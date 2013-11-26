@@ -14,7 +14,7 @@ public class MathOperationAdd extends MathOperationBinary
     public MathObject solveSymb()
     {
         // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class MathOperationAdd extends MathOperationBinary
     }
 
     @Override
-    public double approximate() throws NotConstantException
+    public double approximate() throws MathException
     {
         // TODO If the left and right operand are each others opposites, 0 should be returned
         
@@ -38,5 +38,11 @@ public class MathOperationAdd extends MathOperationBinary
         // Return the actual value
         return leftChild.approximate() + rightChild.approximate();
     }
+
+	@Override
+	public boolean isInverseOf(MathObject o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

@@ -14,7 +14,7 @@ public class MathOperationSubtract extends MathOperationBinary
     public MathObject solveSymb()
     {
         // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
     @Override
@@ -23,14 +23,16 @@ public class MathOperationSubtract extends MathOperationBinary
         // If both operands are constant, the value of this operator will be constant
         if(super.isConstant()) return true;
         
-        // TODO If the left and right operand are equal, the value is constant as well (i.e. 0)
-        return false;
+        // If the left and right operand are equal, the value is constant as well (i.e. 0)
+        return leftChild.equals(rightChild);
     }
 
     @Override
-    public double approximate() throws NotConstantException
+    public double approximate() throws MathException
     {
-        // TODO If the left and right operand are equal, 0 should be returned
+        // If the left and right operand are equal, 0 should be returned
+    	if (leftChild.equals(rightChild))
+	    	return 0;
         
         // Checks whether the operands are valid constant values
         super.approximate();
@@ -38,5 +40,11 @@ public class MathOperationSubtract extends MathOperationBinary
         // Return the actual value
         return leftChild.approximate() - rightChild.approximate();
     }
+
+	@Override
+	public boolean isInverseOf(MathObject o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
