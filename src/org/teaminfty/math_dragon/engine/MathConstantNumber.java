@@ -6,59 +6,24 @@ package org.teaminfty.math_dragon.engine;
  * 
  * @author Folkert van Verseveld
  */
-public final class MathConstantNumber extends MathConstant
+public final class MathConstantNumber<T extends Number> extends MathConstant<T>
 {
-	/**
-	 * The numerical value. Only package classes may manipulate this member.
-	 */
-	protected double value;
-
 	/**
 	 * Construct mathematical constant with a predefined numerical value.
 	 * 
 	 * @param v
 	 *            The numerical value.
 	 */
-	public MathConstantNumber(double v)
+	public MathConstantNumber(T value)
 	{
-		value = v;
+		super(value);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getName()
 	{
 		return "constant-number";
-	}
-
-	@Override
-	public MathObject getChild(int index) throws IndexOutOfBoundsException
-	{
-		checkChildIndex(index);
-		return this;
-	}
-
-	@Override
-	public void setChild(int index, MathObject child)
-			throws IndexOutOfBoundsException, IllegalArgumentException
-	{
-		checkChildIndex(index);
-
-		if (!(child instanceof MathConstantNumber))
-			throw new IllegalArgumentException(
-					"MathConstantNumber expected, but got "
-							+ child.getClass().getCanonicalName());
-		value = ((MathConstantNumber) child).value;
-	}
-
-	/**
-	 * Return numerical value as a floating point number.
-	 * 
-	 * @return The numerical value.
-	 * @see #approximate()
-	 */
-	public double getValue()
-	{
-		return approximate();
 	}
 
 	/**
@@ -66,21 +31,13 @@ public final class MathConstantNumber extends MathConstant
 	 * 
 	 * @see #value
 	 */
+	@Override
 	public double approximate()
 	{
-		return value;
+		return value.doubleValue();
 	}
 
-	/**
-	 * Return text representation of numerical value.
-	 * 
-	 * @return Numerical value as text.
-	 */
-	public String toString()
-	{
-		return String.valueOf(value);
-	}
-
+	/** {@inheritDoc} */
 	@Override
 	public MathObject solveSymb()
 	{
@@ -91,12 +48,5 @@ public final class MathConstantNumber extends MathConstant
 	public boolean isConstant()
 	{
 		return true;
-	}
-
-	@Override
-	public boolean isInverseOf(MathObject o)
-	{
-		return o instanceof MathConstantNumber ? ((MathConstantNumber) o)
-				.getValue() == -value : false;
 	}
 }
