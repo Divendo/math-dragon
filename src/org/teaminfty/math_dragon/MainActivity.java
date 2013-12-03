@@ -1,6 +1,6 @@
 package org.teaminfty.math_dragon;
 
-import com.example.math_dragon.R;
+import org.teaminfty.math_dragon.R;
 
 import android.app.Activity;
 import android.content.res.Configuration;
