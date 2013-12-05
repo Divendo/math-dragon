@@ -1,5 +1,7 @@
 package org.teaminfty.math_dragon;
 
+import org.teaminfty.math_dragon.MathObject.EmptyChildException;
+
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -110,5 +112,14 @@ public abstract class MathBinaryOperationLinear extends MathObject
         // Return the requested bounding box
         return childrenSize[index];
     }
+    
+    protected void checkChildren() throws EmptyChildException
+    {
+        if(getChild(0) == null)
+            throw new EmptyChildException(0);
+        if(getChild(1) == null)
+            throw new EmptyChildException(1);
+    }
+    
 
 }

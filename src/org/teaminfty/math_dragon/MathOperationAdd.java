@@ -20,10 +20,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
     public IExpr eval() throws EmptyChildException
     {
         // Check if the children are not empty
-        if(getChild(0) == null)
-            throw new EmptyChildException(0);
-        if(getChild(1) == null)
-            throw new EmptyChildException(1);
+        this.checkChildren();
         
         // Return the result
         return F.Plus(getChild(0).eval(), getChild(1).eval());
@@ -33,10 +30,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
     public double approximate() throws NotConstantException, EmptyChildException
     {
         // Check if the children are not empty
-        if(getChild(0) == null)
-            throw new EmptyChildException(0);
-        if(getChild(1) == null)
-            throw new EmptyChildException(1);
+        this.checkChildren();
         
         // Return the result
         return getChild(0).approximate() + getChild(1).approximate();
