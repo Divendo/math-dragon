@@ -1,7 +1,5 @@
 package org.teaminfty.math_dragon;
 
-import org.teaminfty.math_dragon.MathObject.EmptyChildException;
-
 import android.graphics.Paint;
 import android.graphics.Rect;
 

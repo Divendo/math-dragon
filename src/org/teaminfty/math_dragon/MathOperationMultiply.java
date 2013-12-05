@@ -2,8 +2,6 @@ package org.teaminfty.math_dragon;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.MathObject.EmptyChildException;
-import org.teaminfty.math_dragon.MathObject.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
