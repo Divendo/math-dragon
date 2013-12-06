@@ -33,10 +33,8 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
 	    @Override
 	    public void draw(Canvas canvas, int maxWidth, int maxHeight)
 	    {
-	        // Get the bounding boxes
+	        // Get the bounding box
 	        final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
-	        final Rect leftChild = getChildBoundingBox(0, maxWidth, maxHeight);
-	        final Rect rightChild = getChildBoundingBox(1, maxWidth, maxHeight);
 	        
 	        // Draw the operator
 	        canvas.save();
@@ -45,22 +43,7 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
 	        canvas.drawLine(0, operator.height() / 2, operator.width(), operator.height() / 2, operatorPaint);
 	        canvas.restore();
 	        
-	        // Draw the left child
-	        canvas.save();
-	        canvas.translate(leftChild.left, leftChild.top);
-	        if(getChild(0) != null)
-	            getChild(0).draw(canvas, leftChild.width(), leftChild.height());
-	        else
-	            drawEmtyChild(canvas, leftChild);
-	        canvas.restore();
-
-	        // Draw the right child
-	        canvas.save();
-	        canvas.translate(rightChild.left, rightChild.top);
-	        if(getChild(1) != null)
-	            getChild(1).draw(canvas, rightChild.width(), rightChild.height());
-	        else
-	            drawEmtyChild(canvas, rightChild);
-	        canvas.restore();
+	        drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
+	        drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
 	    }
 }

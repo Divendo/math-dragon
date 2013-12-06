@@ -3,11 +3,6 @@ package org.teaminfty.math_dragon;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 
-import org.teaminfty.math_dragon.R;
-
-import org.teaminfty.math_dragon.MathObject.EmptyChildException;
-import org.teaminfty.math_dragon.MathObject.NotConstantException;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
