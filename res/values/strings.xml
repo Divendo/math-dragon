@@ -2,5 +2,7 @@
 <resources>
 
     <string name="app_name">Math DragOn</string>
+    <string name="operation_drawer_open">Open the drawer with the operations</string>
+    <string name="operation_drawer_close">Close the drawer with the operations</string>
 
 </resources>
