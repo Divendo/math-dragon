@@ -81,19 +81,21 @@ public abstract class MathObject
     /** Returns the child at the given index
      * @param index The index of the child to return
      * @return The requested child
+     * @throws IndexOutOfBoundsException thrown when the index number is invalid (i.e. out of range).
      */
-    public MathObject getChild(int index)
+    public MathObject getChild(int index) throws IndexOutOfBoundsException
     { return children.get(index); }
     
     /** Sets the child at the given index
      * @param index The index of the child to return
      * @param child The {@link MathObject} that should become the child at the given index
+     * @throws IndexOutOfBoundsException thrown when the index number is invalid (i.e. out of range).
      */
-    public void setChild(int index, MathObject child)
+    public void setChild(int index, MathObject child) throws IndexOutOfBoundsException
     { children.set(index, child); }
     
     /** Symbolically evaluates this {@link MathObject}
-     * @return The symbolical solution of this {@link MathObject}
+     * @return The symbolic solution of this {@link MathObject}
      * @throws EmptyChildException If an empty child is detected where no empty child is allowed
      */
     public abstract IExpr eval() throws EmptyChildException;
@@ -211,7 +213,7 @@ public abstract class MathObject
     }
     
     /** An exception that is thrown when a {@link MathObject} is expected to be constant but it is not */
-    public class NotConstantException extends Exception
+    public class NotConstantException extends MathException
     {
         private static final long serialVersionUID = 9095526946506225182L;
 
@@ -226,7 +228,7 @@ public abstract class MathObject
     }
 
     /** An exception that is thrown when a {@link MathObject} is being evaluated but an empty child where no empty child is allowed */
-    public class EmptyChildException extends Exception
+    public class EmptyChildException extends MathException
     {
         private static final long serialVersionUID = 5101446079156444420L;
 
