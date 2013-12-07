@@ -18,6 +18,11 @@ public abstract class MathBinaryOperation extends MathObject
             int defHeight)
     {
         super(defWidth, defHeight);
+
+        // We have two children
+        children.add(null);
+        children.add(null);
+        
         set(left, right);
     }
 

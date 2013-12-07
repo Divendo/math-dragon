@@ -26,10 +26,6 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
     public MathBinaryOperationLinear(int defWidth, int defHeight)
     {
         super(defWidth, defHeight);
-
-        // We have two children
-        children.add(null);
-        children.add(null);
     }
 
     /**
