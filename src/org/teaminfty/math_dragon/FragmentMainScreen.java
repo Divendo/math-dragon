@@ -37,12 +37,19 @@ public class FragmentMainScreen extends Fragment
         MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
         multiply.setChild(0, new MathConstant(2, 100, 100));
         multiply.setChild(1, subtract);
+
+        MathOperationDivide div = new MathOperationDivide(100, 100);
+        MathOperationAdd add2 = new MathOperationAdd(100,100);
+        add2.setChild(0,new MathConstant(11,100,100));
+        add2.setChild(1, new MathConstant(21,100,100));
+        div.setChild(0, add2);
+        div.setChild(1, multiply);
         
         // Test the MathObject
         try
         {
-            Log.i(getClass().getCanonicalName(), EvalEngine.eval(F.Simplify(multiply.eval())).toString());
-            Log.i(getClass().getCanonicalName(), Double.toString(multiply.approximate()));
+            Log.i(getClass().getCanonicalName(), EvalEngine.eval(F.Simplify(div.eval())).toString());
+            Log.i(getClass().getCanonicalName(), Double.toString(div.approximate()));
         }
         catch(EmptyChildException e)
         {
@@ -55,7 +62,7 @@ public class FragmentMainScreen extends Fragment
         
         // Just to test MathView
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
-        mathView.setMathObject(multiply);
+        mathView.setMathObject(div);
     }
 
 }
