@@ -34,6 +34,7 @@ public class MainActivity extends Activity
             
             // Set the shadow
             drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+
             
             // Set the toggle for the action bar
             actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
