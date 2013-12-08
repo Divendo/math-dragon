@@ -4,6 +4,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -156,6 +157,9 @@ public class MathOperationDivide extends MathObject
         canvas.save();
         canvas.translate(operator.left, operator.top);
         operatorPaint.setStrokeWidth(operator.height() /6);
+       // if(this.type == pizzA)operatorPaint.setColor(0x191970);
+       operatorPaint.setColor(Color.rgb(200,0, 0));
+        
         canvas.drawLine(0, operator.height()/2, operator.width(), operator.height()/2, operatorPaint);
         canvas.restore();
         
