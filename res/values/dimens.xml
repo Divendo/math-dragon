@@ -2,5 +2,7 @@
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="drawer_width">240dp</dimen>
+    <dimen name="math_source_height">64dp</dimen>
+    <dimen name="math_source_margin">8dp</dimen>
 
 </resources>

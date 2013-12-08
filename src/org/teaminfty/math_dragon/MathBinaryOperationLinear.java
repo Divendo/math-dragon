@@ -174,7 +174,10 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         if(getChild(0) != null)
             getChild(0).draw(canvas, box.width(), box.height());
         else
+        {
+            box.offsetTo(0, 0);
             drawEmptyChild(canvas, box);
+        }
         canvas.restore();
     }
     /**
@@ -190,7 +193,10 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         if(getChild(1) != null)
             getChild(1).draw(canvas, box.width(), box.height());
         else
+        {
+            box.offsetTo(0, 0);
             drawEmptyChild(canvas, box);
+        }
         canvas.restore();
     }
 }

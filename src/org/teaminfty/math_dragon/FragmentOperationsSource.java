@@ -15,7 +15,16 @@ public class FragmentOperationsSource extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_operations_source, container, false);
+        View layout = inflater.inflate(R.layout.fragment_operations_source, container, false);
+        
+        // Set the MathObjects for the MathSourceViews
+        // Note: default size isn't necessary since we'll always have a maximum size
+        ((MathSourceView) layout.findViewById(R.id.mathSourceAdd)).setMathObject(new MathOperationAdd(0, 0));
+        ((MathSourceView) layout.findViewById(R.id.mathSourceSubtract)).setMathObject(new MathOperationSubtract(0, 0));
+        ((MathSourceView) layout.findViewById(R.id.mathSourceMultiply)).setMathObject(new MathOperationMultiply(0, 0));
+        
+        // Return the layout
+        return layout;
     }
 
 }

@@ -43,6 +43,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
         
         // Draw the operator
+        operator.inset(operator.width() / 10, operator.height() / 10);      // Padding
         canvas.save();
         canvas.translate(operator.left, operator.top);
         operatorPaint.setStrokeWidth(operator.width() / 5);
