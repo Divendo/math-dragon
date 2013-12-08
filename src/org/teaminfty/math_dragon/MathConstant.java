@@ -36,14 +36,14 @@ public class MathConstant extends MathObject
      * @param defWidth The default maximum width
      * @param defHeight The default maximum height
      */
-    public MathConstant(String value, int defWidth, int defHeight) throws MathException
+    public MathConstant(String value, int defWidth, int defHeight)
     {
         super(defWidth, defHeight);
         this.readString(value);
     }
     
     //Reads the string and converts it to the right constant
-    public void readString(String value) throws MathException
+    public void readString(String value)
     {
     	factor = 0;
     	for(int i = 0; i<value.length(); i++)
@@ -51,7 +51,7 @@ public class MathConstant extends MathObject
     		//if it is a number, add it to the factor
     		if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
     			if(!constantOccurred)
-    				factor = factor * 10 + (int)(value.charAt(i));
+    				factor = factor * 10 + (value.charAt(i) - '0');
     		
     		//if it is the letter p, check if they mean 'pi'
     		if(value.charAt(i) == 'p')
@@ -76,7 +76,7 @@ public class MathConstant extends MathObject
     						i++;
     					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
     					{
-    						local_piPow = local_piPow*10 + (int)(value.charAt(i));
+    						local_piPow = local_piPow*10 + (value.charAt(i) - '0');
     						i++;
     					}
     					else
@@ -118,7 +118,7 @@ public class MathConstant extends MathObject
     						i++;
     					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
     					{
-    						local_ePow = local_ePow*10 + (int)(value.charAt(i));
+    						local_ePow = local_ePow*10 + (value.charAt(i)-'0');
     						i++;
     					}
     					else
@@ -148,7 +148,7 @@ public class MathConstant extends MathObject
     						i++;
     					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
     					{
-    						local_iPow = local_iPow*10 + (int)(value.charAt(i));
+    						local_iPow = local_iPow*10 + (value.charAt(i)-'0');
     						i++;
     					}
     					else
@@ -183,7 +183,7 @@ public class MathConstant extends MathObject
         						i++;
         					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
         					{
-        						local_variablePow = local_variablePow*10 + (int)(value.charAt(i));
+        						local_variablePow = local_variablePow*10 + (value.charAt(i)- '0');
         						i++;
         					}
         					else
@@ -307,7 +307,8 @@ public class MathConstant extends MathObject
     	{
     		return F.Times(F.ZZ(factor), F.Power(F.e, ePow));
     	}
-    	return F.ZZ(factor); 
+    	else 
+    		return F.ZZ(factor); 
     }
 
     @Override

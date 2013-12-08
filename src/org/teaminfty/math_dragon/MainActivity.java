@@ -81,15 +81,15 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
         
         MathOperationAdd add = new MathOperationAdd(100, 100);
-        add.setChild(0, new MathConstant(20, 100, 100));
-        add.setChild(1, new MathConstant(5, 100, 100));
+        add.setChild(0, new MathConstant("20", 100, 100));
+        add.setChild(1, new MathConstant("5", 100, 100));
         
         MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
         subtract.setChild(0, add);
-        subtract.setChild(1, new MathConstant(4, 100, 100));
+        subtract.setChild(1, new MathConstant("4", 100, 100));
 
         MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
-        multiply.setChild(0, new MathConstant(2, 100, 100));
+        multiply.setChild(0, new MathConstant("2", 100, 100));
         multiply.setChild(1, subtract);
         fragmentEvaluation.showMathObject(multiply);
     }
@@ -99,12 +99,12 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Get the DrawerLayout object
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         
-        // Show the evaluation drawer
         drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-        
         // TODO: Approximate the MathObject in the drawing space, and display the resulting constant
+        
+        
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
-        MathConstant mathConstant = new MathConstant(42,100,100);	
+        MathConstant mathConstant = new MathConstant("42",100,100);	
         fragmentEvaluation.showMathObject(mathConstant);
     }
     
