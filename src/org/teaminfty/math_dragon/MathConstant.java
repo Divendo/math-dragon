@@ -125,6 +125,13 @@ public class MathConstant extends MathObject
         
         // Draw the text
         canvas.drawText(str, (boundingBox.width() - bounds.width()) / 2 - bounds.left, (boundingBox.height() - bounds.height()) / 2 - bounds.top, paint);
+        
+        //If you're trying to drag the item, make an aiming cross
+        if(this.state == HoverState.DRAG)
+        {
+        canvas.drawLine(maxWidth/2, 0, maxWidth/2, maxHeight, paint);
+        canvas.drawLine(0, maxHeight/2, maxWidth, maxHeight/2, paint);
+        }
     }
 
     @Override
