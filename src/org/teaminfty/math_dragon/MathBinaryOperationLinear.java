@@ -38,13 +38,10 @@ public abstract class MathBinaryOperationLinear extends MathObject
         // Get the bounding box both operands want to take
         Rect leftSize = getChild(0) == null ? getRectBoundingBox(NO_MAXIMUM, maxHeight, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(NO_MAXIMUM, maxHeight);
         Rect rightSize = getChild(1) == null ? getRectBoundingBox(NO_MAXIMUM, maxHeight, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(NO_MAXIMUM, maxHeight);
-
-        // Determine a new maxHeight (if the new maxHeight would be smaller)
-        if(maxHeight == NO_MAXIMUM || maxHeight > Math.min(leftSize.height(), rightSize.height()) * 2 / 3)
-            maxHeight = Math.min(leftSize.height(), rightSize.height()) * 2 / 3;
         
         // Return a square that fits in the given maxWidth and maxHeight
-        return getRectBoundingBox(maxWidth, maxHeight, 1);
+        //The top was times 2/
+        return getRectBoundingBox(maxWidth, Math.min(leftSize.height(), rightSize.height()) * 2 / 3, 1);
     }
 
     /** Returns the size of the child bounding boxes
