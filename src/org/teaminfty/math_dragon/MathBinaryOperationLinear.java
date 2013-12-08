@@ -168,6 +168,7 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
             box.offsetTo(0, 0);
             drawEmptyChild(canvas, box);
         }
+        
         canvas.restore();
     }
     /**

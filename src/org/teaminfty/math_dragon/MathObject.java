@@ -337,4 +337,13 @@ public abstract class MathObject
                     + getClass().getCanonicalName() + " has only "
                     + Integer.toString(childCount) + " children.");
     }
+    
+    protected int getColor()
+    {
+    	if(this.state == HoverState.DRAG)
+    		return Color.rgb(0x88, 0x88, 0x88);
+    	if(this.state == HoverState.HOVER)
+    		return Color.rgb(0x44, 0x44, 0xff);
+    	return Color.BLACK;
+    }
 }

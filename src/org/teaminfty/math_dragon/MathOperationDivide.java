@@ -147,6 +147,7 @@ public class MathOperationDivide extends MathObject
         
         // Draw the operator
         canvas.save();
+        operatorPaint.setColor(getColor());
         canvas.drawRect(operator.left, operator.top + operator.height() / 3, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
         canvas.restore();
         

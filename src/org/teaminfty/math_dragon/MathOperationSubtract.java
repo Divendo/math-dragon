@@ -41,6 +41,7 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
 	        canvas.save();
 	        canvas.translate(operator.left, operator.top);
 	        operatorPaint.setStrokeWidth(operator.width() / 5);
+	        operatorPaint.setColor(this.getColor());
 	        canvas.drawLine(0, operator.height() / 2, operator.width(), operator.height() / 2, operatorPaint);
 	        canvas.restore();
 	        
