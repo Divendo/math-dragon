@@ -11,7 +11,7 @@ import android.graphics.Rect;
  * That is, operations which are written like '&lt;left operand&gt; &lt;operator&gt; &lt;right operand&gt;'.
  * For example: the add or subtract operation.
  */
-public class MathOperationDivide extends MathObject
+public class MathOperationDivide extends MathBinaryOperation
 {
 
     /** The paint that is used for drawing the operator */
@@ -24,10 +24,6 @@ public class MathOperationDivide extends MathObject
     public MathOperationDivide(int defWidth, int defHeight)
     {
         super(defWidth, defHeight);
-        
-        // We have two children
-        children.add(null);
-        children.add(null);
     }
     
     /** Returns the size of the operator bounding box
