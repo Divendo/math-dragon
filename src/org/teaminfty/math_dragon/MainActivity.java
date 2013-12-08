@@ -9,7 +9,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends Activity
+public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
     
     /** The ActionBarDrawerToggle that is used to toggle the drawer using the action bar */
@@ -22,23 +22,21 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        // If we're using a drawer layout, we'll want to change a few settings
-        if(findViewById(R.id.drawerLayout) != null)
-        {
-            // Get the DrawerLayout object
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-            
-            // Remove the grey overlay
-            drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
-            
-            // Set the shadow
-            drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+        // Get the DrawerLayout object
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        
+        // Remove the grey overlay
+        drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
+        
+        // Set the shadow
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
 
-            
-            // Set the toggle for the action bar
-            actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        // Set the toggle for the action bar
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        // Listen when to close the operations drawer
+        ((FragmentOperationsSource) getFragmentManager().findFragmentById(R.id.fragmentOperationDrawer)).setOnCloseMeListener(this);
     }
 
     @Override
@@ -73,58 +71,59 @@ public class MainActivity extends Activity
     }
     public void evaluate(View view)
     {
-    	if(findViewById(R.id.drawerLayout) != null)
-        {
-            // Get the DrawerLayout object
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-            
-            drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-           
-         // TODO: Evaluate the MathObject in the drawing space, and display the resulting constant
-            
-            FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
-            
-            MathOperationAdd add = new MathOperationAdd(100, 100);
-            add.setChild(0, new MathConstant(20, 100, 100));
-            add.setChild(1, new MathConstant(5, 100, 100));
-            
-            MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
-            subtract.setChild(0, add);
-            subtract.setChild(1, new MathConstant(4, 100, 100));
+        // Get the DrawerLayout object
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        
+        // Show the evaluation drawer
+        drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
+       
+        // TODO: Evaluate the MathObject in the drawing space, and display the resulting constant
+        FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
+        
+        MathOperationAdd add = new MathOperationAdd(100, 100);
+        add.setChild(0, new MathConstant(20, 100, 100));
+        add.setChild(1, new MathConstant(5, 100, 100));
+        
+        MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
+        subtract.setChild(0, add);
+        subtract.setChild(1, new MathConstant(4, 100, 100));
 
-            MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
-            multiply.setChild(0, new MathConstant(2, 100, 100));
-            multiply.setChild(1, subtract);
-            fragmentEvaluation.showMathObject(multiply);
-        }	
+        MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
+        multiply.setChild(0, new MathConstant(2, 100, 100));
+        multiply.setChild(1, subtract);
+        fragmentEvaluation.showMathObject(multiply);
     }
     
     public void approximate(View view)
     {
-    	if(findViewById(R.id.drawerLayout) != null)
-        {
-            // Get the DrawerLayout object
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-            
-            drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-            // TODO: Approximate the MathObject in the drawing space, and display the resulting constant
-            
-            
-            FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
-            MathConstant mathConstant = new MathConstant(42,100,100);	
-            fragmentEvaluation.showMathObject(mathConstant);
-        }
+        // Get the DrawerLayout object
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        
+        // Show the evaluation drawer
+        drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
+        
+        // TODO: Approximate the MathObject in the drawing space, and display the resulting constant
+        FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
+        MathConstant mathConstant = new MathConstant(42,100,100);	
+        fragmentEvaluation.showMathObject(mathConstant);
     }
     
     public void favourites(View view)
     {
-    	if(findViewById(R.id.drawerLayout) != null)
-        {
-            // Get the DrawerLayout object
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-            
-            drawerLayout.openDrawer(Gravity.CENTER);
-            
-        }
+        // Get the DrawerLayout object
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        
+        // Show the favorites drawer
+        drawerLayout.openDrawer(Gravity.CENTER);
+    }
+
+    @Override
+    public void closeMe()
+    {
+        // Get the DrawerLayout object
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        
+        // Close the operations source drawer
+        drawerLayout.closeDrawer(Gravity.LEFT);
     }
 }

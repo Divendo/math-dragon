@@ -62,7 +62,7 @@ public class FragmentMainScreen extends Fragment
         
         // Just to test MathView
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
-        mathView.setMathObject(div);
+        mathView.setMathObject(add);
     }
 
 }

@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FragmentOperationsSource extends Fragment
+public class FragmentOperationsSource extends Fragment implements MathSourceView.DragStartedListener
 {
 
     @Override
@@ -19,13 +19,42 @@ public class FragmentOperationsSource extends Fragment
         
         // Set the MathObjects for the MathSourceViews
         // Note: default size isn't necessary since we'll always have a maximum size
-        ((MathSourceView) layout.findViewById(R.id.mathSourceAdd)).setMathObject(new MathOperationAdd(0, 0));
-        ((MathSourceView) layout.findViewById(R.id.mathSourceSubtract)).setMathObject(new MathOperationSubtract(0, 0));
-        ((MathSourceView) layout.findViewById(R.id.mathSourceMultiply)).setMathObject(new MathOperationMultiply(0, 0));
-        ((MathSourceView) layout.findViewById(R.id.mathSourceDivide)).setMathObject(new MathOperationDivide(0, 0));
+        setMathObjectFor(layout, R.id.mathSourceAdd, new MathOperationAdd(0, 0));
+        setMathObjectFor(layout, R.id.mathSourceSubtract, new MathOperationSubtract(0, 0));
+        setMathObjectFor(layout, R.id.mathSourceMultiply, new MathOperationMultiply(0, 0));
+        setMathObjectFor(layout, R.id.mathSourceDivide, new MathOperationDivide(0, 0));
         
         // Return the layout
         return layout;
+    }
+    
+    /** Sets the given {@link MathObject} to the {@link MathSourceView} with the given ID
+     * @param layout The layout that contains the {@link MathSourceView}
+     * @param id The ID of the {@link MathSourceView} where the {@link MathObject} should be set for
+     * @param mo The {@link MathObject} that should be set */
+    protected void setMathObjectFor(View layout, int id, MathObject mo)
+    {
+        MathSourceView mathSourceView = (MathSourceView) layout.findViewById(id);
+        mathSourceView.setMathObject(mo);
+        mathSourceView.setOnDragStarted(this);
+    }
+    
+    /** Interface definition for a callback to be invoked when this fragment should be closed (if it's a drawer) */
+    public interface CloseMeListener
+    { public void closeMe(); }
+
+    /** The close event listener */
+    private CloseMeListener onCloseMe = null;
+    
+    /** Set the close event listener */
+    public void setOnCloseMeListener(CloseMeListener listener)
+    { onCloseMe = listener; }
+
+    @Override
+    public void dragStarted()
+    {
+        if(onCloseMe != null)
+            onCloseMe.closeMe();
     }
 
 }

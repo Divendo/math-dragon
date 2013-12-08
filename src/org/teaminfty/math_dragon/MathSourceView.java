@@ -6,9 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
-public class MathSourceView extends View implements View.OnLongClickListener
+public class MathSourceView extends View
 {
     
     /** The {@link MathObject} that should be dragged */
@@ -17,19 +18,16 @@ public class MathSourceView extends View implements View.OnLongClickListener
     public MathSourceView(Context context)
     {
         super(context);
-        setOnLongClickListener(this);
     }
 
     public MathSourceView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-        setOnLongClickListener(this);
     }
 
     public MathSourceView(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
-        setOnLongClickListener(this);
     }
     
     /** Sets the {@link MathObject} that should be dragged
@@ -67,14 +65,20 @@ public class MathSourceView extends View implements View.OnLongClickListener
     }
 
     @Override
-    public boolean onLongClick(View v)
+    public boolean onTouchEvent(MotionEvent me)
     {
+        // We only want ACTION_DOWN events
+        if(me.getAction() != MotionEvent.ACTION_DOWN)
+            return false;
+        
         // TODO Convert the MathObject to a string (xml?) and send it as clip data with the drag
         startDrag(ClipData.newPlainText("", ""),
                 new MathShadow(mathObject, new Point(getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions), getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions))),
                 null, 0);
         if(onDragStarted != null)
             onDragStarted.dragStarted();
+        
+        // We handled the event
         return true;
     }
 
