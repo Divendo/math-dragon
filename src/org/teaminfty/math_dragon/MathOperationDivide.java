@@ -2,8 +2,6 @@ package org.teaminfty.math_dragon;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.MathObject.EmptyChildException;
-import org.teaminfty.math_dragon.MathObject.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -13,7 +11,7 @@ import android.graphics.Rect;
  * That is, operations which are written like '&lt;left operand&gt; &lt;operator&gt; &lt;right operand&gt;'.
  * For example: the add or subtract operation.
  */
-public abstract class MathOperationDivide extends MathObject
+public class MathOperationDivide extends MathObject
 {
 
     /** The paint that is used for drawing the operator */
@@ -46,7 +44,7 @@ public abstract class MathOperationDivide extends MathObject
         // Return a square that fits in the given maxWidth and maxHeight
         //Grants as width the maximum of both children
         //Grants a small height for the divide operator is but a slim line.
-        return getRectBoundingBox(Math.max(leftSize.width(), rightSize.width()), maxHeight/10, 1);
+        return new Rect(0, 0, Math.max(leftSize.width(), rightSize.width()), maxHeight / 20);
     }
 
     /** Returns the size of the child bounding boxes
@@ -72,7 +70,7 @@ public abstract class MathOperationDivide extends MathObject
             
             // Determine the new bounding box for each operand
             topSize = getChild(0) == null ? getRectBoundingBox(maxWidth, topMax, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(maxWidth, topMax);
-            bottomSize = getChild(1) == null ? getRectBoundingBox(maxWidth, bottomMax, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(Maxwith, bottomMax);
+            bottomSize = getChild(1) == null ? getRectBoundingBox(maxWidth, bottomMax, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(maxWidth, bottomMax);
         }
         
         // Return the sizes
@@ -82,14 +80,18 @@ public abstract class MathOperationDivide extends MathObject
     @Override
     public Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight)
     {
-        // Get a square that fits in the given maxWidth and maxHeight
-        Rect out = getOperatorSize(maxWidth, maxHeight);
-        
         // Get the sizes of the children
         Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
         
         // Position the bounding box and return it
-        final int totalWidth = Math.max(out.width(), Math.max(childrenSize[0].width(), childrenSize[1].width()));
+        final int totalWidth = Math.max(childrenSize[0].width(), childrenSize[1].width());
+        // Get a square that fits in the given maxWidth and maxHeight
+        
+        System.out.println("child[0] width: " + childrenSize[0].width());
+        System.out.println("child[1] width: " + childrenSize[1].width());
+        System.out.println("Total width: " + totalWidth);
+        
+        Rect out = getOperatorSize(totalWidth, maxHeight);
         out.offsetTo((totalWidth-out.width())/2, getChildBoundingBox(0,maxWidth,maxHeight).height());
         return new Rect[]{ out };
     }
@@ -109,7 +111,7 @@ public abstract class MathOperationDivide extends MathObject
         // Position the bounding boxes of both children
         final int totalWidth = Math.max(operatorSize.width(), Math.max(childrenSize[0].width(), childrenSize[1].width()));
         childrenSize[0].offsetTo((totalWidth-childrenSize[0].width())/2,	0);
-        childrenSize[1].offsetTo((totalWidth-childrenSize[0].width())/2, childrenSize[0].height() + operatorSize.height());
+        childrenSize[1].offsetTo((totalWidth-childrenSize[1].width())/2, childrenSize[0].height() + operatorSize.height());
         
         // Return the requested bounding box
         return childrenSize[index];
@@ -153,7 +155,7 @@ public abstract class MathOperationDivide extends MathObject
         // Draw the operator
         canvas.save();
         canvas.translate(operator.left, operator.top);
-        operatorPaint.setStrokeWidth(operator.width() / 5);
+        operatorPaint.setStrokeWidth(operator.height() /6);
         canvas.drawLine(0, operator.height()/2, operator.width(), operator.height()/2, operatorPaint);
         canvas.restore();
         
