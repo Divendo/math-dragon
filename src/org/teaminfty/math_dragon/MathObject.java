@@ -304,11 +304,19 @@ public abstract class MathObject
      */
     public void drawEmptyChild(Canvas canvas, Rect rect)
     {
-        emptyChildPaint.setStrokeWidth(rect.width() / 10);
+        emptyChildPaint.setStrokeWidth(rect.width() / 20);
         rect.inset((int) Math.ceil(emptyChildPaint.getStrokeWidth() / 2),
                 (int) Math.ceil(emptyChildPaint.getStrokeWidth() / 2));
         canvas.drawRect(rect, emptyChildPaint);
-    }
+        
+        //If you're trying to drag the item, make an aiming cross
+        if(this.state == HoverState.DRAG)
+        {
+        	emptyChildPaint.setStyle(Paint.Style.FILL);
+        	canvas.drawCircle(rect.left + rect.width() / 2, rect.top + rect.height() / 2, Math.min(rect.height(), rect.width()) / 10, emptyChildPaint);
+        	emptyChildPaint.setStyle(Paint.Style.STROKE);
+        }
+     }
 
     /**
      * Checks if the given child index is valid, and throws an exception if it
