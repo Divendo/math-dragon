@@ -1,0 +1,17 @@
+package org.teaminfty.math_dragon;
+
+/**
+ * Container of different states when e.g. a {@link MathObject} is being dragged
+ * or hovered by the cursor pointer.
+ * 
+ * @author Folkert van Verseveld
+ */
+public enum HoverState
+{
+    /** Mouse/cursor pointer does not intersect with current instance. */
+    NONE,
+    /** Mouse/cursor pointer intersects with current instance. */
+    HOVER,
+    /** The current instance is being dragged by the cursor pointer. */
+    DRAG
+}

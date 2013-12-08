@@ -30,3 +30,6 @@ proguard/
 
 # OS files we don't want
 .DS_Store
+
+# The IDE settings
+.settings/

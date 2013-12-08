@@ -3,11 +3,6 @@ package org.teaminfty.math_dragon;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 
-import org.teaminfty.math_dragon.R;
-
-import org.teaminfty.math_dragon.MathObject.EmptyChildException;
-import org.teaminfty.math_dragon.MathObject.NotConstantException;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,13 +25,25 @@ public class FragmentMainScreen extends Fragment
     {
         super.onStart();
         
-        // Create a MathObject to test it
+        // Create MathObjects to test the functionality
+        MathOperationAdd add = new MathOperationAdd(100, 100);
+        add.setChild(0, new MathConstant(20, 100, 100));
+        add.setChild(1, new MathConstant(5, 100, 100));
+        
+        MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
+        subtract.setChild(0, add);
+        subtract.setChild(1, new MathConstant(4, 100, 100));
+
+        MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
+        multiply.setChild(0, new MathConstant(2, 100, 100));
+        multiply.setChild(1, subtract);
+
         MathOperationDivide div = new MathOperationDivide(100, 100);
-        MathOperationAdd plus = new MathOperationAdd(100,100);
-        plus.setChild(0,new MathConstant(11,100,100));
-        plus.setChild(1, new MathConstant(21,100,100));
-        div.setChild(0, plus);
-        div.setChild(1, new MathConstant(31, 100, 100));
+        MathOperationAdd add2 = new MathOperationAdd(100,100);
+        add2.setChild(0,new MathConstant(11,100,100));
+        add2.setChild(1, new MathConstant(21,100,100));
+        div.setChild(0, add2);
+        div.setChild(1, multiply);
         
         // Test the MathObject
         try

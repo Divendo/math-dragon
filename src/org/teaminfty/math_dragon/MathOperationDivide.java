@@ -169,7 +169,10 @@ public class MathOperationDivide extends MathObject
         if(getChild(0) != null)
             getChild(0).draw(canvas, leftChild.width(), leftChild.height());
         else
-            drawEmtyChild(canvas, leftChild);
+        {
+            leftChild.offsetTo(0, 0);
+            drawEmptyChild(canvas, leftChild);
+        }
         canvas.restore();
 
         // Draw the right child
@@ -178,7 +181,10 @@ public class MathOperationDivide extends MathObject
         if(getChild(1) != null)
             getChild(1).draw(canvas, rightChild.width(), rightChild.height());
         else
-            drawEmtyChild(canvas, rightChild);
+        {
+            rightChild.offsetTo(0, 0);
+            drawEmptyChild(canvas, rightChild);
+        }
         canvas.restore();
     }
     
