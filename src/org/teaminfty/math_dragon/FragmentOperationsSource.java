@@ -22,6 +22,7 @@ public class FragmentOperationsSource extends Fragment
         ((MathSourceView) layout.findViewById(R.id.mathSourceAdd)).setMathObject(new MathOperationAdd(0, 0));
         ((MathSourceView) layout.findViewById(R.id.mathSourceSubtract)).setMathObject(new MathOperationSubtract(0, 0));
         ((MathSourceView) layout.findViewById(R.id.mathSourceMultiply)).setMathObject(new MathOperationMultiply(0, 0));
+        ((MathSourceView) layout.findViewById(R.id.mathSourceDivide)).setMathObject(new MathOperationDivide(0, 0));
         
         // Return the layout
         return layout;

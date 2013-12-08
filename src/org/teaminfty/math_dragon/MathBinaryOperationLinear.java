@@ -46,8 +46,7 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         Rect rightSize = getChild(1) == null ? getRectBoundingBox(NO_MAXIMUM, maxHeight, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(NO_MAXIMUM, maxHeight);
 
         // Return a square that fits in the given maxWidth and maxHeight
-        //The top was times 2/
-        return getRectBoundingBox(maxWidth, Math.min(leftSize.height(), rightSize.height()) * 2 / 3, 1);
+        return getRectBoundingBox(maxWidth == NO_MAXIMUM ? NO_MAXIMUM : maxWidth / 3, Math.min(leftSize.height(), rightSize.height()) * 2 / 3, 1);
     }
 
     /**
@@ -76,8 +75,7 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
 
         // If width restrictions are given and we would get wider than the
         // maximum width, shrink so we fit in
-        if(maxWidth != NO_MAXIMUM
-                && leftSize.width() + operatorWidth + rightSize.width() > maxWidth)
+        if(maxWidth != NO_MAXIMUM && leftSize.width() + operatorWidth + rightSize.width() > maxWidth)
         {
             // Determine the maximum width for each operator
             final int leftMax = (maxWidth - operatorWidth) * leftSize.width()

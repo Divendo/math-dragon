@@ -85,12 +85,8 @@ public class MathOperationDivide extends MathObject
         
         // Position the bounding box and return it
         final int totalWidth = Math.max(childrenSize[0].width(), childrenSize[1].width());
+        
         // Get a square that fits in the given maxWidth and maxHeight
-        
-        System.out.println("child[0] width: " + childrenSize[0].width());
-        System.out.println("child[1] width: " + childrenSize[1].width());
-        System.out.println("Total width: " + totalWidth);
-        
         Rect out = getOperatorSize(totalWidth, maxHeight);
         out.offsetTo((totalWidth-out.width())/2, getChildBoundingBox(0,maxWidth,maxHeight).height());
         return new Rect[]{ out };
