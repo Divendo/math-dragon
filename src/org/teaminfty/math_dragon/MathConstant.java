@@ -10,10 +10,16 @@ import android.graphics.Rect;
 /** This class represents a math constant */
 public class MathConstant extends MathObject
 {
+	public long ePow = 0;
+	public long piPow = 0;
+	public long iPow = 0;
+	public char variable = 0;
+	public char variablePow = 0;
+	protected boolean constantOccurred = false;
     
     // TODO Support real values and constants like pi, e, etc
     /** The value this constant currently holds */
-    protected long value = 0;
+    protected long factor = 0;
     
     /** The paint that is used to draw the constant */
     protected Paint paint = new Paint();
@@ -30,11 +36,167 @@ public class MathConstant extends MathObject
      * @param defWidth The default maximum width
      * @param defHeight The default maximum height
      */
-    public MathConstant(long v, int defWidth, int defHeight)
+    public MathConstant(String value, int defWidth, int defHeight) throws MathException
     {
         super(defWidth, defHeight);
-        value = v;
+        this.readString(value);
     }
+    
+    //Reads the string and converts it to the right constant
+    public void readString(String value) throws MathException
+    {
+    	factor = 0;
+    	for(int i = 0; i<value.length(); i++)
+    	{
+    		//if it is a number, add it to the factor
+    		if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
+    			if(!constantOccurred)
+    				factor = factor * 10 + (int)(value.charAt(i));
+    		
+    		//if it is the letter p, check if they mean 'pi'
+    		if(value.charAt(i) == 'p')
+    		{
+    			i++;
+    			//if it is pi,add one to the power, in that way pi
+    			//a constant has occurred in this string, so set that to true
+    			if(value.charAt(i) == 'i')
+    			{
+    			piPow++;
+    			constantOccurred = true;
+    			i++;
+    			//Check to see if that pi has a power, if it has, go and add that power
+    			if(value.charAt(i) == '^')
+    			{
+    				piPow--;
+    				int local_piPow = 0;
+    				i++;
+    				while(i<value.length())
+    				{
+    					if(value.charAt(i)== '(')
+    						i++;
+    					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
+    					{
+    						local_piPow = local_piPow*10 + (int)(value.charAt(i));
+    						i++;
+    					}
+    					else
+    						break;
+    				}
+    				piPow+= local_piPow;
+    			}
+    			else
+    				i--;
+    			}
+    			
+    			// if it's not pi, it's a variable!
+    			else
+    			{
+    				if(variable != 0)
+    				{
+    					variable = 'p';
+    					variablePow++;
+    				}
+    			}
+    		}
+  
+    		//If it is the number e, add one to the e powers
+    		if(value.charAt(i) == 'e')
+    		{
+    			ePow++;
+       			i++;
+       			//Check and see if the e has a power
+    			if(value.charAt(i) == '^')
+    			{
+    				ePow--;
+    				int local_ePow = 0;
+    				i++;
+    				while(i<value.length())
+    				{
+    					if(value.charAt(i)== '(')
+    						i++;
+    					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
+    					{
+    						local_ePow = local_ePow*10 + (int)(value.charAt(i));
+    						i++;
+    					}
+    					else
+    						break;
+    				}
+    				ePow+= local_ePow;
+    			}
+    			else
+    				i--;
+    		}
+    		
+    		//if the value is the number i, add the complex constant!
+    		if (value.charAt(i) == 'i')
+    		{
+    			iPow++;
+       			i++;
+       			//Check and see if the e has a power
+    			if(value.charAt(i) == '^')
+    			{
+    				iPow--;
+    				int local_iPow = 0;
+    				i++;
+    				while(i<value.length())
+    				{
+    					if(value.charAt(i)== '(')
+    						i++;
+    					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
+    					{
+    						local_iPow = local_iPow*10 + (int)(value.charAt(i));
+    						i++;
+    					}
+    					else
+    						break;
+    				}
+    				iPow+= local_iPow;
+    			}
+    			else
+    				i--;
+    		}
+    		
+    		//if the value is a variable, do what you do with variables!
+    		if(value.charAt(i) >= 'a' && value.charAt(i) <= 'z' 
+    				&& value.charAt(i) != 'i' && value.charAt(i) != 'e' && value.charAt(i) != 'p')
+    		{
+    			if(value.charAt(i) == variable || value.charAt(i) == 0)
+    			{ 
+    				variable = value.charAt(i);
+    				
+    				variablePow++;
+           			i++;
+           			//Check and see if the e has a power
+        			if(value.charAt(i) == '^')
+        			{
+        				variablePow--;
+        				int local_variablePow = 0;
+        				i++;
+        				while(i<value.length())
+        				{
+        					if(value.charAt(i)== '(')
+        						i++;
+        					else if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
+        					{
+        						local_variablePow = local_variablePow*10 + (int)(value.charAt(i));
+        						i++;
+        					}
+        					else
+        						break;
+        				}
+        				variablePow+= local_variablePow;
+        			}
+        			else
+        				i--;
+        		}
+    			//else
+    				//throw MathException;
+    				
+			}
+		}
+	}
+    
     
     /** Uses binary search to find the right text size so that the text fits the given bounding box
      * @return The right text size so that the text fits the given bounding box */
@@ -54,7 +216,7 @@ public class MathConstant extends MathObject
         
         // Keep searching until the text fits or until delta becomes too small
         // Note that we will never reach the maximum or minimum text size this way
-        final String str = Long.toString(value);
+        final String str = Long.toString(factor);
         Rect bounds = new Rect();
         while(delta >= 0.1f)
         {
@@ -85,7 +247,7 @@ public class MathConstant extends MathObject
         paint.setTextSize(findTextSize(maxWidth, maxHeight));
         
         // Get the text bounds
-        final String str = Long.toString(value);
+        final String str = Long.toString(factor);
         Rect bounds = new Rect();
         paint.getTextBounds(str, 0, str.length(), bounds);
         bounds.offsetTo(0, 0);
@@ -119,7 +281,7 @@ public class MathConstant extends MathObject
         paint.setTextSize(0.8f * findTextSize(maxWidth, maxHeight));
         
         // Get the text and the text bounds
-        final String str = Long.toString(value);
+        final String str = Long.toString(factor);
         Rect bounds = new Rect();
         paint.getTextBounds(str, 0, str.length(), bounds);
         
@@ -129,10 +291,23 @@ public class MathConstant extends MathObject
 
     @Override
     public IExpr eval()
-    { return F.ZZ(value); }
+    { 
+    	if(piPow != 0)
+    	{ 
+    		if(ePow != 0)
+    			return F.Times(F.ZZ(factor), F.Times(F.Power(F.Pi, piPow),F.Power(F.e, ePow)));
+    		return F.Times(F.ZZ(factor), F.Power(F.Pi, piPow));
+    	}
+    	
+    	else if(ePow!= 0)
+    	{
+    		return F.Times(F.ZZ(factor), F.Power(F.e, ePow));
+    	}
+    	return F.ZZ(factor); 
+    }
 
     @Override
     public double approximate() throws NotConstantException
-    { return value; }
+    { return factor; }
 
 }
