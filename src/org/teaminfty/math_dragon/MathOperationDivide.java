@@ -37,14 +37,12 @@ public class MathOperationDivide extends MathObject
      */
     protected Rect getOperatorSize(int maxWidth, int maxHeight)
     {
-        // Get the bounding box both operands want to take
-        Rect leftSize = getChild(0) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(maxWidth, NO_MAXIMUM);
-        Rect rightSize = getChild(1) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(maxWidth, NO_MAXIMUM);
+        // Get the size of the children
+        final Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
 
-        // Return a square that fits in the given maxWidth and maxHeight
-        //Grants as width the maximum of both children
-        //Grants a small height for the divide operator is but a slim line.
-        return new Rect(0, 0, Math.max(leftSize.width(), rightSize.width()), maxHeight / 20);
+        // Return the operator size
+        return new Rect(0, 0, Math.max(childrenSize[0].width(), childrenSize[1].width()),
+                Math.max(5, maxHeight == NO_MAXIMUM ? maxHeight / 20 : (childrenSize[0].height() + childrenSize[1].height()) / 20));
     }
 
     /** Returns the size of the child bounding boxes
@@ -54,12 +52,12 @@ public class MathOperationDivide extends MathObject
      */
     protected Rect[] getChildrenSize(int maxWidth, int maxHeight)
     {
-        // Get the height of the operator
-        final int operatorHeight = getOperatorSize(maxWidth, maxHeight).height();
-        
         // Get the bounding box both operands want to take
         Rect topSize = getChild(0) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(maxWidth, NO_MAXIMUM);
         Rect bottomSize = getChild(1) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(maxWidth, NO_MAXIMUM);
+        
+        // Get the operator height
+        final int operatorHeight = Math.max(5, maxHeight == NO_MAXIMUM ? maxHeight / 20 : (topSize.height() + bottomSize.height()) / 20);
         
         // If width restrictions are given and we would get wider than the maximum height, shrink so we fit in
         if(maxHeight != NO_MAXIMUM && topSize.height() + operatorHeight + bottomSize.height() > maxHeight)
@@ -88,7 +86,7 @@ public class MathOperationDivide extends MathObject
         
         // Get a square that fits in the given maxWidth and maxHeight
         Rect out = getOperatorSize(totalWidth, maxHeight);
-        out.offsetTo((totalWidth-out.width())/2, getChildBoundingBox(0,maxWidth,maxHeight).height());
+        out.offsetTo(0, getChildBoundingBox(0,maxWidth,maxHeight).height());
         return new Rect[]{ out };
     }
 
@@ -105,9 +103,8 @@ public class MathOperationDivide extends MathObject
         Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
 
         // Position the bounding boxes of both children
-        final int totalWidth = Math.max(operatorSize.width(), Math.max(childrenSize[0].width(), childrenSize[1].width()));
-        childrenSize[0].offsetTo((totalWidth-childrenSize[0].width())/2,	0);
-        childrenSize[1].offsetTo((totalWidth-childrenSize[1].width())/2, childrenSize[0].height() + operatorSize.height());
+        childrenSize[0].offsetTo((operatorSize.width() - childrenSize[0].width()) / 2, 0);
+        childrenSize[1].offsetTo((operatorSize.width() - childrenSize[1].width()) / 2, childrenSize[0].height() + operatorSize.height());
         
         // Return the requested bounding box
         return childrenSize[index];
@@ -150,9 +147,7 @@ public class MathOperationDivide extends MathObject
         
         // Draw the operator
         canvas.save();
-        canvas.translate(operator.left, operator.top);
-        operatorPaint.setStrokeWidth(operator.height() /6);
-        canvas.drawLine(0, operator.height()/2, operator.width(), operator.height()/2, operatorPaint);
+        canvas.drawRect(operator.left, operator.top + operator.height() / 3, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
         canvas.restore();
         
         // Draw the left child
