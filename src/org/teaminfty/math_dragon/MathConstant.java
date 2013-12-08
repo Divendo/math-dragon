@@ -95,6 +95,7 @@ public class MathConstant extends MathObject
     				{
     					variable = 'p';
     					variablePow++;
+    					constantOccurred = true;
     				}
     			}
     		}
@@ -103,6 +104,7 @@ public class MathConstant extends MathObject
     		if(value.charAt(i) == 'e')
     		{
     			ePow++;
+    			constantOccurred = true;
        			i++;
        			//Check and see if the e has a power
     			if(value.charAt(i) == '^')
@@ -131,6 +133,7 @@ public class MathConstant extends MathObject
     		//if the value is the number i, add the complex constant!
     		if (value.charAt(i) == 'i')
     		{
+    			constantOccurred = true;
     			iPow++;
        			i++;
        			//Check and see if the e has a power
@@ -159,10 +162,11 @@ public class MathConstant extends MathObject
     		
     		//if the value is a variable, do what you do with variables!
     		if(value.charAt(i) >= 'a' && value.charAt(i) <= 'z' 
-    				&& value.charAt(i) != 'i' && value.charAt(i) != 'e' && value.charAt(i) != 'p')
+    		&& value.charAt(i) != 'i' && value.charAt(i) != 'e' && value.charAt(i) != 'p')
     		{
     			if(value.charAt(i) == variable || value.charAt(i) == 0)
     			{ 
+    				constantOccurred = true;
     				variable = value.charAt(i);
     				
     				variablePow++;
