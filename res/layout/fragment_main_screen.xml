@@ -5,11 +5,40 @@
     android:background="@color/white"
     android:orientation="vertical" >
 
+    <Button
+        android:id="@+id/button_approximate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/margin_approximate"
+        android:onClick="approximate"
+        android:text="@string/approximate" />
+     
     <org.teaminfty.math_dragon.MathView
         android:id="@+id/mathView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/button_evaluate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_approximate"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/margin_evaluate"
+        android:onClick="evaluate"
+        android:text="@string/evaluate" />
+
+    <Button
+        android:id="@+id/button_favourites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="favourites"
+        android:text="@string/favourites" />
 
 </RelativeLayout>

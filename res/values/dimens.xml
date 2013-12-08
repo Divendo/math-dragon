@@ -1,8 +1,12 @@
 <resources>
 
     <dimen name="drawer_width">240dp</dimen>
-    <dimen name="drawer_height">75dp</dimen>
+    <dimen name="drawer_height">150dp</dimen>
     <dimen name="margin_bottom">75dp</dimen>
+    
+    <dimen name="margin_approximate">30dp</dimen>
+    <dimen name="margin_evaluate">20dp</dimen>
+    
     <dimen name="math_source_height">64dp</dimen>
     <dimen name="math_source_margin">8dp</dimen>
     <dimen name="math_shadow_dimensions">64dp</dimen>
