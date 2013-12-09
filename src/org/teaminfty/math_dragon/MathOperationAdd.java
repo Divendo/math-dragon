@@ -16,7 +16,14 @@ public class MathOperationAdd extends MathBinaryOperationLinear
     public MathOperationAdd(int defWidth, int defHeight)
     { super(defWidth, defHeight); }
 
-    @Override
+    public MathOperationAdd(MathObject A, MathObject B, int defWidth, int defHeight)
+    { 
+    	super(defWidth, defHeight);
+		this.setChild(0, A);
+		this.setChild(1, B);
+	}
+
+	@Override
     public IExpr eval() throws EmptyChildException
     {
         // Check if the children are not empty

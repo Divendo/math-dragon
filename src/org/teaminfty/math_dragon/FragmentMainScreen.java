@@ -27,29 +27,31 @@ public class FragmentMainScreen extends Fragment
         
         // Create MathObjects to test the functionality
         MathOperationAdd add = new MathOperationAdd(100, 100);
-        add.setChild(0, new MathConstant("12", 100, 100));
-        add.setChild(1, new MathConstant("1", 100, 100));
+        add.setChild(0,  new MathConstant("5e", 100,100).makeMathObject());
+        add.setChild(1, new MathConstant("1", 100, 100).makeMathObject());
         
         MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
         subtract.setChild(0, add);
-        subtract.setChild(1, new MathConstant("21", 100, 100));
+        subtract.setChild(1, new MathConstant("21", 100, 100).makeMathObject());
 
         MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
-        multiply.setChild(0, new MathConstant("1", 100, 100));
+        multiply.setChild(0, new MathConstant("1ipie", 100, 100).makeMathObject());
         multiply.setChild(1, subtract);
 
         MathOperationDivide div = new MathOperationDivide(100, 100);
         MathOperationAdd add2 = new MathOperationAdd(100,100);
-        add2.setChild(0,new MathConstant("13",100,100));
-        add2.setChild(1, new MathConstant("1",100,100));
+        add2.setChild(0,new MathConstant("13",100,100).makeMathObject());
+        add2.setChild(1, new MathConstant("1",100,100).makeMathObject());
         div.setChild(0, add2);
         div.setChild(1, multiply);
         
-        // Test the MathObject
+        /*// Test the MathObject
         try
         {
+        	
             Log.i(getClass().getCanonicalName(), EvalEngine.eval(F.Simplify(div.eval())).toString());
             Log.i(getClass().getCanonicalName(), Double.toString(div.approximate()));
+            
         }
         catch(EmptyChildException e)
         {
@@ -59,10 +61,11 @@ public class FragmentMainScreen extends Fragment
         {
             e.printStackTrace();
         }
-        
+        */
         // Just to test MathView
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
-        mathView.setMathObject(add);
+        mathView.setMathObject(div);
     }
+
 
 }

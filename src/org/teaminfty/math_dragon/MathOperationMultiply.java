@@ -11,6 +11,13 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
 	public MathOperationMultiply(int defWidth, int defHeight)
     { super(defWidth, defHeight); }
 	
+	public MathOperationMultiply(MathObject A, MathObject B, int defWidth, int defHeight)
+    { 
+		super(defWidth, defHeight);
+		this.setChild(0, A);
+		this.setChild(1,B);
+    }
+	
 	 @Override
 	    public IExpr eval() throws EmptyChildException
 	    {
