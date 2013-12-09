@@ -25,7 +25,12 @@ public class FinalMathConstant extends MathConstant{
         // Get the text and the text bounds
         String str = "0";
         if(factor != 0)
-        	{ str = Long.toString(factor);}
+        {
+        	if(negative)
+        		str = Long.toString(factor*-1);
+        	else
+        		str = Long.toString(factor);
+        }
         else if(iPow != 0)
         	{ str = "i";}
         else if(piPow != 0)

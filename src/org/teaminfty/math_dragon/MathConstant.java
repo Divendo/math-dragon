@@ -10,14 +10,16 @@ import android.graphics.Rect;
 /** This class represents a math constant */
 public class MathConstant extends MathObject
 {
-	public long factorPow = 0;
-	public long ePow = 0;
-	public long piPow = 0;
-	public long iPow = 0;
-	public char variable = 0;
-	public long variablePow = 0;
+	protected long factorPow = 0;
+	protected long ePow = 0;
+	protected long piPow = 0;
+	protected long iPow = 0;
+	protected char variable = 0;
+	protected long variablePow = 0;
+	protected boolean negative = false;
 	private int i = 0;
 	private PowerType type = PowerType.factor;
+	
 	
 	private enum PowerType
 	{
@@ -65,6 +67,7 @@ public class MathConstant extends MathObject
     	i = 0;
     	type = PowerType.factor;
     	factor = 0;
+    	negative = false;
     }
     
     public void readString (String value)
@@ -80,6 +83,9 @@ public class MathConstant extends MathObject
     		//if it is one of the mathconstants, add them and change the PowerType
     		else
     		{
+    			if(value.charAt(i) == '-')
+    				negative = !negative;
+
     			if(value.charAt(i) == 'i')
     			{
     				iPow += 1;
@@ -132,16 +138,17 @@ public class MathConstant extends MathObject
     					else
     						break;
     				}
+    				//add the power to the right powerlong, and do it minus 1 because the power is automattically added 1 for constants
     				if (type == PowerType.factor)
 						factorPow += tempPow;
 					if (type == PowerType.i)
-						iPow += tempPow;
+						iPow += tempPow - 1;
 					if (type == PowerType.e)
-						ePow += tempPow;
+						ePow += tempPow - 1;
 					if (type == PowerType.pi)
-						piPow +=tempPow;
+						piPow +=tempPow - 1;
 					if (type == PowerType.variable)
-						variablePow += tempPow;
+						variablePow += tempPow - 1;
     			}
     			//Else it must be a variable, or nothing important
     			else if (value.charAt(i)>= 'a' && value.charAt(i) <= 'z' 
