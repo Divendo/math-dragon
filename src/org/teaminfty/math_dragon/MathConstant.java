@@ -19,6 +19,7 @@ public class MathConstant extends MathObject
 	protected boolean negative = false;
 	private int i = 0;
 	private PowerType type = PowerType.factor;
+	private String content = "";
 	
 	
 	private enum PowerType
@@ -55,6 +56,7 @@ public class MathConstant extends MathObject
     {
         super(defWidth, defHeight);
         this.readString(value);
+        content = this.simplify();
     }
     
     private void reset()
@@ -214,13 +216,12 @@ public class MathConstant extends MathObject
         
         // Keep searching until the text fits or until delta becomes too small
         // Note that we will never reach the maximum or minimum text size this way
-        final String string = Long.toString(factor);
         Rect bounds = new Rect();
         while(delta >= 0.1f)
         {
             // Set the text size and calculate the bounds
             paint.setTextSize(textSize);
-            paint.getTextBounds(string, 0, string.length(), bounds);
+            paint.getTextBounds(content, 0, content.length(), bounds);
             
             // Determine if the text size should become smaller or bigger
             if((maxWidth != NO_MAXIMUM && bounds.width() > maxWidth) || (maxHeight != NO_MAXIMUM && bounds.height() > maxHeight))
@@ -245,9 +246,8 @@ public class MathConstant extends MathObject
         paint.setTextSize(findTextSize(maxWidth, maxHeight));
         
         // Get the text bounds
-        final String str = Long.toString(factor);
         Rect bounds = new Rect();
-        paint.getTextBounds(str, 0, str.length(), bounds);
+        paint.getTextBounds(content, 0, content.length(), bounds);
         bounds.offsetTo(0, 0);
         
         // Make sure that bounds is contained within the maximum bounds
@@ -278,41 +278,11 @@ public class MathConstant extends MathObject
         paint.setTextSize(0.8f * findTextSize(maxWidth, maxHeight));
         
         // Get the text and the text bounds
-        String str = "";
-        if(factor != 0)
-        {
-        	if(negative)
-        		str += Long.toString(factor*-1);
-        	else if(factor == 1 && (iPow !=0 || ePow != 0 || piPow != 0))
-    			str = "";
-        	else
-        		str += Long.toString(factor);
-        }
-        if(iPow != 0)
-    	{ 
-    	str += "i";
-    	if(iPow != 1)
-    		str += "^" + iPow;
-    	}
-        if(piPow != 0)
-    	{
-    	str += "\u03C0";
-    	if(piPow != 1)
-    		str += "^" + piPow;
-    	}
-        if(ePow != 0)
-		{
-        str += "e";
-        if(ePow != 1)
-        	str += "^" + ePow;
-		}
-      
-        
         Rect bounds = new Rect();
-        paint.getTextBounds(str, 0, str.length(), bounds);
+        paint.getTextBounds(content, 0, content.length(), bounds);
         
         // Draw the text
-        canvas.drawText(str, (boundingBox.width() - bounds.width()) / 2 - bounds.left, (boundingBox.height() - bounds.height()) / 2 - bounds.top, paint);
+        canvas.drawText(content, (boundingBox.width() - bounds.width()) / 2 - bounds.left, (boundingBox.height() - bounds.height()) / 2 - bounds.top, paint);
     }
     
     public IExpr eval()
@@ -347,6 +317,39 @@ public class MathConstant extends MathObject
     	if(piPow != 0)
     		result = result*Math.pow(Math.PI, piPow);
     	return result;
+    }
+    
+    private String simplify()
+    {
+	    String str = "";
+	    if(factor != 0)
+	    {
+	    	if(negative)
+	    		str += Long.toString(factor*-1);
+	    	else if(factor == 1 && (iPow !=0 || ePow != 0 || piPow != 0))
+				str = "";
+	    	else
+	    		str += Long.toString(factor);
+	    }
+	    if(iPow != 0)
+		{ 
+		str += "i";
+		if(iPow != 1)
+			str += "^" + iPow;
+		}
+	    if(piPow != 0)
+		{
+		str += "\u03C0";
+		if(piPow != 1)
+			str += "^" + piPow;
+		}
+	    if(ePow != 0)
+		{
+	    str += "e";
+	    if(ePow != 1)
+	    	str += "^" + ePow;
+		}
+	    return str;
     }
     
 }
