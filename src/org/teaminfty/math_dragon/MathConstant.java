@@ -73,7 +73,7 @@ public class MathConstant extends MathObject
     public void readString (String value)
     {
     //resets the current values, just in case.
-    this.reset();   
+    //this.reset();   
     //a while loop gave more freedom that a for loop.
     	while (i < value.length() )
     	{
@@ -138,7 +138,7 @@ public class MathConstant extends MathObject
     					else
     						break;
     				}
-    				//add the power to the right powerlong, and do it minus 1 because the power is automattically added 1 for constants
+    				//add the power to the right powerlong, and do it minus 1 because the power is automatically added 1 for constants
     				if (type == PowerType.factor)
 						factorPow += tempPow;
 					if (type == PowerType.i)
@@ -166,26 +166,27 @@ public class MathConstant extends MathObject
     	}
     }
     
+    //Makes objects form the info it contains
     public MathObject makeMathObject()
     {
-    	MathObject result = new FinalMathConstant("1",100,100);
+    	MathObject result = new MathConstant("1",100,100);
     	if (factor != 0)
-    		result = new FinalMathConstant(Long.toString(factor), 100, 100);
+    		result = new MathConstant(Long.toString(factor), 100, 100);
     	if(iPow != 0)
     	{
     		if (iPow % 2 == 0)
     		{
     			factor *= -1;
-    			result = new FinalMathConstant(Long.toString(factor), 100, 100);
+    			result = new MathConstant(Long.toString(factor), 100, 100);
     		}
     		else
-    		{   result = new MathOperationMultiply(result, new FinalMathConstant("i",100,100),100,100);	}
+    		{   result = new MathOperationMultiply(result, new MathConstant("i",100,100),100,100);	}
     	}
     	if (piPow != 0)
-    	{	result = new MathOperationMultiply(result, new FinalMathConstant("pi",100,100),100,100); }
+    	{	result = new MathOperationMultiply(result, new MathConstant("pi",100,100),100,100); }
     	if (ePow != 0)
     	{ 
-    		result = new MathOperationMultiply(result, new FinalMathConstant("e", 100, 100),100,100); 
+    		result = new MathOperationMultiply(result, new MathConstant("e", 100, 100),100,100); 
     	}
     	
     	return result;
@@ -266,17 +267,81 @@ public class MathConstant extends MathObject
     
     public void draw(Canvas canvas, int maxWidth, int maxHeight)
     {
-    	
+        // Get the bounding box
+        Rect boundingBox = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
+        
+        // Find and set the text size
+        // Deliberately take 80% of the text size to create a small padding
+        paint.setTextSize(0.8f * findTextSize(maxWidth, maxHeight));
+        
+        // Get the text and the text bounds
+        String str = "";
+        if(factor != 0)
+        {
+        	if(negative)
+        		str += Long.toString(factor*-1);
+        	else
+        		str += Long.toString(factor);
+        }
+        if(iPow != 0)
+    	{ 
+    	str += "i";
+    	if(iPow != 1)
+    		str += "^" + iPow;
+    	}
+        if(piPow != 0)
+    	{
+    	str += "\u03C0";
+    	if(piPow != 1)
+    		str += "^" + piPow;
+    	}
+        if(ePow != 0)
+		{
+        str += "e";
+        if(ePow != 1)
+        	str += "^" + ePow;
+		}
+      
+        
+        Rect bounds = new Rect();
+        paint.getTextBounds(str, 0, str.length(), bounds);
+        
+        // Draw the text
+        canvas.drawText(str, (boundingBox.width() - bounds.width()) / 2 - bounds.left, (boundingBox.height() - bounds.height()) / 2 - bounds.top, paint);
     }
     
     public IExpr eval()
     {
-    	return F.ZZ(1);
+    	IExpr result = F.ZZ(1);
+    	if(factor != 0)
+    		if(negative)
+    			result = F.ZZ(factor*-1);
+    		else
+    			result = F.ZZ(factor);
+    	if(iPow != 0)
+    		result = F.Times(result, F.Power(F.i, iPow));
+    	if(ePow != 0)
+    		result = F.Times(result, F.Power(F.e, ePow));
+    	if(piPow != 0)
+    		result =F.Times(result, F.Power(F.Pi, piPow));
+    	return result;
     }
     
     public double approximate()throws NotConstantException, EmptyChildException
     {
-    	return 1;
+    	double result = 1;
+    	if(factor != 0)
+    		if(negative)
+    			result = -1*factor;
+    		else
+    			result = factor;
+    	if(iPow %2 == 0)
+    		result = factor*-1;
+    	if(ePow != 0)
+    		result = result*Math.pow(Math.E, ePow);
+    	if(piPow != 0)
+    		result = result*Math.pow(Math.PI, piPow);
+    	return result;
     }
     
 }
