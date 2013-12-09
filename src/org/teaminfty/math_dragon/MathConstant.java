@@ -283,6 +283,8 @@ public class MathConstant extends MathObject
         {
         	if(negative)
         		str += Long.toString(factor*-1);
+        	else if(factor == 1 && (iPow !=0 || ePow != 0 || piPow != 0))
+    			str = "";
         	else
         		str += Long.toString(factor);
         }
