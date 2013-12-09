@@ -118,28 +118,30 @@ public class MathConstant extends MathObject
     			else if(value.charAt(i) == '^')
     			{
     				i++;
+    				long tempPow = 0;
     				while(i<value.length())
     				{
     					if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
     					{
-    						if (type == PowerType.factor)
-    							factorPow = 10*factorPow + value.charAt(i) - '0';
-    						if (type == PowerType.i)
-    							iPow = 10*iPow + value.charAt(i) - '0';
-    						if (type == PowerType.e)
-    							ePow = 10*ePow + value.charAt(i) - '0';
-    						if (type == PowerType.pi)
-    							piPow = 10*piPow + value.charAt(i) - '0';
-    						if (type == PowerType.variable)
-    							variablePow = 10*variablePow + value.charAt(i) - '0';
-    						i++;
+    					tempPow = 10*tempPow + value.charAt(i) - '0';
+    					i++;
     					}
-    					if(value.charAt(i) == '(')
+    					else if(value.charAt(i) == '(')
     						i++;
     					// i want an exception here
     					else
     						break;
     				}
+    				if (type == PowerType.factor)
+						factorPow += tempPow;
+					if (type == PowerType.i)
+						iPow += tempPow;
+					if (type == PowerType.e)
+						ePow += tempPow;
+					if (type == PowerType.pi)
+						piPow +=tempPow;
+					if (type == PowerType.variable)
+						variablePow += tempPow;
     			}
     			//Else it must be a variable, or nothing important
     			else if (value.charAt(i)>= 'a' && value.charAt(i) <= 'z' 
