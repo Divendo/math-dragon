@@ -294,9 +294,9 @@ public class MathConstant extends MathObject
     		else
     			result = F.ZZ(factor);
     	if(iPow != 0)
-    		result = F.Times(result, F.Power(F.i, iPow));
+    		result = F.Times(result, F.Power(F.I, iPow));
     	if(ePow != 0)
-    		result = F.Times(result, F.Power(F.e, ePow));
+    		result = F.Times(result, F.Power(F.E, ePow));
     	if(piPow != 0)
     		result =F.Times(result, F.Power(F.Pi, piPow));
     	return result;
@@ -310,7 +310,7 @@ public class MathConstant extends MathObject
     			result = -1*factor;
     		else
     			result = factor;
-    	if(iPow %2 == 0)
+    	if(iPow != 0 && iPow %2 == 0)
     		result = factor*-1;
     	if(ePow != 0)
     		result = result*Math.pow(Math.E, ePow);
