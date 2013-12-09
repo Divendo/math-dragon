@@ -27,12 +27,12 @@ public class FragmentMainScreen extends Fragment
         
         // Create MathObjects to test the functionality
         MathOperationAdd add = new MathOperationAdd(100, 100);
-        add.setChild(0,  new MathConstant("1", 100,100).makeMathObject());
+        add.setChild(0,  new MathConstant("1e", 100,100).makeMathObject());
         add.setChild(1, new MathConstant("1", 100, 100).makeMathObject());
         
         MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
         subtract.setChild(0, add);
-        subtract.setChild(1, new MathConstant("1", 100, 100).makeMathObject());
+        subtract.setChild(1, new MathConstant("1pi", 100, 100).makeMathObject());
 
         MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
         multiply.setChild(0, new MathConstant("1", 100, 100).makeMathObject());
@@ -40,10 +40,10 @@ public class FragmentMainScreen extends Fragment
 
         MathOperationDivide div = new MathOperationDivide(100, 100);
         MathOperationAdd add2 = new MathOperationAdd(100,100);
-//        add2.setChild(0,new MathConstant("1",100,100).makeMathObject());
-//        add2.setChild(1, new MathConstant("1",100,100).makeMathObject());
-//        div.setChild(0, add2);
-//        div.setChild(1, multiply);
+        add2.setChild(0,new MathConstant("1pi",100,100).makeMathObject());
+        add2.setChild(1, new MathConstant("1",100,100).makeMathObject());
+        div.setChild(0, add2);
+        div.setChild(1, multiply);
         
         /*// Test the MathObject
         try

@@ -63,6 +63,7 @@ public class FinalMathConstant extends MathConstant{
     		return F.e;
     	else
     		return F.ZZ(0);
+    	
     }
 
     @Override
