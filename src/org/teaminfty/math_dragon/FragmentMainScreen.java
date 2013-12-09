@@ -40,7 +40,7 @@ public class FragmentMainScreen extends Fragment
 
         MathOperationDivide div = new MathOperationDivide(100, 100);
         MathOperationAdd add2 = new MathOperationAdd(100,100);
-        add2.setChild(0,new MathConstant("1pi^2",100,100));
+        add2.setChild(0,new MathConstant("1pi^2pi",100,100));
         add2.setChild(1, new MathConstant("1",100,100));
         div.setChild(0, add2);
         div.setChild(1, multiply);

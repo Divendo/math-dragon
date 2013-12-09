@@ -134,9 +134,12 @@ public class MathConstant extends MathObject
     					}
     					else if(value.charAt(i) == '(')
     						i++;
-    					// i want an exception here
+    					// Don't forget the useful information that you can't use here!
     					else
+    					{
+    						i--;
     						break;
+    					}
     				}
     				//add the power to the right powerlong, and do it minus 1 because the power is automatically added 1 for constants
     				if (type == PowerType.factor)
