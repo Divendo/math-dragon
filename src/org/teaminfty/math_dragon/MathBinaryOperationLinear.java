@@ -1,6 +1,5 @@
 package org.teaminfty.math_dragon;
 
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -137,57 +136,5 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
 
         // Return the requested bounding box
         return childrenSize[index];
-    }
-    /**
-     * Ensure both children are not empty. If at least one of them is empty,
-     * <tt>EmptyChildException</tt> will be thrown with the empty index number.
-     * @throws EmptyChildException Thrown when at least one of both children is
-     * empty.
-     */
-    protected void checkChildren() throws EmptyChildException
-    {
-        if(getChild(0) == null)
-            throw new EmptyChildException(0);
-        if(getChild(1) == null)
-            throw new EmptyChildException(1);
-    }
-    /**
-     * Draw left child on <tt>canvas</tt> within the specified bounding box.
-     * @param canvas The graphical instance to draw on.
-     * @param box The bounding box.
-     */
-    protected void drawLeft(Canvas canvas, final Rect box)
-    {
-        // Draw the left child
-        canvas.save();
-        canvas.translate(box.left, box.top);
-        if(getChild(0) != null)
-            getChild(0).draw(canvas, box.width(), box.height());
-        else
-        {
-            box.offsetTo(0, 0);
-            drawEmptyChild(canvas, box);
-        }
-        
-        canvas.restore();
-    }
-    /**
-     * Draw right child on <tt>canvas</tt> within the specified bounding box.
-     * @param canvas The graphical instance to draw on.
-     * @param box The bounding box.
-     */
-    protected void drawRight(Canvas canvas, final Rect box)
-    {
-        // Draw the right child
-        canvas.save();
-        canvas.translate(box.left, box.top);
-        if(getChild(1) != null)
-            getChild(1).draw(canvas, box.width(), box.height());
-        else
-        {
-            box.offsetTo(0, 0);
-            drawEmptyChild(canvas, box);
-        }
-        canvas.restore();
     }
 }

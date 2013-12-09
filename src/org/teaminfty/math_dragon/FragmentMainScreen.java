@@ -27,12 +27,12 @@ public class FragmentMainScreen extends Fragment
         
         // Create MathObjects to test the functionality
         MathOperationAdd add = new MathOperationAdd(100, 100);
-        add.setChild(0, new MathConstant(20, 100, 100));
-        add.setChild(1, new MathConstant(5, 100, 100));
+        add.setChild(0, new MathConstant(2, 100, 100));
+        add.setChild(1, new MathConstant(2, 100, 100));
         
-        MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
-        subtract.setChild(0, add);
-        subtract.setChild(1, new MathConstant(4, 100, 100));
+        MathOperationPower subtract = new MathOperationPower(100, 100);
+        subtract.setChild(0, new MathConstant(2, 100, 100));
+        subtract.setChild(1, add);
 
         MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
         multiply.setChild(0, new MathConstant(2, 100, 100));
