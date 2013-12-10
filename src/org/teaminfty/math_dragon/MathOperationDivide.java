@@ -25,65 +25,59 @@ public class MathOperationDivide extends MathBinaryOperation
     {
         super(defWidth, defHeight);
     }
-    
-    /** Returns the size of the operator bounding box
-     * @param maxWidth The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @return The size of the operator bounding box
-     */
-    protected Rect getOperatorSize(int maxWidth, int maxHeight)
-    {
-        // Get the size of the children
-        final Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
 
-        // Return the operator size
-        return new Rect(0, 0, Math.max(childrenSize[0].width(), childrenSize[1].width()),
-                Math.max(5, maxHeight == NO_MAXIMUM ? maxHeight / 20 : (childrenSize[0].height() + childrenSize[1].height()) / 20));
-    }
-
-    /** Returns the size of the child bounding boxes
-     * @param maxWidth The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+    /**
+     * Returns the sizes of the bounding boxes.
+     * The first rectangle is the size of the operator, the second and third rectangle are the sizes of the children.
+     * 
+     * @param maxWidth
+     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     * @param maxHeight
+     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
      * @return The size of the child bounding boxes
      */
-    protected Rect[] getChildrenSize(int maxWidth, int maxHeight)
+    protected Rect[] getSizes(int maxWidth, int maxHeight)
     {
-        // Get the bounding box both operands want to take
+        // Get the size both operands want to take
         Rect topSize = getChild(0) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(maxWidth, NO_MAXIMUM);
         Rect bottomSize = getChild(1) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(maxWidth, NO_MAXIMUM);
         
-        // Get the operator height
-        final int operatorHeight = Math.max(5, maxHeight == NO_MAXIMUM ? maxHeight / 20 : (topSize.height() + bottomSize.height()) / 20);
-        
-        // If width restrictions are given and we would get wider than the maximum height, shrink so we fit in
-        if(maxHeight != NO_MAXIMUM && topSize.height() + operatorHeight + bottomSize.height() > maxHeight)
+        // Calculate the height the operator wants to take
+        int operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
+
+        // If we have no maximum height, we're done
+        if(maxHeight == NO_MAXIMUM)
+            return new Rect[] {new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight), topSize, bottomSize};
+
+        // If we would get higher than the maximum height, shrink so we fit in
+        if(topSize.height() + operatorHeight + bottomSize.height() > maxHeight)
         {
-            // Determine the maximum height for each operator
-            final int topMax = (maxHeight - operatorHeight) * topSize.height() / (topSize.height() + bottomSize.height());
-            final int bottomMax = (maxHeight - operatorHeight) * bottomSize.height() / (topSize.height() + bottomSize.height());
+            // Determine the maximum width for each operand
+            final int totalHeight = topSize.height() + operatorHeight + bottomSize.height();
+            final int topMax = maxHeight * topSize.height() / totalHeight;
+            final int bottomMax = maxHeight * topSize.height() / totalHeight;
             
-            // Determine the new bounding box for each operand
-            topSize = getChild(0) == null ? getRectBoundingBox(maxWidth, topMax, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(maxWidth, topMax);
-            bottomSize = getChild(1) == null ? getRectBoundingBox(maxWidth, bottomMax, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(maxWidth, bottomMax);
+            // Set the new sizes
+            topSize.set(0, 0, topMax * topSize.width() / topSize.height(), topMax);
+            bottomSize.set(0, 0, bottomMax * bottomSize.width() / bottomSize.height(), bottomMax);
+            
+            // Calculate the new operator size
+            operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
         }
-        
+
         // Return the sizes
-        return new Rect[]{ topSize, bottomSize };
+        return new Rect[] {new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight), topSize, bottomSize};
     }
 
     @Override
     public Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight)
     {
-        // Get the sizes of the children
-        Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
-        
+        // Get the sizes
+        Rect[] sizes = getSizes(maxWidth, maxHeight);
+
         // Position the bounding box and return it
-        final int totalWidth = Math.max(childrenSize[0].width(), childrenSize[1].width());
-        
-        // Get a square that fits in the given maxWidth and maxHeight
-        Rect out = getOperatorSize(totalWidth, maxHeight);
-        out.offsetTo(0, getChildBoundingBox(0,maxWidth,maxHeight).height());
-        return new Rect[]{ out };
+        sizes[0].offsetTo(0, sizes[1].height());
+        return new Rect[] {sizes[0]};
     }
 
     @Override
@@ -92,26 +86,17 @@ public class MathOperationDivide extends MathBinaryOperation
         // Make sure the child index is valid
         checkChildIndex(index);
 
-        // Get the size of the operator
-        final Rect operatorSize = getOperatorSize(maxWidth, maxHeight);
+        // Get the sizes and the total height
+        Rect[] sizes = getSizes(maxWidth, maxHeight);
         
-        // Get the sizes of the children
-        Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
+        // Translate the operand's bounding box
+        if(index == 0)
+            sizes[1].offsetTo((sizes[0].width() - sizes[1].width()) / 2, 0);
+        else
+            sizes[2].offsetTo((sizes[0].width() - sizes[2].width()) / 2, sizes[0].height() + sizes[1].height());
 
-        // Position the bounding boxes of both children
-        childrenSize[0].offsetTo((operatorSize.width() - childrenSize[0].width()) / 2, 0);
-        childrenSize[1].offsetTo((operatorSize.width() - childrenSize[1].width()) / 2, childrenSize[0].height() + operatorSize.height());
-        
         // Return the requested bounding box
-        return childrenSize[index];
-    }
-    
-    protected void checkChildren() throws EmptyChildException
-    {
-        if(getChild(0) == null)
-            throw new EmptyChildException(0);
-        if(getChild(1) == null)
-            throw new EmptyChildException(1);
+        return sizes[index + 1];
     }
     
     @Override
@@ -123,7 +108,8 @@ public class MathOperationDivide extends MathBinaryOperation
         // Return the result
         return F.Divide(getChild(0).eval(), getChild(1).eval());
     }
- @Override
+    
+    @Override
     public double approximate() throws NotConstantException, EmptyChildException
     {
         // Check if the children are not empty
@@ -138,38 +124,16 @@ public class MathOperationDivide extends MathBinaryOperation
     {
         // Get the bounding boxes
         final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
-        final Rect leftChild = getChildBoundingBox(0, maxWidth, maxHeight);
-        final Rect rightChild = getChildBoundingBox(1, maxWidth, maxHeight);
         
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
         canvas.drawRect(operator.left, operator.top + operator.height() / 3, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
         canvas.restore();
-        
-        // Draw the left child
-        canvas.save();
-        canvas.translate(leftChild.left, leftChild.top);
-        if(getChild(0) != null)
-            getChild(0).draw(canvas, leftChild.width(), leftChild.height());
-        else
-        {
-            leftChild.offsetTo(0, 0);
-            drawEmptyChild(canvas, leftChild);
-        }
-        canvas.restore();
 
-        // Draw the right child
-        canvas.save();
-        canvas.translate(rightChild.left, rightChild.top);
-        if(getChild(1) != null)
-            getChild(1).draw(canvas, rightChild.width(), rightChild.height());
-        else
-        {
-            rightChild.offsetTo(0, 0);
-            drawEmptyChild(canvas, rightChild);
-        }
-        canvas.restore();
+        // Draw the children
+        drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
+        drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
     }
     
 

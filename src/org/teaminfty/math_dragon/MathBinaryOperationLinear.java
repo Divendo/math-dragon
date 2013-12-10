@@ -32,16 +32,14 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
      * The first rectangle is the size of the operator, the second and third rectangle are the sizes of the children.
      * 
      * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
+     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
      * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
+     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
      * @return The size of the child bounding boxes
      */
     protected Rect[] getSizes(int maxWidth, int maxHeight)
     {
-        // Get the bounding box both operands want to take
+        // Get the size both operands want to take
         Rect leftSize = getChild(0) == null ? getRectBoundingBox(NO_MAXIMUM, maxHeight, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(NO_MAXIMUM, maxHeight);
         Rect rightSize = getChild(1) == null ? getRectBoundingBox(NO_MAXIMUM, maxHeight, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(NO_MAXIMUM, maxHeight);
         
