@@ -128,6 +128,7 @@ public abstract class MathObject
     public void setChild(int index, MathObject child)
             throws IndexOutOfBoundsException
     {
+        checkChildIndex(index);
         children.set(index, child);
     }
 
@@ -153,7 +154,8 @@ public abstract class MathObject
             EmptyChildException;
 
     /**
-     * Returns the bounding boxes of the operator of this {@link MathObject}
+     * Returns the bounding boxes of the operator of this {@link MathObject}.
+     * The aspect ratio of the bounding boxes should always be the same.
      * 
      * @param maxWidth
      *        The maximum width the {@link MathObject} can have (can be
@@ -166,7 +168,8 @@ public abstract class MathObject
     public abstract Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight);
 
     /**
-     * Returns the bounding box of the child at the given index
+     * Returns the bounding box of the child at the given index.
+     * The aspect ratio of the box should always be the same.
      * 
      * @param index
      *        The index of the child whose bounding box is to be returned
@@ -184,7 +187,8 @@ public abstract class MathObject
             int maxHeight) throws IndexOutOfBoundsException;
 
     /**
-     * Returns the bounding box for the entire {@link MathObject}
+     * Returns the bounding box for the entire {@link MathObject}.
+     * The aspect ratio of the box should always be the same.
      * 
      * @param maxWidth
      *        The maximum width the {@link MathObject} can have (can be
