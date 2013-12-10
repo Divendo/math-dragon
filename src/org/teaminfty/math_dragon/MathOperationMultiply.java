@@ -44,13 +44,11 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
 	        final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
 	        
 	        // Draw the operator
-	        operator.inset(operator.width() / 10, operator.height() / 10);      // Padding
 	        canvas.save();
 	        canvas.translate(operator.left, operator.top);
-	        operatorPaint.setStrokeWidth(operator.width() / 5);
 	        operatorPaint.setColor(this.getColor());
-	        canvas.drawLine(0, 0, operator.width(), operator.height(), operatorPaint);
-	        canvas.drawLine(0, operator.height(), operator.width(), 0, operatorPaint);
+	        operatorPaint.setAntiAlias(true);
+	        canvas.drawCircle(operator.width() / 2, operator.height() / 2, operator.width() / 7, operatorPaint);
 	        canvas.restore();
 	        
 	        drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
