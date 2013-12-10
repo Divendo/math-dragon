@@ -232,8 +232,7 @@ public abstract class MathObject
      */
     protected Rect getRectBoundingBox(int maxWidth, int maxHeight, float ratio)
     {
-        if(maxWidth == NO_MAXIMUM) // If the width is unrestricted, the bounding
-                                   // box depends on maxHeight
+        if(maxWidth == NO_MAXIMUM) // If the width is unrestricted, the bounding box depends on maxHeight
         {
             // If the height is also unrestricted, use the default maximum size
             if(maxHeight == NO_MAXIMUM)

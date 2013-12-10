@@ -25,6 +25,16 @@ public class MathShadow extends DragShadowBuilder
         size = s;
     }
     
+    /** Returns the {@link MathObject} in this shadow
+     * @return The {@link MathObject} in this shadow */
+    public MathObject getMathObject()
+    { return mathObject; }
+    
+    /** Returns the size of this shadow
+     * @return The size of this shadow */
+    public Point getSize()
+    { return size; }
+    
     @Override
     public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint)
     {

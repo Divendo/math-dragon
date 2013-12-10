@@ -72,9 +72,8 @@ public class MathSourceView extends View
             return false;
         
         // TODO Convert the MathObject to a string (xml?) and send it as clip data with the drag
-        startDrag(ClipData.newPlainText("", ""),
-                new MathShadow(mathObject, new Point(getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions), getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions))),
-                null, 0);
+        MathShadow mathShadow = new MathShadow(mathObject, new Point(getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions), getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions)));
+        startDrag(ClipData.newPlainText("", ""), mathShadow, mathShadow, 0);
         if(onDragStarted != null)
             onDragStarted.dragStarted();
         
