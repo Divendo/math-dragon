@@ -305,7 +305,7 @@ public class MathConstant extends MathObject
             // Determine if the text size should become smaller or bigger
             if((maxWidth != NO_MAXIMUM && bounds.width() > maxWidth) || (maxHeight != NO_MAXIMUM && bounds.height() > maxHeight))
                 textSize -= delta;
-            else if(bounds.width() + margin >= maxWidth || bounds.height() + margin >= maxHeight)
+            else if((maxWidth != NO_MAXIMUM && bounds.width() + margin >= maxWidth) || (maxHeight != NO_MAXIMUM && bounds.height() + margin >= maxHeight))
                 break;
             else
                 textSize += delta;
@@ -322,7 +322,7 @@ public class MathConstant extends MathObject
     public Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight)
     {
         // Find the right text size and return the bounding box for it
-        return new Rect[]{ getSize(findTextSize(maxWidth, maxHeight)) };
+        return new Rect[]{ sizeAddPadding(getSize(findTextSize(maxWidth, maxHeight))) };
     }
 
     @Override
