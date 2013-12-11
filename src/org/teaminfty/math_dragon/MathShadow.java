@@ -19,10 +19,21 @@ public class MathShadow extends DragShadowBuilder
      */
     public MathShadow(MathObject mo, Point s)
     {
-        mathObject = mo;
-        mathObject.setState(HoverState.DRAG);
+        setDragState(mathObject = mo);
         
         size = s;
+    }
+    
+    /** Recursively sets the DRAG state for the given {@link MathObject} and all of its children
+     * @param mo The {@link MathObject} to set the DRAG state for */
+    private void setDragState(MathObject mo)
+    {
+        // Set the state
+        mo.setState(HoverState.DRAG);
+        
+        // Loop through the children and set their states
+        for(int i = 0; i < mo.getChildCount(); ++i)
+            setDragState(mo.getChild(i));
     }
     
     /** Returns the {@link MathObject} in this shadow
