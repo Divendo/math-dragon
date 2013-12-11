@@ -22,9 +22,12 @@ public class FragmentMainScreen extends Fragment
         super.onStart();
         
         // Create MathObjects to test the functionality
+        MathOperationDivide div = new MathOperationDivide(100,100);
+        div.setChild(0, new MathConstant("5",100,100));
+        div.setChild(1, new MathConstant("25",100,100));
         MathOperationRoot root = new MathOperationRoot(100, 100);
-        root.setChild(0, new MathConstant("2", 100,100));
-        root.setChild(1, new MathConstant("25", 100,100));
+        root.setChild(0, new MathConstant("25", 100,100));
+        root.setChild(1, div);
 
         
         // Test the MathObject

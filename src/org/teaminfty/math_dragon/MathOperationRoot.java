@@ -122,11 +122,11 @@ public class MathOperationRoot extends MathBinaryOperation
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
-        operatorPaint.setStrokeWidth(operator[0].width()/10);
+        operatorPaint.setStrokeWidth(operator[1].height()/5);
         canvas.drawLine(operator[0].left-operator[0].width()/3,		 operator[0].top + operator[0].height()/3,	operator[0].left + operator[0].width()/3, 		operator[0].top + operator[0].height()/3, 	operatorPaint);
-        canvas.drawLine(operator[0].left + operator[0].width()/3,	 operator[0].top + operator[0].height()/3, 	operator[0].left + 2*operator[0].width()/3, 	operator[0].bottom, 						operatorPaint);
-        canvas.drawLine(operator[0].left + 2*operator[0].width()/3,  operator[0].bottom,	operator[0].right, 		operator[0].top,							operatorPaint);
-        canvas.drawLine(operator[1].left, operator[1].bottom, operator[1].right, operator[1].bottom, operatorPaint);
+        canvas.drawLine(operator[0].left + operator[0].width()/3 - operatorPaint.getStrokeWidth()/2,	 operator[0].top + operator[0].height()/3, 	operator[0].left + 2*operator[0].width()/3, 	operator[0].bottom, 						operatorPaint);
+        canvas.drawLine(operator[0].left + 2*operator[0].width()/3 - operatorPaint.getStrokeWidth()/2,  operator[0].bottom,	operator[0].right, 		operator[0].top,							operatorPaint);
+        canvas.drawLine(operator[1].left - operatorPaint.getStrokeWidth()/2, operator[1].bottom, operator[1].right, operator[1].bottom, operatorPaint);
         canvas.restore();
 		// Draw the children
 		drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
