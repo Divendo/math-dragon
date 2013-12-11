@@ -50,7 +50,7 @@ public class MathConstant extends MathObject
         readString(value);
     }
     
-    /** Initialises the paints */
+    /** Initializes the paints */
     private void initPaints()
     {
         paint.setAntiAlias(true);
@@ -220,7 +220,7 @@ public class MathConstant extends MathObject
             // Add the width of the E constant
             if(ePow != 0)
             {
-                // The PI sign
+                // The e sign
                 tmpStr = "e";
                 paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                 out.right += bounds.width();
@@ -238,7 +238,7 @@ public class MathConstant extends MathObject
             // Add the width of the imaginary unit
             if(iPow != 0)
             {
-                // The PI sign
+                // The i sign
                 tmpStr = "i";
                 paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                 out.right += bounds.width();
