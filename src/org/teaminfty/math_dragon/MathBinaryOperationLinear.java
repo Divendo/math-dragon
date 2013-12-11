@@ -40,8 +40,8 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
     protected Rect[] getSizes(int maxWidth, int maxHeight)
     {
         // Get the size both operands want to take
-        Rect leftSize = getChild(0) == null ? getRectBoundingBox(NO_MAXIMUM, maxHeight, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(NO_MAXIMUM, maxHeight);
-        Rect rightSize = getChild(1) == null ? getRectBoundingBox(NO_MAXIMUM, maxHeight, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(NO_MAXIMUM, maxHeight);
+        Rect leftSize = getChild(0).getBoundingBox(NO_MAXIMUM, maxHeight);
+        Rect rightSize = getChild(1).getBoundingBox(NO_MAXIMUM, maxHeight);
         
         // Calculate the width and height the operator wants to take
         int operatorSize = Math.min(leftSize.height(), rightSize.height()) * 2 / 3;

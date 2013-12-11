@@ -39,8 +39,8 @@ public class MathOperationDivide extends MathBinaryOperation
     protected Rect[] getSizes(int maxWidth, int maxHeight)
     {
         // Get the size both operands want to take
-        Rect topSize = getChild(0) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(maxWidth, NO_MAXIMUM);
-        Rect bottomSize = getChild(1) == null ? getRectBoundingBox(maxWidth, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(maxWidth, NO_MAXIMUM);
+        Rect topSize = getChild(0).getBoundingBox(maxWidth, NO_MAXIMUM);
+        Rect bottomSize = getChild(1).getBoundingBox(maxWidth, NO_MAXIMUM);
         
         // Calculate the height the operator wants to take
         int operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
@@ -132,8 +132,7 @@ public class MathOperationDivide extends MathBinaryOperation
         canvas.restore();
 
         // Draw the children
-        drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
-        drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
+        drawChildren(canvas, maxWidth, maxHeight);
     }
     
 

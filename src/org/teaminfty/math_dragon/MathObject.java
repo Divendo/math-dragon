@@ -6,8 +6,6 @@ import org.matheclipse.core.interfaces.IExpr;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 /** This class represents a mathematical object that can be drawn */
@@ -22,14 +20,8 @@ public abstract class MathObject
     /** The default maximum height of an object */
     protected int defaultMaxHeight = 100;
 
-    /** The paint that is used to draw empty children */
-    protected Paint emptyChildPaint = new Paint();
-
     /** To be used there is no maximum width or height */
     public static final int NO_MAXIMUM = -1;
-
-    /** The ratio of the bounding box of an empty child (i.e. the golden ratio) */
-    protected final static float EMPTY_CHILD_RATIO = 1 / 1.61803398874989f;
 
     /** The current hover state */
     protected HoverState state = HoverState.NONE;
@@ -37,22 +29,14 @@ public abstract class MathObject
     /**
      * Constructor
      * 
-     * @param defWidth
-     *        The default maximum width
-     * @param defHeight
-     *        The default maximum height
+     * @param defWidth The default maximum width
+     * @param defHeight The default maximum height
      */
     public MathObject(int defWidth, int defHeight)
     {
         // Remember the default maximum size
         defaultMaxWidth = defWidth;
         defaultMaxHeight = defHeight;
-
-        // Initialise the empty child paint
-        emptyChildPaint.setColor(Color.rgb(0x88, 0x88, 0x88));
-        emptyChildPaint.setStyle(Paint.Style.STROKE);
-        emptyChildPaint.setPathEffect(new DashPathEffect(new float[] {16.0f,
-                8.0f}, 0));
     }
 
     /**
@@ -60,8 +44,7 @@ public abstract class MathObject
      * given {@link IExpr}
      * 
      * @param expr
-     *        The {@link IExpr} for which the instance of a subclass should be
-     *        created
+     *        The {@link IExpr} for which the instance of a subclass should be created
      * @return The created instance
      */
     public static MathObject buildFromIExpr(IExpr expr)
@@ -83,8 +66,7 @@ public abstract class MathObject
      *        The default maximum height
      * @return The created instance
      */
-    public static MathObject buildFromIExpr(IExpr expr, int defWidth,
-            int defHeight)
+    public static MathObject buildFromIExpr(IExpr expr, int defWidth, int defHeight)
     {
         // TODO Unimplemented method
         return null;
@@ -118,17 +100,22 @@ public abstract class MathObject
      * Sets the child at the given index
      * 
      * @param index
-     *        The index of the child to return
+     *        The index of the child that is to be changed
      * @param child
-     *        The {@link MathObject} that should become the child at the given
-     *        index
+     *        The {@link MathObject} that should become the child at the given index
      * @throws IndexOutOfBoundsException
      *         thrown when the index number is invalid (i.e. out of range).
      */
-    public void setChild(int index, MathObject child)
-            throws IndexOutOfBoundsException
+    public void setChild(int index, MathObject child) throws IndexOutOfBoundsException
     {
+        // Check the child index
         checkChildIndex(index);
+        
+        // Create an MathObjectEmpty if null is given
+        if(child == null)
+            child = new MathObjectEmpty(defaultMaxWidth, defaultMaxHeight);
+        
+        // Set the child
         children.set(index, child);
     }
 
@@ -150,8 +137,7 @@ public abstract class MathObject
      * @throws EmptyChildException
      *         If an empty child is detected where no empty child is allowed
      */
-    public abstract double approximate() throws NotConstantException,
-            EmptyChildException;
+    public abstract double approximate() throws NotConstantException, EmptyChildException;
 
     /**
      * Returns the bounding boxes of the operator of this {@link MathObject}.
@@ -183,8 +169,7 @@ public abstract class MathObject
      * @throws IndexOutOfBoundsException
      *         If an invalid child index is given
      */
-    public abstract Rect getChildBoundingBox(int index, int maxWidth,
-            int maxHeight) throws IndexOutOfBoundsException;
+    public abstract Rect getChildBoundingBox(int index, int maxWidth, int maxHeight) throws IndexOutOfBoundsException;
 
     /**
      * Returns the bounding box for the entire {@link MathObject}.
@@ -296,30 +281,33 @@ public abstract class MathObject
      *        {@link MathObject#NO_MAXIMUM})
      */
     public abstract void draw(Canvas canvas, int maxWidth, int maxHeight);
-
+    
     /**
-     * Draws an empty child box
-     * 
-     * @param canvas
-     *        The canvas to draw on
-     * @param rect
-     *        The rectangle describing the coordinates of the empty child box
+     * Draw the child with the given index child on <tt>canvas</tt> within the specified bounding box.
+     * @param index The index of the child that is to be drawn
+     * @param canvas The graphical instance to draw on
+     * @param box The bounding box of the child
      */
-    public void drawEmptyChild(Canvas canvas, Rect rect)
+    protected void drawChild(int index, Canvas canvas, final Rect box)
     {
-        emptyChildPaint.setStrokeWidth(rect.width() / 20);
-        rect.inset((int) Math.ceil(emptyChildPaint.getStrokeWidth() / 2),
-                (int) Math.ceil(emptyChildPaint.getStrokeWidth() / 2));
-        canvas.drawRect(rect, emptyChildPaint);
-        
-        //If you're trying to drag the item, make an aiming cross
-        if(this.state == HoverState.DRAG)
-        {
-        	emptyChildPaint.setStyle(Paint.Style.FILL);
-        	canvas.drawCircle(rect.left + rect.width() / 2, rect.top + rect.height() / 2, Math.min(rect.height(), rect.width()) / 10, emptyChildPaint);
-        	emptyChildPaint.setStyle(Paint.Style.STROKE);
-        }
-     }
+        // Draw the child
+        canvas.save();
+        canvas.translate(box.left, box.top);
+        getChild(index).draw(canvas, box.width(), box.height());
+        canvas.restore();
+    }
+    
+    /** Draws all children
+     * @param canvas The canvas that the children should be drawn on
+     * @param maxWidth The maximum width the child can have (can be {@link MathObject#NO_MAXIMUM})
+     * @param maxHeight The maximum height the child can have (can be {@link MathObject#NO_MAXIMUM})
+     */
+    protected void drawChildren(Canvas canvas, int maxWidth, int maxHeight)
+    {
+        // Loop through all children and draw them
+        for(int i = 0; i < children.size(); ++i)
+            drawChild(i, canvas, getChildBoundingBox(i, maxWidth, maxHeight));
+    }
 
     /**
      * Checks if the given child index is valid, and throws an exception if it
@@ -330,8 +318,7 @@ public abstract class MathObject
      * @throws IndexOutOfBoundsException
      *         If the child index is invalid
      */
-    protected final void checkChildIndex(int index)
-            throws IndexOutOfBoundsException
+    protected final void checkChildIndex(int index) throws IndexOutOfBoundsException
     {
         final int childCount = getChildCount();
 
@@ -349,6 +336,9 @@ public abstract class MathObject
                     + Integer.toString(childCount) + " children.");
     }
     
+    /** Returns the color for the current state
+     * @return The color for the current state
+     */
     protected int getColor()
     {
     	if(this.state == HoverState.DRAG)

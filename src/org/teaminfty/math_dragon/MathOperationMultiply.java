@@ -51,7 +51,7 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
 	        canvas.drawCircle(operator.width() / 2, operator.height() / 2, operator.width() / 7, operatorPaint);
 	        canvas.restore();
 	        
-	        drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
-	        drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
+	        // Draw the children
+	        drawChildren(canvas, maxWidth, maxHeight);
 	    }
 }

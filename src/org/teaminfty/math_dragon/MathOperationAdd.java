@@ -59,8 +59,8 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         canvas.drawLine(operator.width() / 2, 0, operator.width() / 2, operator.height(), operatorPaint);
         canvas.restore();
         
-        drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
-        drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
+        // Draw the children
+        drawChildren(canvas, maxWidth, maxHeight);
     }
 
 }

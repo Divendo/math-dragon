@@ -45,7 +45,7 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
 	        canvas.drawLine(0, operator.height() / 2, operator.width(), operator.height() / 2, operatorPaint);
 	        canvas.restore();
 	        
-	        drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
-	        drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
+	        // Draw the children
+	        drawChildren(canvas, maxWidth, maxHeight);
 	    }
 }

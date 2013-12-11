@@ -17,12 +17,14 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_operations_source, container, false);
         
+        // Get the default size for the MathObjects in this drawer
+        final int defSize = getResources().getDimensionPixelSize(R.dimen.math_source_height);
+        
         // Set the MathObjects for the MathSourceViews
-        // Note: default size isn't necessary since we'll always have a maximum size
-        setMathObjectFor(layout, R.id.mathSourceAdd, new MathOperationAdd(0, 0));
-        setMathObjectFor(layout, R.id.mathSourceSubtract, new MathOperationSubtract(0, 0));
-        setMathObjectFor(layout, R.id.mathSourceMultiply, new MathOperationMultiply(0, 0));
-        setMathObjectFor(layout, R.id.mathSourceDivide, new MathOperationDivide(0, 0));
+        setMathObjectFor(layout, R.id.mathSourceAdd, new MathOperationAdd(defSize, defSize));
+        setMathObjectFor(layout, R.id.mathSourceSubtract, new MathOperationSubtract(defSize, defSize));
+        setMathObjectFor(layout, R.id.mathSourceMultiply, new MathOperationMultiply(defSize, defSize));
+        setMathObjectFor(layout, R.id.mathSourceDivide, new MathOperationDivide(defSize, defSize));
         
         // Return the layout
         return layout;
