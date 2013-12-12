@@ -360,11 +360,11 @@ public class MathView extends View
     /** The <tt>System.currentTimeMillis()</tt> at which the click started (in ms) */
     private long startClickTime;
     
-    /** The information about the empty box that is to be replaced in the next call to {@link MathView#replaceEmptyBox(MathConstant) replaceEmptyBox()} */
+    /** The information about the {@link MathObject} that is to be replaced in the next call to {@link MathView#replaceEmptyBox(MathConstant) replaceEmptyBox()} */
     private HoverInformation emptyBoxReplaceInfo = null;
     
-    /** Replaces the empty box (whose information is stored in {@link MathView#emptyBoxReplaceInfo emptyBoxReplaceInfo}) with the given {@link MathConstant}.
-     * @param constant The {@link MathConstant} to replace the empty box with
+    /** Replaces the {@link MathObject} (whose information is stored in {@link MathView#emptyBoxReplaceInfo emptyBoxReplaceInfo}) with the given {@link MathConstant}.
+     * @param constant The {@link MathConstant} to replace the {@link MathObject} with
      */
     private void replaceEmptyBox(MathConstant constant)
     {
@@ -413,8 +413,8 @@ public class MathView extends View
             // Pop off an element of the queue
             HoverInformation info = queue.pollFirst();
             
-            // If the MathObject is a MathObjectEmpty, we check the distance to the main aiming point
-            if(info.mathObject instanceof MathObjectEmpty)
+            // If the MathObject is a MathObjectEmpty or MathConstant, we check if we clicked on it
+            if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathConstant)
             {
                 // If we click inside the object, we're done looking
                 if(info.boundingBox.contains(clickPos.x, clickPos.y))
