@@ -2,13 +2,17 @@ package org.teaminfty.math_dragon;
 
 import java.util.ArrayDeque;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 
 /** A view that can hold and draw a mathematical formula */
 public class MathView extends View
@@ -348,5 +352,132 @@ public class MathView extends View
         
         // Set the child
         parent.setChild(index, child);
+    }
+    
+    /** The maximal time a click may take (in ms) */
+    private static final int MAX_CLICK_DURATION = 200;
+    
+    /** The <tt>System.currentTimeMillis()</tt> at which the click started (in ms) */
+    private long startClickTime;
+    
+    /** The information about the empty box that is to be replaced in the next call to {@link MathView#replaceEmptyBox(MathConstant) replaceEmptyBox()} */
+    private HoverInformation emptyBoxReplaceInfo = null;
+    
+    /** Replaces the empty box (whose information is stored in {@link MathView#emptyBoxReplaceInfo emptyBoxReplaceInfo}) with the given {@link MathConstant}.
+     * @param constant The {@link MathConstant} to replace the empty box with
+     */
+    private void replaceEmptyBox(MathConstant constant)
+    {
+        // Place the constant
+        if(emptyBoxReplaceInfo.parent == null)
+            mathObject = constant;
+        else
+            emptyBoxReplaceInfo.parent.setChild(emptyBoxReplaceInfo.childIndex, constant);
+        
+        // Redraw
+        invalidate();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent me)
+    {
+        // Determine whether we're clicking or not
+        Point clickPos = null;
+        switch(me.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                startClickTime = System.currentTimeMillis();
+            break;
+        
+            case MotionEvent.ACTION_UP:
+                if(System.currentTimeMillis() - startClickTime < MAX_CLICK_DURATION)
+                    clickPos = new Point((int) me.getX(), (int) me.getY());
+            break;
+        }
+        
+        // If no click was detected, stop here
+        if(clickPos == null)
+            return true;
+        
+        // Determine how the canvas will be translated when drawing the current MathObject
+        Rect boundingBox = mathObject.getBoundingBox(getWidth(), getHeight());
+        boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
+        
+        // Keep track of which objects still need to be checked
+        ArrayDeque<HoverInformation> queue = new ArrayDeque<HoverInformation>();
+        queue.addLast(new HoverInformation(mathObject, boundingBox, null, 0));
+        
+        // Keep going until the queue is empty
+        while(!queue.isEmpty())
+        {
+            // Pop off an element of the queue
+            HoverInformation info = queue.pollFirst();
+            
+            // If the MathObject is a MathObjectEmpty, we check the distance to the main aiming point
+            if(info.mathObject instanceof MathObjectEmpty)
+            {
+                // If we click inside the object, we're done looking
+                if(info.boundingBox.contains(clickPos.x, clickPos.y))
+                {
+                    // Remember the info about the box we clicked
+                    emptyBoxReplaceInfo = info;
+                    
+                    // Light up the box we clicked
+                    info.mathObject.setState(HoverState.HOVER);
+                    
+                    // Create a dialog
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setTitle("Enter the constant");
+                    alert.setMessage("Enter the value, then press OK!");
+
+                    // Set an EditText view to get user input   
+                    final EditText input = new EditText(getContext());
+                    alert.setView(input);
+
+                    // Create an OK button
+                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int whichButton)
+                        {
+                            // Create a MathConstant from the user input
+                            final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
+                            MathConstant mathConstant = new MathConstant(input.getText().toString(), defSize, defSize);
+                            
+                            // Replace the empty box we clicked with the new MathConstant
+                            replaceEmptyBox(mathConstant);
+                        }
+                    });
+
+                    // Create a cancel button
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int whichButton)
+                        {
+                            emptyBoxReplaceInfo.mathObject.setState(HoverState.NONE);
+                        }
+                    });
+
+                    // Show the dialog
+                    alert.show();
+                }
+            }
+            else
+            {
+                // Add the children we click on to the queue
+                for(int i = 0; i < info.mathObject.getChildCount(); ++i)
+                {
+                    // Get the bounding box for the child
+                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i, info.boundingBox.width(), info.boundingBox.height());
+                    childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
+
+                    // Add the child to the queue if we click inside the child
+                    if(childBoundingBox.contains(clickPos.x, clickPos.y))
+                        queue.addLast(new HoverInformation(info.mathObject.getChild(i), childBoundingBox, info.mathObject, i));
+                }
+            }
+        }
+        
+        // Always return true
+        return true;
     }
 }

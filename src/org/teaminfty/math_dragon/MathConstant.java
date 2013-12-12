@@ -284,7 +284,7 @@ public class MathConstant extends MathObject
             return findTextSize(NO_MAXIMUM, defaultMaxHeight);
         
         // We don't want a text size bigger than 128 or smaller than 8
-        final float maxTextSize = 512.0f;
+        final float maxTextSize = 96.0f;
         final float minTextSize = 8.0f;
         
         // The margin, if our resulting box is this amount smaller than the target then we're done
@@ -343,6 +343,10 @@ public class MathConstant extends MathObject
         // Set the text size
         paint.setTextSize(textSize);
         exponentPaint.setTextSize(textSize * EXPONENT_FACTOR);
+        
+        // Set the paint colour
+        paint.setColor(getColor());
+        exponentPaint.setColor(getColor());
         
         // Translate the canvas
         canvas.save();
