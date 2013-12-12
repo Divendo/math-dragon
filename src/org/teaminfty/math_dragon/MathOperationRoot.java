@@ -68,6 +68,10 @@ public class MathOperationRoot extends MathBinaryOperation
         leftSize.bottom = 2 * leftSize.bottom / 3;
         leftSize.right = 2 * leftSize.right / 3;
         
+        //Since the exponent's size has changed, 
+        leftSize = getChild(0).getBoundingBox(leftSize.bottom, leftSize.right);
+        
+        
         // If the boxes fit within the specified maximum, we're done
         if((maxWidth == NO_MAXIMUM || leftSize.width() + rightSize.width() < maxWidth) && (maxHeight == NO_MAXIMUM || leftSize.height() + rightSize.height() < maxHeight))
             return new Rect[] {leftSize, rightSize};
@@ -104,10 +108,12 @@ public class MathOperationRoot extends MathBinaryOperation
 		
 		// Get the Size of the children
 		Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
+		Rect boundingBox = getBoundingBox(maxWidth, maxHeight);
+		Rect[] operatorBox = getOperatorBoundingBoxes(maxWidth, maxHeight);
 		
 		// Move the bounding boxes to the correct position
-		childrenSize[0].offsetTo(0 - childrenSize[1].width()/15, childrenSize[1].height()/5);
-		childrenSize[1].offsetTo(childrenSize[0].width(),childrenSize[0].height());
+		childrenSize[0].offsetTo( (boundingBox.width()-childrenSize[1].width())/2- childrenSize[0].width()/2, (boundingBox.height()-childrenSize[1].height())/2- childrenSize[0].height()/2);
+		childrenSize[1].offsetTo(operatorBox[0].width(), operatorBox[1].height());
 		
 		// Return the right bounding box
 		return childrenSize[index];
@@ -122,7 +128,7 @@ public class MathOperationRoot extends MathBinaryOperation
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
-        operatorPaint.setStrokeWidth(operator[1].height()/5);
+        operatorPaint.setStrokeWidth(operator[1].height()/10);
         canvas.drawLine(operator[0].left-operator[0].width()/3,		 operator[0].top + operator[0].height()/3,	operator[0].left + operator[0].width()/3, 		operator[0].top + operator[0].height()/3, 	operatorPaint);
         canvas.drawLine(operator[0].left + operator[0].width()/3 - operatorPaint.getStrokeWidth()/2,	 operator[0].top + operator[0].height()/3, 	operator[0].left + 2*operator[0].width()/3, 	operator[0].bottom, 						operatorPaint);
         canvas.drawLine(operator[0].left + 2*operator[0].width()/3 - operatorPaint.getStrokeWidth()/2,  operator[0].bottom,	operator[0].right, 		operator[0].top,							operatorPaint);
@@ -131,7 +137,6 @@ public class MathOperationRoot extends MathBinaryOperation
 		// Draw the children
 		drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
         drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
-        
 	}
 	
 	

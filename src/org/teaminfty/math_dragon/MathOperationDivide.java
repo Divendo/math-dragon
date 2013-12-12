@@ -48,29 +48,37 @@ public class MathOperationDivide extends MathBinaryOperation
         
         // Calculate the height the operator wants to take
         int operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
+        
 
-        // If we have no maximum height, we're done
-        if(maxHeight == NO_MAXIMUM)
-            return new Rect[] {new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight), topSize, bottomSize};
+        // If we have no maximum height or it isn't breached, we're done
+        if(maxHeight == NO_MAXIMUM || topSize.height()+ operatorHeight + bottomSize.height() < maxHeight )
+            return new Rect[] 
+            		{
+        			new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight),
+        			topSize, 
+        			bottomSize
+        			};
 
         // If we would get higher than the maximum height, shrink so we fit in
-        if(topSize.height() + operatorHeight + bottomSize.height() > maxHeight)
+        else
         {
-            // Determine the maximum width for each operand
+            // Determine the maximum height for each operand
             final int totalHeight = topSize.height() + operatorHeight + bottomSize.height();
-            final int topMax = maxHeight * topSize.height() / totalHeight;
-            final int bottomMax = maxHeight * topSize.height() / totalHeight;
+            final float heightFactor = maxHeight == NO_MAXIMUM ? 1.0f : (float) (maxHeight) / totalHeight;
+            final float widthFactor = maxWidth == NO_MAXIMUM ?.0f : (float)(maxWidth)/ Math.max(topSize.width(), bottomSize.width());
+            final float factor = Math.min(heightFactor, widthFactor);
             
             // Set the new sizes
-            topSize.set(0, 0, topMax * topSize.width() / topSize.height(), topMax);
-            bottomSize.set(0, 0, bottomMax * bottomSize.width() / bottomSize.height(), bottomMax);
+            topSize.set(0, 0,(int)(topSize.width()*factor), (int)(topSize.height()*factor));
+            bottomSize.set(0, 0,(int)(bottomSize.width()*factor), (int)(bottomSize.height()*factor));
             
             // Calculate the new operator size
             operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
         }
 
         // Return the sizes
-        return new Rect[] {new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight), topSize, bottomSize};
+        return new Rect[] 
+        	{new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight), topSize, bottomSize};
     }
 
     @Override
@@ -101,6 +109,16 @@ public class MathOperationDivide extends MathBinaryOperation
 
         // Return the requested bounding box
         return sizes[index + 1];
+    }
+    
+    @Override
+    public Rect getBoundingBox(int maxWidth, int maxHeight)
+    {
+        // Get the sizes
+        Rect[] sizes = getSizes(maxWidth, maxHeight);
+        
+        // Return a bounding box, containing the bounding boxes of the children
+        return new Rect(0, 0, sizes[0].width() + sizes[1].width() + sizes[2].width(), sizes[0].height()*2 + sizes[1].height() + sizes[2].height());
     }
     
     @Override
