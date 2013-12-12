@@ -1,11 +1,7 @@
 package org.teaminfty.math_dragon;
 
-import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.expression.F;
-
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,12 +42,12 @@ public class FragmentMainScreen extends Fragment
         div.setChild(1, multiply);
         
         // Test the MathObject
-        try
+        /*try
         {
         	
             //Log.i(getClass().getCanonicalName(), EvalEngine.eval(F.Simplify(add2.eval())).toString());
-            Log.i(getClass().getCanonicalName(), EvalEngine.eval(div.eval()).toString());
-            Log.i(getClass().getCanonicalName(), Double.toString(div.approximate()));
+            //Log.i(getClass().getCanonicalName(), EvalEngine.eval(div.eval()).toString());
+            //Log.i(getClass().getCanonicalName(), Double.toString(div.approximate()));
             
         }
         catch(EmptyChildException e)
@@ -61,7 +57,7 @@ public class FragmentMainScreen extends Fragment
         catch(NotConstantException e)
         {
             e.printStackTrace();
-        }
+        }*/
         
         // Just to test MathView
         /*MathView mathView = (MathView) getView().findViewById(R.id.mathView);

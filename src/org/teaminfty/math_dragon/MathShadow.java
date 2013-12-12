@@ -46,6 +46,24 @@ public class MathShadow extends DragShadowBuilder
     public Point getSize()
     { return size; }
     
+    /** Returns the bounding box of the current {@link MathObject} relative to the touch point
+     * @return The requested bounding box
+     */
+    public Rect getMathObjectBounding()
+    {
+        // Calculate the bounding box
+        Rect boundingBox = mathObject.getBoundingBox(size.x, size.y);
+        
+        // Apply the same translation we apply to the canvas
+        boundingBox.offset((size.x - boundingBox.width()) / 2, (size.y - boundingBox.height()) / 2);
+        
+        // Translate the bounding, so that our touch point becomes the origin
+        boundingBox.offset(-size.x / 2, -size.y - 64);
+        
+        // Return the result
+        return boundingBox;
+    }
+    
     @Override
     public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint)
     {

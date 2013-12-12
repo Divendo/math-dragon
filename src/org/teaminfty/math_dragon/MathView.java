@@ -1,8 +1,10 @@
 package org.teaminfty.math_dragon;
 
-import android.annotation.SuppressLint;
+import java.util.ArrayDeque;
+
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.DragEvent;
@@ -50,8 +52,20 @@ public class MathView extends View
      */
     public MathObject getMathObject()
     { return mathObject; }
+
+    /** Recursively sets the given state for the given {@link MathObject} and all of its children
+     * @param mo The {@link MathObject} to set the given state for
+     * @param state The state that the {@link MathObject}s should be set to */
+    private void setHoverState(MathObject mo, HoverState state)
+    {
+        // Set the state
+        mo.setState(state);
+        
+        // Loop through the children and set their states
+        for(int i = 0; i < mo.getChildCount(); ++i)
+            setHoverState(mo.getChild(i), state);
+    }
     
-    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas)
     {
@@ -75,22 +89,226 @@ public class MathView extends View
             return true;
             
             case DragEvent.ACTION_DRAG_ENTERED:
+            case DragEvent.ACTION_DRAG_LOCATION:
+            {
+                // Calculate the coordinates of the top-left corner of the MathObject
+                Rect dragBoundingBox = mathShadow.getMathObjectBounding();
+                dragBoundingBox.offset((int) event.getX(), (int) event.getY());
+                
+                // Show where we're hovering above
+                respondToDrag(mathShadow.getMathObject(), dragBoundingBox, false);
                 invalidate();
+            }
             return true;
             
             case DragEvent.ACTION_DRAG_EXITED:
+                setHoverState(mathObject, HoverState.NONE);
                 invalidate();
             return true;
             
             case DragEvent.ACTION_DROP:
+            {
+                // Calculate the coordinates of the top-left corner of the MathObject
+                Rect dragBoundingBox = mathShadow.getMathObjectBounding();
+                dragBoundingBox.offset((int) event.getX(), (int) event.getY());
+                
+                // Show where we're hovering above
+                respondToDrag(mathShadow.getMathObject(), dragBoundingBox, true);
                 invalidate();
+            }
             return true;
 
             case DragEvent.ACTION_DRAG_ENDED:
+                setHoverState(mathObject, HoverState.NONE);
                 invalidate();
             return true;
         }
         return false;
     }
+    
+    /** Holds information about the {@link MathObject} that's being dragged to */
+    private static class HoverInformation
+    {
+        /** Constructor
+         * @param mathObject The {@link MathObject} we're hovering over 
+         * @param boundingBox The bounding box of {@link HoverInformation#mathObject mathObject}
+         * @param parent The parent of the {@link MathObject} we're hovering over (null if we're hovering over the root {@link MathObject})
+         * @param childIndex The child index of the {@link MathObject} we're hovering over (undefined if we're hovering over the root {@link MathObject})
+         */
+        public HoverInformation(MathObject mathObject, Rect boundingBox, MathObject parent, int childIndex)
+        {
+            this.mathObject = mathObject;
+            this.boundingBox = boundingBox;
+            this.parent = parent;
+            this.childIndex = childIndex;
+        }
+        
+        /** The {@link MathObject} we're hovering over */
+        public MathObject mathObject = null;
+        
+        /** The bounding box of {@link HoverInformation#mathObject mathObject} */
+        public Rect boundingBox = null;
+        
+        /** The parent of the {@link MathObject} we're hovering over (null if we're hovering over the root {@link MathObject}) */
+        public MathObject parent = null;
+        
+        /** The child index of the {@link MathObject} we're hovering over (undefined if we're hovering over the root {@link MathObject}) */
+        public int childIndex = 0;
+    }
 
+    /** Calculates the square of the distance from the given point to the centre of the given rectangle
+     * @param p The point
+     * @param r The rectangle
+     * @return The square of the distance from the given point to the centre of the given rectangle
+     */
+    private int getDst(Point p, Rect r)
+    {
+        return (r.centerX() - p.x) * (r.centerX() - p.x) + (r.centerY() - p.y) * (r.centerY() - p.y);
+    }
+
+    /** Responds to a {@link MathObject} that is being dragged over this view.
+     * It can either respond by lighting up the right part of the current {@link MathObject} (i.e. <tt>dropped == false</tt>).
+     * Or it can respond by inserting the dropped {@link MathObject} into the current {@link MathObject} (i.e. <tt>dropped == true</tt>).
+     * @param dragMathObject The {@link MathObject} that is being dragged
+     * @param dragBoundingBox The bounding box of the {@link MathObject} that is being dragged
+     * @param dropped Whether or not the {@link MathObject} is being dropped
+     */
+    private void respondToDrag(MathObject dragMathObject, Rect dragBoundingBox, boolean dropped)
+    {
+        // Reset the state of the current MathObject and all of its descendants
+        setHoverState(mathObject, HoverState.NONE);
+        
+        // The aiming point of the MathObject that is being dragged (the main aiming point)
+        Point aimPoint = new Point(dragBoundingBox.centerX(), dragBoundingBox.centerY());
+        
+        // Determine the aiming points of the children of the MathObject that is being dragged
+        // But only if they are empty children (otherwise they aren't interesting, so we set their aiming points to null)
+        Point[] childAimPoints = new Point[dragMathObject.getChildCount()];
+        for(int i = 0; i < childAimPoints.length; ++i)
+        {
+            if(dragMathObject.getChild(i) instanceof MathObjectEmpty)
+            {
+                Rect rect = dragMathObject.getChildBoundingBox(i, dragBoundingBox.width(), dragBoundingBox.height());
+                childAimPoints[i] = new Point(dragBoundingBox.left + rect.centerX(), dragBoundingBox.top + rect.centerY());
+            }
+            else
+                childAimPoints[i] = null;
+        }
+        
+        // Determine how the canvas will be translated when drawing the current MathObject
+        Rect boundingBox = mathObject.getBoundingBox(getWidth(), getHeight());
+        boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
+        
+        // If we don't intersect with the bounding box at all, we can stop here
+        if(!Rect.intersects(dragBoundingBox, boundingBox))
+            return;
+        
+        // Some variables that will keep track of where we're hovering above
+        int sourceChild = -1;                   // The source child that's causing the hover (-1 means the complete mathObject)
+        int dst = -1;                           // The best distance (squared) we've found so far (-1 means that no hover has been found yet)
+        HoverInformation currHover = null;      // The hover information of the MathObject we're currently hovering over
+        
+        // Keep track of which objects still need to be checked
+        ArrayDeque<HoverInformation> queue = new ArrayDeque<HoverInformation>();
+        queue.addLast(new HoverInformation(mathObject, boundingBox, null, 0));
+        
+        // Keep going until the queue is empty
+        while(!queue.isEmpty())
+        {
+            // Pop off an element of the queue
+            HoverInformation info = queue.pollFirst();
+            
+            // If the MathObject is a MathObjectEmpty, we check the distance to the main aiming point
+            if(info.mathObject instanceof MathObjectEmpty)
+            {
+                // If the aim point is not in the rectangle at all, we've nothing to do
+                if(!info.boundingBox.contains(aimPoint.x, aimPoint.y))
+                    continue;
+                
+                // Check if the distance is smaller than what we've found so far
+                final int tmpDst = getDst(aimPoint, info.boundingBox);
+                if(dst == -1 || tmpDst < dst)
+                {
+                    sourceChild = -1;
+                    dst = tmpDst;
+                    currHover = info;
+                }
+            }
+            else
+            {
+                // Determine if we're aiming at this object itself
+                Rect[] operatorBounds = info.mathObject.getOperatorBoundingBoxes(info.boundingBox.width(), info.boundingBox.height());
+                for(Rect rect : operatorBounds)
+                    rect.offset(info.boundingBox.left, info.boundingBox.top);
+                for(int i = 0; i < childAimPoints.length; ++i)
+                {
+                    // If the current child has no aim point, we skip
+                    if(childAimPoints[i] == null) continue;
+                    
+                    // Determine the distance to the centre of every operator bounding box
+                    for(Rect rect : operatorBounds)
+                    {
+                        // If the aim point is not in the rectangle at all, we've nothing to do
+                        if(!rect.contains(childAimPoints[i].x, childAimPoints[i].y))
+                            continue;
+                        
+                        // Check if the distance is smaller than what we've found so far
+                        final int tmpDst = getDst(childAimPoints[i], rect);
+                        if(dst == -1 || tmpDst < dst)
+                        {
+                            sourceChild = i;
+                            dst = tmpDst;
+                            currHover = info;
+                        }
+                    }
+                }
+                
+                // Add the children we intersect with to the queue
+                for(int i = 0; i < info.mathObject.getChildCount(); ++i)
+                {
+                    // Get the bounding box for the child
+                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i, info.boundingBox.width(), info.boundingBox.height());
+                    childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
+                    
+                    // If we don't intersect with the bounding box at all, we're not interested
+                    if(!Rect.intersects(dragBoundingBox, childBoundingBox))
+                        continue;
+                    
+                    // Add the child to the queue
+                    queue.addLast(new HoverInformation(info.mathObject.getChild(i), childBoundingBox, info.mathObject, i));
+                }
+            }
+        }
+        
+        // If we've found a MathObject we're hovering over, do the right thing with it
+        if(currHover != null)
+        {
+            // If we're not dropping, just light up the part we're hovering over
+            // Otherwise we insert the MathObject that's being dragged at the right point in current MathObject
+            if(!dropped)
+                currHover.mathObject.setState(HoverState.HOVER);
+            else
+            {
+                // Determine whether or not we're dropping the whole thing in an empty box
+                if(sourceChild == -1)
+                {
+                    if(currHover.parent == null)
+                        mathObject = dragMathObject;
+                    else
+                        currHover.parent.setChild(currHover.childIndex, dragMathObject);
+                }
+                else
+                {
+                    dragMathObject.setChild(sourceChild, currHover.mathObject);
+                    if(currHover.parent == null)
+                        mathObject = dragMathObject;
+                    else
+                        currHover.parent.setChild(currHover.childIndex, dragMathObject);
+                }
+                
+                // Make sure the MathObject and all of its descendants have the right state
+                setHoverState(mathObject, HoverState.NONE);
+            }
+        }
+    }
 }
