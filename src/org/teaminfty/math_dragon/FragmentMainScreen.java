@@ -44,5 +44,11 @@ public class FragmentMainScreen extends Fragment
         mathView.setMathObject(root);*/
     }
 
-
+    /** Clears the current formula */
+    public void clear()
+    {
+        MathView mathView = (MathView) getView().findViewById(R.id.mathView);
+        mathView.setMathObject(null);
+        mathView.invalidate();
+    }
 }

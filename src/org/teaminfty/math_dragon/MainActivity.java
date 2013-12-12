@@ -110,11 +110,15 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     
     public void favourites(View view)
     {
-        // Get the DrawerLayout object
+        /*// Get the DrawerLayout object
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         
-        // Show the favorites drawer
-        drawerLayout.openDrawer(Gravity.CENTER);
+        // Show the favourites drawer
+        drawerLayout.openDrawer(Gravity.CENTER);*/
+        
+        // We use the favourites button to clear the entire screen for the time being
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+        fragmentMainScreen.clear();
     }
 
     @Override
