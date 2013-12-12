@@ -98,8 +98,7 @@ public class MathOperationPower extends MathBinaryOperation
     }
 	
 	@Override
-	public Rect getChildBoundingBox(int index, int maxWidth, int maxHeight)
-			throws IndexOutOfBoundsException 
+	public Rect getChildBoundingBox(int index, int maxWidth, int maxHeight) throws IndexOutOfBoundsException 
 	{
 		// Check if the child exists
 		this.checkChildIndex(index);

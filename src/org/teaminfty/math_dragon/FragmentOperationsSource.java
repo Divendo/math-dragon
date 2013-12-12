@@ -25,6 +25,7 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         setMathObjectFor(layout, R.id.mathSourceSubtract, new MathOperationSubtract(defSize, defSize));
         setMathObjectFor(layout, R.id.mathSourceMultiply, new MathOperationMultiply(defSize, defSize));
         setMathObjectFor(layout, R.id.mathSourceDivide, new MathOperationDivide(defSize, defSize));
+        setMathObjectFor(layout, R.id.mathSourcePower, new MathOperationPower(defSize, defSize));
         
         // Return the layout
         return layout;
