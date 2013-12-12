@@ -1,6 +1,8 @@
 package org.teaminfty.math_dragon;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -8,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
@@ -111,10 +114,37 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     public void favourites(View view)
     {
         // Get the DrawerLayout object
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        // DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         
         // Show the favorites drawer
-        drawerLayout.openDrawer(Gravity.CENTER);
+        // drawerLayout.openDrawer(Gravity.CENTER);
+        
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    	alert.setTitle("Enter the constant!");
+    	alert.setMessage("Enter the value, then press OK!");
+
+    	// Set an EditText view to get user input 	
+    	final EditText input = new EditText(this);
+    	alert.setView(input);
+
+    	alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    	public void onClick(DialogInterface dialog, int whichButton) {
+    	  String value = input.getText().toString();
+    	  MathConstant mathconstant = new MathConstant(value,100,100);
+    	  }
+    	});
+    	
+    	alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+    	  public void onClick(DialogInterface dialog, int whichButton) {
+    	    // Canceled.
+    	  }
+    	});
+
+    	alert.show();
+    }
+    public void inputMathDialog()
+    { 
+    	
     }
 
     @Override
