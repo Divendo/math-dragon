@@ -44,8 +44,8 @@ public class MathOperationRoot extends MathBinaryOperation
 	    
 		//Square roots have a fairly large operator, which we split in 2.
 		return new Rect[] {
-		        new Rect(0, sizes[0].height(), sizes[0].width(), maxHeight),
-                new Rect(sizes[0].width(), 0, maxWidth, maxHeight - sizes[0].height())
+		        new Rect(0, sizes[0].height(), sizes[0].width(), sizes[0].height() + sizes[1].height()),
+                new Rect(sizes[0].width(), 0, sizes[0].width() + sizes[1].width(), sizes[0].height())
 	        };
 	}
 
@@ -106,7 +106,7 @@ public class MathOperationRoot extends MathBinaryOperation
 		Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
 		
 		// Move the bounding boxes to the correct position
-		childrenSize[0].offsetTo(0, 0);
+		childrenSize[0].offsetTo(0 - childrenSize[1].width()/15, childrenSize[1].height()/5);
 		childrenSize[1].offsetTo(childrenSize[0].width(),childrenSize[0].height());
 		
 		// Return the right bounding box
@@ -122,10 +122,11 @@ public class MathOperationRoot extends MathBinaryOperation
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
-        canvas.drawLine(operator[0].left, operator[0].top + operator[0].height()/2, operator[0].left + operator[0].width()/3, operator[0].top + operator[0].height()/2, operatorPaint);
-        canvas.drawLine(operator[0].left + operator[0].width()/3, operator[0].top + operator[0].height()/4, operator[0].left +2* operator[0].width()/3, operator[0].top + operator[0].height(), operatorPaint);
-        canvas.drawLine(operator[0].left +2* operator[0].width()/3, operator[0].top + operator[0].height(), operator[0].left + operator[0].width(), operator[0].top, operatorPaint);
-        canvas.drawLine(operator[1].left, operator[1].top + operator[1].height(), operator[1].left +operator[1].width(), operator[1].top + operator[1].height(), operatorPaint);
+        operatorPaint.setStrokeWidth(operator[0].width()/10);
+        canvas.drawLine(operator[0].left-operator[0].width()/3,		 operator[0].top + operator[0].height()/3,	operator[0].left + operator[0].width()/3, 		operator[0].top + operator[0].height()/3, 	operatorPaint);
+        canvas.drawLine(operator[0].left + operator[0].width()/3,	 operator[0].top + operator[0].height()/3, 	operator[0].left + 2*operator[0].width()/3, 	operator[0].bottom, 						operatorPaint);
+        canvas.drawLine(operator[0].left + 2*operator[0].width()/3,  operator[0].bottom,	operator[0].right, 		operator[0].top,							operatorPaint);
+        canvas.drawLine(operator[1].left, operator[1].bottom, operator[1].right, operator[1].bottom, operatorPaint);
         canvas.restore();
 		// Draw the children
 		drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
