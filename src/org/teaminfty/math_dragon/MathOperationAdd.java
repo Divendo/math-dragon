@@ -22,6 +22,10 @@ public class MathOperationAdd extends MathBinaryOperationLinear
 		this.setChild(0, A);
 		this.setChild(1, B);
 	}
+    
+    @Override
+    public int getPrecedence()
+    { return MathObjectPrecedence.ADD; }
 
 	@Override
     public IExpr eval() throws EmptyChildException

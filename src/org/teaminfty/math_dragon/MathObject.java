@@ -71,6 +71,13 @@ public abstract class MathObject
         // TODO Unimplemented method
         return null;
     }
+    
+    /** Returns the precedence of this operation.
+     * The highest precedence is 0, greater values are lower precedences.
+     * @return The precedence
+     */
+    public int getPrecedence()
+    { return MathObjectPrecedence.HIGHEST; }
 
     /**
      * Returns the number of children this {@link MathObject} has

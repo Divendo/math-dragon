@@ -12,6 +12,10 @@ public class MathOperationPower extends MathBinaryOperation
 	{
 		super(defWidth, defHeight);
 	}
+    
+    @Override
+    public int getPrecedence()
+    { return MathObjectPrecedence.POWER; }
 
 	@Override
 	public IExpr eval() throws EmptyChildException 

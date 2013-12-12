@@ -15,6 +15,24 @@ public class MathParentheses extends MathObject
     
     /** The paint that's used to draw the parentheses */
     private Paint paint = new Paint();
+
+    /** Constructor
+     * 
+     * @param child The child to wrap the parentheses around
+     * @param defWidth The default maximum width
+     * @param defHeight The default maximum height
+     */
+    public MathParentheses(MathObject child, int defWidth, int defHeight)
+    {
+        super(defWidth, defHeight);
+        
+        // We have one child
+        children.add(child == null ? new MathObjectEmpty(defWidth, defHeight) : child);
+        
+        // Initialise the paint
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setAntiAlias(true);
+    }
     
     /** Constructor
      * 
@@ -22,16 +40,7 @@ public class MathParentheses extends MathObject
      * @param defHeight The default maximum height
      */
     public MathParentheses(int defWidth, int defHeight)
-    {
-        super(defWidth, defHeight);
-        
-        // We have one child
-        children.add(new MathObjectEmpty(defWidth, defHeight));
-        
-        // Initialise the paint
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setAntiAlias(true);
-    }
+    { this(null, defWidth, defHeight); }
 
     @Override
     public IExpr eval() throws EmptyChildException

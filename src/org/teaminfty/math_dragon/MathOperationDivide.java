@@ -26,6 +26,10 @@ public class MathOperationDivide extends MathBinaryOperation
         super(defWidth, defHeight);
     }
 
+    @Override
+    public int getPrecedence()
+    { return MathObjectPrecedence.MULTIPLY; }
+    
     /**
      * Returns the sizes of the bounding boxes.
      * The first rectangle is the size of the operator, the second and third rectangle are the sizes of the children.
