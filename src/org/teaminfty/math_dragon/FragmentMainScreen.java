@@ -21,7 +21,7 @@ public class FragmentMainScreen extends Fragment
     {
         super.onStart();
         
-        // Create MathObjects to test the functionality 
+        /*// Create MathObjects to test the functionality 
         MathConstant five = new MathConstant("5", 100,100);
         MathOperationDivide div = new MathOperationDivide(100,100);
         div.setChild(0, five);
@@ -35,32 +35,13 @@ public class FragmentMainScreen extends Fragment
         MathOperationDivide div2 = new MathOperationDivide(100,100);
         div2.setChild(0, add2);
         div2.setChild(1, five);
-        
-        
         MathOperationRoot root = new MathOperationRoot(100,100);
         root.setChild(0, div);
         root.setChild(1, div2);
         
-     
-             
-        // Test the MathObject
-     //   try
-        {
-            //Log.i(getClass().getCanonicalName(), EvalEngine.eval(F.Simplify(root.eval())).toString());
-            //Log.i(getClass().getCanonicalName(), Double.toString(root.approximate()));
-        }
-    //    catch(EmptyChildException e)
-        {
-   //         e.printStackTrace();
-        }
-     //   catch(NotConstantException e)
-        {
-     //       e.printStackTrace();
-        }
-        
         // Just to test MathView
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
-        mathView.setMathObject(root);
+        mathView.setMathObject(root);*/
     }
 
 
