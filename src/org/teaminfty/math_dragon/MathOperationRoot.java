@@ -61,8 +61,8 @@ public class MathOperationRoot extends MathBinaryOperation
 	public Rect[] getChildrenSize(int maxWidth, int maxHeight)
 	{
 		// Get the sizes both operands want to take
-        Rect leftSize = getChild(0) == null ? getRectBoundingBox(NO_MAXIMUM, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(0).getBoundingBox(NO_MAXIMUM, NO_MAXIMUM);
-        Rect rightSize = getChild(1) == null ? getRectBoundingBox(NO_MAXIMUM, NO_MAXIMUM, EMPTY_CHILD_RATIO) : getChild(1).getBoundingBox(NO_MAXIMUM, NO_MAXIMUM);
+		 Rect leftSize = getChild(0).getBoundingBox(NO_MAXIMUM, NO_MAXIMUM);
+	     Rect rightSize = getChild(1).getBoundingBox(NO_MAXIMUM, NO_MAXIMUM);
         
         // Make sure the exponent is smaller than the base
         leftSize.bottom = 2 * leftSize.bottom / 3;
@@ -135,8 +135,7 @@ public class MathOperationRoot extends MathBinaryOperation
         canvas.drawLine(operator[1].left - operatorPaint.getStrokeWidth()/2, operator[1].bottom, operator[1].right, operator[1].bottom, operatorPaint);
         canvas.restore();
 		// Draw the children
-		drawLeft(canvas, getChildBoundingBox(0, maxWidth, maxHeight));
-        drawRight(canvas, getChildBoundingBox(1, maxWidth, maxHeight));
+		drawChildren(canvas, maxWidth, maxHeight);
 	}
 	
 	
