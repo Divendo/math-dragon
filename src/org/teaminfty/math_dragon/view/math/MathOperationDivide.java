@@ -75,13 +75,25 @@ public class MathOperationDivide extends MathBinaryOperation
             // Set the new sizes
             topSize.set(0, 0,(int)(topSize.width()*factor), (int)(topSize.height()*factor));
             bottomSize.set(0, 0,(int)(bottomSize.width()*factor), (int)(bottomSize.height()*factor));
-            topSize = getChild(0).getBoundingBox(topSize.width(), topSize.height());
-            bottomSize = getChild(1).getBoundingBox(bottomSize.width(), bottomSize.height());
             
             // Calculate the new operator size
             operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
         }
-
+        if(maxWidth == NO_MAXIMUM)
+        {
+        	 return new Rect[] 
+             		{
+         			new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight),
+         			topSize, 
+         			bottomSize
+         			};
+        }
+        if( topSize.width() < maxWidth || bottomSize.width()<maxWidth)
+        {
+        	final float factor = maxWidth == NO_MAXIMUM ? 1.0f : (float)(maxWidth)/ Math.max(topSize.width(), bottomSize.width());
+        	topSize.set(0,0, (int)(topSize.width()*factor), topSize.height());
+        	bottomSize.set(0,0, (int)(bottomSize.width()*factor), bottomSize.height());
+        }
         // Return the sizes
         return new Rect[] 
         	{new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight), topSize, bottomSize};
@@ -155,7 +167,7 @@ public class MathOperationDivide extends MathBinaryOperation
     {
         // Get the bounding boxes
         final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
-/*
+        /*
         Paint tmp = new Paint();
         tmp.setColor(Color.GREEN);
         canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
