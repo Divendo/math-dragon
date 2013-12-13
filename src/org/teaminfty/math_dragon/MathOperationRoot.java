@@ -128,12 +128,12 @@ public class MathOperationRoot extends MathBinaryOperation
         // Get the bounding boxes
         final Rect[] childSize = getChildrenSize(maxWidth, maxHeight);
 
-        Paint tmp = new Paint();
+        /*Paint tmp = new Paint();
         tmp.setColor(Color.GREEN);
         canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
         tmp.setColor(Color.RED);
         for(int i = 0; i < getChildCount(); ++i)
-            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);*/
         
         // Draw the operator
         canvas.save();

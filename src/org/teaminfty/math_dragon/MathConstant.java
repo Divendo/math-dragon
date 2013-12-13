@@ -336,13 +336,13 @@ public class MathConstant extends MathObject
     
     public void draw(Canvas canvas, int maxWidth, int maxHeight)
     {
-        Paint tmp = new Paint();
+        /*Paint tmp = new Paint();
         tmp.setColor(Color.GREEN);
         tmp.setStyle(Paint.Style.STROKE);
         canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
         tmp.setColor(Color.RED);
         for(int i = 0; i < getChildCount(); ++i)
-            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);*/
         
         // Get the text size and the bounding box
         final float textSize = findTextSize(maxWidth, maxHeight);

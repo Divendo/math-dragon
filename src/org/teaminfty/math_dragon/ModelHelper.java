@@ -5,6 +5,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.IRational;
 
 /**
  * Hack helper class that communicates as a wrapper between our model and the
@@ -50,6 +51,35 @@ public final class ModelHelper
 			c.factor = ((IInteger) expr).longValue();
 			return c;
 		}
+		else if(expr.isFraction())
+		{
+		    IRational rational = (IRational) expr;
+		    MathOperationDivide div = new MathOperationDivide(w, h);
+		    div.setChild(0, new MathConstant(Long.toString(rational.getNumerator().longValue()), w, h));
+            div.setChild(1, new MathConstant(Long.toString(rational.getDenominator().longValue()), w, h));
+            return div;
+		}
+        else if(expr instanceof Symbol)
+        {
+            Symbol s = (Symbol) expr;
+            MathConstant c = new MathConstant(w, h);
+            c.factor = 1;
+            if(s.equals(F.Pi))
+            {
+                c.piPow = 1;
+                return c;
+            }
+            else if(s.equals(F.E))
+            {
+                c.ePow = 1;
+                return c;
+            }
+            else if(s.equals(F.I))
+            {
+                c.iPow = 1;
+                return c;
+            }
+        }
 		throw new ParseException();
 	}
 	

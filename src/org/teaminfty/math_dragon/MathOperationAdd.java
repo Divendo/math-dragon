@@ -55,12 +55,12 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         // Get the bounding box
         final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
         
-        Paint tmp = new Paint();
+        /*Paint tmp = new Paint();
         tmp.setColor(Color.GREEN);
         canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
         tmp.setColor(Color.RED);
         for(int i = 0; i < getChildCount(); ++i)
-            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);*/
         
         // Draw the operator
         operator.inset(operator.width() / 10, operator.height() / 10);      // Padding

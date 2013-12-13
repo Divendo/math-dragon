@@ -119,12 +119,12 @@ public class MathOperationPower extends MathBinaryOperation
 	@Override
 	public void draw(Canvas canvas, int maxWidth, int maxHeight) 
 	{
-        Paint tmp = new Paint();
+        /*Paint tmp = new Paint();
         tmp.setColor(Color.GREEN);
         canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
         tmp.setColor(Color.RED);
         for(int i = 0; i < getChildCount(); ++i)
-            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);*/
         
         // Only draw the children
         drawChildren(canvas, maxWidth, maxHeight);
