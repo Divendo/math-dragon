@@ -107,7 +107,7 @@ public final class ModelHelper
 			{
 				if(p.isNegative())
 				{
-					return toOpDiv(ast.get(1), p, w, h);
+					return toOpDiv(ast.get(1), a.get(1), w, h);
 				}
 				else if((b = a.get(1)) instanceof Symbol)
 				{
