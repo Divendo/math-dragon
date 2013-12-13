@@ -9,6 +9,7 @@ import org.teaminfty.math_dragon.view.HoverState;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 
 /** This class represents a mathematical object that can be drawn */
@@ -356,5 +357,12 @@ public abstract class MathObject
     	if(this.state == HoverState.HOVER)
     		return Color.rgb(0x44, 0x44, 0xff);
     	return Color.BLACK;
+    }
+    
+    //Returns the center of the mathObject
+    public Point getCenter(int maxWidth, int maxHeight)
+    {
+    	Rect bounding = this.getBoundingBox(maxWidth, maxHeight);
+    	return new Point(bounding.centerX(), bounding.centerY());
     }
 }

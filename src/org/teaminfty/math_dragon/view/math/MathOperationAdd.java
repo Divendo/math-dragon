@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.exceptions.NotConstantException;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 
 public class MathOperationAdd extends MathBinaryOperationLinear
@@ -50,6 +51,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         // Return the result
         return getChild(0).approximate() + getChild(1).approximate();
     }
+
 
     @Override
     public void draw(Canvas canvas, int maxWidth, int maxHeight)

@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon.view.math;
 
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 
 /**
@@ -75,10 +76,12 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
     {
         // Get the sizes
         Rect[] sizes = getSizes(maxWidth, maxHeight);
+        Point center_one = getChild(0).getCenter(sizes[1].width(), sizes[1].height());
+        Point center_two = getChild(1).getCenter(sizes[2].width(), sizes[2].height());
+        final int centerY = Math.max(center_one.y, center_two.y);
 
         // Position the bounding box and return it
-        final int totalHeight = Math.max(sizes[1].height(), sizes[2].height());
-        sizes[0].offsetTo(sizes[1].width(), (totalHeight - sizes[0].height()) / 2);
+        sizes[0].offsetTo(sizes[1].width(), centerY - sizes[0].height() / 2);
         return new Rect[] {sizes[0]};
     }
 
@@ -88,18 +91,32 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         // Make sure the child index is valid
         checkChildIndex(index);
 
-        // Get the sizes and the total height
+        // Get the sizes and the centers
         Rect[] sizes = getSizes(maxWidth, maxHeight);
-        final int totalHeight = Math.max(sizes[1].height(), sizes[2].height());
+        Point center_one = getChild(0).getCenter(sizes[1].width(), sizes[1].height());
+        Point center_two = getChild(1).getCenter(sizes[2].width(), sizes[2].height());
+        final int centerY = Math.max(center_one.y, center_two.y);
         
         // Translate the operand's bounding box
         if(index == 0)
-            sizes[1].offsetTo(0, (totalHeight - sizes[1].height()) / 2);
+            sizes[1].offsetTo(0, centerY-center_one.y);
         else
-            sizes[2].offsetTo(sizes[0].width() + sizes[1].width(), (totalHeight - sizes[2].height()) / 2);
+            sizes[2].offsetTo(sizes[0].width() + sizes[1].width(), centerY - center_two.y);
+        
+        this.getCenter(maxWidth, maxHeight).y = this.getCenter(maxWidth, maxHeight).y + centerY-center_two.y;
+        
+        
 
         // Return the requested bounding box
         return sizes[index + 1];
+    }
+    
+    @Override
+    public Point getCenter(int maxWidth, int maxHeight)
+    {
+    	Rect bounding_vertical = this.getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
+    	Rect bounding_horizontal = this.getBoundingBox(maxWidth, maxHeight);
+    	return new Point(bounding_horizontal.centerX(), bounding_vertical.centerY());
     }
     
     @Override

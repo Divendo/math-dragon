@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.exceptions.NotConstantException;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 
 public class MathOperationPower extends MathBinaryOperation
@@ -98,7 +99,7 @@ public class MathOperationPower extends MathBinaryOperation
         Rect[] sizes = getChildrenSize(maxWidth, maxHeight);
         
         // Return a bounding box, containing the bounding boxes of the children
-        return new Rect(0, 0, sizes[0].width() + sizes[1].width(), sizes[0].height() + sizes[1].height() * 2);
+        return new Rect(0, 0, sizes[0].width() + sizes[1].width(), sizes[0].height() + sizes[1].height());
     }
 	
 	@Override
@@ -117,6 +118,16 @@ public class MathOperationPower extends MathBinaryOperation
 		// Return the right bounding box
 		return childrenSize[index];
 	}
+	
+	//We regard the base operand as the vertical center of the mathObject
+	//
+	@Override
+    public Point getCenter(int maxWidth, int maxHeight)
+    {
+    	Rect bounding_vertical = this.getChildBoundingBox(0, maxWidth, maxHeight);
+    	Rect bounding_horizontal = this.getBoundingBox(maxWidth, maxHeight);
+    	return new Point(bounding_horizontal.centerX(), bounding_vertical.centerY());
+    }
 
 	@Override
 	public void draw(Canvas canvas, int maxWidth, int maxHeight) 

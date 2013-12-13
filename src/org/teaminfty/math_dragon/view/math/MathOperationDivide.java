@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.exceptions.NotConstantException;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 
 /** This class draws binary operations that are written linear.
@@ -103,12 +104,15 @@ public class MathOperationDivide extends MathBinaryOperation
 
         // Get the sizes and the total height
         Rect[] sizes = getSizes(maxWidth, maxHeight);
+        Point center_one = getChild(0).getCenter(sizes[1].width(), sizes[1].height());
+        Point center_two = getChild(1).getCenter(sizes[2].width(), sizes[2].height());
+        Point center_this = this.getCenter(maxWidth, maxHeight);
         
         // Translate the operand's bounding box
         if(index == 0)
-            sizes[1].offsetTo((sizes[0].width() - sizes[1].width()) / 2, 0);
+            sizes[1].offsetTo(center_this.x - center_one.x, 0);
         else
-            sizes[2].offsetTo((sizes[0].width() - sizes[2].width()) / 2, sizes[0].height() + sizes[1].height());
+            sizes[2].offsetTo(center_this.x - center_two.x, sizes[0].height() + sizes[1].height());
 
         // Return the requested bounding box
         return sizes[index + 1];
