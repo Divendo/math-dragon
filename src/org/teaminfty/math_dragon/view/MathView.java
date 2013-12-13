@@ -3,7 +3,6 @@ package org.teaminfty.math_dragon.view;
 import java.util.ArrayDeque;
 
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.R.dimen;
 import org.teaminfty.math_dragon.view.fragments.MathShadow;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
@@ -324,8 +323,8 @@ public class MathView extends View
             }
         }
     }
-    
-    /** Makes a {@link MathObject} the child of antoher {@link MathObject}, while correctly placing / removing parentheses
+
+	/** Makes a {@link MathObject} the child of antoher {@link MathObject}, while correctly placing / removing parentheses
      * @param parent The {@link MathObject} that is to become the parent
      * @param child The {@link MathObject} that is to become the child
      * @param index The index where the child should be placed

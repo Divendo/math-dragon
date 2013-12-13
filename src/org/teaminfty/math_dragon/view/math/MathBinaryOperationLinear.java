@@ -27,6 +27,11 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
     {
         super(defWidth, defHeight);
     }
+    
+    public MathBinaryOperationLinear(MathObject left, MathObject right, int defWidth, int defHeight)
+    {
+    	super(left, right, defWidth, defHeight);
+    }
 
     /**
      * Returns the sizes of the bounding boxes.

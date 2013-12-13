@@ -85,7 +85,7 @@ public class TestModelHelper
 		lc.setFactor(3);
 		MathConstant rc = new MathConstant(0, 0);
 		rc.setFactor(1);
-		rc.setePow(1);
+		rc.setEPow(1);
 		MathOperationMultiply m = new MathOperationMultiply(0, 0);
 		m.set(lc, rc);
 		MathObject result = ModelHelper.toMathObject(m.eval(), 0, 0);
@@ -99,7 +99,7 @@ public class TestModelHelper
 		lc.setFactor(4);
 		MathConstant rc = new MathConstant(0, 0);
 		rc.setFactor(2);
-		rc.setiPow(1);
+		rc.setIPow(1);
 		MathOperationMultiply m = new MathOperationMultiply(0, 0);
 		m.set(lc, rc);
 		MathObject result = ModelHelper.toMathObject(m.eval(), 0, 0);

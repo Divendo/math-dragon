@@ -6,7 +6,6 @@ import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -28,6 +27,11 @@ public class MathOperationDivide extends MathBinaryOperation
     public MathOperationDivide(int defWidth, int defHeight)
     {
         super(defWidth, defHeight);
+    }
+    
+    public MathOperationDivide(MathObject left, MathObject right, int defWidth, int defHeight)
+    {
+    	super(left, right, defWidth, defHeight);
     }
 
     @Override

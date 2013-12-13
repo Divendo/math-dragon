@@ -1,8 +1,6 @@
 package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.R.id;
-import org.teaminfty.math_dragon.R.layout;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.math.MathObject;
 

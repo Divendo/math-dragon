@@ -40,18 +40,9 @@ public final class ModelHelper
 		if(expr.isAST())
 		{
 			AST ast = (AST) expr;
-			if(expr.isPlus())
-			{
-				return toOpAdd(ast, w, h);
-			}
-			else if (expr.isTimes())
-			{
-				return toOpMul(ast, w, h);
-			}
-			else if (expr.isPower())
-			{
-				return toOpPow(ast, w, h);
-			}
+			if(expr.isPlus()) return toOpAdd(ast, w, h);
+			if (expr.isTimes()) return toOpMul(ast, w, h);
+			if (expr.isPower()) return toOpPow(ast, w, h);
 		}
 		else if (expr.isInteger())
 		{
@@ -62,10 +53,7 @@ public final class ModelHelper
 		else if(expr.isFraction())
 		{
 		    IRational rational = (IRational) expr;
-		    MathOperationDivide div = new MathOperationDivide(w, h);
-		    div.setChild(0, new MathConstant(Long.toString(rational.getNumerator().longValue()), w, h));
-            div.setChild(1, new MathConstant(Long.toString(rational.getDenominator().longValue()), w, h));
-            return div;
+		    return new MathOperationDivide(new MathConstant(Long.toString(rational.getNumerator().longValue()), w, h), new MathConstant(Long.toString(rational.getDenominator().longValue()), w, h), w, h);
 		}
         else if(expr instanceof Symbol)
         {
@@ -79,12 +67,12 @@ public final class ModelHelper
             }
             else if(s.equals(F.E))
             {
-                c.setePow(1);
+                c.setEPow(1);
                 return c;
             }
             else if(s.equals(F.I))
             {
-                c.setiPow(1);
+                c.setIPow(1);
                 return c;
             }
         }
@@ -105,11 +93,8 @@ public final class ModelHelper
 			IExpr p = a.get(2), b;
 			if(p.isInteger())
 			{
-				if(p.isNegative())
-				{
-					return toOpDiv(ast.get(1), a.get(1), w, h);
-				}
-				else if((b = a.get(1)) instanceof Symbol)
+				if(p.isNegative()) return toOpDiv(ast.get(1), p, w, h);
+				if((b = a.get(1)) instanceof Symbol)
 				{
 					Symbol s = (Symbol) b;
 					MathConstant c = new MathConstant(w, h);
@@ -121,12 +106,12 @@ public final class ModelHelper
 					}
 					else if(s.equals(F.E))
 					{
-						c.setePow(((IInteger) p).longValue());
+						c.setEPow(((IInteger) p).longValue());
 						return c;
 					}
 					else if(s.equals(F.I))
 					{
-						c.setiPow(((IInteger) p).longValue());
+						c.setIPow(((IInteger) p).longValue());
 						return c;
 					}
 				}
@@ -137,15 +122,11 @@ public final class ModelHelper
 	
 	static MathObject toOpDiv(IExpr l, IExpr r, int w, int h) throws MathException
 	{
-		MathOperationDivide d = new MathOperationDivide(w, h);
-		d.set(toMathObject(l, w, h), toMathObject(r, w, h));
-		return d;
+		return new MathOperationDivide(toMathObject(l, w, h), toMathObject(r, w, h), w, h);
 	}
 	
 	static MathObject toOpPow(AST ast, int w, int h) throws MathException
 	{
-		MathOperationPower p = new MathOperationPower(w, h);
-		p.set(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h));
-		return p;
+		return new MathOperationPower(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h), w, h);
 	}
 }

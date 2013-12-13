@@ -6,7 +6,6 @@ import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -37,8 +36,7 @@ public class MathConstant extends MathObject
      */
     public MathConstant(int defWidth, int defHeight)
     { 
-        super(defWidth, defHeight);
-        initPaints();
+        this(0, 0, 0, 0, defWidth, defHeight);
     }
 
     /** Constructor, constructs with the given value
@@ -53,6 +51,24 @@ public class MathConstant extends MathObject
         readString(value);
     }
     
+    /** Construct mathematical constant using specified values for simplicity.
+     * @param factor The base number
+     * @param ePow The euler power
+     * @param piPow The pi power
+     * @param iPow The imaginary power
+     * @param defWidth The default width
+     * @param defHeight The default height
+     */
+    public MathConstant(long factor, long ePow, long piPow, long iPow, int defWidth, int defHeight)
+    {
+    	super(defWidth, defHeight);
+    	initPaints();
+    	this.factor = factor;
+    	this.ePow = ePow;
+    	this.piPow = piPow;
+    	this.iPow = iPow;
+    }
+    
     /** Initializes the paints */
     private void initPaints()
     {
@@ -63,10 +79,7 @@ public class MathConstant extends MathObject
     /** Resets the value of this constant */
     private void reset()
     {
-        setFactor(0);
-        setePow(0);
-        setPiPow(0);
-        setiPow(0);
+    	set(0, 0, 0, 0);
     }
     
     /** Used in {@link MathConstant#readString(String) readString()} to keep track of the current power type */
@@ -79,6 +92,7 @@ public class MathConstant extends MathObject
      * Note that this method does not much error detection, so passing invalid strings may result in undefined behaviour.
      * @param value The string representation of the constant
      */
+    // FIXME fails to parse if <tt>value</tt> equals <tt>Long.MIN_VALUE</tt>
     public void readString(String value)
     {
         // Reset the current values
@@ -109,12 +123,12 @@ public class MathConstant extends MathObject
                 // Check for constants
                 if(value.charAt(i) == 'i')
                 {
-                    setiPow(getiPow() + 1);
+                    setIPow(getIPow() + 1);
                     type = PowerType.i;
                 }
                 else if(value.charAt(i) == 'e')
                 {
-                    setePow(getePow() + 1);
+                    setEPow(getEPow() + 1);
                     type = PowerType.e;
                 }
                 // If you see a 'p', check if they mean 'pi'.
@@ -155,9 +169,9 @@ public class MathConstant extends MathObject
                     if(type == PowerType.factor)
                         setFactor((long) Math.pow(getFactor(), tempPow));
                     else if(type == PowerType.i)
-                        setiPow(getiPow() + tempPow - 1);
+                        setIPow(getIPow() + tempPow - 1);
                     else if(type == PowerType.e)
-                        setePow(getePow() + tempPow - 1);
+                        setEPow(getEPow() + tempPow - 1);
                     else if(type == PowerType.pi)
                         setPiPow(getPiPow() + tempPow - 1);
                 }
@@ -185,7 +199,7 @@ public class MathConstant extends MathObject
         
         // First add the width of the factor part
         String tmpStr = Long.toString(getFactor());
-        if((getPiPow() | getePow() | getiPow()) != 0)
+        if((getPiPow() | getEPow() | getIPow()) != 0)
         {
             if(getFactor() == 1)
                 tmpStr = "";
@@ -221,7 +235,7 @@ public class MathConstant extends MathObject
             }
             
             // Add the width of the E constant
-            if(getePow() != 0)
+            if(getEPow() != 0)
             {
                 // The e sign
                 tmpStr = "e";
@@ -230,16 +244,16 @@ public class MathConstant extends MathObject
                 out.bottom = Math.max(out.bottom, bounds.height());
                 
                 // The exponent
-                if(getePow() != 1)
+                if(getEPow() != 1)
                 {
-                    tmpStr = Long.toString(getePow());
+                    tmpStr = Long.toString(getEPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     out.right += bounds.width();
                 }
             }
             
             // Add the width of the imaginary unit
-            if(getiPow() != 0)
+            if(getIPow() != 0)
             {
                 // The i sign
                 tmpStr = "i";
@@ -248,9 +262,9 @@ public class MathConstant extends MathObject
                 out.bottom = Math.max(out.bottom, bounds.height());
                 
                 // The exponent
-                if(getiPow() != 1)
+                if(getIPow() != 1)
                 {
-                    tmpStr = Long.toString(getiPow());
+                    tmpStr = Long.toString(getIPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     out.right += bounds.width();
                 }
@@ -370,7 +384,7 @@ public class MathConstant extends MathObject
         String tmpStr = Long.toString(getFactor());
         Rect bounds = new Rect();
         boolean addMinusSign = false;
-        if((getPiPow() | getePow() | getiPow()) != 0)
+        if((getPiPow() | getEPow() | getIPow()) != 0)
         {
             if(getFactor() == 1)
                 tmpStr = "";
@@ -411,7 +425,7 @@ public class MathConstant extends MathObject
             }
             
             // Draw the E constant
-            if(getePow() != 0)
+            if(getEPow() != 0)
             {
                 // The E sign
                 tmpStr = (addMinusSign ? "-" : "") + "e";
@@ -421,9 +435,9 @@ public class MathConstant extends MathObject
                 tmpStr = "";
                 
                 // The exponent
-                if(getePow() != 1)
+                if(getEPow() != 1)
                 {
-                    tmpStr = Long.toString(getePow());
+                    tmpStr = Long.toString(getEPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
                     x += bounds.width();
@@ -434,7 +448,7 @@ public class MathConstant extends MathObject
             }
             
             // Draw the imaginary unit
-            if(getiPow() != 0)
+            if(getIPow() != 0)
             {
                 // The imaginary unit sign
                 tmpStr = (addMinusSign ? "-" : "") + "i";
@@ -444,9 +458,9 @@ public class MathConstant extends MathObject
                 tmpStr = "";
                 
                 // The exponent
-                if(getiPow() != 1)
+                if(getIPow() != 1)
                 {
-                    tmpStr = Long.toString(getiPow());
+                    tmpStr = Long.toString(getIPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
                     x += bounds.width();
@@ -470,10 +484,10 @@ public class MathConstant extends MathObject
         // Add the other constants and their powers
         if(getPiPow() != 0)
             result =F.Times(result, F.Power(F.Pi, getPiPow()));
-        if(getePow() != 0)
-            result = F.Times(result, F.Power(F.E, getePow()));
-        if(getiPow() != 0)
-            result = F.Times(result, F.Power(F.I, getiPow()));
+        if(getEPow() != 0)
+            result = F.Times(result, F.Power(F.E, getEPow()));
+        if(getIPow() != 0)
+            result = F.Times(result, F.Power(F.I, getIPow()));
         
         // Return the result
         return result;
@@ -488,7 +502,7 @@ public class MathConstant extends MathObject
         double result = getFactor();
         
         // If the power of the imaginary unit is even and not a multiple of four, we negate the value
-        if(getiPow() % 2 == 0 && getiPow() % 4 != 0)
+        if(getIPow() % 2 == 0 && getIPow() % 4 != 0)
             result *= -1;
         else
             throw new NotConstantException("Can't approximate the value of an imaginary constant.");
@@ -496,8 +510,8 @@ public class MathConstant extends MathObject
         // Add the constants PI and E
         if(getPiPow() != 0)
             result *= Math.pow(Math.PI, getPiPow());
-        if(getePow() != 0)
-            result *= Math.pow(Math.E, getePow());
+        if(getEPow() != 0)
+            result *= Math.pow(Math.E, getEPow());
         
         // Return the result
         return result;
@@ -522,55 +536,83 @@ public class MathConstant extends MathObject
         }
         
         // Add the constant E to the string
-        if(getePow() != 0)
+        if(getEPow() != 0)
         {
             str += "e";
-            if(getePow() != 1)
-                str += "^" + getePow();
+            if(getEPow() != 1)
+                str += "^" + getEPow();
         }
         
         // Add the imaginary unit to the string
-        if(getiPow() != 0)
+        if(getIPow() != 0)
         { 
             str += "i";
-            if(getiPow() != 1)
-                str += "^" + getiPow();
+            if(getIPow() != 1)
+                str += "^" + getIPow();
         }
         
         // Return the string
         return str;
     }
 
-	protected long getFactor() {
+    /** Retrieve the ground base number factor.
+     * @return The base number.
+     */
+	public long getFactor()
+	{
 		return factor;
 	}
 
-	public void setFactor(long factor) {
+	/** Assign the new factor to <tt>factor</tt>.
+	 * @param factor the new <tt>factor</tt>.
+	 */
+	public void setFactor(long factor)
+	{
 		this.factor = factor;
 	}
 
-	public long getPiPow() {
+	public long getPiPow()
+	{
 		return piPow;
 	}
 
-	public void setPiPow(long piPow) {
+	public void setPiPow(long piPow)
+	{
 		this.piPow = piPow;
 	}
 
-	public long getePow() {
+	public long getEPow()
+	{
 		return ePow;
 	}
 
-	public void setePow(long ePow) {
+	public void setEPow(long ePow)
+	{
 		this.ePow = ePow;
 	}
 
-	public long getiPow() {
+	public long getIPow()
+	{
 		return iPow;
 	}
 
-	public void setiPow(long iPow) {
+	public void setIPow(long iPow)
+	{
 		this.iPow = iPow;
 	}
-    
+
+	/**
+	 * Reset all numerical values to new specified values.
+	 * @param factor The new factor
+	 * @param ePow The new euler power
+	 * @param piPow The new pi power
+	 * @param iPow The new imaginary power
+	 */
+	public void set(long factor, long ePow, long piPow, long iPow)
+	{
+		setFactor(factor);
+		setEPow(ePow);
+		setPiPow(piPow);
+		setIPow(iPow);
+	}
 }

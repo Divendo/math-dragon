@@ -359,7 +359,11 @@ public abstract class MathObject
     	return Color.BLACK;
     }
     
-    //Returns the center of the mathObject
+    /** Returns the centre of the {@link MathObject}
+     * @param maxWidth The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     * @param maxHeight The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     * @return The centre of the {@link MathObject}
+     */
     public Point getCenter(int maxWidth, int maxHeight)
     {
     	Rect bounding = this.getBoundingBox(maxWidth, maxHeight);

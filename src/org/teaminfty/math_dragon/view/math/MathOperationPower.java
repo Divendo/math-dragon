@@ -6,8 +6,6 @@ import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
@@ -16,6 +14,11 @@ public class MathOperationPower extends MathBinaryOperation
 	public MathOperationPower(int defWidth, int defHeight)
 	{
 		super(defWidth, defHeight);
+	}
+	
+	public MathOperationPower(MathObject base, MathObject power, int defWidth, int defHeight)
+	{
+		super(base, power, defWidth, defHeight);
 	}
     
     @Override
@@ -120,7 +123,6 @@ public class MathOperationPower extends MathBinaryOperation
 	}
 	
 	//We regard the base operand as the vertical center of the mathObject
-	//
 	@Override
     public Point getCenter(int maxWidth, int maxHeight)
     {

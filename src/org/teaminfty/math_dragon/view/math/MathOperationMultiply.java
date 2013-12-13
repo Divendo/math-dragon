@@ -6,8 +6,6 @@ import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class MathOperationMultiply extends MathBinaryOperationLinear
@@ -15,11 +13,9 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
     public MathOperationMultiply(int defWidth, int defHeight)
     { super(defWidth, defHeight); }
     
-    public MathOperationMultiply(MathObject A, MathObject B, int defWidth, int defHeight)
+    public MathOperationMultiply(MathObject left, MathObject right, int defWidth, int defHeight)
     { 
-        super(defWidth, defHeight);
-        this.setChild(0, A);
-        this.setChild(1, B);
+        super(left, right, defWidth, defHeight);
     }
 
     @Override
