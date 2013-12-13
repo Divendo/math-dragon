@@ -4,6 +4,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -65,7 +66,7 @@ public class MathOperationDivide extends MathBinaryOperation
             // Determine the maximum height for each operand
             final int totalHeight = topSize.height() + operatorHeight + bottomSize.height();
             final float heightFactor = maxHeight == NO_MAXIMUM ? 1.0f : (float) (maxHeight) / totalHeight;
-            final float widthFactor = maxWidth == NO_MAXIMUM ?.0f : (float)(maxWidth)/ Math.max(topSize.width(), bottomSize.width());
+            final float widthFactor = maxWidth == NO_MAXIMUM ? 1.0f : (float)(maxWidth)/ Math.max(topSize.width(), bottomSize.width());
             final float factor = Math.min(heightFactor, widthFactor);
             
             // Set the new sizes
@@ -118,7 +119,7 @@ public class MathOperationDivide extends MathBinaryOperation
         Rect[] sizes = getSizes(maxWidth, maxHeight);
         
         // Return a bounding box, containing the bounding boxes of the children
-        return new Rect(0, 0, sizes[0].width() + sizes[1].width() + sizes[2].width(), sizes[0].height()*2 + sizes[1].height() + sizes[2].height());
+        return new Rect(0, 0, sizes[0].width(), sizes[0].height() + sizes[1].height() + sizes[2].height());
     }
     
     @Override
@@ -146,6 +147,13 @@ public class MathOperationDivide extends MathBinaryOperation
     {
         // Get the bounding boxes
         final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
+
+        Paint tmp = new Paint();
+        tmp.setColor(Color.GREEN);
+        canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
+        tmp.setColor(Color.RED);
+        for(int i = 0; i < getChildCount(); ++i)
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);
         
         // Draw the operator
         canvas.save();

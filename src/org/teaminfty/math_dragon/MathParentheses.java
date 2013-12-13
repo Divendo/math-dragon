@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon;
 import org.matheclipse.core.interfaces.IExpr;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -125,6 +126,13 @@ public class MathParentheses extends MathObject
     @Override
     public void draw(Canvas canvas, int maxWidth, int maxHeight)
     {
+        Paint tmp = new Paint();
+        tmp.setColor(Color.GREEN);
+        canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
+        tmp.setColor(Color.RED);
+        for(int i = 0; i < getChildCount(); ++i)
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);
+        
         // Get the operator bounding boxes
         Rect[] boxes = getOperatorBoundingBoxes(maxWidth, maxHeight);
         

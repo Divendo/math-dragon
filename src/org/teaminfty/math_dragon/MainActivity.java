@@ -1,10 +1,14 @@
 package org.teaminfty.math_dragon;
 
+import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.interfaces.IExpr;
+
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,27 +75,38 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     }
     public void evaluate(View view)
     {
-        // Get the DrawerLayout object
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        
-        // Show the evaluation drawer
-        drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-       
-        // TODO: Evaluate the MathObject in the drawing space, and display the resulting constant
-        FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
-        
-        MathOperationAdd add = new MathOperationAdd(100, 100);
-        add.setChild(0, new MathConstant("20", 100, 100));
-        add.setChild(1, new MathConstant("5", 100, 100));
-        
-        MathOperationSubtract subtract = new MathOperationSubtract(100, 100);
-        subtract.setChild(0, add);
-        subtract.setChild(1, new MathConstant("4", 100, 100));
+        try
+        {
+            // Calculate the answer
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+            long start = System.currentTimeMillis();
+            IExpr a = fragmentMainScreen.getMathObject().eval();
+            long between = System.currentTimeMillis();
+            IExpr result = EvalEngine.eval(a);
+            long end = System.currentTimeMillis();
+            Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
+            
+            // The default size for a MathObject
+            final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
+           
+            // Get the evaluation fragment and show the result
+            FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
+            fragmentEvaluation.showMathObject(ModelHelper.toMathObject(result, defSize, defSize));
 
-        MathOperationMultiply multiply = new MathOperationMultiply(100, 100);
-        multiply.setChild(0, new MathConstant("2", 100, 100));
-        multiply.setChild(1, subtract);
-        fragmentEvaluation.showMathObject(multiply);
+            // Get the DrawerLayout object and open the drawer
+            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+            drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
+        }
+        catch(EmptyChildException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch(MathException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     public void approximate(View view)

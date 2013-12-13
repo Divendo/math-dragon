@@ -51,4 +51,12 @@ public class FragmentMainScreen extends Fragment
         mathView.setMathObject(null);
         mathView.invalidate();
     }
+    
+    /** Returns the current {@link MathObject}
+     * @return The current {@link MathObject} */
+    public MathObject getMathObject()
+    {
+        MathView mathView = (MathView) getView().findViewById(R.id.mathView);
+        return mathView.getMathObject();
+    }
 }

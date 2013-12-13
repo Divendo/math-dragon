@@ -4,6 +4,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
@@ -50,7 +51,7 @@ public class MathOperationRoot extends MathBinaryOperation
         // We'll need 3 bounding boxes to contain the operator
         return new Rect[] {
                 new Rect(0, sizes[0].height(), 7 * sizes[0].width() / 5, sizes[0].height() + sizes[1].height()),
-                new Rect(sizes[0].width(), 0, 7 * sizes[0].width() / 5, sizes[0].height() / 2),
+                new Rect(sizes[0].width(), 0, 7 * sizes[0].width() / 5, sizes[0].height()),
                 new Rect(7 * sizes[0].width() / 5, 0, sizes[0].width() + sizes[1].width(), sizes[0].height() / 2)
             };
     }
@@ -126,6 +127,13 @@ public class MathOperationRoot extends MathBinaryOperation
     {
         // Get the bounding boxes
         final Rect[] childSize = getChildrenSize(maxWidth, maxHeight);
+
+        Paint tmp = new Paint();
+        tmp.setColor(Color.GREEN);
+        canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
+        tmp.setColor(Color.RED);
+        for(int i = 0; i < getChildCount(); ++i)
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);
         
         // Draw the operator
         canvas.save();
