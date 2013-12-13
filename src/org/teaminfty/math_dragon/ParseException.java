@@ -7,21 +7,26 @@ package org.teaminfty.math_dragon;
  *
  */
 
-public class ParseException extends MathException {
+public class ParseException extends MathException
+{
 	private static final long serialVersionUID = -5061683875213406313L;
 
-	public ParseException() {
+	public ParseException()
+	{
 	}
 
-	public ParseException(String message) {
+	public ParseException(String message) 
+	{
 		super(message);
 	}
 
-	public ParseException(Throwable cause) {
+	public ParseException(Throwable cause)
+	{
 		super(cause);
 	}
 
-	public ParseException(String message, Throwable cause) {
+	public ParseException(String message, Throwable cause)
+	{
 		super(message, cause);
 	}
 }

@@ -1,6 +1,8 @@
 package org.teaminfty.math_dragon;
 
 import org.matheclipse.core.expression.AST;
+import org.matheclipse.core.expression.F;
+import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 
@@ -12,28 +14,8 @@ import org.matheclipse.core.interfaces.IInteger;
  * @author Folkert van Verseveld
  *
  */
-
-public final class ModelHelper {
-	static MathObject toOpAdd(AST ast, int w, int h) throws MathException {
-		return new MathOperationAdd(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h), w, h);
-	}
-	
-	static MathObject toOpMul(AST ast, int w, int h) throws MathException {
-		return new MathOperationMultiply(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h), w, h);
-	}
-	
-	static MathObject toOpDiv(AST ast, int w, int h) throws MathException {
-		MathOperationDivide d = new MathOperationDivide(w, h);
-		d.set(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h));
-		return d;
-	}
-	
-	static MathObject toOpPow(AST ast, int w, int h) throws MathException {
-		MathOperationPower p = new MathOperationPower(w, h);
-		p.set(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h));
-		return p;
-	}
-	
+public final class ModelHelper
+{
 	/**
 	 * Convert a mathematical expression from symja to a graphical viewer that
 	 * contains the mathematical expression.
@@ -44,21 +26,88 @@ public final class ModelHelper {
 	 * @return A viewer that contains <tt>expr</tt>.
 	 * @throws MathException Thrown when conversion is impossible.
 	 */
-	public static MathObject toMathObject(IExpr expr, int w, int h) throws MathException {
-		if (expr.isAST()) {
+	public static MathObject toMathObject(IExpr expr, int w, int h) throws MathException
+	{
+		if(expr.isAST())
+		{
 			AST ast = (AST) expr;
-			if (expr.isPlus()) {
+			if(expr.isPlus())
+			{
 				return toOpAdd(ast, w, h);
-			} else if (expr.isTimes()) {
+			}
+			else if (expr.isTimes())
+			{
 				return toOpMul(ast, w, h);
-			} else if (expr.isPower()) {
+			}
+			else if (expr.isPower())
+			{
 				return toOpPow(ast, w, h);
 			}
-		} else if (expr.isInteger()) {
+		}
+		else if (expr.isInteger())
+		{
 			MathConstant c = new MathConstant(w, h);
 			c.factor = ((IInteger) expr).longValue();
 			return c;
 		}
 		throw new ParseException();
+	}
+	
+	static MathObject toOpAdd(AST ast, int w, int h) throws MathException
+	{
+		return new MathOperationAdd(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h), w, h);
+	}
+	
+	static MathObject toOpMul(AST ast, int w, int h) throws MathException
+	{
+		IExpr r = ast.get(2);
+		if(r.isPower())
+		{
+			AST a = (AST) r;
+			IExpr p = a.get(2), b;
+			if(p.isInteger())
+			{
+				if(p.isNegative())
+				{
+					return toOpDiv(ast.get(1), p, w, h);
+				}
+				else if((b = a.get(1)) instanceof Symbol)
+				{
+					Symbol s = (Symbol) b;
+					MathConstant c = new MathConstant(w, h);
+					c.factor = 1;
+					if(s.equals(F.Pi))
+					{
+						c.piPow = ((IInteger) p).longValue();
+						return c;
+					}
+					else if(s.equals(F.E))
+					{
+						c.ePow = ((IInteger) p).longValue();
+						return c;
+					}
+					else if(s.equals(F.I))
+					{
+						c.iPow = ((IInteger) p).longValue();
+						return c;
+					}
+				}
+			}
+		}
+		return new MathOperationMultiply(toMathObject(ast.get(1), w, h), toMathObject(r, w, h), w, h);
+	}
+	
+	static MathObject toOpDiv(IExpr l, IExpr r, int w, int h) throws MathException
+	{
+		MathOperationDivide d = new MathOperationDivide(w, h);
+		d.set(toMathObject(l, w, h), toMathObject(r, w, h));
+		return d;
+	}
+	
+	static MathObject toOpPow(AST ast, int w, int h) throws MathException
+	{
+		MathOperationPower p = new MathOperationPower(w, h);
+		p.set(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h));
+		return p;
 	}
 }
