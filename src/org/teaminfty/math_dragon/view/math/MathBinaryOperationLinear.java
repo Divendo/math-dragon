@@ -56,17 +56,16 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         {
             // Determine the maximum width for each operand
             final int totalWidth = leftSize.width() + operatorSize + rightSize.width();
-            final int leftMax = maxWidth * leftSize.width() / totalWidth;
-            final int rightMax = maxWidth * rightSize.width() / totalWidth;
+            final float factor = ((float)(maxWidth))/((float)(totalWidth));
             
             // Set the new sizes
-            leftSize.set(0, 0, leftMax, leftMax * leftSize.height() / leftSize.width());
-            rightSize.set(0, 0, rightMax, rightMax * rightSize.height() / rightSize.width());
+            leftSize.set(0, 0, (int)(leftSize.width()*factor), (int)(leftSize.height()*factor));
+            rightSize.set(0, 0, (int)(rightSize.width()*factor), (int)(rightSize.height()*factor));
             
             // Calculate the new operator size
             operatorSize = Math.min(leftSize.height(), rightSize.height()) * 2 / 3;
-        }
-
+       }
+      
         // Return the sizes
         return new Rect[] {new Rect(0, 0, operatorSize, operatorSize), leftSize, rightSize};
     }
@@ -95,6 +94,7 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         Rect[] sizes = getSizes(maxWidth, maxHeight);
         Point center_one = getChild(0).getCenter(sizes[1].width(), sizes[1].height());
         Point center_two = getChild(1).getCenter(sizes[2].width(), sizes[2].height());
+        final int centerX = this.getCenter(maxWidth,maxHeight).x;
         final int centerY = Math.max(center_one.y, center_two.y);
         
         // Translate the operand's bounding box
@@ -104,8 +104,6 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
             sizes[2].offsetTo(sizes[0].width() + sizes[1].width(), centerY - center_two.y);
         
         this.getCenter(maxWidth, maxHeight).y = this.getCenter(maxWidth, maxHeight).y + centerY-center_two.y;
-        
-        
 
         // Return the requested bounding box
         return sizes[index + 1];
