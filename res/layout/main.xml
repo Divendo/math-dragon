@@ -6,21 +6,21 @@
 
     <fragment
         android:id="@+id/fragmentMainScreen"
-        android:name="org.teaminfty.math_dragon.FragmentMainScreen"
+        android:name="org.teaminfty.math_dragon.view.fragments.FragmentMainScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_main_screen" />
 
     <fragment
         android:id="@+id/fragmentOperationDrawer"
-        android:name="org.teaminfty.math_dragon.FragmentOperationsSource"
+        android:name="org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource"
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="left" />
     
     <fragment 
         android:id="@+id/fragmentEvaluation"
-        android:name="org.teaminfty.math_dragon.FragmentEvaluation"
+        android:name="org.teaminfty.math_dragon.view.fragments.FragmentEvaluation"
         android:layout_width="@dimen/drawer_width"
         android:layout_height="@dimen/drawer_height"
         android:layout_marginBottom="@dimen/margin_evaluate" 

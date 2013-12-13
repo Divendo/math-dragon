@@ -1,4 +1,6 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
+
+import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 
 /**
  * This class draws binary operations and provides simply functions to modify

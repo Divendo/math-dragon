@@ -10,14 +10,14 @@
         android:layout_height="wrap_content"
         android:weightSum="2" >
 
-        <org.teaminfty.math_dragon.MathSourceView
+        <org.teaminfty.math_dragon.view.MathSourceView
             android:id="@+id/mathSourceAdd"
         	style="@style/MathSourceView"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/math_source_height" />
 
-        <org.teaminfty.math_dragon.MathSourceView
+        <org.teaminfty.math_dragon.view.MathSourceView
             android:id="@+id/mathSourceSubtract"
         	style="@style/MathSourceView"
             android:layout_width="0dp"
@@ -31,14 +31,14 @@
         android:layout_height="wrap_content"
         android:weightSum="2" >
 
-        <org.teaminfty.math_dragon.MathSourceView
+        <org.teaminfty.math_dragon.view.MathSourceView
             android:id="@+id/mathSourceMultiply"
         	style="@style/MathSourceView"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/math_source_height" />
         
-        <org.teaminfty.math_dragon.MathSourceView
+        <org.teaminfty.math_dragon.view.MathSourceView
             android:id="@+id/mathSourceDivide"
         	style="@style/MathSourceView"
             android:layout_width="0dp"
@@ -52,14 +52,14 @@
         android:layout_height="wrap_content"
         android:weightSum="2" >
 
-        <org.teaminfty.math_dragon.MathSourceView
+        <org.teaminfty.math_dragon.view.MathSourceView
             android:id="@+id/mathSourcePower"
         	style="@style/MathSourceView"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="@dimen/math_source_height" />
         
-        <org.teaminfty.math_dragon.MathSourceView
+        <org.teaminfty.math_dragon.view.MathSourceView
             android:id="@+id/mathSourceRoot"
         	style="@style/MathSourceView"
             android:layout_width="0dp"

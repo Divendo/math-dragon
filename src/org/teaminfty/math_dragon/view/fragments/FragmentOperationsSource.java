@@ -1,6 +1,18 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.R.dimen;
+import org.teaminfty.math_dragon.R.id;
+import org.teaminfty.math_dragon.R.layout;
+import org.teaminfty.math_dragon.view.MathSourceView;
+import org.teaminfty.math_dragon.view.MathSourceView.DragStartedListener;
+import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.MathOperationAdd;
+import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
+import org.teaminfty.math_dragon.view.math.MathOperationPower;
+import org.teaminfty.math_dragon.view.math.MathOperationRoot;
+import org.teaminfty.math_dragon.view.math.MathOperationSubtract;
 
 import android.app.Fragment;
 import android.os.Bundle;

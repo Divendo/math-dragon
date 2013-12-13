@@ -1,4 +1,6 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.exceptions;
+
+import org.teaminfty.math_dragon.view.math.MathObject;
 
 /**
  * An exception that is thrown when a {@link MathObject} is expected to be

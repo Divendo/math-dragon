@@ -1,4 +1,4 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
 
 /** A class that holds constants for the precedence levels of the {@link MathObject}s */
 public abstract class MathObjectPrecedence

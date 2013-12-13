@@ -1,6 +1,15 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view;
 
 import java.util.ArrayDeque;
+
+import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.R.dimen;
+import org.teaminfty.math_dragon.view.fragments.MathShadow;
+import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
+import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathParentheses;
 
 import android.app.AlertDialog;
 import android.content.Context;

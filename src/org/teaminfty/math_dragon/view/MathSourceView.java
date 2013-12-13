@@ -1,6 +1,10 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view;
 
 import java.lang.reflect.InvocationTargetException;
+
+import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.fragments.MathShadow;
+import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.content.ClipData;
 import android.content.Context;

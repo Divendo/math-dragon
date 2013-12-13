@@ -1,4 +1,4 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
 
 import android.graphics.Paint;
 import android.graphics.Rect;

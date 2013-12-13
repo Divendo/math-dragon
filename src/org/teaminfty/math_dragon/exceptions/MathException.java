@@ -1,4 +1,5 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.exceptions;
+
 
 /**
  * Thrown to indicate a mathematical evaluation/operation/assertion has failed.

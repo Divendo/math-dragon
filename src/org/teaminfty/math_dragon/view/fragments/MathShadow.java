@@ -1,4 +1,7 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.fragments;
+
+import org.teaminfty.math_dragon.view.HoverState;
+import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.graphics.Canvas;
 import android.graphics.Point;

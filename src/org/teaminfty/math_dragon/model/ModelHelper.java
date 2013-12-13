@@ -1,4 +1,4 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.model;
 
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
@@ -6,6 +6,14 @@ import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.IRational;
+import org.teaminfty.math_dragon.exceptions.MathException;
+import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.MathOperationAdd;
+import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
+import org.teaminfty.math_dragon.view.math.MathOperationPower;
 
 /**
  * Hack helper class that communicates as a wrapper between our model and the
@@ -48,7 +56,7 @@ public final class ModelHelper
 		else if (expr.isInteger())
 		{
 			MathConstant c = new MathConstant(w, h);
-			c.factor = ((IInteger) expr).longValue();
+			c.setFactor(((IInteger) expr).longValue());
 			return c;
 		}
 		else if(expr.isFraction())
@@ -63,20 +71,20 @@ public final class ModelHelper
         {
             Symbol s = (Symbol) expr;
             MathConstant c = new MathConstant(w, h);
-            c.factor = 1;
+            c.setFactor(1);
             if(s.equals(F.Pi))
             {
-                c.piPow = 1;
+                c.setPiPow(1);
                 return c;
             }
             else if(s.equals(F.E))
             {
-                c.ePow = 1;
+                c.setePow(1);
                 return c;
             }
             else if(s.equals(F.I))
             {
-                c.iPow = 1;
+                c.setiPow(1);
                 return c;
             }
         }
@@ -105,20 +113,20 @@ public final class ModelHelper
 				{
 					Symbol s = (Symbol) b;
 					MathConstant c = new MathConstant(w, h);
-					c.factor = 1;
+					c.setFactor(1);
 					if(s.equals(F.Pi))
 					{
-						c.piPow = ((IInteger) p).longValue();
+						c.setPiPow(((IInteger) p).longValue());
 						return c;
 					}
 					else if(s.equals(F.E))
 					{
-						c.ePow = ((IInteger) p).longValue();
+						c.setePow(((IInteger) p).longValue());
 						return c;
 					}
 					else if(s.equals(F.I))
 					{
-						c.iPow = ((IInteger) p).longValue();
+						c.setiPow(((IInteger) p).longValue());
 						return c;
 					}
 				}

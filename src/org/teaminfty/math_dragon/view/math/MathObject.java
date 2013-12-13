@@ -1,8 +1,11 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
 
 import java.util.ArrayList;
 
 import org.matheclipse.core.interfaces.IExpr;
+import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.exceptions.NotConstantException;
+import org.teaminfty.math_dragon.view.HoverState;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

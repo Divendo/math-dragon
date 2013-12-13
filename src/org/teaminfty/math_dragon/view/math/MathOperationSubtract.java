@@ -1,39 +1,34 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-public class MathOperationMultiply extends MathBinaryOperationLinear
+public class MathOperationSubtract extends MathBinaryOperationLinear
 {
-    public MathOperationMultiply(int defWidth, int defHeight)
+    public MathOperationSubtract(int defWidth, int defHeight)
     { super(defWidth, defHeight); }
-    
-    public MathOperationMultiply(MathObject A, MathObject B, int defWidth, int defHeight)
-    { 
-        super(defWidth, defHeight);
-        this.setChild(0, A);
-        this.setChild(1, B);
-    }
 
     @Override
     public int getPrecedence()
-    { return MathObjectPrecedence.MULTIPLY; }
+    { return MathObjectPrecedence.ADD; }
     
-     @Override
+    @Override
     public IExpr eval() throws EmptyChildException
     {
         // Check if the children are not empty
         this.checkChildren();
         
         // Return the result
-        return F.Times(getChild(0).eval(), getChild(1).eval());
+        return F.Subtract(getChild(0).eval(), getChild(1).eval());
     }
-     
+
     @Override
     public double approximate() throws NotConstantException, EmptyChildException
     {
@@ -41,7 +36,7 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
         this.checkChildren();
         
         // Return the result
-        return getChild(0).approximate() * getChild(1).approximate();
+        return getChild(0).approximate() - getChild(1).approximate();
     }
     
     @Override
@@ -58,11 +53,12 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
             canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);*/
         
         // Draw the operator
+        operator.inset(operator.width() / 10, operator.height() / 10);      // Padding
         canvas.save();
         canvas.translate(operator.left, operator.top);
+        operatorPaint.setStrokeWidth(operator.width() / 5);
         operatorPaint.setColor(this.getColor());
-        operatorPaint.setAntiAlias(true);
-        canvas.drawCircle(operator.width() / 2, operator.height() / 2, operator.width() / 7, operatorPaint);
+        canvas.drawLine(0, operator.height() / 2, operator.width(), operator.height() / 2, operatorPaint);
         canvas.restore();
         
         // Draw the children

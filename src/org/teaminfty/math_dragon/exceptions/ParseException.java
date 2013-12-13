@@ -1,4 +1,5 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.exceptions;
+
 
 /**
  * Thrown when <tt>ModelHelper</tt> couldn't parse a <tt>MathObject</tt> from
