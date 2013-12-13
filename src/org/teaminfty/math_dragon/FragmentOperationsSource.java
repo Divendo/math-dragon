@@ -1,4 +1,4 @@
-package org.teaminfty.math_dragon.view.fragments;
+package org.teaminfty.math_dragon;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.R.dimen;
