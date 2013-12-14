@@ -56,7 +56,6 @@ public class MathOperationDivide extends MathBinaryOperation
         
         // Calculate the height the operator wants to take
         int operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
-        
 
         // If we have no maximum height or it isn't breached, we're done
         if(maxHeight == NO_MAXIMUM || topSize.height()+ operatorHeight + bottomSize.height() < maxHeight )
@@ -92,9 +91,9 @@ public class MathOperationDivide extends MathBinaryOperation
          			bottomSize
          			};
         }
-        if( topSize.width() < maxWidth || bottomSize.width()<maxWidth)
+        if(topSize.width() < maxWidth || bottomSize.width() < maxWidth)
         {
-        	final float factor = maxWidth == NO_MAXIMUM ? 1.0f : (float)(maxWidth)/ Math.max(topSize.width(), bottomSize.width());
+        	final float factor = maxWidth == NO_MAXIMUM ? 1.0f : (float)(maxWidth) / Math.max(topSize.width(), bottomSize.width());
         	topSize.set(0,0, (int)(topSize.width()*factor), topSize.height());
         	bottomSize.set(0,0, (int)(bottomSize.width()*factor), bottomSize.height());
         }
@@ -169,15 +168,11 @@ public class MathOperationDivide extends MathBinaryOperation
     @Override
     public void draw(Canvas canvas, int maxWidth, int maxHeight)
     {
+        // Draw the bounding boxes
+        drawBoundingBoxes(canvas, maxWidth, maxHeight);
+        
         // Get the bounding boxes
         final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
-        /*
-        Paint tmp = new Paint();
-        tmp.setColor(Color.GREEN);
-        canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
-        tmp.setColor(Color.RED);
-        for(int i = 0; i < getChildCount(); ++i)
-            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);*/
         
         // Draw the operator
         canvas.save();

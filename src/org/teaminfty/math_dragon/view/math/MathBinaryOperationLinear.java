@@ -99,7 +99,6 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         Rect[] sizes = getSizes(maxWidth, maxHeight);
         Point center_one = getChild(0).getCenter(sizes[1].width(), sizes[1].height());
         Point center_two = getChild(1).getCenter(sizes[2].width(), sizes[2].height());
-        final int centerX = this.getCenter(maxWidth,maxHeight).x;
         final int centerY = Math.max(center_one.y, center_two.y);
         
         // Translate the operand's bounding box

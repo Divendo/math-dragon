@@ -9,6 +9,7 @@ import org.teaminfty.math_dragon.view.HoverState;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
@@ -368,5 +369,28 @@ public abstract class MathObject
     {
     	Rect bounding = this.getBoundingBox(maxWidth, maxHeight);
     	return new Point(bounding.centerX(), bounding.centerY());
+    }
+    
+    /** Whether or not to draw the bounding boxes */
+    private final static boolean DRAW_BOUNDING = false;
+    
+    /** Draws the bounding box and the bounding boxes of the children (for debug purposes).
+     * The boxes will only be drawn if {@link MathObject#DRAW_BOUNDING DRAW_BOUNDING} is set to true.
+     * @param canvas The canvas to draw on
+     * @param maxWidth The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     * @param maxHeight The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     */
+    protected void drawBoundingBoxes(Canvas canvas, int maxWidth, int maxHeight)
+    {
+        // Check if we should draw the bounding boxes
+        if(!DRAW_BOUNDING) return;
+
+        // Draw the bounding boxes
+        Paint paint = new Paint();
+        paint.setColor(0x4400ff00);
+        canvas.drawRect(getBoundingBox(maxWidth, maxHeight), paint);
+        paint.setColor(0x44ff0000);
+        for(int i = 0; i < getChildCount(); ++i)
+            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), paint);
     }
 }

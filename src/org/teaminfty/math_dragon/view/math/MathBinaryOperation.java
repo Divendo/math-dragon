@@ -2,9 +2,6 @@ package org.teaminfty.math_dragon.view.math;
 
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 
-import android.graphics.Point;
-import android.graphics.Rect;
-
 /**
  * This class draws binary operations and provides simply functions to modify
  * both mathematical expressions.

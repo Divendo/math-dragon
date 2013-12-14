@@ -45,15 +45,11 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
     @Override
     public void draw(Canvas canvas, int maxWidth, int maxHeight)
     {
+        // Draw the bounding boxes
+        drawBoundingBoxes(canvas, maxWidth, maxHeight);
+        
         // Get the bounding box
         final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
-
-        /*Paint tmp = new Paint();
-        tmp.setColor(Color.GREEN);
-        canvas.drawRect(getBoundingBox(maxWidth, maxHeight), tmp);
-        tmp.setColor(Color.RED);
-        for(int i = 0; i < getChildCount(); ++i)
-            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), tmp);*/
         
         // Draw the operator
         canvas.save();
