@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon.model;
 
 import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
 import org.teaminfty.math_dragon.view.math.MathOperationSubtract;
@@ -27,9 +28,20 @@ public class ParenthesesHelper
                 return;
             }
         }
-        // Special case: the subtract operator
+        // Special case: the second operand of the subtract operator
         else if(parent instanceof MathOperationSubtract && index == 1 && parent.getPrecedence() == child.getPrecedence())
             child = new MathParentheses(child);
+        // Special case: the exponent in the power operator
+        else if(parent instanceof MathOperationPower && index == 1)
+        {
+            if(child instanceof MathOperationPower)
+                child = new MathParentheses(child);
+            else if(child instanceof MathParentheses && !(child.getChild(0) instanceof MathOperationPower))
+            {
+                makeChild(parent, child.getChild(0), index);
+                return;
+            }
+        }
         // Special case: the root operator (never place parentheses)
         else if(!(parent instanceof MathOperationRoot))
         {
