@@ -7,6 +7,7 @@ import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
+import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 
 import android.app.Activity;
