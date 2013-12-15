@@ -513,6 +513,20 @@ public class MathConstant extends MathObject
     }
     
     /**
+     * Check whether the current instance and <tt>o</tt> are identical. It is
+     * heavily called by unit test cases, so do not remove this method!
+     * @param o the instance to compare with
+     * @return <tt>true</tt> when equal, <tt>false</tt> otherwise.
+     */
+    public boolean equals(Object o)
+    {
+    	if (!(o instanceof MathConstant))
+    		return false;
+    	MathConstant c = (MathConstant) o;
+    	return c.factor == factor && c.ePow == ePow && c.piPow == piPow && c.iPow == iPow;
+    }
+    
+    /**
      * Gives the constant as a string (in the format that's supported by {@link MathConstant#readString(String) readString()}
      * @return The constant as a string
      */

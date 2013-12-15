@@ -28,6 +28,11 @@ public abstract class MathBinaryOperation extends MathObject
         set(left, right);
     }
     
+    public String toString()
+    {
+        return "(" + getLeft().toString() + "," + getRight().toString() + ")";
+    }
+    
     /**
      * Ensure both children are not empty. If at least one of them is empty,
      * <tt>EmptyChildException</tt> will be thrown with the empty index number.

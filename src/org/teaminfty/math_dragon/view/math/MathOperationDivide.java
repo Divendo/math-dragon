@@ -33,6 +33,11 @@ public class MathOperationDivide extends MathBinaryOperation
     {
     	super(left, right, defWidth, defHeight);
     }
+    
+    public String toString()
+    {
+        return "(" + getLeft().toString() + "/" + getRight().toString() + ")";
+    }
 
     @Override
     public int getPrecedence()
@@ -121,8 +126,8 @@ public class MathOperationDivide extends MathBinaryOperation
 
         // Get the sizes and the total height
         Rect[] sizes = getSizes(maxWidth, maxHeight);
-        Point center_one = getChild(0).getCenter(sizes[1].width(), sizes[1].height());
-        Point center_two = getChild(1).getCenter(sizes[2].width(), sizes[2].height());
+        Point center_one = getLeft().getCenter(sizes[1].width(), sizes[1].height());
+        Point center_two = getRight().getCenter(sizes[2].width(), sizes[2].height());
         Point center_this = this.getCenter(maxWidth, maxHeight);
         
         // Translate the operand's bounding box
@@ -152,7 +157,7 @@ public class MathOperationDivide extends MathBinaryOperation
         this.checkChildren();
         
         // Return the result
-        return F.Divide(getChild(0).eval(), getChild(1).eval());
+        return F.Divide(getLeft().eval(), getRight().eval());
     }
     
     @Override
@@ -162,7 +167,7 @@ public class MathOperationDivide extends MathBinaryOperation
         this.checkChildren();
         
         // Return the result
-        return getChild(0).approximate() / getChild(1).approximate();
+        return getLeft().approximate() / getRight().approximate();
     }
 
     @Override

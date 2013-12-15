@@ -20,6 +20,11 @@ public class MathOperationPower extends MathBinaryOperation
 	{
 		super(base, power, defWidth, defHeight);
 	}
+	
+	public String toString()
+	{
+	    return "(" + getLeft().toString() + "^" + getRight().toString() + ")";
+	}
     
     @Override
     public int getPrecedence()

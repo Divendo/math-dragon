@@ -17,6 +17,11 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
     { 
         super(left, right, defWidth, defHeight);
     }
+    
+    public String toString()
+    {
+        return "(" + getLeft().toString() + "*" + getRight().toString() + ")";
+    }
 
     @Override
     public int getPrecedence()

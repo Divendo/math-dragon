@@ -23,6 +23,10 @@ public class MathOperationAdd extends MathBinaryOperationLinear
     	super(left, right, defWidth, defHeight);
 	}
     
+    public String toString(){
+        return "(" + getLeft().toString() + "+" + getRight().toString() + ")";
+    }
+    
     @Override
     public int getPrecedence()
     { return MathObjectPrecedence.ADD; }
@@ -34,7 +38,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         this.checkChildren();
         
         // Return the result
-        return F.Plus(getChild(0).eval(), getChild(1).eval());
+        return F.Plus(getLeft().eval(), getRight().eval());
     }
 
     @Override
@@ -44,7 +48,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         this.checkChildren();
         
         // Return the result
-        return getChild(0).approximate() + getChild(1).approximate();
+        return getLeft().approximate() + getRight().approximate();
     }
 
 

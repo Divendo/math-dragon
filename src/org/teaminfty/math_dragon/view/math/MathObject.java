@@ -43,39 +43,6 @@ public abstract class MathObject
         defaultMaxWidth = defWidth;
         defaultMaxHeight = defHeight;
     }
-
-    /**
-     * Creates an instance of the right subclass of {@link MathObject} for the
-     * given {@link IExpr}
-     * 
-     * @param expr
-     *        The {@link IExpr} for which the instance of a subclass should be created
-     * @return The created instance
-     */
-    public static MathObject buildFromIExpr(IExpr expr)
-    {
-        // This function is simply an overload
-        return buildFromIExpr(expr, 100, 100);
-    }
-
-    /**
-     * Creates an instance of the right subclass of {@link MathObject} for the
-     * given {@link IExpr}
-     * 
-     * @param expr
-     *        The {@link IExpr} for which the instance of a subclass should be
-     *        created
-     * @param defWidth
-     *        The default maximum width
-     * @param defHeight
-     *        The default maximum height
-     * @return The created instance
-     */
-    public static MathObject buildFromIExpr(IExpr expr, int defWidth, int defHeight)
-    {
-        // TODO Unimplemented method
-        return null;
-    }
     
     /** Returns the precedence of this operation.
      * The highest precedence is 0, greater values are lower precedences.
