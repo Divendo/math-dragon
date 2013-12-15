@@ -6,6 +6,7 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.fragments.MathShadow;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
