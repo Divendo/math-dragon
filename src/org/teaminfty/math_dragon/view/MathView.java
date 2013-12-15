@@ -17,6 +17,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -27,22 +28,31 @@ public class MathView extends View
     /** The top-level {@link MathObject} */
     private MathObject mathObject = null;
     
+    /** The GestureDetector we're going to use for detecting scrolling and clicking */
+    private GestureDetector gestureDetector = null;
+    
+    /** The translation that's applied to the canvas because of the scrolling */
+    private Point scrollTranslate = new Point(0, 0);
+    
     public MathView(Context context)
     {
         super(context);
         setMathObject(null);    // Setting the MathObject to null will construct a MathObjectEmpty
+        initGestureDetector();
     }
 
     public MathView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         setMathObject(null);    // Setting the MathObject to null will construct a MathObjectEmpty
+        initGestureDetector();
     }
 
     public MathView(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
         setMathObject(null);    // Setting the MathObject to null will construct a MathObjectEmpty
+        initGestureDetector();
     }
     
     /** Set the top-level {@link MathObject}
@@ -54,6 +64,9 @@ public class MathView extends View
         if((mathObject = newMathObject) == null)
             mathObject = new MathObjectEmpty(getResources().getDimensionPixelSize(R.dimen.math_object_default_size), getResources().getDimensionPixelSize(R.dimen.math_object_default_size));
         
+        // Reset the translation
+        scrollTranslate.set(0, 0);
+        
         // Redraw
         invalidate();
     }
@@ -63,6 +76,12 @@ public class MathView extends View
      */
     public MathObject getMathObject()
     { return mathObject; }
+    
+    /** Initialises the gesture detector */
+    private void initGestureDetector()
+    {
+        gestureDetector = new GestureDetector(getContext(), new GestureListener());
+    }
 
     /** Recursively sets the given state for the given {@link MathObject} and all of its children
      * @param mo The {@link MathObject} to set the given state for
@@ -80,12 +99,146 @@ public class MathView extends View
     @Override
     protected void onDraw(Canvas canvas)
     {
-        // Simply draw the math object
+        // Save the canvas
         canvas.save();
+        
+        // Translate the canvas
+        canvas.translate(scrollTranslate.x, scrollTranslate.y);
+        
+        // Simply draw the math object
         Rect boundingBox = mathObject.getBoundingBox();
         canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
         mathObject.draw(canvas);
+        
+        // Restore the canvas
         canvas.restore();
+    }
+    
+    /** Bounds the scrolling translation to make sure there is always a part of the current {@link MathObject} visible */
+    private void boundScrollTranslation()
+    {
+        // Get the bounding box of the MathObject
+        Rect boundingBox = mathObject.getBoundingBox();
+        
+        // The least size that should still be visible of the current MathObject
+        final int leastHorSize = Math.min(boundingBox.width() / 2, getResources().getDimensionPixelSize(R.dimen.math_object_default_size));
+        final int leastVertSize = Math.min(boundingBox.height() / 2, getResources().getDimensionPixelSize(R.dimen.math_object_default_size));
+        
+        // Set a left bounding for the scrolling
+        scrollTranslate.x = Math.max(scrollTranslate.x, leastHorSize - (getWidth() - boundingBox.width()) / 2 - boundingBox.width());
+        scrollTranslate.y = Math.max(scrollTranslate.y, leastVertSize - (getHeight() - boundingBox.height()) / 2 - boundingBox.height());
+        
+        // Set a right bounding for the scrolling
+        scrollTranslate.x = Math.min(scrollTranslate.x, (getWidth() - boundingBox.width()) / 2 + boundingBox.width() - leastHorSize);
+        scrollTranslate.y = Math.min(scrollTranslate.y, (getHeight() - boundingBox.height()) / 2 + boundingBox.height() - leastVertSize);
+    }
+    
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener
+    {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY)
+        {
+            // Translate the canvas
+            scrollTranslate.offset((int) -distanceX, (int) -distanceY);
+            
+            // Bound the scroll translation
+            boundScrollTranslation();
+            
+            // Redraw
+            invalidate();
+            
+            // Always return true
+            return true;
+        }
+        
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent me)
+        {
+            // Determine click position
+            Point clickPos = new Point((int) me.getX(), (int) me.getY());
+            
+            // Determine how the canvas will be translated when drawing the current MathObject
+            Rect boundingBox = mathObject.getBoundingBox();
+            boundingBox.offset(scrollTranslate.x, scrollTranslate.y);
+            boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
+            
+            // Keep track of which objects still need to be checked
+            ArrayDeque<HoverInformation> queue = new ArrayDeque<HoverInformation>();
+            queue.addLast(new HoverInformation(mathObject, boundingBox, null, 0));
+            
+            // Keep going until the queue is empty
+            while(!queue.isEmpty())
+            {
+                // Pop off an element of the queue
+                HoverInformation info = queue.pollFirst();
+                
+                // If the MathObject is a MathObjectEmpty or MathConstant, we check if we clicked on it
+                if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathConstant)
+                {
+                    // If we click inside the object, we're done looking
+                    if(info.boundingBox.contains(clickPos.x, clickPos.y))
+                    {
+                        // Remember the info about the box we clicked
+                        emptyBoxReplaceInfo = info;
+                        
+                        // Light up the box we clicked
+                        info.mathObject.setState(HoverState.HOVER);
+                        
+                        // Create a dialog
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                        alert.setTitle("Enter the constant");
+                        alert.setMessage("Enter the value, then press OK!");
+
+                        // Set an EditText view to get user input   
+                        final EditText input = new EditText(getContext());
+                        alert.setView(input);
+
+                        // Create an OK button
+                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int whichButton)
+                            {
+                                // Create a MathConstant from the user input
+                                final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
+                                MathConstant mathConstant = new MathConstant(input.getText().toString(), defSize, defSize);
+                                
+                                // Replace the empty box we clicked with the new MathConstant
+                                replaceEmptyBox(mathConstant);
+                            }
+                        });
+
+                        // Create a cancel button
+                        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int whichButton)
+                            {
+                                emptyBoxReplaceInfo.mathObject.setState(HoverState.NONE);
+                            }
+                        });
+
+                        // Show the dialog
+                        alert.show();
+                    }
+                }
+                else
+                {
+                    // Add the children we click on to the queue
+                    for(int i = 0; i < info.mathObject.getChildCount(); ++i)
+                    {
+                        // Get the bounding box for the child
+                        Rect childBoundingBox = info.mathObject.getChildBoundingBox(i);
+                        childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
+
+                        // Add the child to the queue if we click inside the child
+                        if(childBoundingBox.contains(clickPos.x, clickPos.y))
+                            queue.addLast(new HoverInformation(info.mathObject.getChild(i), childBoundingBox, info.mathObject, i));
+                    }
+                }
+            }
+            
+            // Always return true
+            return true;
+        }
     }
     
     @Override
@@ -208,6 +361,7 @@ public class MathView extends View
         
         // Determine how the canvas will be translated when drawing the current MathObject
         Rect boundingBox = mathObject.getBoundingBox();
+        boundingBox.offset(scrollTranslate.x, scrollTranslate.y);
         boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
         
         // If we don't intersect with the bounding box at all, we can stop here
@@ -323,12 +477,6 @@ public class MathView extends View
         }
     }
     
-    /** The maximal time a click may take (in ms) */
-    private static final int MAX_CLICK_DURATION = 200;
-    
-    /** The <tt>System.currentTimeMillis()</tt> at which the click started (in ms) */
-    private long startClickTime;
-    
     /** The information about the {@link MathObject} that is to be replaced in the next call to {@link MathView#replaceEmptyBox(MathConstant) replaceEmptyBox()} */
     private HoverInformation emptyBoxReplaceInfo = null;
     
@@ -350,103 +498,10 @@ public class MathView extends View
     @Override
     public boolean onTouchEvent(MotionEvent me)
     {
-        // Determine whether we're clicking or not
-        Point clickPos = null;
-        switch(me.getAction())
-        {
-            case MotionEvent.ACTION_DOWN:
-                startClickTime = System.currentTimeMillis();
-            break;
+        // Pass the touch event to the gesture detector
+        gestureDetector.onTouchEvent(me);
         
-            case MotionEvent.ACTION_UP:
-                if(System.currentTimeMillis() - startClickTime < MAX_CLICK_DURATION)
-                    clickPos = new Point((int) me.getX(), (int) me.getY());
-            break;
-        }
-        
-        // If no click was detected, stop here
-        if(clickPos == null)
-            return true;
-        
-        // Determine how the canvas will be translated when drawing the current MathObject
-        Rect boundingBox = mathObject.getBoundingBox();
-        boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
-        
-        // Keep track of which objects still need to be checked
-        ArrayDeque<HoverInformation> queue = new ArrayDeque<HoverInformation>();
-        queue.addLast(new HoverInformation(mathObject, boundingBox, null, 0));
-        
-        // Keep going until the queue is empty
-        while(!queue.isEmpty())
-        {
-            // Pop off an element of the queue
-            HoverInformation info = queue.pollFirst();
-            
-            // If the MathObject is a MathObjectEmpty or MathConstant, we check if we clicked on it
-            if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathConstant)
-            {
-                // If we click inside the object, we're done looking
-                if(info.boundingBox.contains(clickPos.x, clickPos.y))
-                {
-                    // Remember the info about the box we clicked
-                    emptyBoxReplaceInfo = info;
-                    
-                    // Light up the box we clicked
-                    info.mathObject.setState(HoverState.HOVER);
-                    
-                    // Create a dialog
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setTitle("Enter the constant");
-                    alert.setMessage("Enter the value, then press OK!");
-
-                    // Set an EditText view to get user input   
-                    final EditText input = new EditText(getContext());
-                    alert.setView(input);
-
-                    // Create an OK button
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
-                    {
-                        public void onClick(DialogInterface dialog, int whichButton)
-                        {
-                            // Create a MathConstant from the user input
-                            final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-                            MathConstant mathConstant = new MathConstant(input.getText().toString(), defSize, defSize);
-                            
-                            // Replace the empty box we clicked with the new MathConstant
-                            replaceEmptyBox(mathConstant);
-                        }
-                    });
-
-                    // Create a cancel button
-                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-                    {
-                        public void onClick(DialogInterface dialog, int whichButton)
-                        {
-                            emptyBoxReplaceInfo.mathObject.setState(HoverState.NONE);
-                        }
-                    });
-
-                    // Show the dialog
-                    alert.show();
-                }
-            }
-            else
-            {
-                // Add the children we click on to the queue
-                for(int i = 0; i < info.mathObject.getChildCount(); ++i)
-                {
-                    // Get the bounding box for the child
-                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i);
-                    childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
-
-                    // Add the child to the queue if we click inside the child
-                    if(childBoundingBox.contains(clickPos.x, clickPos.y))
-                        queue.addLast(new HoverInformation(info.mathObject.getChild(i), childBoundingBox, info.mathObject, i));
-                }
-            }
-        }
-        
-        // Always return true
+        // Always consume the event
         return true;
     }
 }
