@@ -5,6 +5,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.model.ModelHelper;
+import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
@@ -41,8 +42,7 @@ public class MainActivity extends Activity implements
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         // Remove the grey overlay
-        drawerLayout.setScrimColor(getResources().getColor(
-                android.R.color.transparent));
+        drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
 
         // Set the shadow
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
@@ -52,16 +52,12 @@ public class MainActivity extends Activity implements
             drawerLayout.closeDrawer(Gravity.LEFT);
 
             // Set the toggle for the action bar
-            actionBarDrawerToggle = new ActionBarDrawerToggle(this,
-                    drawerLayout, R.drawable.ic_drawer,
-                    R.string.operation_drawer_open,
-                    R.string.operation_drawer_close);
+            actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
             getActionBar().setDisplayHomeAsUpEnabled(true);
 
             // Listen when to close the operations drawer
             // TODO only register this event when needed
-            ((FragmentOperationsSource) getFragmentManager().findFragmentById(
-                    R.id.fragmentOperationDrawer)).setOnCloseMeListener(this);
+            ((FragmentOperationsSource) getFragmentManager().findFragmentById(R.id.fragmentOperationDrawer)).setOnCloseMeListener(this);
         }
         catch(IllegalArgumentException e)
         {
@@ -69,6 +65,8 @@ public class MainActivity extends Activity implements
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
 
+        // Set the default size in the ParenthesesHelper class
+        ParenthesesHelper.defaultSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
     }
 
     @Override
@@ -108,26 +106,20 @@ public class MainActivity extends Activity implements
         try
         {
             // Calculate the answer
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager()
-                    .findFragmentById(R.id.fragmentMainScreen);
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
             long start = System.currentTimeMillis();
             IExpr a = fragmentMainScreen.getMathObject().eval();
             long between = System.currentTimeMillis();
             IExpr result = EvalEngine.eval(a);
             long end = System.currentTimeMillis();
-            Log.i("Timings",
-                    Long.toString(between - start) + "ms, "
-                            + Long.toString(end - between) + "ms");
+            Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
 
             // The default size for a MathObject
-            final int defSize = getResources().getDimensionPixelSize(
-                    R.dimen.math_object_default_size);
+            final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
 
             // Get the evaluation fragment and show the result
-            FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
-                    .findFragmentById(R.id.fragmentEvaluation);
-            fragmentEvaluation.showMathObject(ModelHelper.toMathObject(result,
-                    defSize, defSize));
+            FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
+            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result, defSize, defSize)));
 
             // Get the DrawerLayout object and open the drawer
             DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);

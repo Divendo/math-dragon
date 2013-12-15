@@ -3,12 +3,11 @@ package org.teaminfty.math_dragon.view;
 import java.util.ArrayDeque;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.fragments.MathShadow;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-import org.teaminfty.math_dragon.view.math.MathOperationDivide;
-import org.teaminfty.math_dragon.view.math.MathParentheses;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -307,59 +306,21 @@ public class MathView extends View
                     if(currHover.parent == null)
                         mathObject = dragMathObject;
                     else
-                        makeChild(currHover.parent, dragMathObject, currHover.childIndex);
+                        ParenthesesHelper.makeChild(currHover.parent, dragMathObject, currHover.childIndex);
                 }
                 else
                 {
-                    makeChild(dragMathObject, currHover.mathObject, sourceChild);
+                    ParenthesesHelper.makeChild(dragMathObject, currHover.mathObject, sourceChild);
                     if(currHover.parent == null)
                         mathObject = dragMathObject;
                     else
-                        makeChild(currHover.parent, dragMathObject, currHover.childIndex);
+                        ParenthesesHelper.makeChild(currHover.parent, dragMathObject, currHover.childIndex);
                 }
                 
                 // Make sure the MathObject and all of its descendants have the right state
                 setHoverState(mathObject, HoverState.NONE);
             }
         }
-    }
-
-	/** Makes a {@link MathObject} the child of antoher {@link MathObject}, while correctly placing / removing parentheses
-     * @param parent The {@link MathObject} that is to become the parent
-     * @param child The {@link MathObject} that is to become the child
-     * @param index The index where the child should be placed
-     */
-    private void makeChild(MathObject parent, MathObject child, int index)
-    {
-        // We might need the default size
-        final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-        
-        // Special case: the divide operator
-        if(parent instanceof MathOperationDivide)
-        {
-            if(child instanceof MathOperationDivide)
-                child = new MathParentheses(child, defSize, defSize);
-            else if(child instanceof MathParentheses && !(child.getChild(0) instanceof MathOperationDivide))
-            {
-                makeChild(parent, child.getChild(0), index);
-                return;
-            }
-        }
-        else
-        {
-            // Wrap in parentheses if necessary
-            if(!(parent instanceof MathParentheses) && parent.getPrecedence() < child.getPrecedence())
-                child = new MathParentheses(child, defSize, defSize);
-            else if(child instanceof MathParentheses && (parent instanceof MathParentheses || child.getChild(0).getPrecedence() <= parent.getPrecedence()))
-            {
-                // Maybe the child is already wrapped in parentheses, in that case we unwrap it and make that MathObject a child of parent
-                makeChild(parent, child.getChild(0), index);
-                return;
-            }
-        }
-        
-        // Set the child
-        parent.setChild(index, child);
     }
     
     /** The maximal time a click may take (in ms) */
