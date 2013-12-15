@@ -10,9 +10,14 @@ import android.graphics.Rect;
 
 public class MathOperationSubtract extends MathBinaryOperationLinear
 {
-    public MathOperationSubtract(int defWidth, int defHeight)
-    { super(defWidth, defHeight); }
+    public MathOperationSubtract()
+    {}
 
+    public MathOperationSubtract(MathObject left, MathObject right)
+    { 
+        super(left, right);
+    }
+    
     @Override
     public int getPrecedence()
     { return MathObjectPrecedence.ADD; }

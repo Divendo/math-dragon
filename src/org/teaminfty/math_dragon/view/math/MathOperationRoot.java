@@ -15,10 +15,13 @@ public class MathOperationRoot extends MathBinaryOperation
 {
      protected Paint operatorPaint = new Paint();
     
-    public MathOperationRoot(int defWidth, int defHeight)
+    public MathOperationRoot()
+    { this(null, null); }
+
+    public MathOperationRoot(MathObject base, MathObject exponent)
     {
-        super(defWidth, defHeight);
-        
+        super(exponent, base);
+
         // Initialise the paint
         operatorPaint.setAntiAlias(true);
         operatorPaint.setStyle(Paint.Style.STROKE);
@@ -31,7 +34,7 @@ public class MathOperationRoot extends MathBinaryOperation
         this.checkChildren();
         
         // Return the result
-        return F.Power( getChild(1).eval(), F.Divide(F.ZZ(1), getChild(0).eval()));
+        return F.Power(getChild(1).eval(), F.Divide(F.ZZ(1), getChild(0).eval()));
     }
 
     @Override
@@ -123,7 +126,7 @@ public class MathOperationRoot extends MathBinaryOperation
         
         // Create an MathObjectEmpty if null is given
         if(child == null)
-            child = new MathObjectEmpty(defaultMaxHeight, defaultMaxHeight);
+            child = new MathObjectEmpty();
         //if it is the exponent of the root, make it smaller
         if(index == 1)
         	child.setLevel(level);
@@ -157,6 +160,7 @@ public class MathOperationRoot extends MathBinaryOperation
         operatorPaint.setColor(getColor());
         operatorPaint.setStrokeWidth(childSize[0].width() / 10);
         Path path = new Path();
+        
         path.moveTo(0, (childSize[0].height() + childSize[1].height()) / 2);
         path.lineTo(6 * childSize[0].width() / 5, childSize[0].height() / 2 + childSize[1].height());
         path.lineTo(6 * childSize[0].width() / 5, childSize[0].height() / 4);

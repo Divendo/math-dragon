@@ -11,14 +11,12 @@ import android.graphics.Rect;
 
 public class MathOperationPower extends MathBinaryOperation
 {
-	public MathOperationPower(int defWidth, int defHeight)
+    public MathOperationPower()
+    {}
+    
+	public MathOperationPower(MathObject base, MathObject power)
 	{
-		super(defWidth, defHeight);
-	}
-	
-	public MathOperationPower(MathObject base, MathObject power, int defWidth, int defHeight)
-	{
-		super(base, power, defWidth, defHeight);
+		super(base, power);
 	}
 	
 	public String toString()
@@ -126,7 +124,7 @@ public class MathOperationPower extends MathBinaryOperation
 	        
 	        // Create an MathObjectEmpty if null is given
 	        if(child == null)
-	            child = new MathObjectEmpty(defaultMaxHeight, defaultMaxHeight);
+	            child = new MathObjectEmpty();
 	        if (index == 1)
 	        	child.setLevel(level+1);
 	        else

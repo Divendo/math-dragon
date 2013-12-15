@@ -10,6 +10,7 @@ import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -65,8 +66,8 @@ public class MainActivity extends Activity implements
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
 
-        // Set the default size in the ParenthesesHelper class
-        ParenthesesHelper.defaultSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
+        // Set the default size in the MathObject class
+        MathObject.defaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
     }
 
     @Override
@@ -114,12 +115,9 @@ public class MainActivity extends Activity implements
             long end = System.currentTimeMillis();
             Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
 
-            // The default size for a MathObject
-            final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-
             // Get the evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
-            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result, defSize, defSize)));
+            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result)));
 
             // Get the DrawerLayout object and open the drawer
             DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -149,7 +147,7 @@ public class MainActivity extends Activity implements
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
                 .findFragmentById(R.id.fragmentEvaluation);
 
-        MathConstant mathConstant = new MathConstant("42", 100, 100);
+        MathConstant mathConstant = new MathConstant("42");
         fragmentEvaluation.showMathObject(mathConstant);
     }
 

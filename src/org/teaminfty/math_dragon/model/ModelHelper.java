@@ -45,7 +45,7 @@ public final class ModelHelper
      * @throws MathException
      *         Thrown when conversion is impossible.
      */
-    public static MathObject toMathObject(IExpr expr, int w, int h) throws MathException
+    public static MathObject toMathObject(IExpr expr) throws MathException
     {
         if(expr.isAST())
         {
@@ -53,27 +53,27 @@ public final class ModelHelper
             if(!(ast.get(0) instanceof Symbol))
                 throw new MathException(ast.toString() + ": invalid operation");
             if(expr.isPlus())
-                return toOpAdd(ast, w, h);
+                return toOpAdd(ast);
             if(expr.isTimes())
-                return toOpMul(ast, w, h);
+                return toOpMul(ast);
             if(expr.isPower())
-                return toOpPow(ast, w, h);
+                return toOpPow(ast);
         }
         else if(expr.isInteger())
         {
-            MathConstant c = new MathConstant(w, h);
+            MathConstant c = new MathConstant();
             c.setFactor(((IInteger) expr).longValue());
             return c;
         }
         else if(expr.isFraction())
         {
             IRational rational = (IRational) expr;
-            return new MathOperationDivide(new MathConstant(Long.toString(rational.getNumerator().longValue()), w, h), new MathConstant(Long.toString(rational.getDenominator().longValue()), w, h), w, h);
+            return new MathOperationDivide(new MathConstant(Long.toString(rational.getNumerator().longValue())), new MathConstant(Long.toString(rational.getDenominator().longValue())));
         }
         else if(expr instanceof Symbol)
         {
             Symbol s = (Symbol) expr;
-            MathConstant c = new MathConstant(w, h);
+            MathConstant c = new MathConstant();
             c.setFactor(1);
             if(s.equals(F.Pi))
             {
@@ -94,29 +94,29 @@ public final class ModelHelper
         throw new ParseException();
     }
 
-    static MathObject toOpAdd(AST ast, int w, int h) throws MathException
+    static MathObject toOpAdd(AST ast) throws MathException
     {
         if(ast.size() > 3)
         {
             int n = ast.size() - 1;
-            MathOperationAdd child = new MathOperationAdd(toMathObject(ast.get(n - 1), w, h), toMathObject(ast.get(n), w, h), w, h);
+            MathOperationAdd child = new MathOperationAdd(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
             for(n -= 2; n > 0; --n)
             {
-                MathOperationAdd parent = new MathOperationAdd(toMathObject(ast.get(n), w, h), child, w, h);
+                MathOperationAdd parent = new MathOperationAdd(toMathObject(ast.get(n)), child);
                 child = parent;
             }
             return child;
         }
-        return new MathOperationAdd(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h), w, h);
+        return new MathOperationAdd(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
     }
 
-    static MathObject toOpMul(AST ast, int w, int h) throws MathException
+    static MathObject toOpMul(AST ast) throws MathException
     {
         if (ast.size() > 3) {
             int n = ast.size() - 1;
-            MathOperationMultiply child = new MathOperationMultiply(toMathObject(ast.get(n - 1), w, h), toMathObject(ast.get(n), w, h), w, h);
+            MathOperationMultiply child = new MathOperationMultiply(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
             for (n -= 2; n > 0; --n) {
-                MathOperationMultiply parent = new MathOperationMultiply(toMathObject(ast.get(n), w, h), child, w, h);
+                MathOperationMultiply parent = new MathOperationMultiply(toMathObject(ast.get(n)), child);
                 child = parent;
             }
             return child;
@@ -129,11 +129,11 @@ public final class ModelHelper
             if(p.isInteger())
             {
                 if(p.isNegative())
-                    return toOpDiv(ast.get(1), a, w, h);
+                    return toOpDiv(ast.get(1), a);
                 if((b = a.get(1)) instanceof Symbol)
                 {
                     Symbol s = (Symbol) b;
-                    MathConstant c = new MathConstant(w, h);
+                    MathConstant c = new MathConstant();
                     c.setFactor(1);
                     if(s.equals(F.Pi))
                     {
@@ -153,16 +153,16 @@ public final class ModelHelper
                 }
             }
         }
-        return new MathOperationMultiply(toMathObject(ast.get(1), w, h), toMathObject(r, w, h), w, h);
+        return new MathOperationMultiply(toMathObject(ast.get(1)), toMathObject(r));
     }
 
     // TODO implement more than 2 children for operation divide
-    static MathObject toOpDiv(IExpr l, IExpr r, int w, int h) throws MathException
+    static MathObject toOpDiv(IExpr l, IExpr r) throws MathException
     {
-        return new MathOperationDivide(toMathObject(l, w, h), toMathObject(r, w, h), w, h);
+        return new MathOperationDivide(toMathObject(l), toMathObject(r));
     }
     
-    static MathObject toOpDiv(IExpr l, AST r, int w, int h) throws MathException
+    static MathObject toOpDiv(IExpr l, AST r) throws MathException
     {
         if (r.size() > 3) {
             throw new MathException("no more than 2 children supported for division");
@@ -171,24 +171,24 @@ public final class ModelHelper
         r.set(2, r.get(2).negate());
         if (r.get(2).isInteger() && ((IInteger) r.get(2)).longValue() == 1)
         {
-            return toOpDiv(l, r.get(1), w, h);
+            return toOpDiv(l, r.get(1));
         }
-        return new MathOperationDivide(toMathObject(l, w, h), toMathObject(r, w, h), w, h);
+        return new MathOperationDivide(toMathObject(l), toMathObject(r));
     }
 
-    static MathObject toOpPow(AST ast, int w, int h) throws MathException
+    static MathObject toOpPow(AST ast) throws MathException
     {
         if(ast.size() > 3)
         {
             int n = ast.size() - 1;
-            MathOperationPower child = new MathOperationPower(toMathObject(ast.get(n - 1), w, h), toMathObject(ast.get(n), w, h), w, h);
+            MathOperationPower child = new MathOperationPower(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
             for(n -= 2; n > 0; --n)
             {
-                MathOperationPower parent = new MathOperationPower(toMathObject(ast.get(n), w, h), child, w, h);
+                MathOperationPower parent = new MathOperationPower(toMathObject(ast.get(n)), child);
                 child = parent;
             }
             return child;
         }
-        return new MathOperationPower(toMathObject(ast.get(1), w, h), toMathObject(ast.get(2), w, h), w, h);
+        return new MathOperationPower(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
     }
 }

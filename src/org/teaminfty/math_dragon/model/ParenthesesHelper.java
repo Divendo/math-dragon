@@ -9,9 +9,6 @@ import org.teaminfty.math_dragon.view.math.MathParentheses;
 /** Class that helps setting parentheses at the right places in a {@link MathObject} */
 public class ParenthesesHelper
 {
-    /** The default size for {@link MathObject}s */
-    public static int defaultSize = 100;
-    
     /** Makes a {@link MathObject} the child of another {@link MathObject}, while correctly placing / removing parentheses
      * @param parent The {@link MathObject} that is to become the parent
      * @param child The {@link MathObject} that is to become the child
@@ -23,7 +20,7 @@ public class ParenthesesHelper
         if(parent instanceof MathOperationDivide)
         {
             if(child instanceof MathOperationDivide)
-                child = new MathParentheses(child, defaultSize, defaultSize);
+                child = new MathParentheses(child);
             else if(child instanceof MathParentheses && !(child.getChild(0) instanceof MathOperationDivide))
             {
                 makeChild(parent, child.getChild(0), index);
@@ -32,13 +29,13 @@ public class ParenthesesHelper
         }
         // Special case: the subtract operator
         else if(parent instanceof MathOperationSubtract && index == 1 && parent.getPrecedence() == child.getPrecedence())
-            child = new MathParentheses(child, defaultSize, defaultSize);
+            child = new MathParentheses(child);
         // Special case: the root operator (never place parentheses)
         else if(!(parent instanceof MathOperationRoot))
         {
             // Wrap in parentheses if necessary
             if(!(parent instanceof MathParentheses) && parent.getPrecedence() < child.getPrecedence())
-                child = new MathParentheses(child, defaultSize, defaultSize);
+                child = new MathParentheses(child);
             else if(child instanceof MathParentheses && (parent instanceof MathParentheses || child.getChild(0).getPrecedence() <= parent.getPrecedence()))
             {
                 // Maybe the child is already wrapped in parentheses, in that case we unwrap it and make that MathObject a child of parent

@@ -19,29 +19,17 @@ public abstract class MathObject
     /** The children of this {@link MathObject} */
     protected ArrayList<MathObject> children = new ArrayList<MathObject>();
 
-    /** The default maximum height of an object */
-    protected int defaultMaxHeight = 100;
+    /** The default height of an object */
+    public static int defaultHeight = 100;
     
     /** The maximum level depth */
-    public final static int MAX_LEVEL = 3;
+    public final static int MAX_LEVEL = 2;
 
     /** The current hover state */
     protected HoverState state = HoverState.NONE;
     
     /** The current 'level' of the object*/
     protected int level = 0;
-
-    /**
-     * Constructor
-     * 
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
-     */
-    public MathObject(int defWidth, int defHeight)
-    {
-        // Remember the default maximum size
-        defaultMaxHeight = defHeight;
-    }
     
     /** Returns the precedence of this operation.
      * The highest precedence is 0, greater values are lower precedences.
@@ -92,7 +80,7 @@ public abstract class MathObject
         
         // Create an MathObjectEmpty if null is given
         if(child == null)
-            child = new MathObjectEmpty(defaultMaxHeight, defaultMaxHeight);
+            child = new MathObjectEmpty();
         this.setLevel(level);
         // Set the child
         children.set(index, child);

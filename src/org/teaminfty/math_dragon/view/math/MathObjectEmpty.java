@@ -20,15 +20,9 @@ public class MathObjectEmpty extends MathObject
     /** The paint that's used to draw the child */
     private Paint paint = new Paint();
     
-    /** Constructor
-     * 
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
-     */
-    public MathObjectEmpty(int defWidth, int defHeight)
+    /** Constructor */
+    public MathObjectEmpty()
     {
-        super(defWidth, defHeight);
-
         // Initialise the paint
         paint.setColor(Color.rgb(0x88, 0x88, 0x88));
         paint.setStyle(Paint.Style.STROKE);
@@ -86,8 +80,8 @@ public class MathObjectEmpty extends MathObject
     @Override
     public Rect getBoundingBox()
     {
-    	int width = (int)(defaultMaxHeight*RATIO);
-    	int height = defaultMaxHeight;
+    	int width = (int)(defaultHeight*RATIO);
+    	int height = defaultHeight;
     	
     	for(int t = 0; t < this.level && t < MAX_LEVEL; t++)
     	{

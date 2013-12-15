@@ -11,26 +11,16 @@ import android.graphics.Rect;
  */
 public abstract class MathBinaryOperationLinear extends MathBinaryOperation
 {
-
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
 
-    /**
-     * Constructor
-     * 
-     * @param defWidth
-     *        The default maximum width
-     * @param defHeight
-     *        The default maximum height
-     */
-    public MathBinaryOperationLinear(int defWidth, int defHeight)
-    {
-        super(defWidth, defHeight);
-    }
+    /** Default constructor */
+    public MathBinaryOperationLinear()
+    { }
     
-    public MathBinaryOperationLinear(MathObject left, MathObject right, int defWidth, int defHeight)
+    public MathBinaryOperationLinear(MathObject left, MathObject right)
     {
-    	super(left, right, defWidth, defHeight);
+    	super(left, right);
     }
 
     /**

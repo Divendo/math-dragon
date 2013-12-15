@@ -65,8 +65,7 @@ public class MathSourceView extends View
         
         try
         {
-            final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-            MathObject copy = mo.getClass().getConstructor(int.class, int.class).newInstance(defSize, defSize);
+            MathObject copy = mo.getClass().getConstructor().newInstance();
             for(int i = 0; i < mo.getChildCount(); ++i)
                 copy.setChild(i, copyMathObject(mo.getChild(i)));
             return copy;

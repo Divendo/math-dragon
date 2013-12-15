@@ -10,12 +10,12 @@ import android.graphics.Rect;
 
 public class MathOperationMultiply extends MathBinaryOperationLinear
 {
-    public MathOperationMultiply(int defWidth, int defHeight)
-    { super(defWidth, defHeight); }
+    public MathOperationMultiply()
+    {}
     
-    public MathOperationMultiply(MathObject left, MathObject right, int defWidth, int defHeight)
+    public MathOperationMultiply(MathObject left, MathObject right)
     { 
-        super(left, right, defWidth, defHeight);
+        super(left, right);
     }
     
     public String toString()

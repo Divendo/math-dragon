@@ -30,23 +30,18 @@ public class MathConstant extends MathObject
     /** The text size factor for exponents */
     protected static final float EXPONENT_FACTOR = 1.0f / 2;
 
-    /** Constructor
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
-     */
-    public MathConstant(int defWidth, int defHeight)
+    /** Default constructor */
+    public MathConstant()
     { 
-        this(0, 0, 0, 0, defWidth, defHeight);
+        this(0, 0, 0, 0);
     }
 
     /** Constructor, constructs with the given value
-     * @param v The value that this constant should be initialized with
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
+     * @param v The value that this constant should be initialised with
      */
-    public MathConstant(String value, int defWidth, int defHeight)
+    public MathConstant(String value)
     {
-        super(defWidth, defHeight);
+        super();
         initPaints();
         readString(value);
     }
@@ -56,12 +51,9 @@ public class MathConstant extends MathObject
      * @param ePow The euler power
      * @param piPow The pi power
      * @param iPow The imaginary power
-     * @param defWidth The default width
-     * @param defHeight The default height
      */
-    public MathConstant(long factor, long ePow, long piPow, long iPow, int defWidth, int defHeight)
+    public MathConstant(long factor, long ePow, long piPow, long iPow)
     {
-    	super(defWidth, defHeight);
     	initPaints();
     	this.factor = factor;
     	this.ePow = ePow;
@@ -69,7 +61,7 @@ public class MathConstant extends MathObject
     	this.iPow = iPow;
     }
     
-    /** Initializes the paints */
+    /** Initialises the paints */
     private void initPaints()
     {
         paint.setAntiAlias(true);

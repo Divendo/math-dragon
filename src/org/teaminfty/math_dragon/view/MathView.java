@@ -62,7 +62,7 @@ public class MathView extends View
     {
         // Remember the new MathObject, if it is null we create a MathObjectEmpty
         if((mathObject = newMathObject) == null)
-            mathObject = new MathObjectEmpty(getResources().getDimensionPixelSize(R.dimen.math_object_default_size), getResources().getDimensionPixelSize(R.dimen.math_object_default_size));
+            mathObject = new MathObjectEmpty();
         
         // Reset the translation
         scrollTranslate.set(0, 0);
@@ -199,8 +199,7 @@ public class MathView extends View
                             public void onClick(DialogInterface dialog, int whichButton)
                             {
                                 // Create a MathConstant from the user input
-                                final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-                                MathConstant mathConstant = new MathConstant(input.getText().toString(), defSize, defSize);
+                                MathConstant mathConstant = new MathConstant(input.getText().toString());
                                 
                                 // Replace the empty box we clicked with the new MathConstant
                                 replaceEmptyBox(mathConstant);

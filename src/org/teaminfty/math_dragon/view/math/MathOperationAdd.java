@@ -10,17 +10,12 @@ import android.graphics.Rect;
 
 public class MathOperationAdd extends MathBinaryOperationLinear
 {
+    public MathOperationAdd()
+    {}
 
-    /** Constructor
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
-     */
-    public MathOperationAdd(int defWidth, int defHeight)
-    { super(defWidth, defHeight); }
-
-    public MathOperationAdd(MathObject left, MathObject right, int defWidth, int defHeight)
+    public MathOperationAdd(MathObject left, MathObject right)
     { 
-    	super(left, right, defWidth, defHeight);
+    	super(left, right);
 	}
     
     public String toString(){
