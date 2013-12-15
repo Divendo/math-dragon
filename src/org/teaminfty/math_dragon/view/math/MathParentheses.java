@@ -101,23 +101,23 @@ public class MathParentheses extends MathObject
         // Prepare the paint and canvas for drawing the brackets
         paint.setColor(getColor());
         paint.setStrokeWidth(boxes[0].width() / 5);
-        canvas.save();
         
         // Draw the left bracket
-        canvas.clipRect(boxes[0], Region.Op.REPLACE);
+        canvas.save();
+        canvas.clipRect(boxes[0], Region.Op.INTERSECT);
         RectF bracket = new RectF(boxes[0]);
         bracket.inset(0, -paint.getStrokeWidth());
         bracket.offset(bracket.width() / 4, 0);
         canvas.drawArc(bracket, 100.0f, 160.0f, false, paint);
+        canvas.restore();
         
         // Draw the right bracket
-        canvas.clipRect(boxes[1], Region.Op.REPLACE);
+        canvas.save();
+        canvas.clipRect(boxes[1], Region.Op.INTERSECT);
         bracket = new RectF(boxes[1]);
         bracket.inset(0, -paint.getStrokeWidth());
         bracket.offset(-bracket.width() / 4, 0);
         canvas.drawArc(bracket, -80.0f, 160.0f, false, paint);
-        
-        // Restore the canvas
         canvas.restore();
         
         // Draw the child
