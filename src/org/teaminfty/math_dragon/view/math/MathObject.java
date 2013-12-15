@@ -96,6 +96,7 @@ public abstract class MathObject
         this.setLevel(level);
         // Set the child
         children.set(index, child);
+        child.setLevel(level);
     }
 
     /**
