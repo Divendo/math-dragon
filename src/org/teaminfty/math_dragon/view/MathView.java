@@ -473,6 +473,9 @@ public class MathView extends View
                 
                 // Make sure the MathObject and all of its descendants have the right state
                 setHoverState(mathObject, HoverState.NONE);
+                
+                // Make sure every MathObject has the right level
+                mathObject.setLevel(0);
             }
         }
     }

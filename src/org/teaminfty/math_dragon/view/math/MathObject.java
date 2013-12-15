@@ -21,9 +21,9 @@ public abstract class MathObject
 
     /** The default maximum height of an object */
     protected int defaultMaxHeight = 100;
-
-    /** To be used there is no maximum width or height */
-    public static final int NO_MAXIMUM = -1;
+    
+    /** The maximum level depth */
+    public final static int MAX_LEVEL = 3;
 
     /** The current hover state */
     protected HoverState state = HoverState.NONE;

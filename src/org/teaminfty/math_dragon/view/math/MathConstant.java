@@ -297,7 +297,7 @@ public class MathConstant extends MathObject
     protected float findTextSize(int Level)
     {
     	int value = 96;
-    	for(int t = 0; t<Level && t<3; t++)
+    	for(int t = 0; t < Level && t < MAX_LEVEL; t++)
     		value = 2*value/3;
     	return value;
     }
