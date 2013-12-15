@@ -19,9 +19,6 @@ public abstract class MathObject
     /** The children of this {@link MathObject} */
     protected ArrayList<MathObject> children = new ArrayList<MathObject>();
 
-    /** The default maximum width of an object */
-    protected int defaultMaxWidth = 100;
-
     /** The default maximum height of an object */
     protected int defaultMaxHeight = 100;
 
@@ -30,6 +27,9 @@ public abstract class MathObject
 
     /** The current hover state */
     protected HoverState state = HoverState.NONE;
+    
+    /** The current 'level' of the object*/
+    protected int level = 0;
 
     /**
      * Constructor
@@ -40,7 +40,6 @@ public abstract class MathObject
     public MathObject(int defWidth, int defHeight)
     {
         // Remember the default maximum size
-        defaultMaxWidth = defWidth;
         defaultMaxHeight = defHeight;
     }
     
@@ -90,10 +89,11 @@ public abstract class MathObject
         // Check the child index
         checkChildIndex(index);
         
+        
         // Create an MathObjectEmpty if null is given
         if(child == null)
-            child = new MathObjectEmpty(defaultMaxWidth, defaultMaxHeight);
-        
+            child = new MathObjectEmpty(defaultMaxHeight, defaultMaxHeight);
+        this.setLevel(level);
         // Set the child
         children.set(index, child);
     }
@@ -130,7 +130,7 @@ public abstract class MathObject
      *        {@link MathObject#NO_MAXIMUM})
      * @return An array containing the requested bounding boxes
      */
-    public abstract Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight);
+    public abstract Rect[] getOperatorBoundingBoxes();
 
     /**
      * Returns the bounding box of the child at the given index.
@@ -138,86 +138,36 @@ public abstract class MathObject
      * 
      * @param index
      *        The index of the child whose bounding box is to be returned
-     * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
      * @return An array containing the requested bounding boxes
      * @throws IndexOutOfBoundsException
      *         If an invalid child index is given
      */
-    public abstract Rect getChildBoundingBox(int index, int maxWidth, int maxHeight) throws IndexOutOfBoundsException;
+    public abstract Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException;
 
     /**
      * Returns the bounding box for the entire {@link MathObject}.
      * The aspect ratio of the box should always be the same.
      * 
-     * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
      * @return The bounding box for the entire {@link MathObject}
      */
-    public Rect getBoundingBox(int maxWidth, int maxHeight)
+    public Rect getBoundingBox()
     {
         // This will be our result
         Rect out = new Rect();
 
         // Add all operator bounding boxes
-        Rect[] operatorBoundingBoxes = getOperatorBoundingBoxes(maxWidth,
-                maxHeight);
-        for(Rect tmp : operatorBoundingBoxes)
+        Rect[] operatorBoundingBoxes = getOperatorBoundingBoxes();
+        	for(Rect tmp : operatorBoundingBoxes)
             out.union(tmp);
 
         // Add all child bounding boxes
         for(int i = 0; i < getChildCount(); ++i)
-            out.union(getChildBoundingBox(i, maxWidth, maxHeight));
+            out.union(getChildBoundingBox(i));
+        int width = out.width();
+        int height = out.height();
 
         // Return the result
-        return out;
-    }
-
-    /**
-     * Returns a rectangle of the given ratio (width : height) that fits exactly
-     * in the given maximum rectangle. If no restrictions are given, the default
-     * maximum size is used.
-     * 
-     * @param maxWidth
-     *        The maximum width of the rectangle (can be
-     *        {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight
-     *        The maximum height of the rectangle (can be
-     *        {@link MathObject#NO_MAXIMUM})
-     * @return The rectangle fitting in the given maximum size
-     */
-    protected Rect getRectBoundingBox(int maxWidth, int maxHeight, float ratio)
-    {
-        if(maxWidth == NO_MAXIMUM) // If the width is unrestricted, the bounding box depends on maxHeight
-        {
-            // If the height is also unrestricted, use the default maximum size
-            if(maxHeight == NO_MAXIMUM)
-                return getRectBoundingBox(defaultMaxWidth, defaultMaxHeight,
-                        ratio);
-
-            // We'll use as much space as possible
-            return new Rect(0, 0, (int) (maxHeight * ratio), maxHeight);
-        }
-        else if(maxHeight == NO_MAXIMUM) // If the height is unrestricted, the
-                                         // bounding box depends on maxWidth
-            return new Rect(0, 0, maxWidth, (int) (maxWidth / ratio));
-        else
-        // If both the height and the width are restricted, the bounding box
-        // depends on both maxWidth and maxHeight
-        {
-            if(maxWidth / ratio <= maxHeight)
-                return new Rect(0, 0, maxWidth, (int) (maxWidth / ratio));
-            else
-                return new Rect(0, 0, (int) (maxHeight * ratio), maxHeight);
-        }
+        return new Rect(0,0,width, height);
     }
     
     /**
@@ -252,14 +202,8 @@ public abstract class MathObject
      * 
      * @param canvas
      *        The canvas to draw the {@link MathObject} on
-     * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
      */
-    public abstract void draw(Canvas canvas, int maxWidth, int maxHeight);
+    public abstract void draw(Canvas canvas);
     
     /**
      * Draw the child with the given index child on <tt>canvas</tt> within the specified bounding box.
@@ -272,20 +216,19 @@ public abstract class MathObject
         // Draw the child
         canvas.save();
         canvas.translate(box.left, box.top);
-        getChild(index).draw(canvas, box.width(), box.height());
+        getChild(index).draw(canvas);
         canvas.restore();
     }
     
     /** Draws all children
      * @param canvas The canvas that the children should be drawn on
-     * @param maxWidth The maximum width the child can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight The maximum height the child can have (can be {@link MathObject#NO_MAXIMUM})
+
      */
-    protected void drawChildren(Canvas canvas, int maxWidth, int maxHeight)
+    protected void drawChildren(Canvas canvas)
     {
         // Loop through all children and draw them
         for(int i = 0; i < children.size(); ++i)
-            drawChild(i, canvas, getChildBoundingBox(i, maxWidth, maxHeight));
+            drawChild(i, canvas, getChildBoundingBox(i));
     }
 
     /**
@@ -328,26 +271,32 @@ public abstract class MathObject
     }
     
     /** Returns the centre of the {@link MathObject}
-     * @param maxWidth The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
      * @return The centre of the {@link MathObject}
      */
-    public Point getCenter(int maxWidth, int maxHeight)
+    public Point getCenter()
     {
-    	Rect bounding = this.getBoundingBox(maxWidth, maxHeight);
+    	Rect bounding = this.getBoundingBox();
     	return new Point(bounding.centerX(), bounding.centerY());
     }
     
+	/**method to set the level of your children
+	 * 
+	 */
+	public void setLevel(int l)
+	{
+		level = l;
+		for(MathObject child : children)
+			child.setLevel(l);
+	}
+    
     /** Whether or not to draw the bounding boxes */
-    private final static boolean DRAW_BOUNDING = false;
+    private final static boolean DRAW_BOUNDING = true;
     
     /** Draws the bounding box and the bounding boxes of the children (for debug purposes).
      * The boxes will only be drawn if {@link MathObject#DRAW_BOUNDING DRAW_BOUNDING} is set to true.
      * @param canvas The canvas to draw on
-     * @param maxWidth The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
      */
-    protected void drawBoundingBoxes(Canvas canvas, int maxWidth, int maxHeight)
+    protected void drawBoundingBoxes(Canvas canvas)
     {
         // Check if we should draw the bounding boxes
         if(!DRAW_BOUNDING) return;
@@ -355,9 +304,9 @@ public abstract class MathObject
         // Draw the bounding boxes
         Paint paint = new Paint();
         paint.setColor(0x4400ff00);
-        canvas.drawRect(getBoundingBox(maxWidth, maxHeight), paint);
+        canvas.drawRect(getBoundingBox(), paint);
         paint.setColor(0x44ff0000);
         for(int i = 0; i < getChildCount(); ++i)
-            canvas.drawRect(getChildBoundingBox(i, maxWidth, maxHeight), paint);
+            canvas.drawRect(getChildBoundingBox(i), paint);
     }
 }

@@ -45,10 +45,10 @@ public class MathOperationRoot extends MathBinaryOperation
     }
 
     @Override
-    public Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight) 
+    public Rect[] getOperatorBoundingBoxes() 
     {
         // Get the children sizes
-        Rect[] sizes = getChildrenSize(maxWidth, maxHeight);
+        Rect[] sizes = getChildrenSize();
         
         // We'll need 3 bounding boxes to contain the operator
         return new Rect[] {
@@ -68,54 +68,37 @@ public class MathOperationRoot extends MathBinaryOperation
      *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
      * @return The size of the child bounding boxes
      */
-    public Rect[] getChildrenSize(int maxWidth, int maxHeight)
+    public Rect[] getChildrenSize()
     {
         // Get the sizes both operands want to take
-         Rect leftSize = getChild(0).getBoundingBox(NO_MAXIMUM, NO_MAXIMUM);
-         Rect rightSize = getChild(1).getBoundingBox(NO_MAXIMUM, NO_MAXIMUM);
-        
-        // Make sure the exponent is smaller than the base
-        leftSize.bottom = 2 * leftSize.bottom / 3;
-        leftSize.right = 2 * leftSize.right / 3;
-        
-        //Since the exponent's size has changed, 
-        leftSize = getChild(0).getBoundingBox(leftSize.bottom, leftSize.right);
-        
-        // If the boxes fit within the specified maximum, we're done
-        if((maxWidth == NO_MAXIMUM || 7 * leftSize.width() / 5 + rightSize.width() < maxWidth) && (maxHeight == NO_MAXIMUM || leftSize.height() / 2 + rightSize.height() < maxHeight))
-            return new Rect[] {leftSize, rightSize};
-        
-        // Calculate the shrinking factor
-        final float widthFactor = maxWidth == NO_MAXIMUM ? 1.0f : ((float) maxWidth) / (7 * leftSize.width() / 5 + rightSize.width());
-        final float heightFactor = maxHeight == NO_MAXIMUM ? 1.0f : ((float) maxHeight) / (leftSize.height() / 2 + rightSize.height());
-        final float factor = Math.min(widthFactor, heightFactor);
-        
-        // Calculate the sizes
-        leftSize.set(0, 0, (int) (leftSize.width() * factor), (int) (leftSize.height() * factor));
-        rightSize.set(0, 0, (int) (rightSize.width() * factor), (int) (rightSize.height() * factor));
+         Rect leftSize = getChild(0).getBoundingBox();
+         Rect rightSize = getChild(1).getBoundingBox();
         
         // Return the Sizes
         return new Rect[] {leftSize, rightSize};
     }
 
     @Override
-    public Rect getBoundingBox(int maxWidth, int maxHeight)
+    public Rect getBoundingBox()
     {
         // Get the sizes
-        Rect[] sizes = getChildrenSize(maxWidth, maxHeight);
+        Rect[] sizes = getChildrenSize();
+        
+        int width =  7 * sizes[0].width() / 5 + sizes[1].width();
+        int height = sizes[0].height()/2 + sizes[1].height();
         
         // Return a bounding box, containing the bounding boxes of the children
-        return new Rect(0, 0, 7 * sizes[0].width() / 5 + sizes[1].width(), sizes[0].height()/2 + sizes[1].height());
+        return new Rect(0, 0, width, height);
     }
     
     @Override
-    public Rect getChildBoundingBox(int index, int maxWidth, int maxHeight) throws IndexOutOfBoundsException 
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException 
     {
         // Check if the child exists
         this.checkChildIndex(index);
         
         // Get the Size of the children
-        Rect[] childrenSize = getChildrenSize(maxWidth, maxHeight);
+        Rect[] childrenSize = getChildrenSize();
         
         // Move the bounding boxes to the correct position
         childrenSize[1].offsetTo(7 * childrenSize[0].width() / 5, childrenSize[0].height() / 2);
@@ -124,23 +107,50 @@ public class MathOperationRoot extends MathBinaryOperation
         return childrenSize[index];
     }
     
+    @Override
+	public void setLevel(int l)
+	{
+		level = l;
+		getChild(0).setLevel(level+1);
+		getChild(1).setLevel(level);
+	}
+    
+    @Override
+    public void setChild(int index, MathObject child) throws IndexOutOfBoundsException
+    {
+        // Check the child index
+        checkChildIndex(index);
+        
+        // Create an MathObjectEmpty if null is given
+        if(child == null)
+            child = new MathObjectEmpty(defaultMaxHeight, defaultMaxHeight);
+        //if it is the exponent of the root, make it smaller
+        if(index == 1)
+        	child.setLevel(level);
+        else 
+        	child.setLevel(level +1);
+        
+        // Set the child
+        children.set(index, child);
+    }
+    
     //We regard the center of the base operand as the center of the mathObject
     @Override
-    public Point getCenter(int maxWidth, int maxHeight)
+    public Point getCenter()
     {
-    	Rect bounding_vertical = this.getChildBoundingBox(1, maxWidth, maxHeight);
-    	Rect bounding_horizontal = this.getBoundingBox(maxWidth, maxHeight);
+    	Rect bounding_vertical = this.getChildBoundingBox(1);
+    	Rect bounding_horizontal = this.getBoundingBox();
     	return new Point(bounding_horizontal.centerX(), bounding_vertical.centerY());
     }
 
     @Override
-    public void draw(Canvas canvas, int maxWidth, int maxHeight) 
+    public void draw(Canvas canvas) 
     {
         // Draw the bounding boxes
-        drawBoundingBoxes(canvas, maxWidth, maxHeight);
+        drawBoundingBoxes(canvas);
         
         // Get the bounding boxes
-        final Rect[] childSize = getChildrenSize(maxWidth, maxHeight);
+        final Rect[] childSize = getChildrenSize();
         
         // Draw the operator
         canvas.save();
@@ -155,6 +165,6 @@ public class MathOperationRoot extends MathBinaryOperation
         canvas.restore();
         
         // Draw the children
-        drawChildren(canvas, maxWidth, maxHeight);
+        drawChildren(canvas);
     }
 }

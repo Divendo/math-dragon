@@ -101,9 +101,9 @@ public class MathSourceView extends View
         if(mathObject != null)
         {
             canvas.save();
-            Rect boundingBox = mathObject.getBoundingBox(canvas.getWidth(), canvas.getHeight());
+            Rect boundingBox = mathObject.getBoundingBox();
             canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
-            mathObject.draw(canvas, canvas.getWidth(), canvas.getHeight());
+            mathObject.draw(canvas);
             canvas.restore();
         }
     }

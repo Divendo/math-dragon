@@ -48,13 +48,13 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
     }
     
     @Override
-    public void draw(Canvas canvas, int maxWidth, int maxHeight)
+    public void draw(Canvas canvas)
     {
         // Draw the bounding boxes
-        drawBoundingBoxes(canvas, maxWidth, maxHeight);
+        drawBoundingBoxes(canvas);
         
         // Get the bounding box
-        final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
+        final Rect operator = getOperatorBoundingBoxes()[0];
         
         // Draw the operator
         canvas.save();
@@ -65,6 +65,6 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
         canvas.restore();
         
         // Draw the children
-        drawChildren(canvas, maxWidth, maxHeight);
+        drawChildren(canvas);
     }
 }

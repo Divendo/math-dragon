@@ -55,83 +55,48 @@ public class MathParentheses extends MathObject
     {
         return getChild(0).approximate();
     }
-
-    /**
-     * Returns the sizes of the bounding boxes.
-     * The first two rectangle are the sizes of the brackets, the third rectangle is the size of the child.
-     * 
-     * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @return The size of the child bounding boxes
-     */
-    protected Rect[] getSizes(int maxWidth, int maxHeight)
+    
+    @Override
+    public Rect[] getOperatorBoundingBoxes()
     {
-        // Get the size the child wants to take
-        Rect childSize = getChild(0).getBoundingBox(NO_MAXIMUM, maxHeight);
+    	final Rect childRect = getChild(0).getBoundingBox();
+    	final int width = (int)(childRect.height() * RATIO);
         
-        // Calculate the width and height the operator wants to take
-        Rect operatorSize = getRectBoundingBox(NO_MAXIMUM, childSize.height(), RATIO);
-
-        // If we have no maximum width, we're done
-        if(maxWidth == NO_MAXIMUM)
-            return new Rect[] {operatorSize, new Rect(operatorSize), childSize};
-
-        // If we would get wider than the maximum width, shrink so we fit in
-        if(childSize.width() + operatorSize.width() * 2 > maxWidth)
-        {
-            // Determine the maximum width for the child
-            final int childMax = maxWidth * childSize.width() / (childSize.width() + operatorSize.width() * 2);
-            
-            // Set the new size of the child
-            childSize.set(0, 0, childMax, childMax * childSize.height() / childSize.width());
-            
-            // Calculate the new operator size
-            operatorSize = getRectBoundingBox(NO_MAXIMUM, childSize.height(), RATIO);
-        }
-
-        // Return the sizes
-        return new Rect[] {operatorSize, new Rect(operatorSize), childSize};
+        // Return the bounding boxes
+        return new Rect[] {new Rect(0, 0, width, childRect.height()), new Rect(width + childRect.width(), 0, width * 2 + childRect.width(), childRect.height())};
     }
     
     @Override
-    public Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight)
+    public Rect getBoundingBox()
     {
-        // Get the sizes
-        Rect[] sizes = getSizes(maxWidth, maxHeight);
-        
-        // Position the bounding box of the right bracket
-        sizes[1].offset(sizes[0].width() + sizes[2].width(), 0);
-        
-        // Return the bounding boxes
-        return new Rect[] {sizes[0], sizes[1]};
+    	final Rect childRect = getChild(0).getBoundingBox();
+    	return new Rect(0, 0, 2 * (int)(childRect.height() * RATIO) + childRect.width(), childRect.height());
     }
 
     @Override
-    public Rect getChildBoundingBox(int index, int maxWidth, int maxHeight) throws IndexOutOfBoundsException
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Check the child index
         checkChildIndex(index);
         
         // Get the sizes
-        Rect[] sizes = getSizes(maxWidth, maxHeight);
+        Rect childRect = getChild(0).getBoundingBox();
         
         // Position the bounding box of the child
-        sizes[2].offset(sizes[0].width(), 0);
+        childRect.offset((int)(childRect.height() * RATIO), 0);
         
         // Return the bounding box
-        return sizes[2];
+        return childRect;
     }
 
     @Override
-    public void draw(Canvas canvas, int maxWidth, int maxHeight)
+    public void draw(Canvas canvas)
     {
         // Draw the bounding boxes
-        drawBoundingBoxes(canvas, maxWidth, maxHeight);
+        drawBoundingBoxes(canvas);
         
         // Get the operator bounding boxes
-        Rect[] boxes = getOperatorBoundingBoxes(maxWidth, maxHeight);
+        Rect[] boxes = getOperatorBoundingBoxes();
         
         // Prepare the paint and canvas for drawing the brackets
         paint.setColor(getColor());
@@ -156,7 +121,7 @@ public class MathParentheses extends MathObject
         canvas.restore();
         
         // Draw the child
-        drawChildren(canvas, maxWidth, maxHeight);
+        drawChildren(canvas);
     }
 
 }

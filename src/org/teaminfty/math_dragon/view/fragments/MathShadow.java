@@ -55,7 +55,7 @@ public class MathShadow extends DragShadowBuilder
     public Rect getMathObjectBounding()
     {
         // Calculate the bounding box
-        Rect boundingBox = mathObject.getBoundingBox(size.x, size.y);
+        Rect boundingBox = mathObject.getBoundingBox();
         
         // Apply the same translation we apply to the canvas
         boundingBox.offset((size.x - boundingBox.width()) / 2, (size.y - boundingBox.height()) / 2);
@@ -81,9 +81,9 @@ public class MathShadow extends DragShadowBuilder
         if(mathObject != null)
         {
             canvas.save();
-            Rect boundingBox = mathObject.getBoundingBox(canvas.getWidth(), canvas.getHeight());
+            Rect boundingBox = mathObject.getBoundingBox();
             canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
-            mathObject.draw(canvas, canvas.getWidth(), canvas.getHeight());
+            mathObject.draw(canvas);
             canvas.restore();
         }
     }

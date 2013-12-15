@@ -294,69 +294,36 @@ public class MathConstant extends MathObject
     
     /** Uses binary search to find the right text size so that the text fits the given bounding box
      * @return The right text size so that the text fits the given bounding box */
-    protected float findTextSize(int maxWidth, int maxHeight)
+    protected float findTextSize(int Level)
     {
-        // If both the width and height are unrestricted, restrict the height
-        if(maxWidth == NO_MAXIMUM && maxHeight == NO_MAXIMUM)
-            return findTextSize(NO_MAXIMUM, defaultMaxHeight);
-        
-        // We don't want a text size bigger than 128 or smaller than 8
-        final float maxTextSize = 96.0f;
-        final float minTextSize = 8.0f;
-        
-        // The margin, if our resulting box is this amount smaller than the target then we're done
-        final int margin = 2;
-        
-        // Our initial text size and delta
-        float textSize = (maxTextSize - minTextSize) / 2;
-        float delta = (maxTextSize - textSize) / 2;
-        
-        // Keep searching until the text fits or until delta becomes too small
-        // Note that we will never reach the maximum or minimum text size this way
-        Rect bounds = new Rect();
-        while(delta >= 0.1f)
-        {
-            // Set the text size and calculate the bounds
-            bounds = sizeAddPadding(getSize(textSize));
-            
-            // Determine if the text size should become smaller or bigger
-            if((maxWidth != NO_MAXIMUM && bounds.width() > maxWidth) || (maxHeight != NO_MAXIMUM && bounds.height() > maxHeight))
-                textSize -= delta;
-            else if((maxWidth != NO_MAXIMUM && bounds.width() + margin >= maxWidth) || (maxHeight != NO_MAXIMUM && bounds.height() + margin >= maxHeight))
-                break;
-            else
-                textSize += delta;
-            
-            // Calculate the new delta
-            delta /= 2;
-        }
-        
-        // Return the text size
-        return textSize;
+    	int value = 96;
+    	for(int t = 0; t<Level; t++)
+    		value = 2*value/3;
+    	return value;
     }
 
     @Override
-    public Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight)
+    public Rect[] getOperatorBoundingBoxes()
     {
         // Find the right text size and return the bounding box for it
-        return new Rect[]{ sizeAddPadding(getSize(findTextSize(maxWidth, maxHeight))) };
+        return new Rect[]{ sizeAddPadding(getSize(findTextSize(level))) };
     }
 
     @Override
-    public Rect getChildBoundingBox(int index, int maxWidth, int maxHeight) throws IndexOutOfBoundsException
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Will always throw an error since constants do not have children
         checkChildIndex(index);
         return null;
     }
     
-    public void draw(Canvas canvas, int maxWidth, int maxHeight)
+    public void draw(Canvas canvas)
     {
         // Draw the bounding boxes
-        drawBoundingBoxes(canvas, maxWidth, maxHeight);
+        drawBoundingBoxes(canvas);
         
         // Get the text size and the bounding box
-        final float textSize = findTextSize(maxWidth, maxHeight);
+        final float textSize = findTextSize(level);
         Rect textBounding = getSize(textSize);
         Rect totalBounding = sizeAddPadding(textBounding);
 
@@ -364,7 +331,7 @@ public class MathConstant extends MathObject
         paint.setTextSize(textSize);
         exponentPaint.setTextSize(textSize * EXPONENT_FACTOR);
         
-        // Set the paint colour
+        // Set the paint color
         paint.setColor(getColor());
         exponentPaint.setColor(getColor());
         

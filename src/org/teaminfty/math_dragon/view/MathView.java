@@ -82,9 +82,9 @@ public class MathView extends View
     {
         // Simply draw the math object
         canvas.save();
-        Rect boundingBox = mathObject.getBoundingBox(canvas.getWidth(), canvas.getHeight());
+        Rect boundingBox = mathObject.getBoundingBox();
         canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
-        mathObject.draw(canvas, canvas.getWidth(), canvas.getHeight());
+        mathObject.draw(canvas);
         canvas.restore();
     }
     
@@ -199,7 +199,7 @@ public class MathView extends View
         {
             if(dragMathObject.getChild(i) instanceof MathObjectEmpty)
             {
-                Rect rect = dragMathObject.getChildBoundingBox(i, dragBoundingBox.width(), dragBoundingBox.height());
+                Rect rect = dragMathObject.getChildBoundingBox(i);
                 childAimPoints[i] = new Point(dragBoundingBox.left + rect.centerX(), dragBoundingBox.top + rect.centerY());
             }
             else
@@ -207,7 +207,7 @@ public class MathView extends View
         }
         
         // Determine how the canvas will be translated when drawing the current MathObject
-        Rect boundingBox = mathObject.getBoundingBox(getWidth(), getHeight());
+        Rect boundingBox = mathObject.getBoundingBox();
         boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
         
         // If we don't intersect with the bounding box at all, we can stop here
@@ -248,7 +248,7 @@ public class MathView extends View
             else
             {
                 // Determine if we're aiming at this object itself
-                Rect[] operatorBounds = info.mathObject.getOperatorBoundingBoxes(info.boundingBox.width(), info.boundingBox.height());
+                Rect[] operatorBounds = info.mathObject.getOperatorBoundingBoxes();
                 for(Rect rect : operatorBounds)
                     rect.offset(info.boundingBox.left, info.boundingBox.top);
                 for(int i = 0; i < childAimPoints.length; ++i)
@@ -278,7 +278,7 @@ public class MathView extends View
                 for(int i = 0; i < info.mathObject.getChildCount(); ++i)
                 {
                     // Get the bounding box for the child
-                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i, info.boundingBox.width(), info.boundingBox.height());
+                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i);
                     childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
                     
                     // If we don't intersect with the bounding box at all, we're not interested
@@ -369,7 +369,7 @@ public class MathView extends View
             return true;
         
         // Determine how the canvas will be translated when drawing the current MathObject
-        Rect boundingBox = mathObject.getBoundingBox(getWidth(), getHeight());
+        Rect boundingBox = mathObject.getBoundingBox();
         boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
         
         // Keep track of which objects still need to be checked
@@ -436,7 +436,7 @@ public class MathView extends View
                 for(int i = 0; i < info.mathObject.getChildCount(); ++i)
                 {
                     // Get the bounding box for the child
-                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i, info.boundingBox.width(), info.boundingBox.height());
+                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i);
                     childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
 
                     // Add the child to the queue if we click inside the child
