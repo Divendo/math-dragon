@@ -89,7 +89,7 @@ public class MathObjectEmpty extends MathObject
     	int width = (int)(defaultMaxHeight*RATIO);
     	int height = defaultMaxHeight;
     	
-    	for(int t = 0; t< this.level; t++)
+    	for(int t = 0; t< this.level && t<3; t++)
     	{
     		width = 2*width/3;
     		height = 2*height/3;
