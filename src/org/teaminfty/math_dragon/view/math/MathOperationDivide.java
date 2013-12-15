@@ -115,12 +115,7 @@ public class MathOperationDivide extends MathBinaryOperation
        
         int width = Math.max(sizes[1].width(), sizes[2].width());
         int height = sizes[0].height() + sizes[1].height() + sizes[2].height();
-        
-        for(int t = 0; t< this.level; t++)
-        {
-        	width = 2*width/3;
-        	height = 2*height/3;
-        }
+
         return new Rect(0, 0, width, height);
     }
     
