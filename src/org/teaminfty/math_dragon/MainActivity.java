@@ -113,7 +113,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     
     public void favourites(View view)
     {
-        // Get the DrawerLayout object
+    	// Get the DrawerLayout object
         // DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         
         // Show the favorites drawer
