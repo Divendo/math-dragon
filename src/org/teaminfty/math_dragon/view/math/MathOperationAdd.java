@@ -1,27 +1,26 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class MathOperationAdd extends MathBinaryOperationLinear
 {
+    public MathOperationAdd()
+    {}
 
-    /** Constructor
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
-     */
-    public MathOperationAdd(int defWidth, int defHeight)
-    { super(defWidth, defHeight); }
-
-    public MathOperationAdd(MathObject A, MathObject B, int defWidth, int defHeight)
+    public MathOperationAdd(MathObject left, MathObject right)
     { 
-    	super(defWidth, defHeight);
-		this.setChild(0, A);
-		this.setChild(1, B);
+    	super(left, right);
 	}
+    
+    public String toString(){
+        return "(" + getLeft().toString() + "+" + getRight().toString() + ")";
+    }
     
     @Override
     public int getPrecedence()
@@ -34,7 +33,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         this.checkChildren();
         
         // Return the result
-        return F.Plus(getChild(0).eval(), getChild(1).eval());
+        return F.Plus(getLeft().eval(), getRight().eval());
     }
 
     @Override
@@ -44,14 +43,18 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         this.checkChildren();
         
         // Return the result
-        return getChild(0).approximate() + getChild(1).approximate();
+        return getLeft().approximate() + getRight().approximate();
     }
 
+
     @Override
-    public void draw(Canvas canvas, int maxWidth, int maxHeight)
+    public void draw(Canvas canvas)
     {
+        // Draw the bounding boxes
+        drawBoundingBoxes(canvas);
+        
         // Get the bounding box
-        final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
+        final Rect operator = getOperatorBoundingBoxes()[0];
         
         // Draw the operator
         operator.inset(operator.width() / 10, operator.height() / 10);      // Padding
@@ -64,7 +67,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         canvas.restore();
         
         // Draw the children
-        drawChildren(canvas, maxWidth, maxHeight);
+        drawChildren(canvas);
     }
 
 }

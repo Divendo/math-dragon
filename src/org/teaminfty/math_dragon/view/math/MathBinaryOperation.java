@@ -1,4 +1,6 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
+
+import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 
 /**
  * This class draws binary operations and provides simply functions to modify
@@ -9,21 +11,24 @@ package org.teaminfty.math_dragon;
 
 public abstract class MathBinaryOperation extends MathObject
 {
-    public MathBinaryOperation(int defWidth, int defHeight)
+    public MathBinaryOperation()
     {
-        this(null, null, defWidth, defHeight);
+        this(null, null);
     }
 
-    public MathBinaryOperation(MathObject left, MathObject right, int defWidth, int defHeight)
+    public MathBinaryOperation(MathObject left, MathObject right)
     {
-        super(defWidth, defHeight);
-
         // We have two children
-        children.add(new MathObjectEmpty(defWidth, defHeight));
-        children.add(new MathObjectEmpty(defWidth, defHeight));
+        children.add(new MathObjectEmpty());
+        children.add(new MathObjectEmpty());
         
         // Set the left and right child
         set(left, right);
+    }
+    
+    public String toString()
+    {
+        return "(" + getLeft().toString() + "," + getRight().toString() + ")";
     }
     
     /**

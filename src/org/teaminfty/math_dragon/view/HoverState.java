@@ -1,4 +1,7 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view;
+
+import org.teaminfty.math_dragon.view.math.MathObject;
+
 
 /**
  * Container of different states when e.g. a {@link MathObject} is being dragged

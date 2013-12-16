@@ -1,6 +1,10 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view;
 
 import java.lang.reflect.InvocationTargetException;
+
+import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.fragments.MathShadow;
+import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.content.ClipData;
 import android.content.Context;
@@ -61,35 +65,29 @@ public class MathSourceView extends View
         
         try
         {
-            final int defSize = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-            MathObject copy = mo.getClass().getConstructor(int.class, int.class).newInstance(defSize, defSize);
+            MathObject copy = mo.getClass().getConstructor().newInstance();
             for(int i = 0; i < mo.getChildCount(); ++i)
                 copy.setChild(i, copyMathObject(mo.getChild(i)));
             return copy;
         }
         catch(InstantiationException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch(IllegalAccessException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch(IllegalArgumentException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch(InvocationTargetException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch(NoSuchMethodException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -102,9 +100,9 @@ public class MathSourceView extends View
         if(mathObject != null)
         {
             canvas.save();
-            Rect boundingBox = mathObject.getBoundingBox(canvas.getWidth(), canvas.getHeight());
+            Rect boundingBox = mathObject.getBoundingBox();
             canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
-            mathObject.draw(canvas, canvas.getWidth(), canvas.getHeight());
+            mathObject.draw(canvas);
             canvas.restore();
         }
     }

@@ -1,7 +1,9 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,13 +13,13 @@ import android.graphics.Rect;
 public class MathConstant extends MathObject
 {
     /** The factor of this constant */
-    protected long factor = 0;
+    private long factor = 0;
     /** The power of the E constant */
-    protected long ePow = 0;
+    private long ePow = 0;
     /** The power of the PI constant */
-    protected long piPow = 0;
+    private long piPow = 0;
     /** The power of the imaginary unit */
-    protected long iPow = 0;
+    private long iPow = 0;
     
     /** The paint that is used to draw the factor and the constants */
     protected Paint paint = new Paint();
@@ -28,26 +30,35 @@ public class MathConstant extends MathObject
     /** The text size factor for exponents */
     protected static final float EXPONENT_FACTOR = 1.0f / 2;
 
-    /** Constructor
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
-     */
-    public MathConstant(int defWidth, int defHeight)
+    /** Default constructor */
+    public MathConstant()
     { 
-        super(defWidth, defHeight);
-        initPaints();
+        this(0, 0, 0, 0);
     }
 
     /** Constructor, constructs with the given value
-     * @param v The value that this constant should be initialized with
-     * @param defWidth The default maximum width
-     * @param defHeight The default maximum height
+     * @param v The value that this constant should be initialised with
      */
-    public MathConstant(String value, int defWidth, int defHeight)
+    public MathConstant(String value)
     {
-        super(defWidth, defHeight);
+        super();
         initPaints();
         readString(value);
+    }
+    
+    /** Construct mathematical constant using specified values for simplicity.
+     * @param factor The base number
+     * @param ePow The euler power
+     * @param piPow The pi power
+     * @param iPow The imaginary power
+     */
+    public MathConstant(long factor, long ePow, long piPow, long iPow)
+    {
+    	initPaints();
+    	this.factor = factor;
+    	this.ePow = ePow;
+    	this.piPow = piPow;
+    	this.iPow = iPow;
     }
     
     /** Initialises the paints */
@@ -60,10 +71,7 @@ public class MathConstant extends MathObject
     /** Resets the value of this constant */
     private void reset()
     {
-        factor = 0;
-        ePow = 0;
-        piPow = 0;
-        iPow = 0;
+    	set(0, 0, 0, 0);
     }
     
     /** Used in {@link MathConstant#readString(String) readString()} to keep track of the current power type */
@@ -76,6 +84,7 @@ public class MathConstant extends MathObject
      * Note that this method does not much error detection, so passing invalid strings may result in undefined behaviour.
      * @param value The string representation of the constant
      */
+    // FIXME fails to parse if <tt>value</tt> equals <tt>Long.MIN_VALUE</tt>
     public void readString(String value)
     {
         // Reset the current values
@@ -88,7 +97,7 @@ public class MathConstant extends MathObject
         {
             // If the value is a number, add that number
             if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
-                    factor = factor * 10 + (value.charAt(i) - '0');
+                    setFactor(getFactor() * 10 + (value.charAt(i) - '0'));
             // If it is one of the mathematical constants, add them and change the PowerType
             else
             {
@@ -101,17 +110,17 @@ public class MathConstant extends MathObject
 
                 // If we're still the first character, then there is an implicit 1
                 if(i == 0)
-                    factor = 1;
+                    setFactor(1);
                 
                 // Check for constants
                 if(value.charAt(i) == 'i')
                 {
-                    iPow += 1;
+                    setIPow(getIPow() + 1);
                     type = PowerType.i;
                 }
                 else if(value.charAt(i) == 'e')
                 {
-                    ePow += 1;
+                    setEPow(getEPow() + 1);
                     type = PowerType.e;
                 }
                 // If you see a 'p', check if they mean 'pi'.
@@ -120,7 +129,7 @@ public class MathConstant extends MathObject
                     i++;
                     if (value.charAt(i) == 'i')
                     {
-                        piPow += 1;
+                        setPiPow(getPiPow() + 1);
                         type = PowerType.pi;
                     }
                 }
@@ -150,20 +159,20 @@ public class MathConstant extends MathObject
                     // Add the power to the right power variable
                     // Subtract 1 from the power because that was added before (in case no exponent would be specified)
                     if(type == PowerType.factor)
-                        factor = (long) Math.pow(factor, tempPow);
+                        setFactor((long) Math.pow(getFactor(), tempPow));
                     else if(type == PowerType.i)
-                        iPow += tempPow - 1;
+                        setIPow(getIPow() + tempPow - 1);
                     else if(type == PowerType.e)
-                        ePow += tempPow - 1;
+                        setEPow(getEPow() + tempPow - 1);
                     else if(type == PowerType.pi)
-                        piPow += tempPow - 1;
+                        setPiPow(getPiPow() + tempPow - 1);
                 }
             }
         }
         
         // If value is negative, just negate the factor
         if(negative)
-            factor *= -1;
+            setFactor(getFactor() * -1);
     }
     
     /** Calculates the size of this {@link MathConstant} when using the given font size
@@ -181,12 +190,12 @@ public class MathConstant extends MathObject
         Rect bounds = new Rect();
         
         // First add the width of the factor part
-        String tmpStr = Long.toString(factor);
-        if((piPow | ePow | iPow) != 0)
+        String tmpStr = Long.toString(getFactor());
+        if((getPiPow() | getEPow() | getIPow()) != 0)
         {
-            if(factor == 1)
+            if(getFactor() == 1)
                 tmpStr = "";
-            else if(factor == -1)
+            else if(getFactor() == -1)
                 tmpStr = "-";
         }
         if(tmpStr != "")
@@ -197,10 +206,10 @@ public class MathConstant extends MathObject
         }
 
         // We only show the other constants if the factor is not 0
-        if(factor != 0)
+        if(getFactor() != 0)
         {
             // Add the width of the PI constant
-            if(piPow != 0)
+            if(getPiPow() != 0)
             {
                 // The PI sign
                 tmpStr = "\u03C0";
@@ -209,45 +218,45 @@ public class MathConstant extends MathObject
                 out.bottom = Math.max(out.bottom, bounds.height());
 
                 // The exponent
-                if(piPow != 1)
+                if(getPiPow() != 1)
                 {
-                    tmpStr = Long.toString(piPow);
+                    tmpStr = Long.toString(getPiPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     out.right += bounds.width();
                 }
             }
             
             // Add the width of the E constant
-            if(ePow != 0)
+            if(getEPow() != 0)
             {
-                // The PI sign
+                // The e sign
                 tmpStr = "e";
                 paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                 out.right += bounds.width();
                 out.bottom = Math.max(out.bottom, bounds.height());
                 
                 // The exponent
-                if(ePow != 1)
+                if(getEPow() != 1)
                 {
-                    tmpStr = Long.toString(ePow);
+                    tmpStr = Long.toString(getEPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     out.right += bounds.width();
                 }
             }
             
             // Add the width of the imaginary unit
-            if(iPow != 0)
+            if(getIPow() != 0)
             {
-                // The PI sign
+                // The i sign
                 tmpStr = "i";
                 paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                 out.right += bounds.width();
                 out.bottom = Math.max(out.bottom, bounds.height());
                 
                 // The exponent
-                if(iPow != 1)
+                if(getIPow() != 1)
                 {
-                    tmpStr = Long.toString(iPow);
+                    tmpStr = Long.toString(getIPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     out.right += bounds.width();
                 }
@@ -277,72 +286,46 @@ public class MathConstant extends MathObject
     
     /** Uses binary search to find the right text size so that the text fits the given bounding box
      * @return The right text size so that the text fits the given bounding box */
-    protected float findTextSize(int maxWidth, int maxHeight)
+    protected float findTextSize(int Level)
     {
-        // If both the width and height are unrestricted, restrict the height
-        if(maxWidth == NO_MAXIMUM && maxHeight == NO_MAXIMUM)
-            return findTextSize(NO_MAXIMUM, defaultMaxHeight);
-        
-        // We don't want a text size bigger than 128 or smaller than 8
-        final float maxTextSize = 512.0f;
-        final float minTextSize = 8.0f;
-        
-        // The margin, if our resulting box is this amount smaller than the target then we're done
-        final int margin = 2;
-        
-        // Our initial text size and delta
-        float textSize = (maxTextSize - minTextSize) / 2;
-        float delta = (maxTextSize - textSize) / 2;
-        
-        // Keep searching until the text fits or until delta becomes too small
-        // Note that we will never reach the maximum or minimum text size this way
-        Rect bounds = new Rect();
-        while(delta >= 0.1f)
-        {
-            // Set the text size and calculate the bounds
-            bounds = sizeAddPadding(getSize(textSize));
-            
-            // Determine if the text size should become smaller or bigger
-            if((maxWidth != NO_MAXIMUM && bounds.width() > maxWidth) || (maxHeight != NO_MAXIMUM && bounds.height() > maxHeight))
-                textSize -= delta;
-            else if((maxWidth != NO_MAXIMUM && bounds.width() + margin >= maxWidth) || (maxHeight != NO_MAXIMUM && bounds.height() + margin >= maxHeight))
-                break;
-            else
-                textSize += delta;
-            
-            // Calculate the new delta
-            delta /= 2;
-        }
-        
-        // Return the text size
-        return textSize;
+    	int value = 96;
+    	for(int t = 0; t < Level && t < MAX_LEVEL; t++)
+    		value = 2*value/3;
+    	return value;
     }
 
     @Override
-    public Rect[] getOperatorBoundingBoxes(int maxWidth, int maxHeight)
+    public Rect[] getOperatorBoundingBoxes()
     {
         // Find the right text size and return the bounding box for it
-        return new Rect[]{ sizeAddPadding(getSize(findTextSize(maxWidth, maxHeight))) };
+        return new Rect[]{ sizeAddPadding(getSize(findTextSize(level))) };
     }
 
     @Override
-    public Rect getChildBoundingBox(int index, int maxWidth, int maxHeight) throws IndexOutOfBoundsException
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Will always throw an error since constants do not have children
         checkChildIndex(index);
         return null;
     }
     
-    public void draw(Canvas canvas, int maxWidth, int maxHeight)
+    public void draw(Canvas canvas)
     {
+        // Draw the bounding boxes
+        drawBoundingBoxes(canvas);
+        
         // Get the text size and the bounding box
-        final float textSize = findTextSize(maxWidth, maxHeight);
+        final float textSize = findTextSize(level);
         Rect textBounding = getSize(textSize);
         Rect totalBounding = sizeAddPadding(textBounding);
 
         // Set the text size
         paint.setTextSize(textSize);
         exponentPaint.setTextSize(textSize * EXPONENT_FACTOR);
+        
+        // Set the paint color
+        paint.setColor(getColor());
+        exponentPaint.setColor(getColor());
         
         // Translate the canvas
         canvas.save();
@@ -352,14 +335,14 @@ public class MathConstant extends MathObject
         int x = 0;
         
         // Draw the factor part
-        String tmpStr = Long.toString(factor);
+        String tmpStr = Long.toString(getFactor());
         Rect bounds = new Rect();
         boolean addMinusSign = false;
-        if((piPow | ePow | iPow) != 0)
+        if((getPiPow() | getEPow() | getIPow()) != 0)
         {
-            if(factor == 1)
+            if(getFactor() == 1)
                 tmpStr = "";
-            else if(factor == -1)
+            else if(getFactor() == -1)
                 addMinusSign = true;    // Just remember to add a minus sign to the next constant
         }
         if(tmpStr != "" && !addMinusSign)
@@ -371,10 +354,10 @@ public class MathConstant extends MathObject
         }
         
         // Only draw the other constants if the factor is not 0
-        if(factor != 0)
+        if(getFactor() != 0)
         {
             // Draw the PI constant
-            if(piPow != 0)
+            if(getPiPow() != 0)
             {
                 // The PI sign
                 tmpStr = (addMinusSign ? "-" : "") + "\u03C0";
@@ -383,9 +366,9 @@ public class MathConstant extends MathObject
                 x += bounds.width();
                 
                 // The exponent
-                if(piPow != 1)
+                if(getPiPow() != 1)
                 {
-                    tmpStr = Long.toString(piPow);
+                    tmpStr = Long.toString(getPiPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
                     x += bounds.width();
@@ -396,7 +379,7 @@ public class MathConstant extends MathObject
             }
             
             // Draw the E constant
-            if(ePow != 0)
+            if(getEPow() != 0)
             {
                 // The E sign
                 tmpStr = (addMinusSign ? "-" : "") + "e";
@@ -406,9 +389,9 @@ public class MathConstant extends MathObject
                 tmpStr = "";
                 
                 // The exponent
-                if(ePow != 1)
+                if(getEPow() != 1)
                 {
-                    tmpStr = Long.toString(ePow);
+                    tmpStr = Long.toString(getEPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
                     x += bounds.width();
@@ -419,7 +402,7 @@ public class MathConstant extends MathObject
             }
             
             // Draw the imaginary unit
-            if(iPow != 0)
+            if(getIPow() != 0)
             {
                 // The imaginary unit sign
                 tmpStr = (addMinusSign ? "-" : "") + "i";
@@ -429,9 +412,9 @@ public class MathConstant extends MathObject
                 tmpStr = "";
                 
                 // The exponent
-                if(iPow != 1)
+                if(getIPow() != 1)
                 {
-                    tmpStr = Long.toString(iPow);
+                    tmpStr = Long.toString(getIPow());
                     exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
                     canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
                     x += bounds.width();
@@ -449,16 +432,16 @@ public class MathConstant extends MathObject
     public IExpr eval()
     {
         // This will be our result, and if the factor is 0, we're done already
-        IExpr result = F.ZZ(factor);
-        if(factor == 0) return result;
+        IExpr result = F.ZZ(getFactor());
+        if(getFactor() == 0) return result;
 
         // Add the other constants and their powers
-        if(piPow != 0)
-            result =F.Times(result, F.Power(F.Pi, piPow));
-        if(ePow != 0)
-            result = F.Times(result, F.Power(F.E, ePow));
-        if(iPow != 0)
-            result = F.Times(result, F.Power(F.I, iPow));
+        if(getPiPow() != 0)
+            result =F.Times(result, F.Power(F.Pi, getPiPow()));
+        if(getEPow() != 0)
+            result = F.Times(result, F.Power(F.E, getEPow()));
+        if(getIPow() != 0)
+            result = F.Times(result, F.Power(F.I, getIPow()));
         
         // Return the result
         return result;
@@ -467,25 +450,39 @@ public class MathConstant extends MathObject
     public double approximate()throws NotConstantException, EmptyChildException
     {
         // If the factor is 0, we're done
-        if(factor == 0) return 0;
+        if(getFactor() == 0) return 0;
         
         // Keep track of the result
-        double result = factor;
+        double result = getFactor();
         
         // If the power of the imaginary unit is even and not a multiple of four, we negate the value
-        if(iPow % 2 == 0 && iPow % 4 != 0)
+        if(getIPow() % 2 == 0 && getIPow() % 4 != 0)
             result *= -1;
         else
             throw new NotConstantException("Can't approximate the value of an imaginary constant.");
         
         // Add the constants PI and E
-        if(piPow != 0)
-            result *= Math.pow(Math.PI, piPow);
-        if(ePow != 0)
-            result *= Math.pow(Math.E, ePow);
+        if(getPiPow() != 0)
+            result *= Math.pow(Math.PI, getPiPow());
+        if(getEPow() != 0)
+            result *= Math.pow(Math.E, getEPow());
         
         // Return the result
         return result;
+    }
+    
+    /**
+     * Check whether the current instance and <tt>o</tt> are identical. It is
+     * heavily called by unit test cases, so do not remove this method!
+     * @param o the instance to compare with
+     * @return <tt>true</tt> when equal, <tt>false</tt> otherwise.
+     */
+    public boolean equals(Object o)
+    {
+    	if (!(o instanceof MathConstant))
+    		return false;
+    	MathConstant c = (MathConstant) o;
+    	return c.factor == factor && c.ePow == ePow && c.piPow == piPow && c.iPow == iPow;
     }
     
     /**
@@ -495,35 +492,95 @@ public class MathConstant extends MathObject
     public String toString()
     {
         // Add the factor to the string, if that is 0 we're done
-        String str = Long.toString(factor);
-        if(factor == 0) return str;
+        String str = Long.toString(getFactor());
+        if(getFactor() == 0) return str;
 
         // Add PI to the string
-        if(piPow != 0)
+        if(getPiPow() != 0)
         {
             str += "\u03C0";
-            if(piPow != 1)
-                str += "^" + piPow;
+            if(getPiPow() != 1)
+                str += "^" + getPiPow();
         }
         
         // Add the constant E to the string
-        if(ePow != 0)
+        if(getEPow() != 0)
         {
             str += "e";
-            if(ePow != 1)
-                str += "^" + ePow;
+            if(getEPow() != 1)
+                str += "^" + getEPow();
         }
         
         // Add the imaginary unit to the string
-        if(iPow != 0)
+        if(getIPow() != 0)
         { 
             str += "i";
-            if(iPow != 1)
-                str += "^" + iPow;
+            if(getIPow() != 1)
+                str += "^" + getIPow();
         }
         
         // Return the string
         return str;
     }
-    
+
+    /** Retrieve the ground base number factor.
+     * @return The base number.
+     */
+	public long getFactor()
+	{
+		return factor;
+	}
+
+	/** Assign the new factor to <tt>factor</tt>.
+	 * @param factor the new <tt>factor</tt>.
+	 */
+	public void setFactor(long factor)
+	{
+		this.factor = factor;
+	}
+
+	public long getPiPow()
+	{
+		return piPow;
+	}
+
+	public void setPiPow(long piPow)
+	{
+		this.piPow = piPow;
+	}
+
+	public long getEPow()
+	{
+		return ePow;
+	}
+
+	public void setEPow(long ePow)
+	{
+		this.ePow = ePow;
+	}
+
+	public long getIPow()
+	{
+		return iPow;
+	}
+
+	public void setIPow(long iPow)
+	{
+		this.iPow = iPow;
+	}
+
+	/**
+	 * Reset all numerical values to new specified values.
+	 * @param factor The new factor
+	 * @param ePow The new euler power
+	 * @param piPow The new pi power
+	 * @param iPow The new imaginary power
+	 */
+	public void set(long factor, long ePow, long piPow, long iPow)
+	{
+		setFactor(factor);
+		setEPow(ePow);
+		setPiPow(piPow);
+		setIPow(iPow);
+	}
 }

@@ -1,6 +1,14 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.MathSourceView;
+import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.MathOperationAdd;
+import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
+import org.teaminfty.math_dragon.view.math.MathOperationPower;
+import org.teaminfty.math_dragon.view.math.MathOperationRoot;
+import org.teaminfty.math_dragon.view.math.MathOperationSubtract;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -10,22 +18,19 @@ import android.view.ViewGroup;
 
 public class FragmentOperationsSource extends Fragment implements MathSourceView.DragStartedListener
 {
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_operations_source, container, false);
         
-        // Get the default size for the MathObjects in this drawer
-        final int defSize = getResources().getDimensionPixelSize(R.dimen.math_source_height);
-        
         // Set the MathObjects for the MathSourceViews
-        setMathObjectFor(layout, R.id.mathSourceAdd, new MathOperationAdd(defSize, defSize));
-        setMathObjectFor(layout, R.id.mathSourceSubtract, new MathOperationSubtract(defSize, defSize));
-        setMathObjectFor(layout, R.id.mathSourceMultiply, new MathOperationMultiply(defSize, defSize));
-        setMathObjectFor(layout, R.id.mathSourceDivide, new MathOperationDivide(defSize, defSize));
-        setMathObjectFor(layout, R.id.mathSourcePower, new MathOperationPower(defSize, defSize));
+        setMathObjectFor(layout, R.id.mathSourceAdd, new MathOperationAdd());
+        setMathObjectFor(layout, R.id.mathSourceSubtract, new MathOperationSubtract());
+        setMathObjectFor(layout, R.id.mathSourceMultiply, new MathOperationMultiply());
+        setMathObjectFor(layout, R.id.mathSourceDivide, new MathOperationDivide());
+        setMathObjectFor(layout, R.id.mathSourcePower, new MathOperationPower());
+        setMathObjectFor(layout, R.id.mathSourceRoot, new MathOperationRoot());
         
         // Return the layout
         return layout;

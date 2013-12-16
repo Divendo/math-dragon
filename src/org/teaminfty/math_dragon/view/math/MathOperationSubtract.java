@@ -1,16 +1,23 @@
-package org.teaminfty.math_dragon;
+package org.teaminfty.math_dragon.view.math;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class MathOperationSubtract extends MathBinaryOperationLinear
 {
-    public MathOperationSubtract(int defWidth, int defHeight)
-    { super(defWidth, defHeight); }
+    public MathOperationSubtract()
+    {}
 
+    public MathOperationSubtract(MathObject left, MathObject right)
+    { 
+        super(left, right);
+    }
+    
     @Override
     public int getPrecedence()
     { return MathObjectPrecedence.ADD; }
@@ -36,10 +43,13 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
     }
     
     @Override
-    public void draw(Canvas canvas, int maxWidth, int maxHeight)
+    public void draw(Canvas canvas)
     {
+        // Draw the bounding boxes
+        drawBoundingBoxes(canvas);
+        
         // Get the bounding box
-        final Rect operator = getOperatorBoundingBoxes(maxWidth, maxHeight)[0];
+        final Rect operator = getOperatorBoundingBoxes()[0];
         
         // Draw the operator
         operator.inset(operator.width() / 10, operator.height() / 10);      // Padding
@@ -51,6 +61,6 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
         canvas.restore();
         
         // Draw the children
-        drawChildren(canvas, maxWidth, maxHeight);
+        drawChildren(canvas);
     }
 }
