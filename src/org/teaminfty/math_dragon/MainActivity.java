@@ -17,10 +17,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 public class MainActivity extends Activity implements
         FragmentOperationsSource.CloseMeListener
@@ -68,6 +70,7 @@ public class MainActivity extends Activity implements
 
         // Set the default size in the MathObject class
         MathObject.defaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
+        
     }
 
     @Override
@@ -168,6 +171,17 @@ public class MainActivity extends Activity implements
                 .findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();
     }
+    
+    public void temporary(View view)
+    {
+    	// Get the DrawerLayout object DrawerLayout drawerLayout =
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+         
+        // Show the favourites drawer
+        drawerLayout.openDrawer(Gravity.CENTER);
+         
+
+    }
 
     @Override
     public void closeMe()
@@ -186,4 +200,76 @@ public class MainActivity extends Activity implements
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
     }
+    
+    public void add1(View view){
+    	EditText edittext = (EditText) findViewById(R.id.editText1);
+    	Editable editable = edittext.getText();
+      	editable.append("1");
+    }
+    public void add2(View view){
+ 	    EditText edittext = (EditText) findViewById(R.id.editText1);
+ 	    Editable editable = edittext.getText();
+ 	 	editable.append("2");
+    }
+    public void add3(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	 	editable.append("3");
+    }
+    public void add4(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("4");
+    }
+    public void add5(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("5");
+    }
+    public void add6(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("6");
+    }
+    public void add7(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("7");
+    }
+    public void add8(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("8");
+    }
+    public void add9(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("9");
+    }
+    public void add0(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("0");
+    }
+    public void addpi(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("pi");
+    }
+    public void adde(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("e");
+    }
+    public void addPower(View view){
+  	    EditText edittext = (EditText) findViewById(R.id.editText1);
+  	    Editable editable = edittext.getText();
+  	    editable.append("^");
+    }
+    public void clearText(View view){
+    	EditText edittext = (EditText) findViewById(R.id.editText1);
+    	Editable editable = edittext.getText();
+    	editable.clear();
+    }
+    
 }

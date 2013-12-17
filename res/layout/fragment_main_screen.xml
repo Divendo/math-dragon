@@ -40,5 +40,19 @@
         android:layout_alignParentTop="true"
         android:onClick="favourites"
         android:text="@string/favourites" />
+    
+    <Button 
+        android:id="@+id/button_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:onClick = "temporary"
+        android:text="@string/test" />
+   
+    
+      
+    
 
 </RelativeLayout>

@@ -11,5 +11,7 @@
     <dimen name="math_source_margin">8dp</dimen>
     <dimen name="math_shadow_dimensions">64dp</dimen>
     <dimen name="math_object_default_size">80dp</dimen>
+    
+    <dimen name="button_size">80dp</dimen>
 
 </resources>
