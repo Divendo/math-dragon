@@ -3,7 +3,6 @@ package org.teaminfty.math_dragon.view.math;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -34,16 +33,6 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         
         // Return the result
         return F.Plus(getLeft().eval(), getRight().eval());
-    }
-
-    @Override
-    public double approximate() throws NotConstantException, EmptyChildException
-    {
-        // Check if the children are not empty
-        this.checkChildren();
-        
-        // Return the result
-        return getLeft().approximate() + getRight().approximate();
     }
 
 

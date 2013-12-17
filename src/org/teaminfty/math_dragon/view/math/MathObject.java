@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-import org.teaminfty.math_dragon.exceptions.NotConstantException;
 import org.teaminfty.math_dragon.view.HoverState;
 
 import android.graphics.Canvas;
@@ -98,17 +97,6 @@ public abstract class MathObject
      *         If an empty child is detected where no empty child is allowed
      */
     public abstract IExpr eval() throws EmptyChildException;
-
-    /**
-     * Approximates the value of this {@link MathObject}
-     * 
-     * @return The approximated value of this {@link MathObject}
-     * @throws NotConstantException
-     *         If this {@link MathObject} doesn't evaluate into a constant value
-     * @throws EmptyChildException
-     *         If an empty child is detected where no empty child is allowed
-     */
-    public abstract double approximate() throws NotConstantException, EmptyChildException;
 
     /**
      * Returns the bounding boxes of the operator of this {@link MathObject}.

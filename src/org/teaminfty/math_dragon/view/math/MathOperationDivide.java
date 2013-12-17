@@ -3,7 +3,6 @@ package org.teaminfty.math_dragon.view.math;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -120,16 +119,6 @@ public class MathOperationDivide extends MathBinaryOperation
         
         // Return the result
         return F.Divide(getLeft().eval(), getRight().eval());
-    }
-    
-    @Override
-    public double approximate() throws NotConstantException, EmptyChildException
-    {
-        // Check if the children are not empty
-        this.checkChildren();
-        
-        // Return the result
-        return getLeft().approximate() / getRight().approximate();
     }
     
     @Override
