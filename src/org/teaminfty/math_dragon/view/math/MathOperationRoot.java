@@ -158,7 +158,7 @@ public class MathOperationRoot extends MathBinaryOperation
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
-        operatorPaint.setStrokeWidth(childSize[0].width() / 10);
+        operatorPaint.setStrokeWidth(lineWidth);
         Path path = new Path();
         
         path.moveTo(0, (childSize[0].height() + childSize[1].height()) / 2);

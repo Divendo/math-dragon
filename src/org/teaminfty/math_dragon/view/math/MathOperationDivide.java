@@ -171,7 +171,9 @@ public class MathOperationDivide extends MathBinaryOperation
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
-        canvas.drawRect(operator.left, operator.top + operator.height() / 6, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
+        operatorPaint.setStrokeWidth(lineWidth);
+        canvas.drawLine(operator.left, operator.centerY(), operator.right, operator.centerY(), operatorPaint);
+        //canvas.drawRect(operator.left, operator.top + operator.height() / 6, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
         canvas.restore();
 
         // Draw the children

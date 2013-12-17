@@ -64,7 +64,7 @@ public class MathObjectEmpty extends MathObject
         paint.setColor(getColor());
         
         // Draw the dashed rectangle
-        paint.setStrokeWidth(rect.width() / 20);
+        paint.setStrokeWidth(lineWidth);
         rect.inset((int) Math.ceil(paint.getStrokeWidth() / 2), (int) Math.ceil(paint.getStrokeWidth() / 2));
         canvas.drawRect(rect, paint);
         

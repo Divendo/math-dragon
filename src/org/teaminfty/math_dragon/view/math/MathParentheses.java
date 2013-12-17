@@ -92,7 +92,7 @@ public class MathParentheses extends MathObject
         
         // Prepare the paint and canvas for drawing the brackets
         paint.setColor(getColor());
-        paint.setStrokeWidth(boxes[0].width() / 5);
+        paint.setStrokeWidth(lineWidth);
         
         // Draw the left bracket
         canvas.save();

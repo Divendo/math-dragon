@@ -24,6 +24,13 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
     }
 
     @Override
+    protected Rect getOperatorSize()
+    {
+        final int size = (int) (18 * lineWidth);
+        return new Rect(0, 0, size, size);
+    }
+    
+    @Override
     public int getPrecedence()
     { return MathObjectPrecedence.MULTIPLY; }
     
@@ -58,10 +65,9 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
         
         // Draw the operator
         canvas.save();
-        canvas.translate(operator.left, operator.top);
         operatorPaint.setColor(this.getColor());
         operatorPaint.setAntiAlias(true);
-        canvas.drawCircle(operator.width() / 2, operator.height() / 2, operator.width() / 7, operatorPaint);
+        canvas.drawCircle(operator.centerX(), operator.centerY(), 2 * lineWidth, operatorPaint);
         canvas.restore();
         
         // Draw the children

@@ -60,7 +60,7 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         operator.inset(operator.width() / 10, operator.height() / 10);      // Padding
         canvas.save();
         canvas.translate(operator.left, operator.top);
-        operatorPaint.setStrokeWidth(operator.width() / 5);
+        operatorPaint.setStrokeWidth(lineWidth);
         operatorPaint.setColor(this.getColor());
         canvas.drawLine(0, operator.height() / 2, operator.width(), operator.height() / 2, operatorPaint);
         canvas.drawLine(operator.width() / 2, 0, operator.width() / 2, operator.height(), operatorPaint);
