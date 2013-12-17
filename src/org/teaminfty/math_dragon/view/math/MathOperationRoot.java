@@ -160,7 +160,6 @@ public class MathOperationRoot extends MathBinaryOperation
         operatorPaint.setColor(getColor());
         operatorPaint.setStrokeWidth(lineWidth);
         Path path = new Path();
-        
         path.moveTo(0, (childSize[0].height() + childSize[1].height()) / 2);
         path.lineTo(6 * childSize[0].width() / 5, childSize[0].height() / 2 + childSize[1].height());
         path.lineTo(6 * childSize[0].width() / 5, childSize[0].height() / 4);
