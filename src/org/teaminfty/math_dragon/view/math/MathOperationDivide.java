@@ -122,6 +122,16 @@ public class MathOperationDivide extends MathBinaryOperation
     }
     
     @Override
+    public Point getCenter()
+    {
+        // Get the operator bounding box
+        Rect operatorBounding = getOperatorBoundingBoxes()[0];
+        
+        // Return the centre, which is the centre of the operator
+        return new Point(operatorBounding.centerX(), operatorBounding.centerY());
+    }
+    
+    @Override
     public void setChild(int index, MathObject child) throws IndexOutOfBoundsException
     {
         // Check the child index
