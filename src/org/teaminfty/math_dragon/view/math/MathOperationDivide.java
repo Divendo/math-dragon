@@ -3,7 +3,6 @@ package org.teaminfty.math_dragon.view.math;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -123,13 +122,13 @@ public class MathOperationDivide extends MathBinaryOperation
     }
     
     @Override
-    public double approximate() throws NotConstantException, EmptyChildException
+    public Point getCenter()
     {
-        // Check if the children are not empty
-        this.checkChildren();
+        // Get the operator bounding box
+        Rect operatorBounding = getOperatorBoundingBoxes()[0];
         
-        // Return the result
-        return getLeft().approximate() / getRight().approximate();
+        // Return the centre, which is the centre of the operator
+        return new Point(operatorBounding.centerX(), operatorBounding.centerY());
     }
     
     @Override
@@ -171,7 +170,9 @@ public class MathOperationDivide extends MathBinaryOperation
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
-        canvas.drawRect(operator.left, operator.top + operator.height() / 6, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
+        operatorPaint.setStrokeWidth(lineWidth);
+        canvas.drawLine(operator.left, operator.centerY(), operator.right, operator.centerY(), operatorPaint);
+        //canvas.drawRect(operator.left, operator.top + operator.height() / 6, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
         canvas.restore();
 
         // Draw the children

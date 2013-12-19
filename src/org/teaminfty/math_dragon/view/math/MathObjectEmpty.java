@@ -2,7 +2,6 @@ package org.teaminfty.math_dragon.view.math;
 
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-import org.teaminfty.math_dragon.exceptions.NotConstantException;
 import org.teaminfty.math_dragon.view.HoverState;
 
 import android.graphics.Canvas;
@@ -15,7 +14,7 @@ import android.graphics.Rect;
 public class MathObjectEmpty extends MathObject
 {
     /** The ratio (width : height) of the empty child box (i.e. the golden ratio) */
-    final float RATIO = 1 / 1.61803398874989f;
+    public final static float RATIO = 1 / 1.61803398874989f;
     
     /** The paint that's used to draw the child */
     private Paint paint = new Paint();
@@ -31,13 +30,6 @@ public class MathObjectEmpty extends MathObject
 
     @Override
     public IExpr eval() throws EmptyChildException
-    {
-        // Just throw an error
-        throw new EmptyChildException();
-    }
-
-    @Override
-    public double approximate() throws NotConstantException, EmptyChildException
     {
         // Just throw an error
         throw new EmptyChildException();
@@ -64,7 +56,7 @@ public class MathObjectEmpty extends MathObject
         paint.setColor(getColor());
         
         // Draw the dashed rectangle
-        paint.setStrokeWidth(rect.width() / 20);
+        paint.setStrokeWidth(lineWidth);
         rect.inset((int) Math.ceil(paint.getStrokeWidth() / 2), (int) Math.ceil(paint.getStrokeWidth() / 2));
         canvas.drawRect(rect, paint);
         

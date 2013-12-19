@@ -15,9 +15,8 @@ public class MathShadow extends DragShadowBuilder
 
     /** Constructor
      * @param mo The {@link MathObject} that is to be dragged
-     * @param s The size of the shadow
      */
-    public MathShadow(MathObject mo, Point s)
+    public MathShadow(MathObject mo)
     {
         setDragState(mathObject = mo);
         mathObject.setLevel(MathObject.MAX_LEVEL - 1);

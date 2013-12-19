@@ -284,14 +284,12 @@ public class MathConstant extends MathObject
         return out;
     }
     
-    /** Uses binary search to find the right text size so that the text fits the given bounding box
-     * @return The right text size so that the text fits the given bounding box */
-    protected float findTextSize(int Level)
+    /** Calculates the right text size for the given level
+     * @param lvl The level
+     * @return The right text size for the given level */
+    protected float findTextSize(int lvl)
     {
-    	int value = 96;
-    	for(int t = 0; t < Level && t < MAX_LEVEL; t++)
-    		value = 2*value/3;
-    	return value;
+        return defaultHeight * (float) Math.pow(2.0 / 3.0, lvl);
     }
 
     @Override

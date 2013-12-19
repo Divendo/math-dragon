@@ -1,14 +1,12 @@
 package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.MathSourceBinaryOperationLinear;
+import org.teaminfty.math_dragon.view.MathSourceObject;
+import org.teaminfty.math_dragon.view.MathSourceOperationDivide;
+import org.teaminfty.math_dragon.view.MathSourceOperationPower;
+import org.teaminfty.math_dragon.view.MathSourceOperationRoot;
 import org.teaminfty.math_dragon.view.MathSourceView;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathOperationAdd;
-import org.teaminfty.math_dragon.view.math.MathOperationDivide;
-import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
-import org.teaminfty.math_dragon.view.math.MathOperationPower;
-import org.teaminfty.math_dragon.view.math.MathOperationRoot;
-import org.teaminfty.math_dragon.view.math.MathOperationSubtract;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -25,25 +23,25 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         View layout = inflater.inflate(R.layout.fragment_operations_source, container, false);
         
         // Set the MathObjects for the MathSourceViews
-        setMathObjectFor(layout, R.id.mathSourceAdd, new MathOperationAdd());
-        setMathObjectFor(layout, R.id.mathSourceSubtract, new MathOperationSubtract());
-        setMathObjectFor(layout, R.id.mathSourceMultiply, new MathOperationMultiply());
-        setMathObjectFor(layout, R.id.mathSourceDivide, new MathOperationDivide());
-        setMathObjectFor(layout, R.id.mathSourcePower, new MathOperationPower());
-        setMathObjectFor(layout, R.id.mathSourceRoot, new MathOperationRoot());
+        setMathSourceObjectFor(layout, R.id.mathSourceAdd, new MathSourceBinaryOperationLinear(MathSourceBinaryOperationLinear.OperatorType.ADD));
+        setMathSourceObjectFor(layout, R.id.mathSourceSubtract, new MathSourceBinaryOperationLinear(MathSourceBinaryOperationLinear.OperatorType.SUBTRACT));
+        setMathSourceObjectFor(layout, R.id.mathSourceMultiply, new MathSourceBinaryOperationLinear(MathSourceBinaryOperationLinear.OperatorType.MULTIPLY));
+        setMathSourceObjectFor(layout, R.id.mathSourceDivide, new MathSourceOperationDivide());
+        setMathSourceObjectFor(layout, R.id.mathSourcePower, new MathSourceOperationPower());
+        setMathSourceObjectFor(layout, R.id.mathSourceRoot, new MathSourceOperationRoot());
         
         // Return the layout
         return layout;
     }
     
-    /** Sets the given {@link MathObject} to the {@link MathSourceView} with the given ID
+    /** Sets the given {@link MathSourceObject} to the {@link MathSourceView} with the given ID
      * @param layout The layout that contains the {@link MathSourceView}
-     * @param id The ID of the {@link MathSourceView} where the {@link MathObject} should be set for
-     * @param mo The {@link MathObject} that should be set */
-    protected void setMathObjectFor(View layout, int id, MathObject mo)
+     * @param id The ID of the {@link MathSourceView} where the {@link MathSourceView} should be set for
+     * @param mo The {@link MathSourceObject} that should be set */
+    protected void setMathSourceObjectFor(View layout, int id, MathSourceObject mso)
     {
         MathSourceView mathSourceView = (MathSourceView) layout.findViewById(id);
-        mathSourceView.setMathObject(mo);
+        mathSourceView.setSource(mso);
         mathSourceView.setOnDragStarted(this);
     }
     

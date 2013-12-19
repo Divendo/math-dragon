@@ -3,7 +3,6 @@ package org.teaminfty.math_dragon.view.math;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -38,83 +37,69 @@ public class MathOperationRoot extends MathBinaryOperation
     }
 
     @Override
-    public double approximate() throws NotConstantException, EmptyChildException 
-    {
-        // Check the children
-        this.checkChildren();
-        
-        // Return the result
-        return Math.pow( getChild(1).approximate(), 1/getChild(0).approximate() );
-    }
-
-    @Override
     public Rect[] getOperatorBoundingBoxes() 
     {
-        // Get the children sizes
-        Rect[] sizes = getChildrenSize();
+        // Get the bounding boxes (not the sizes) of the children
+        Rect exponentBounding = getChildBoundingBox(0);
+        Rect baseBounding = getChildBoundingBox(1);
+        
+        // The size of the gap
+        final int gapSize = (int) (3 * MathObject.lineWidth);
         
         // We'll need 3 bounding boxes to contain the operator
         return new Rect[] {
-                new Rect(0, sizes[0].height(), 7 * sizes[0].width() / 5, sizes[0].height() + sizes[1].height()),
-                new Rect(sizes[0].width(), 0, 7 * sizes[0].width() / 5, sizes[0].height()),
-                new Rect(7 * sizes[0].width() / 5, 0, sizes[0].width() + sizes[1].width(), sizes[0].height() / 2)
+                new Rect(exponentBounding.left, exponentBounding.bottom, baseBounding.left, baseBounding.bottom),
+                new Rect(exponentBounding.right, baseBounding.top - gapSize, baseBounding.left, exponentBounding.bottom),
+                new Rect(baseBounding.left, baseBounding.top - gapSize, baseBounding.right, baseBounding.top)
             };
-    }
-
-    /**
-     * Returns the sizes of the bounding of the children.
-     * At index 0 the exponent's size is stored, at index 1 the base's size is stored
-     * 
-     * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @return The size of the child bounding boxes
-     */
-    public Rect[] getChildrenSize()
-    {
-        // Get the sizes both operands want to take
-         Rect leftSize = getChild(0).getBoundingBox();
-         Rect rightSize = getChild(1).getBoundingBox();
-        
-        // Return the Sizes
-        return new Rect[] {leftSize, rightSize};
     }
 
     @Override
     public Rect getBoundingBox()
     {
-        // Get the sizes
-        Rect[] sizes = getChildrenSize();
-        
-        int width =  7 * sizes[0].width() / 5 + sizes[1].width();
-        int height = sizes[0].height()/2 + sizes[1].height();
+        // Get the bounding box (not the size) of the base
+        Rect baseBounding = getChildBoundingBox(1);
         
         // Return a bounding box, containing the bounding boxes of the children
-        return new Rect(0, 0, width, height);
+        return new Rect(0, 0, baseBounding.right, baseBounding.bottom);
     }
     
     @Override
     public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException 
     {
         // Check if the child exists
-        this.checkChildIndex(index);
+        checkChildIndex(index);
         
-        // Get the Size of the children
-        Rect[] childrenSize = getChildrenSize();
+        // The size of the gap
+        final int gapSize = (int) (3 * MathObject.lineWidth);
         
-        // Move the bounding boxes to the correct position
-        childrenSize[1].offsetTo(7 * childrenSize[0].width() / 5, childrenSize[0].height() / 2);
+        // We'll always need the y-coordinate of the centre of the base
+        final int centerY = getChild(1).getCenter().y;
         
-        // Return the right bounding box
-        return childrenSize[index];
+        // We'll always need the bounding box of the exponent
+        Rect exponentBounding = getChild(0).getBoundingBox();
+        if(exponentBounding.bottom - gapSize / 2 < centerY)
+            exponentBounding.offset(0, centerY - (exponentBounding.bottom - gapSize / 2));
+        
+        // If we're calculating the bounding box of the exponent, we're done
+        if(index == 0)
+            return exponentBounding;
+        
+        // We want the bounding box of the base, so we'll need its size
+        Rect baseBounding = getChild(1).getBoundingBox();
+        
+        // Position the bounding box
+        baseBounding.offsetTo(exponentBounding.right + 2 * gapSize, Math.max(0, exponentBounding.bottom + gapSize / 2 - centerY));
+        
+        // Return the bounding box
+        return baseBounding;
     }
     
     @Override
 	public void setLevel(int l)
 	{
 		level = l;
-		getChild(0).setLevel(level+1);
+		getChild(0).setLevel(level + 1);
 		getChild(1).setLevel(level);
 	}
     
@@ -131,19 +116,24 @@ public class MathOperationRoot extends MathBinaryOperation
         if(index == 1)
         	child.setLevel(level);
         else 
-        	child.setLevel(level +1);
+        	child.setLevel(level + 1);
         
         // Set the child
         children.set(index, child);
     }
     
-    //We regard the center of the base operand as the center of the mathObject
     @Override
     public Point getCenter()
     {
-    	Rect bounding_vertical = this.getChildBoundingBox(1);
-    	Rect bounding_horizontal = this.getBoundingBox();
-    	return new Point(bounding_horizontal.centerX(), bounding_vertical.centerY());
+        // The size of the gap
+        final int gapSize = (int) (3 * MathObject.lineWidth);
+        
+        // The bounding box of the exponent
+        Rect exponentBounding = getChildBoundingBox(0);
+        
+        // We regard the vertical centre of the base operand as the vertical centre of the root
+        // The centre of the base operand is the same as the bottom of the exponent operand + gapSize / 2
+    	return new Point((exponentBounding.width() + 2 * gapSize + getChild(1).getBoundingBox().width()) / 2, exponentBounding.bottom + gapSize / 2);
     }
 
     @Override
@@ -151,20 +141,27 @@ public class MathOperationRoot extends MathBinaryOperation
     {
         // Draw the bounding boxes
         drawBoundingBoxes(canvas);
+
+        // Get the bounding boxes (not the sizes) of the children
+        Rect exponentBounding = getChildBoundingBox(0);
+        Rect baseBounding = getChildBoundingBox(1);
+
+        // The size of the gap and the centre y-coordinate
+        final int gapSize = (int) (3 * MathObject.lineWidth);
+        final int centerY = getCenter().y;
         
-        // Get the bounding boxes
-        final Rect[] childSize = getChildrenSize();
+        // Create a path to draw the operator
+        Path path = new Path();
+        path.moveTo(exponentBounding.left, centerY);
+        path.lineTo(baseBounding.left - 2 * gapSize, centerY);
+        path.lineTo(baseBounding.left - gapSize / 2, baseBounding.bottom - MathObject.lineWidth / 2);
+        path.lineTo(baseBounding.left - gapSize / 2, baseBounding.top - gapSize / 2);
+        path.lineTo(baseBounding.right, baseBounding.top - gapSize / 2);
         
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(getColor());
-        operatorPaint.setStrokeWidth(childSize[0].width() / 10);
-        Path path = new Path();
-        
-        path.moveTo(0, (childSize[0].height() + childSize[1].height()) / 2);
-        path.lineTo(6 * childSize[0].width() / 5, childSize[0].height() / 2 + childSize[1].height());
-        path.lineTo(6 * childSize[0].width() / 5, childSize[0].height() / 4);
-        path.lineTo(7 * childSize[0].width() / 5 + childSize[1].width(), childSize[0].height() / 4);
+        operatorPaint.setStrokeWidth(lineWidth);
         canvas.drawPath(path, operatorPaint);
         canvas.restore();
         

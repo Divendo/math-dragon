@@ -1,24 +1,19 @@
 package org.teaminfty.math_dragon.view;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.fragments.MathShadow;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class MathSourceView extends View
 {
-    /** The {@link MathObject} that should be dragged */
-    private MathObject mathObject = null;
+    /** The {@link MathSourceObject} that will be used as a source for {@link MathObject}s */
+    private MathSourceObject mathSourceObject = null;
 
     public MathSourceView(Context context)
     {
@@ -35,12 +30,12 @@ public class MathSourceView extends View
         super(context, attrs, defStyleAttr);
     }
     
-    /** Sets the {@link MathObject} that should be dragged
-     * @param mo The {@link MathObject} that should be dragged
+    /** Sets the {@link MathSourceObject} that should be used as a source for {@link MathObject}s
+     * @param mso The source for {@link MathObject}s
      */
-    public void setMathObject(MathObject mo)
+    public void setSource(MathSourceObject mso)
     {
-        mathObject = mo;
+        mathSourceObject = mso;
         invalidate();
     }
 
@@ -54,57 +49,13 @@ public class MathSourceView extends View
     /** Set the drag start event listener */
     public void setOnDragStarted(DragStartedListener listener)
     { onDragStarted = listener; }
-    
-    /** Creates a copy of the given {@link MathObject} and returns the copy
-     * @param mo The {@link MathObject} that is to be copied
-     * @return The created copy
-     */
-    private MathObject copyMathObject(MathObject mo)
-    {
-        // TODO Handle the exceptions in this method (or maybe support copying from the MathObject classes?)
-        
-        try
-        {
-            MathObject copy = mo.getClass().getConstructor().newInstance();
-            for(int i = 0; i < mo.getChildCount(); ++i)
-                copy.setChild(i, copyMathObject(mo.getChild(i)));
-            return copy;
-        }
-        catch(InstantiationException e)
-        {
-            e.printStackTrace();
-        }
-        catch(IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-        catch(IllegalArgumentException e)
-        {
-            e.printStackTrace();
-        }
-        catch(InvocationTargetException e)
-        {
-            e.printStackTrace();
-        }
-        catch(NoSuchMethodException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @Override
     protected void onDraw(Canvas canvas)
     {
-        // Simply draw the math object
-        if(mathObject != null)
-        {
-            canvas.save();
-            Rect boundingBox = mathObject.getBoundingBox();
-            canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
-            mathObject.draw(canvas);
-            canvas.restore();
-        }
+        // Simply draw the math source object
+        if(mathSourceObject != null)
+            mathSourceObject.draw(canvas, getWidth(), getHeight());
     }
 
     @Override
@@ -115,7 +66,7 @@ public class MathSourceView extends View
             return false;
         
         // Start the dragging
-        MathShadow mathShadow = new MathShadow(copyMathObject(mathObject), new Point(getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions), getResources().getDimensionPixelSize(R.dimen.math_shadow_dimensions)));
+        MathShadow mathShadow = new MathShadow(mathSourceObject.createMathObject());
         startDrag(ClipData.newPlainText("", ""), mathShadow, mathShadow, 0);
         if(onDragStarted != null)
             onDragStarted.dragStarted();

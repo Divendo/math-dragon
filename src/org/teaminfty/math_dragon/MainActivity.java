@@ -70,7 +70,7 @@ public class MainActivity extends Activity implements
 
         // Set the default size in the MathObject class
         MathObject.defaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-        
+        MathObject.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
     }
 
     @Override
