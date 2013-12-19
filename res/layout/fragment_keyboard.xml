@@ -13,7 +13,6 @@
         android:ems="10"
         android:hint="@string/favourites" />
         <!--  android:visibility = "gone"-->
-
     
     <Button
         android:id="@+id/button1"
@@ -135,8 +134,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/button10"
-        android:text="CLR"
-        android:onClick="clearText" />
+        android:onClick="clearText"
+        android:text="Clear" />
 
     <Button
         android:id="@+id/button14"
@@ -154,6 +153,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/button11"
         android:layout_toRightOf="@+id/button11"
-        android:text="Button" />
+        android:text="Enter" />
 
 </RelativeLayout>
