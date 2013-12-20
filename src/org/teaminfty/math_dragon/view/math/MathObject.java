@@ -15,17 +15,17 @@ import android.graphics.Rect;
 /** This class represents a mathematical object that can be drawn */
 public abstract class MathObject
 {
+    /** The line width that is to be used to draw operators */
+    public static float lineWidth = 2.0f;
+    
     /** The children of this {@link MathObject} */
     protected ArrayList<MathObject> children = new ArrayList<MathObject>();
 
     /** The default height of an object */
-    public static int defaultHeight = 100;
-    
-    /** The line width that is to be used to draw operators */
-    public static float lineWidth = 2.0f;
+    protected int defaultHeight = 100;
     
     /** The maximum level depth */
-    public final static int MAX_LEVEL = 2;
+    public final static int MAX_LEVEL = 4;
 
     /** The current hover state */
     protected HoverState state = HoverState.NONE;
@@ -46,9 +46,7 @@ public abstract class MathObject
      * @return The number of children this {@link MathObject} has
      */
     public int getChildCount()
-    {
-        return children.size();
-    }
+    { return children.size(); }
 
     /**
      * Returns the child at the given index
@@ -60,9 +58,7 @@ public abstract class MathObject
      *         thrown when the index number is invalid (i.e. out of range).
      */
     public MathObject getChild(int index) throws IndexOutOfBoundsException
-    {
-        return children.get(index);
-    }
+    { return children.get(index); }
 
     /**
      * Sets the child at the given index
@@ -79,15 +75,30 @@ public abstract class MathObject
         // Check the child index
         checkChildIndex(index);
         
-        
         // Create an MathObjectEmpty if null is given
         if(child == null)
             child = new MathObjectEmpty();
-        this.setLevel(level);
+        
         // Set the child
         children.set(index, child);
-        child.setLevel(level);
+
+        // Refresh all levels and default heights
+        setLevel(level);
+        setDefaultHeight(defaultHeight);
     }
+    
+    /** Sets the default height for this {@link MathObject} and all of its children
+     * @param height The default height */
+    public void setDefaultHeight(int height)
+    {
+        // Set the default height
+        defaultHeight = height;
+        
+        // Pass the new default height to all children
+        for(MathObject child : children)
+            child.setDefaultHeight(defaultHeight);
+    }
+    
 
     /**
      * Symbolically evaluates this {@link MathObject}
@@ -259,9 +270,8 @@ public abstract class MathObject
     	return new Point(bounding.centerX(), bounding.centerY());
     }
     
-	/**method to set the level of your children
-	 * 
-	 */
+	/** Sets the new level for this {@link MathObject} and all of its children
+	 * @param l The new level */
 	public void setLevel(int l)
 	{
 		level = l;

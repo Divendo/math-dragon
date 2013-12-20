@@ -35,8 +35,12 @@ public class MainActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        // Load the layout
         super.onCreate(savedInstanceState);
+
+        // Set the default size in the MathObject class
+        MathObject.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
+        
+        // Load the layout
         setContentView(R.layout.main);
 
         // Get the DrawerLayout object
@@ -65,10 +69,6 @@ public class MainActivity extends Activity implements
             // there was no drawer to open
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
-
-        // Set the default size in the MathObject class
-        MathObject.defaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-        MathObject.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
     }
 
     @Override

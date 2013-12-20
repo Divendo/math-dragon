@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
-import org.teaminfty.math_dragon.view.fragments.MathShadow;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
@@ -19,6 +18,7 @@ import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.EditText;
 
@@ -30,6 +30,9 @@ public class MathView extends View
     
     /** The GestureDetector we're going to use for detecting scrolling and clicking */
     private GestureDetector gestureDetector = null;
+
+    /** The ScaleGestureDetector we're going to use for detecting scale events */
+    private ScaleGestureDetector scaleGestureDetector = null;
     
     /** The translation that's applied to the canvas because of the scrolling */
     private Point scrollTranslate = new Point(0, 0);
@@ -37,6 +40,7 @@ public class MathView extends View
     public MathView(Context context)
     {
         super(context);
+        mathObjectDefaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
         setMathObject(null);    // Setting the MathObject to null will construct a MathObjectEmpty
         initGestureDetector();
     }
@@ -44,6 +48,7 @@ public class MathView extends View
     public MathView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
+        mathObjectDefaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
         setMathObject(null);    // Setting the MathObject to null will construct a MathObjectEmpty
         initGestureDetector();
     }
@@ -51,6 +56,7 @@ public class MathView extends View
     public MathView(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
+        mathObjectDefaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
         setMathObject(null);    // Setting the MathObject to null will construct a MathObjectEmpty
         initGestureDetector();
     }
@@ -60,12 +66,23 @@ public class MathView extends View
      */
     public void setMathObject(MathObject newMathObject)
     {
+        // Reset the translation
+        scrollTranslate.set(0, 0);
+        
+        // Set the MathObject
+        setMathObjectHelper(newMathObject);
+    }
+    
+    /** Private helper for {@link MathView#setMathObject(MathObject) setMathObject()} */
+    private void setMathObjectHelper(MathObject newMathObject)
+    {
         // Remember the new MathObject, if it is null we create a MathObjectEmpty
         if((mathObject = newMathObject) == null)
             mathObject = new MathObjectEmpty();
         
-        // Reset the translation
-        scrollTranslate.set(0, 0);
+        // Set the default size and the level for the MathObject
+        mathObject.setDefaultHeight((int) mathObjectDefaultHeight);
+        mathObject.setLevel(0);
         
         // Redraw
         invalidate();
@@ -81,6 +98,7 @@ public class MathView extends View
     private void initGestureDetector()
     {
         gestureDetector = new GestureDetector(getContext(), new GestureListener());
+        scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
     }
 
     /** Recursively sets the given state for the given {@link MathObject} and all of its children
@@ -236,6 +254,21 @@ public class MathView extends View
             }
             
             // Always return true
+            return true;
+        }
+    }
+    
+    /** The default height of the MathObjects as a float */
+    private float mathObjectDefaultHeight = 0.0f;
+    
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener
+    {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector)
+        {
+            mathObjectDefaultHeight = Math.max(mathObjectDefaultHeight * detector.getScaleFactor(), getResources().getDimensionPixelSize(R.dimen.math_object_min_default_size));
+            mathObject.setDefaultHeight((int) mathObjectDefaultHeight);
+            invalidate();
             return true;
         }
     }
@@ -457,7 +490,7 @@ public class MathView extends View
                 if(sourceChild == -1)
                 {
                     if(currHover.parent == null)
-                        mathObject = dragMathObject;
+                        setMathObjectHelper(dragMathObject);
                     else
                         ParenthesesHelper.makeChild(currHover.parent, dragMathObject, currHover.childIndex);
                 }
@@ -465,7 +498,7 @@ public class MathView extends View
                 {
                     ParenthesesHelper.makeChild(dragMathObject, currHover.mathObject, sourceChild);
                     if(currHover.parent == null)
-                        mathObject = dragMathObject;
+                        setMathObjectHelper(dragMathObject);
                     else
                         ParenthesesHelper.makeChild(currHover.parent, dragMathObject, currHover.childIndex);
                 }
@@ -489,7 +522,7 @@ public class MathView extends View
     {
         // Place the constant
         if(emptyBoxReplaceInfo.parent == null)
-            mathObject = constant;
+            setMathObjectHelper(constant);
         else
             emptyBoxReplaceInfo.parent.setChild(emptyBoxReplaceInfo.childIndex, constant);
         
@@ -502,6 +535,7 @@ public class MathView extends View
     {
         // Pass the touch event to the gesture detector
         gestureDetector.onTouchEvent(me);
+        scaleGestureDetector.onTouchEvent(me);
         
         // Always consume the event
         return true;

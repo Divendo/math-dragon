@@ -1,6 +1,6 @@
 package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.fragments.MathShadow;
+import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.content.ClipData;
@@ -65,8 +65,12 @@ public class MathSourceView extends View
         if(me.getAction() != MotionEvent.ACTION_DOWN)
             return false;
         
+        // Prepare a MathObject for dragging
+        MathObject mathObject = mathSourceObject.createMathObject();
+        mathObject.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_drag_default_size));
+        
         // Start the dragging
-        MathShadow mathShadow = new MathShadow(mathSourceObject.createMathObject());
+        MathShadow mathShadow = new MathShadow(mathObject);
         startDrag(ClipData.newPlainText("", ""), mathShadow, mathShadow, 0);
         if(onDragStarted != null)
             onDragStarted.dragStarted();

@@ -104,25 +104,6 @@ public class MathOperationRoot extends MathBinaryOperation
 	}
     
     @Override
-    public void setChild(int index, MathObject child) throws IndexOutOfBoundsException
-    {
-        // Check the child index
-        checkChildIndex(index);
-        
-        // Create an MathObjectEmpty if null is given
-        if(child == null)
-            child = new MathObjectEmpty();
-        //if it is the exponent of the root, make it smaller
-        if(index == 1)
-        	child.setLevel(level);
-        else 
-        	child.setLevel(level + 1);
-        
-        // Set the child
-        children.set(index, child);
-    }
-    
-    @Override
     public Point getCenter()
     {
         // The size of the gap

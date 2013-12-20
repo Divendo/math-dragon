@@ -102,26 +102,8 @@ public class MathOperationPower extends MathBinaryOperation
 	{
 		level = l;
 		getChild(0).setLevel(level);
-		getChild(1).setLevel(level+1);
+		getChild(1).setLevel(level + 1);
 	}
-	
-	@Override
-	 public void setChild(int index, MathObject child) throws IndexOutOfBoundsException
-	    {
-	        // Check the child index
-	        checkChildIndex(index);
-	        
-	        // Create an MathObjectEmpty if null is given
-	        if(child == null)
-	            child = new MathObjectEmpty();
-	        if (index == 1)
-	        	child.setLevel(level+1);
-	        else
-	        	child.setLevel(level);
-	        
-	        // Set the child
-	        children.set(index, child);
-	    }
 	
 	//We regard the base operand as the vertical center of the mathObject
 	@Override
