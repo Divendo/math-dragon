@@ -94,8 +94,7 @@ public class MainActivity extends Activity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Pass the event to ActionBarDrawerToggle, if it returns true, then it
-        // has handled the app icon touch event
+        // Pass the event to ActionBarDrawerToggle, if it returns true, then it has handled the app icon touch event
         if(actionBarDrawerToggle.onOptionsItemSelected(item))
             return true;
 
@@ -142,8 +141,7 @@ public class MainActivity extends Activity implements
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-        // TODO: Approximate the MathObject in the drawing space, and display
-        // the resulting constant
+        // TODO: Approximate the MathObject in the drawing space, and display the resulting constant
 
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
                 .findFragmentById(R.id.fragmentEvaluation);
@@ -152,20 +150,10 @@ public class MainActivity extends Activity implements
         fragmentEvaluation.showMathObject(mathConstant);
     }
 
-    public void favourites(View view)
+    public void clear(View view)
     {
-        /*
-         * // Get the DrawerLayout object DrawerLayout drawerLayout =
-         * (DrawerLayout) findViewById(R.id.drawerLayout);
-         * 
-         * // Show the favourites drawer
-         * drawerLayout.openDrawer(Gravity.CENTER);
-         */
-
-        // We use the favourites button to clear the entire screen for the time
-        // being
-        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager()
-                .findFragmentById(R.id.fragmentMainScreen);
+        // Simply clear the current formula
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();
     }
 
@@ -174,7 +162,6 @@ public class MainActivity extends Activity implements
     {
         // Get the DrawerLayout object
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-
 
         try
         {

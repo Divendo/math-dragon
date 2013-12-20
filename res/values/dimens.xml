@@ -4,8 +4,9 @@
     <dimen name="drawer_height">150dp</dimen>
     <dimen name="margin_bottom">75dp</dimen>
     
-    <dimen name="margin_approximate">30dp</dimen>
-    <dimen name="margin_evaluate">20dp</dimen>
+    <dimen name="main_screen_button_margin">24dp</dimen>
+    <dimen name="circle_button_size">32dp</dimen>
+    <dimen name="circle_button_line_width">2dp</dimen>
     
     <dimen name="math_source_height">64dp</dimen>
     <dimen name="math_source_margin">8dp</dimen>
