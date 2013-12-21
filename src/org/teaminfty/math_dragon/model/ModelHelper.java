@@ -14,6 +14,7 @@ import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
+import org.teaminfty.math_dragon.view.math.MathVariable;
 
 /**
  * Hack helper class that communicates as a wrapper between our model and the
@@ -73,10 +74,18 @@ public final class ModelHelper
         else if(expr instanceof Symbol)
         {
             Symbol s = (Symbol) expr;
-            MathConstant c = new MathConstant();
-            c.setFactor(1);
-            if(s.equals(F.Pi))
+            
+            String str = s.toString();
+            
+            if (str.matches("[a-df-hj-z]")) 
             {
+                MathVariable v = new MathVariable(str);
+                return v;
+            }
+            MathConstant c = new MathConstant();
+                c.setFactor(1);
+                if(s.equals(F.Pi))
+                {
                 c.setPiPow(1);
                 return c;
             }
