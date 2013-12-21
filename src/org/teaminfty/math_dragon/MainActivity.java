@@ -200,57 +200,7 @@ public class MainActivity extends Activity implements
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
     }
-    
-    public void add1(View view){
-    	EditText edittext = (EditText) findViewById(R.id.editText1);
-    	Editable editable = edittext.getText();
-      	editable.append("1");
-    }
-    public void add2(View view){
- 	    EditText edittext = (EditText) findViewById(R.id.editText1);
- 	    Editable editable = edittext.getText();
- 	 	editable.append("2");
-    }
-    public void add3(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	 	editable.append("3");
-    }
-    public void add4(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("4");
-    }
-    public void add5(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("5");
-    }
-    public void add6(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("6");
-    }
-    public void add7(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("7");
-    }
-    public void add8(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("8");
-    }
-    public void add9(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("9");
-    }
-    public void add0(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("0");
-    }
+   
     public void addpi(View view){
   	    EditText edittext = (EditText) findViewById(R.id.editText1);
   	    Editable editable = edittext.getText();

@@ -37,7 +37,7 @@ public class MathConstant extends MathObject
     }
 
     /** Constructor, constructs with the given value
-     * @param v The value that this constant should be initialised with
+     * @param value The value that this constant should be initialized with
      */
     public MathConstant(String value)
     {
