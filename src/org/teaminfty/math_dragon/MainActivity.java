@@ -134,6 +134,8 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             
             
             String url = "http://www.wolframalpha.com/input/?i=";
+            
+            // The most general intent. Shall either open Wolfram:Alpha app, or the preferred web browser.
             Intent intent = new Intent(Intent.ACTION_VIEW);
             
             // TODO one might be able to insert weird queries here using variables? not sure.
