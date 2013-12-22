@@ -60,7 +60,7 @@ public class MathConstant extends MathObject
     	this.piPow = piPow;
     	this.iPow = iPow;
     }
-    
+
     /** Initialises the paints */
     private void initPaints()
     {

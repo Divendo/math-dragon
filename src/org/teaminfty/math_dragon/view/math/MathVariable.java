@@ -36,6 +36,11 @@ public class MathVariable extends MathObject
     {
         this.c = c;
     }
+    
+    @Override
+    public String toString() {
+        return c;
+    }
 
     /** Calculates the right text size for the given level
      * @param lvl The level

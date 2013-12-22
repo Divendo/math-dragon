@@ -125,23 +125,16 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
      */
     public void wolfram(View view)
     {
-        try
-        {
-            // Get the expression as a string
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            IExpr expr = fragmentMainScreen.getMathObject().eval();
-            String query = expr.toString();
-            
-            // Start an intent to send the user to Wolfram|Alpha
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            // TODO one might be able to insert weird queries here using variables? not sure.
-            intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
-            startActivity(intent);
-        }
-        catch(EmptyChildException e)
-        {
-            e.printStackTrace();
-        }
+        // Get the expression as a string
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+        String query = fragmentMainScreen.getMathObject().toString();
+        
+        // Start an intent to send the user to Wolfram|Alpha
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        // TODO one might be able to insert weird queries here using variables? not sure.
+        intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
+        startActivity(intent);
+        
     }
 
     public void evaluate(View view)
@@ -156,7 +149,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             IExpr result = EvalEngine.eval(a);
             
             
-            System.out.println(result.toScript());
+            System.out.println(fragmentMainScreen.getMathObject());
             long end = System.currentTimeMillis();
             Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
 

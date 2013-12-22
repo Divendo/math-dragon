@@ -12,7 +12,7 @@ import android.graphics.Rect;
 
 public class MathOperationRoot extends MathBinaryOperation
 {
-     protected Paint operatorPaint = new Paint();
+    protected Paint operatorPaint = new Paint();
     
     public MathOperationRoot()
     { this(null, null); }
@@ -26,6 +26,12 @@ public class MathOperationRoot extends MathBinaryOperation
         operatorPaint.setStyle(Paint.Style.STROKE);
     }
 
+    @Override
+    public String toString()
+    {
+        return "(" + getRight().toString() + "^ (1/" + getLeft().toString() + "))";
+    }
+    
     @Override
     public IExpr eval() throws EmptyChildException 
     {
