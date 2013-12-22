@@ -11,6 +11,10 @@ public class MathConstantView extends View {
 	public long factor = 0;
 	public long piPow = 0;
 	public long ePow = 0; 
+	public boolean piTemp = false;
+	public boolean facTemp = false;
+	public boolean eTemp = false; 
+	
 	private MathConstant mathConstant = new MathConstant(0,0,0,0);
 	
 	public MathConstantView(Context context) {
@@ -47,11 +51,46 @@ public class MathConstantView extends View {
 		 
 		 invalidate();
 	 }
-	 public void setMathConstant(MathConstant newMathConstant)
+	 
+	 public void btnPressed(int num){
+		 if (typeSelected == 0)
+			 factor = factor * 10 + num;
+		 else if (typeSelected == 1){
+			 if (piTemp){ 
+				 piPow = num;
+				 piTemp = false;
+			 }
+			 else 
+				 piPow = piPow * 10 + num;
+		 }
+		 else{ 
+			 if (eTemp){
+				 ePow = num;
+				 eTemp = false;
+			 }
+			 else
+				 ePow = ePow * 10 + num;
+		 }
+		 refreshMathConstant();
+	 }
+	 
+	 public void delete(){
+		 if (typeSelected == 0)
+			 factor /= 10;
+		 else if (typeSelected == 1)
+			 piPow /= 10;
+		 else 
+			 ePow /= 10;
+		 refreshMathConstant();
+	 }
+	 public void setMathConstant(long tfactor, long tpiPow, long tePow, long tiPow)
 	 {
-		 mathConstant = newMathConstant;
+		 factor = tfactor;
+		 piPow = tpiPow;
+		 ePow = tePow;
+		 mathConstant = new MathConstant(factor, piPow, ePow, tiPow);
 	       
 	 	 // Redraw
-	     invalidate();
+	     refreshMathConstant();
 	 }
 }

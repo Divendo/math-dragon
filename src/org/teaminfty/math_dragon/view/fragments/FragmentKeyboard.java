@@ -6,13 +6,11 @@ import org.teaminfty.math_dragon.view.math.MathConstant;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
 public class FragmentKeyboard extends Fragment {
 	private View myFragmentView;
@@ -20,11 +18,10 @@ public class FragmentKeyboard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-    	MathConstant mathConstant = new MathConstant(123,0,0,0);
-    	setMathConstant(mathConstant);
         // Inflate the layout for this fragment
     	myFragmentView = inflater.inflate(R.layout.fragment_keyboard, container, false);
-    	
+		final MathConstantView mathConstantView = (MathConstantView) myFragmentView.findViewById(R.id.mCV); 
+		
     	//Acquire access to all buttons
     	final Button button1 =  (Button) myFragmentView.findViewById(R.id.button1);
     	final Button button2 =  (Button) myFragmentView.findViewById(R.id.button2);
@@ -38,46 +35,54 @@ public class FragmentKeyboard extends Fragment {
     	final Button button0 =  (Button) myFragmentView.findViewById(R.id.button11);
     	final Button buttonpi = (Button) myFragmentView.findViewById(R.id.button10);
     	final Button buttone =  (Button) myFragmentView.findViewById(R.id.button12);
+    	final Button buttonClr = (Button) myFragmentView.findViewById(R.id.button13);
+    	final Button buttonDel = (Button) myFragmentView.findViewById(R.id.button14);
     	
     	//Set the OnClickListener for all buttons with a number
     	final OnClickListener onClickListenerNum = new OnClickListener() {
     		public void onClick(final View v) {
 
-				MathConstantView mathConstantView = (MathConstantView) getView().findViewById(R.id.mCV); 
+
 	        	Button button = (Button) v;
-    			mathConstantView.factor*=10;
-    			mathConstantView.factor+= Integer.parseInt(button.getText().toString());
-	        	mathConstantView.refreshMathConstant();
+    			mathConstantView.btnPressed(Integer.parseInt(button.getText().toString()));
     		} 
     	};
     	//Set the OnClickListener for all buttons with a symbol
     	final OnClickListener onClickListenerType = new OnClickListener() {
     		public void onClick(final View v) {
-				MathConstantView mathConstantView = (MathConstantView) getView().findViewById(R.id.mCV); 
 	        	Button button = (Button) v;
+	        	
 	        	if (button==buttonpi){
-	        		if (mathConstantView.piPow==0){
-	        			mathConstantView.piPow=1;
-	        			mathConstantView.typeSelected = 1;
-	        		}
-	        		else if (mathConstantView.typeSelected == 1)
+	        		if (mathConstantView.typeSelected == 1)
 	        			mathConstantView.typeSelected = 0;
 	        		else 
 	        			mathConstantView.typeSelected = 1;
+	        			if (mathConstantView.piPow ==0){
+	        			mathConstantView.piPow = 1;
+	        			mathConstantView.piTemp = true;
+	        			}
+	        	}
+	        	
+	        	if (button==buttone){
+	        		if (mathConstantView.typeSelected == 2)
+	        			mathConstantView.typeSelected = 0;
+	        		else 
+	        			mathConstantView.typeSelected = 2;
+        				if (mathConstantView.ePow ==0){
+        					mathConstantView.ePow = 1;
+        					mathConstantView.eTemp = true;
+        				}
 
 	        	}
-	        	if (button==buttone){
-	        		if (mathConstantView.ePow==0){
-	        			mathConstantView.ePow=1;
-	        			mathConstantView.typeSelected = 2;
-	        		}
-	        		else if (mathConstantView.typeSelected == 2)
-	        			mathConstantView.typeSelected = 0;
-	        		else 
-	        			mathConstantView.typeSelected = 2;
-	        		mathConstantView.invalidate();
+        		mathConstantView.refreshMathConstant();
+	        	
+	        	if (button==buttonDel)
+	        		mathConstantView.delete();
+	        		        	
+	        	if (button==buttonClr){
+		        	mathConstantView.setMathConstant(0,0,0,0);
+		        	mathConstantView.typeSelected = 0;
 	        	}
-	        	mathConstantView.refreshMathConstant();
     		} 
     	};
     	
@@ -94,20 +99,11 @@ public class FragmentKeyboard extends Fragment {
     	button0.setOnClickListener(onClickListenerNum);
     	buttonpi.setOnClickListener(onClickListenerType);
     	buttone.setOnClickListener(onClickListenerType);
-    	
-    	
-    
-    	
-    	
-
+    	buttonDel.setOnClickListener(onClickListenerType);
+    	buttonClr.setOnClickListener(onClickListenerType);
 
         return myFragmentView;
     }
-    
-    public void setMathConstant(MathConstant mathConstant){
-    	
-    }
-    
     
     
 }

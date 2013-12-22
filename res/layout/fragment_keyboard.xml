@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/editText1"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="60dp"
         android:text="1" />
 	
     <Button
@@ -122,7 +122,7 @@
         android:layout_alignBaseline="@+id/button13"
         android:layout_alignBottom="@+id/button13"
         android:layout_alignLeft="@+id/button11"
-        android:text="^"/>
+        android:text="Delete"/>
 
     <Button
         android:id="@+id/button15"
