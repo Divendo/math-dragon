@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
+import org.teaminfty.math_dragon.view.math.MathBinaryOperationLinear;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
@@ -510,6 +511,65 @@ public class MathView extends View
                 }
                 else
                 {
+                    // In case the target is a linear binary operation, we only want the operands directly next to it
+                    // So we rearrange the MathObject tree to make that happen
+                    if(currHover.mathObject instanceof MathBinaryOperationLinear)
+                    {
+                        // The linear binary operation we're going to modify
+                        MathBinaryOperationLinear binOp = (MathBinaryOperationLinear) currHover.mathObject;
+                        
+                        // Get the right operand
+                        MathObject operand = binOp.getRight();
+                        MathObject newParent = null;
+                        while(operand instanceof MathBinaryOperationLinear)
+                        {
+                            newParent = operand;
+                            operand = operand.getChild(0);
+                        }
+                        
+                        // Change the structure of the MathObject tree (if necessary)
+                        if(newParent != null)
+                        {
+                            MathObject newSuperParent = binOp.getRight();
+                            binOp.setRight(operand);
+                            newParent.setChild(0, binOp);
+                            
+                            if(currHover.parent == null)
+                                setMathObjectHelper(newSuperParent);
+                            else
+                                ParenthesesHelper.makeChild(currHover.parent, newSuperParent, currHover.childIndex);
+                            
+                            currHover.parent = newParent;
+                            currHover.childIndex = 0;
+                        }
+                        
+                        // Now we do the same thing for the left operand
+                        operand = binOp.getLeft();
+                        newParent = null;
+                        while(operand instanceof MathBinaryOperationLinear)
+                        {
+                            newParent = operand;
+                            operand = operand.getChild(1);
+                        }
+                        
+                        // Change the structure of the MathObject tree (if necessary)
+                        if(newParent != null)
+                        {
+                            MathObject newSuperParent = binOp.getLeft();
+                            binOp.setLeft(operand);
+                            newParent.setChild(1, binOp);
+                            
+                            if(currHover.parent == null)
+                                setMathObjectHelper(newSuperParent);
+                            else
+                                ParenthesesHelper.makeChild(currHover.parent, newSuperParent, currHover.childIndex);
+                            
+                            currHover.parent = newParent;
+                            currHover.childIndex = 1;
+                        }
+                    }
+                    
+                    // Insert the MathObject into to MathObject tree
                     ParenthesesHelper.makeChild(dragMathObject, currHover.mathObject, sourceChild);
                     if(currHover.parent == null)
                         setMathObjectHelper(dragMathObject);

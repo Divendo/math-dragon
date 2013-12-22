@@ -8,32 +8,41 @@ import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 
 
 public class MathVariable extends MathObject
 {
-    private final String c;
+    /** The name of the variable */
+    private String c;
+    
+    /** The paint that is used to draw the variable */
     private final Paint paint = new Paint();
 
-    /**
-     * Symbol lookup table
-     */
+    /** Symbol lookup table */
     private final ISymbol[] symbols = new ISymbol[] {F.a, F.b, F.c, F.d, F.e,
             F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r,
             F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
-    /**
-     * 
+    /** Default constructor */
+    public MathVariable()
+    {
+        c = "x";
+    }
+
+    /** Constructor
      * @param c The letter this MathVariable represents.  (Is a string so we can later support multiple-letter variables)
      */
     public MathVariable(String c)
     {
         this.c = c;
-        Typeface face = Typeface.create("Droid Sans Mono", Typeface.NORMAL);
-        
-        paint.setTypeface(face);
+    }
 
+    /** Calculates the right text size for the given level
+     * @param lvl The level
+     * @return The right text size for the given level */
+    protected float findTextSize(int lvl)
+    {
+        return defaultHeight * (float) Math.pow(2.0 / 3.0, lvl);
     }
 
     /**
@@ -64,52 +73,43 @@ public class MathVariable extends MathObject
     }
     
     /**
-     * returns the bounding boxes with the required padding
+     * Returns the bounding boxes with the required padding
      */
     @Override
     public Rect[] getOperatorBoundingBoxes()
     {
-        return new Rect[] {sizeAddPadding(getSize(defaultHeight))};
+        paint.setTextSize(findTextSize(level));
+        Rect bounds = new Rect();
+        paint.getTextBounds(c, 0, 1, bounds);
+        return new Rect[] { sizeAddPadding(bounds) };
     }
 
     @Override
     public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
-        // Has no children
-        throw new IndexOutOfBoundsException("No children");
+        // Will always throw an error since constants do not have children
+        checkChildIndex(index);
+        return null;
     }
 
     @Override
     public void draw(Canvas canvas)
     {
+        // Draw the bounding boxes
         drawBoundingBoxes(canvas);
-        Rect textBounding = getSize(defaultHeight);
+        
+        // Set the text size and calculate the bounding boxes
+        paint.setTextSize(findTextSize(level));
+        Rect textBounding = new Rect();
+        paint.getTextBounds(c, 0, 1, textBounding);
         Rect totalBounding = sizeAddPadding(textBounding);
-        Rect bounds = new Rect();
+
+        // Draw the variable
         canvas.save();
         canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
         paint.setColor(getColor());
-        paint.getTextBounds(c, 0, 1, bounds);
-        canvas.drawText(c, -bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
+        canvas.drawText(c, -textBounding.left, -textBounding.top, paint);
         canvas.restore();
-    }
-
-    /**
-     * returns the size of a symbol given the specific fontsize
-     * @param fontSize
-     * @return the size of the symbol
-     */
-    protected Rect getSize(float fontSize)
-    {
-        paint.setTextSize(fontSize);
-        Rect out = new Rect(0, 0, 0, 0);
-        Rect bounds = new Rect();
-
-        paint.getTextBounds(c, 0, 1, bounds);
-        out.right += bounds.width();
-        out.bottom = bounds.height();
-
-        return out;
     }
 
 }
