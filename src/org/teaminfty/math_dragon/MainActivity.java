@@ -14,7 +14,9 @@ import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -102,6 +104,34 @@ public class MainActivity extends Activity implements
         // Handle other action bar items...
         return super.onOptionsItemSelected(item);
     }
+    
+    public void wolfram(View view)
+    {
+        try
+        {
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+            IExpr expr = fragmentMainScreen.getMathObject().eval();
+            
+            String query = expr.toString();
+            
+            
+            String url = "http://www.wolframalpha.com/input/?i=";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            
+            // TODO one might be able to insert weird queries here using variables? not sure.
+            intent.setData(Uri.parse(url + Uri.encode(query)));
+            startActivity(intent);
+        }
+        catch(EmptyChildException e)
+        {
+            e.printStackTrace();
+        }
+        catch(MathException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
 
     public void evaluate(View view)
     {
@@ -113,6 +143,9 @@ public class MainActivity extends Activity implements
             IExpr a = fragmentMainScreen.getMathObject().eval();
             long between = System.currentTimeMillis();
             IExpr result = EvalEngine.eval(a);
+            
+            
+            System.out.println(result.toScript());
             long end = System.currentTimeMillis();
             Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
 

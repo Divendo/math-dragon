@@ -233,6 +233,7 @@ public class MathView extends View
 
                                 // Replace the empty box we clicked with
                                 // the new MathConstant
+                                
                                 replaceEmptyBox(res);
                             }
                         });
