@@ -127,30 +127,21 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         try
         {
+            // Get the expression as a string
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
             IExpr expr = fragmentMainScreen.getMathObject().eval();
-            
             String query = expr.toString();
             
-            
-            String url = "http://www.wolframalpha.com/input/?i=";
-            
-            // The most general intent. Shall either open Wolfram:Alpha app, or the preferred web browser.
+            // Start an intent to send the user to Wolfram|Alpha
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            
             // TODO one might be able to insert weird queries here using variables? not sure.
-            intent.setData(Uri.parse(url + Uri.encode(query)));
+            intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
             startActivity(intent);
         }
         catch(EmptyChildException e)
         {
             e.printStackTrace();
         }
-        catch(MathException e)
-        {
-            e.printStackTrace();
-        }
-
     }
 
     public void evaluate(View view)
