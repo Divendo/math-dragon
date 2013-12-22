@@ -1,7 +1,6 @@
 package org.teaminfty.math_dragon;
 
 import org.matheclipse.core.eval.EvalEngine;
-import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
