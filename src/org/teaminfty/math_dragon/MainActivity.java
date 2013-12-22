@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
@@ -14,6 +15,7 @@ import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -22,15 +24,25 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends Activity implements
-        FragmentOperationsSource.CloseMeListener
+public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
 
-    /**
-     * The ActionBarDrawerToggle that is used to toggle the drawer using the
-     * action bar
-     */
+    /** The ActionBarDrawerToggle that is used to toggle the drawer using the action bar */
     ActionBarDrawerToggle actionBarDrawerToggle = null;
+
+    /** Class that loads the Symja library in a separate thread */
+    private class SymjaLoader extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... args)
+        {
+            // Simply do a simple (yet beautiful :D) calculation to make the system load Symja
+            EvalEngine.eval(F.Plus(F.ZZ(1), F.Power(F.E, F.Times(F.Pi, F.I))));
+            
+            // Return null (return value won't be used)
+            return null;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,6 +54,9 @@ public class MainActivity extends Activity implements
         
         // Load the layout
         setContentView(R.layout.main);
+        
+        // Load Symja
+        new SymjaLoader().execute();
 
         // Get the DrawerLayout object
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
