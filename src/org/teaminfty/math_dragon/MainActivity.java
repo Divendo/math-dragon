@@ -127,13 +127,20 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         // Get the expression as a string
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-        String query = fragmentMainScreen.getMathObject().toString();
         
-        // Start an intent to send the user to Wolfram|Alpha
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        // TODO one might be able to insert weird queries here using variables? not sure.
-        intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
-        startActivity(intent);
+        MathObject obj = fragmentMainScreen.getMathObject();
+        
+        if (obj.isCompleted())
+        {
+            String query = obj.toString();
+
+            // Start an intent to send the user to Wolfram|Alpha
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            // TODO one might be able to insert weird queries here using
+            // variables? not sure.
+            intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
+            startActivity(intent);
+        }
         
     }
 

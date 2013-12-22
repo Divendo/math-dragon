@@ -299,4 +299,22 @@ public abstract class MathObject
         for(int i = 0; i < getChildCount(); ++i)
             canvas.drawRect(getChildBoundingBox(i), paint);
     }
+    
+    
+    /**
+     * Checks if all children have been fully filled in. and aso their children and so on recursivly down the tree.
+     * A MathObject can only be evaluated if this method returns true.
+     * @return returns true if all children of this MathObject have been filled in.
+     */
+    public boolean isCompleted()
+    {
+        boolean completed = !(this instanceof MathObjectEmpty);
+        if (!completed) return false;
+        for (MathObject child : children)
+        {
+            if (child instanceof MathObjectEmpty) return false;
+            completed =  completed && child.isCompleted();
+        }
+        return completed;
+    }
 }

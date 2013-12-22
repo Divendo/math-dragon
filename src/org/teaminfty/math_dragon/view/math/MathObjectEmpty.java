@@ -29,6 +29,12 @@ public class MathObjectEmpty extends MathObject
     }
 
     @Override
+    public String toString()
+    {
+        return null;
+    }
+    
+    @Override
     public IExpr eval() throws EmptyChildException
     {
         // Just throw an error
