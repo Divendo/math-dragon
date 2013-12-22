@@ -119,6 +119,10 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         return super.onOptionsItemSelected(item);
     }
     
+    /**
+     * Gets called when wolfram alpha needs to be started. It will send the unevaluated IExpr to wolfram alpha for evaluation and inspection
+     * @param view
+     */
     public void wolfram(View view)
     {
         try
