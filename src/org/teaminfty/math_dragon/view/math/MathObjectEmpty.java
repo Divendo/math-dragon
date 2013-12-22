@@ -81,7 +81,7 @@ public class MathObjectEmpty extends MathObject
     		height = 2*height/3;
     	}
     	
-    	return new Rect(0,0,width, height);
+    	return new Rect(0, 0, width, height);
     }
     
     @Override

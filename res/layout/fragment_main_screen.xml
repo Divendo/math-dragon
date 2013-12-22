@@ -2,18 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical" >
-
-    <Button
-        android:id="@+id/button_approximate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/margin_approximate"
-        android:onClick="approximate"
-        android:text="@string/approximate" />
      
     <org.teaminfty.math_dragon.view.MathView
         android:id="@+id/mathView"
@@ -22,24 +11,33 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
-    <Button
-        android:id="@+id/button_evaluate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_approximate"
+    <ImageButton
+        android:id="@+id/btn_evaluate"
+        style="@style/CircleButton"
+        android:src="@drawable/evaluate"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/margin_evaluate"
-        android:onClick="evaluate"
-        android:text="@string/evaluate" />
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/main_screen_button_margin"
+        android:contentDescription="@string/evaluate"
+        android:onClick="evaluate" />
 
-    <Button
-        android:id="@+id/button_favourites"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        style="@style/CircleButton"
+        android:src="@drawable/approximate"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/btn_evaluate"
+        android:layout_marginBottom="@dimen/main_screen_button_margin"
+        android:onClick="approximate"
+        android:contentDescription="@string/approximate" />
+
+    <ImageButton
+        style="@style/CircleButton"
+        android:src="@drawable/clear"
+        android:layout_margin="@dimen/main_screen_button_margin"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:onClick="favourites"
-        android:text="@string/favourites" />
+        android:onClick="clear"
+        android:contentDescription="@string/clear" />
     
     <Button 
         android:id="@+id/button_test"
@@ -50,9 +48,6 @@
         android:layout_marginTop="50dp"
         android:onClick = "temporary"
         android:text="@string/test" />
-   
-    
-      
-    
+
 
 </RelativeLayout>

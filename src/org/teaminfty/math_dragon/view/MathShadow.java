@@ -1,6 +1,5 @@
-package org.teaminfty.math_dragon.view.fragments;
+package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.HoverState;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.graphics.Canvas;
@@ -19,7 +18,7 @@ public class MathShadow extends DragShadowBuilder
     public MathShadow(MathObject mo)
     {
         setDragState(mathObject = mo);
-        mathObject.setLevel(MathObject.MAX_LEVEL - 1);
+        mathObject.setLevel(0);
     }
     
     /** Recursively sets the DRAG state for the given {@link MathObject} and all of its children

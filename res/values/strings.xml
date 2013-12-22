@@ -6,6 +6,6 @@
     <string name="operation_drawer_close">Close the drawer with the operations</string>
 	<string name="evaluate">Evaluate</string>
 	<string name="approximate">Approx</string>
-	<string name="favourites">Clear</string>
+	<string name="clear">Clear</string>
 	<string name="test">Test</string>
 </resources>

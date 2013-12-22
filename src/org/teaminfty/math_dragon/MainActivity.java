@@ -37,8 +37,12 @@ public class MainActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        // Load the layout
         super.onCreate(savedInstanceState);
+
+        // Set the default size in the MathObject class
+        MathObject.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
+        
+        // Load the layout
         setContentView(R.layout.main);
 
         // Get the DrawerLayout object
@@ -67,10 +71,6 @@ public class MainActivity extends Activity implements
             // there was no drawer to open
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
-
-        // Set the default size in the MathObject class
-        MathObject.defaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
-        MathObject.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
     }
 
     @Override
@@ -96,8 +96,7 @@ public class MainActivity extends Activity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Pass the event to ActionBarDrawerToggle, if it returns true, then it
-        // has handled the app icon touch event
+        // Pass the event to ActionBarDrawerToggle, if it returns true, then it has handled the app icon touch event
         if(actionBarDrawerToggle.onOptionsItemSelected(item))
             return true;
 
@@ -144,8 +143,7 @@ public class MainActivity extends Activity implements
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
         drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-        // TODO: Approximate the MathObject in the drawing space, and display
-        // the resulting constant
+        // TODO: Approximate the MathObject in the drawing space, and display the resulting constant
 
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
                 .findFragmentById(R.id.fragmentEvaluation);
@@ -154,21 +152,11 @@ public class MainActivity extends Activity implements
         fragmentEvaluation.showMathObject(mathConstant);
     }
 
-    public void favourites(View view)
+    public void clear(View view)
     {
 
-        /*
-         * // Get the DrawerLayout object DrawerLayout drawerLayout =
-         * (DrawerLayout) findViewById(R.id.drawerLayout);
-         * 
-         * // Show the favourites drawer
-         * drawerLayout.openDrawer(Gravity.CENTER);
-         */
-
-        // We use the favourites button to clear the entire screen for the time
-        // being
-        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager()
-                .findFragmentById(R.id.fragmentMainScreen);
+        // Simply clear the current formula
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();
     }
     
@@ -189,7 +177,6 @@ public class MainActivity extends Activity implements
         // Get the DrawerLayout object
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
-
         try
         {
             drawerLayout.closeDrawer(Gravity.LEFT);
@@ -199,27 +186,5 @@ public class MainActivity extends Activity implements
             // there was no drawer to open.
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
-    }
-   
-    public void addpi(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("pi");
-    }
-    public void adde(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("e");
-    }
-    public void addPower(View view){
-  	    EditText edittext = (EditText) findViewById(R.id.editText1);
-  	    Editable editable = edittext.getText();
-  	    editable.append("^");
-    }
-    public void clearText(View view){
-    	EditText edittext = (EditText) findViewById(R.id.editText1);
-    	Editable editable = edittext.getText();
-    	editable.clear();
-    }
-    
+    }   
 }
