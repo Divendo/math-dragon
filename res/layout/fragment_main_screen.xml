@@ -12,6 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
+    <!-- Buttons in the bottom right corner -->
     <ImageButton
         android:id="@+id/btn_evaluate"
         style="@style/CircleButton"
@@ -21,8 +22,6 @@
         android:layout_margin="@dimen/main_screen_button_margin"
         android:contentDescription="@string/evaluate"
         android:onClick="evaluate" />
-    
-
     
     <ImageButton
         android:id="@+id/btn_approximate"
@@ -38,19 +37,66 @@
         style="@style/CircleButton"
         android:src="@drawable/wolfram"
         android:layout_margin="@dimen/main_screen_button_margin"
-         android:layout_toLeftOf="@id/btn_approximate"
+        android:layout_toLeftOf="@id/btn_approximate"
         android:layout_alignParentBottom="true"
         android:onClick="wolfram"
         android:contentDescription="@string/wolfram" />
     
+    <!-- Buttons in the top right corner -->
     <ImageButton
+        android:id="@+id/btn_favourite"
         style="@style/CircleButton"
-        android:src="@drawable/clear"
+        android:src="@drawable/favourite"
         android:layout_margin="@dimen/main_screen_button_margin"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:contentDescription="@string/favourite" />
+    
+    <ImageButton
+        android:id="@+id/btn_clear"
+        style="@style/CircleButton"
+        android:src="@drawable/clear"
+        android:layout_marginTop="@dimen/main_screen_button_margin"
+        android:layout_marginBottom="@dimen/main_screen_button_margin"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/btn_favourite"
         android:onClick="clear"
         android:contentDescription="@string/clear" />
     
+    <ImageButton
+        android:id="@+id/btn_redo"
+        style="@style/CircleButton"
+        android:src="@drawable/redo"
+        android:layout_marginRight="@dimen/main_screen_button_margin"
+        android:layout_marginLeft="@dimen/main_screen_button_margin"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/btn_favourite"
+        android:contentDescription="@string/redo" />
+    
+    <ImageButton
+        android:id="@+id/btn_undo"
+        style="@style/CircleButton"
+        android:src="@drawable/undo"
+        android:layout_below="@id/btn_clear"
+        android:layout_toLeftOf="@id/btn_redo"
+        android:contentDescription="@string/undo" />
+    
+    <!-- Buttons in the bottom left corner -->
+    <ImageButton
+        style="@style/CircleButton"
+        android:src="@drawable/substitute"
+        android:layout_margin="@dimen/main_screen_button_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/substitute" />
+    
+    <!-- Buttons in the bottom top corner -->
+    <ImageButton
+        style="@style/CircleButton"
+        android:src="@drawable/help"
+        android:layout_margin="@dimen/main_screen_button_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/help" />
 
 </RelativeLayout>

@@ -8,4 +8,9 @@
 	<string name="approximate">Approx</string>
 	<string name="clear">Clear</string>
 	<string name="wolfram">Wolfram</string>
+	<string name="favourite">Favourite</string>
+	<string name="undo">Undo</string>
+	<string name="redo">Redo</string>
+	<string name="substitute">Substitute</string>
+	<string name="help">Help</string>
 </resources>
