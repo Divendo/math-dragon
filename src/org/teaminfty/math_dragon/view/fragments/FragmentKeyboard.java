@@ -51,16 +51,20 @@ public class FragmentKeyboard extends Fragment {
     	final OnClickListener onClickListenerType = new OnClickListener() {
     		public void onClick(final View v) {
 	        	Button button = (Button) v;
-	        	
+	        		
 	        	if (button==buttonpi){
 	        		if (mathConstantView.typeSelected == 1)
 	        			mathConstantView.typeSelected = 0;
 	        		else 
 	        			mathConstantView.typeSelected = 1;
 	        			if (mathConstantView.piPow ==0){
-	        			mathConstantView.piPow = 1;
-	        			mathConstantView.piTemp = true;
+	        				mathConstantView.piPow = 1;
+	        				mathConstantView.piTemp = true;
 	        			}
+        				if (mathConstantView.factor ==0){
+        					mathConstantView.factor = 1;
+        					mathConstantView.facTemp = true;
+        				}
 	        	}
 	        	
 	        	if (button==buttone){
@@ -71,6 +75,10 @@ public class FragmentKeyboard extends Fragment {
         				if (mathConstantView.ePow ==0){
         					mathConstantView.ePow = 1;
         					mathConstantView.eTemp = true;
+        				}
+        				if (mathConstantView.factor ==0){
+        					mathConstantView.factor = 1;
+        					mathConstantView.facTemp = true;
         				}
 
 	        	}
