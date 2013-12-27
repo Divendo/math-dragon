@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon;
 
 import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
@@ -13,7 +14,10 @@ import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -24,15 +28,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-public class MainActivity extends Activity implements
-        FragmentOperationsSource.CloseMeListener
+public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
 
-    /**
-     * The ActionBarDrawerToggle that is used to toggle the drawer using the
-     * action bar
-     */
+    /** The ActionBarDrawerToggle that is used to toggle the drawer using the action bar */
     ActionBarDrawerToggle actionBarDrawerToggle = null;
+
+    /** Class that loads the Symja library in a separate thread */
+    private class SymjaLoader extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... args)
+        {
+            // Simply do a simple (yet beautiful :D) calculation to make the system load Symja
+            EvalEngine.eval(F.Plus(F.ZZ(1), F.Power(F.E, F.Times(F.Pi, F.I))));
+            
+            // Return null (return value won't be used)
+            return null;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,6 +58,9 @@ public class MainActivity extends Activity implements
         
         // Load the layout
         setContentView(R.layout.main);
+        
+        // Load Symja
+        new SymjaLoader().execute();
 
         // Get the DrawerLayout object
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -103,6 +120,31 @@ public class MainActivity extends Activity implements
         // Handle other action bar items...
         return super.onOptionsItemSelected(item);
     }
+    
+    /**
+     * Gets called when wolfram alpha needs to be started. It will send the unevaluated IExpr to wolfram alpha for evaluation and inspection
+     * @param view
+     */
+    public void wolfram(View view)
+    {
+        try
+        {
+            // Get the expression as a string
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+            IExpr expr = fragmentMainScreen.getMathObject().eval();
+            String query = expr.toString();
+            
+            // Start an intent to send the user to Wolfram|Alpha
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            // TODO one might be able to insert weird queries here using variables? not sure.
+            intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
+            startActivity(intent);
+        }
+        catch(EmptyChildException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     public void evaluate(View view)
     {
@@ -114,6 +156,9 @@ public class MainActivity extends Activity implements
             IExpr a = fragmentMainScreen.getMathObject().eval();
             long between = System.currentTimeMillis();
             IExpr result = EvalEngine.eval(a);
+            
+            
+            System.out.println(result.toScript());
             long end = System.currentTimeMillis();
             Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
 

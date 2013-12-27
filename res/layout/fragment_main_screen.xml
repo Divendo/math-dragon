@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -20,8 +21,11 @@
         android:layout_margin="@dimen/main_screen_button_margin"
         android:contentDescription="@string/evaluate"
         android:onClick="evaluate" />
+    
 
+    
     <ImageButton
+        android:id="@+id/btn_approximate"
         style="@style/CircleButton"
         android:src="@drawable/approximate"
         android:layout_alignParentBottom="true"
@@ -29,7 +33,16 @@
         android:layout_marginBottom="@dimen/main_screen_button_margin"
         android:onClick="approximate"
         android:contentDescription="@string/approximate" />
-
+    
+    <ImageButton
+        style="@style/CircleButton"
+        android:src="@drawable/wolfram"
+        android:layout_margin="@dimen/main_screen_button_margin"
+         android:layout_toLeftOf="@id/btn_approximate"
+        android:layout_alignParentBottom="true"
+        android:onClick="wolfram"
+        android:contentDescription="@string/wolfram" />
+    
     <ImageButton
         style="@style/CircleButton"
         android:src="@drawable/clear"

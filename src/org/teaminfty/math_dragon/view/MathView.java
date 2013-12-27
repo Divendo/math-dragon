@@ -4,9 +4,11 @@ import java.util.ArrayDeque;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
+import org.teaminfty.math_dragon.view.math.MathBinaryOperationLinear;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
+import org.teaminfty.math_dragon.view.math.MathVariable;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -191,7 +193,7 @@ public class MathView extends View
                 HoverInformation info = queue.pollFirst();
                 
                 // If the MathObject is a MathObjectEmpty or MathConstant, we check if we clicked on it
-                if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathConstant)
+                if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathConstant || info.mathObject instanceof MathVariable)
                 {
                     // If we click inside the object, we're done looking
                     if(info.boundingBox.contains(clickPos.x, clickPos.y))
@@ -216,11 +218,24 @@ public class MathView extends View
                         {
                             public void onClick(DialogInterface dialog, int whichButton)
                             {
-                                // Create a MathConstant from the user input
-                                MathConstant mathConstant = new MathConstant(input.getText().toString());
+                                String inp = input.getText().toString();
+                                MathObject res;
+                                // any letter but e or i
+                                if(inp.matches("[a-df-hj-z]"))
+                                {
+                                    res = new MathVariable(inp);
+                                }
+                                else
+                                {
+                                    // Create a MathConstant from the
+                                    // user input
+                                    res = new MathConstant(inp);
+                                }
+
+                                // Replace the empty box we clicked with
+                                // the new MathConstant
                                 
-                                // Replace the empty box we clicked with the new MathConstant
-                                replaceEmptyBox(mathConstant);
+                                replaceEmptyBox(res);
                             }
                         });
 
@@ -496,6 +511,65 @@ public class MathView extends View
                 }
                 else
                 {
+                    // In case the target is a linear binary operation, we only want the operands directly next to it
+                    // So we rearrange the MathObject tree to make that happen
+                    if(currHover.mathObject instanceof MathBinaryOperationLinear)
+                    {
+                        // The linear binary operation we're going to modify
+                        MathBinaryOperationLinear binOp = (MathBinaryOperationLinear) currHover.mathObject;
+                        
+                        // Get the right operand
+                        MathObject operand = binOp.getRight();
+                        MathObject newParent = null;
+                        while(operand instanceof MathBinaryOperationLinear)
+                        {
+                            newParent = operand;
+                            operand = operand.getChild(0);
+                        }
+                        
+                        // Change the structure of the MathObject tree (if necessary)
+                        if(newParent != null)
+                        {
+                            MathObject newSuperParent = binOp.getRight();
+                            binOp.setRight(operand);
+                            newParent.setChild(0, binOp);
+                            
+                            if(currHover.parent == null)
+                                setMathObjectHelper(newSuperParent);
+                            else
+                                ParenthesesHelper.makeChild(currHover.parent, newSuperParent, currHover.childIndex);
+                            
+                            currHover.parent = newParent;
+                            currHover.childIndex = 0;
+                        }
+                        
+                        // Now we do the same thing for the left operand
+                        operand = binOp.getLeft();
+                        newParent = null;
+                        while(operand instanceof MathBinaryOperationLinear)
+                        {
+                            newParent = operand;
+                            operand = operand.getChild(1);
+                        }
+                        
+                        // Change the structure of the MathObject tree (if necessary)
+                        if(newParent != null)
+                        {
+                            MathObject newSuperParent = binOp.getLeft();
+                            binOp.setLeft(operand);
+                            newParent.setChild(1, binOp);
+                            
+                            if(currHover.parent == null)
+                                setMathObjectHelper(newSuperParent);
+                            else
+                                ParenthesesHelper.makeChild(currHover.parent, newSuperParent, currHover.childIndex);
+                            
+                            currHover.parent = newParent;
+                            currHover.childIndex = 1;
+                        }
+                    }
+                    
+                    // Insert the MathObject into to MathObject tree
                     ParenthesesHelper.makeChild(dragMathObject, currHover.mathObject, sourceChild);
                     if(currHover.parent == null)
                         setMathObjectHelper(dragMathObject);
@@ -516,15 +590,15 @@ public class MathView extends View
     private HoverInformation emptyBoxReplaceInfo = null;
     
     /** Replaces the {@link MathObject} (whose information is stored in {@link MathView#emptyBoxReplaceInfo emptyBoxReplaceInfo}) with the given {@link MathConstant}.
-     * @param constant The {@link MathConstant} to replace the {@link MathObject} with
+     * @param res The {@link MathConstant} to replace the {@link MathObject} with
      */
-    private void replaceEmptyBox(MathConstant constant)
+    private void replaceEmptyBox(MathObject res)
     {
         // Place the constant
         if(emptyBoxReplaceInfo.parent == null)
-            setMathObjectHelper(constant);
+            setMathObjectHelper(res);
         else
-            emptyBoxReplaceInfo.parent.setChild(emptyBoxReplaceInfo.childIndex, constant);
+            emptyBoxReplaceInfo.parent.setChild(emptyBoxReplaceInfo.childIndex, res);
         
         // Redraw
         invalidate();
