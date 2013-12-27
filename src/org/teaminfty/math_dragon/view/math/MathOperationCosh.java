@@ -12,11 +12,12 @@ import android.graphics.Region;
 
 public class MathOperationCosh extends MathObjectSinoid
 {
-    public MathOperationCosh()
-    {
-    	sineWidth = (int)(110*4.5);
-    }
-
+	//String of which to get the TextBounds
+	public MathOperationCosh()
+	{
+		tmpStr = "cosh";
+	}
+	
     //returns a cosine (or does it?)
 	@Override
 	public IExpr eval() throws EmptyChildException 
@@ -27,19 +28,29 @@ public class MathOperationCosh extends MathObjectSinoid
 	@Override
 	public void draw(Canvas canvas) 
 	{
-        // Draw the bounding boxes
+		// Draw the bounding boxes
         drawBoundingBoxes(canvas);
+		
+        // Get the text size and the bounding box
+        final float textSize = findTextSize(level);
+        Rect textBounding = getSize(textSize);
+        Rect totalBounding = sizeAddPadding(textBounding);
+
+        // Set the text size
+        operatorPaint.setTextSize(textSize);
         
-		    final float textSize = findTextSize(level);
+        // Set the paint color
+        operatorPaint.setColor(getColor());
+
         // Draw the main operator
         canvas.save();
-        operatorPaint.setColor(getColor());
-        operatorPaint.setTextSize(textSize);
-        Rect boundingBox = getBoundingBox();
-        canvas.drawText("Cosh", boundingBox.left,boundingBox.height()/2 + (int)(85* Math.pow(2.0/3.0, level)), operatorPaint);
+        canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
+        operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
+        canvas.drawText(tmpStr, bounds.left, textBounding.height() - bounds.height() - bounds.top, operatorPaint);
         canvas.restore();
         
         this.drawChildren(canvas);
 	}
 
 }
+

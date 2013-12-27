@@ -12,33 +12,45 @@ import android.graphics.Region;
 
 public class MathOperationTangent extends MathObjectSinoid
 {
-    public MathOperationTangent()
-    {
-    }
-
-    //returns a cosine (or does it?)
+	//String of which to get the TextBounds
+	public MathOperationTangent()
+	{
+		tmpStr = "tan";
+	}
+	
+    //returns a cosine
 	@Override
 	public IExpr eval() throws EmptyChildException 
 	{
-		return F.Tan(getChild(0).eval());
+		return F.Cos(getChild(0).eval());
 	}
 
 	@Override
 	public void draw(Canvas canvas) 
 	{
-        // Draw the bounding boxes
+		// Draw the bounding boxes
         drawBoundingBoxes(canvas);
+		
+        // Get the text size and the bounding box
+        final float textSize = findTextSize(level);
+        Rect textBounding = getSize(textSize);
+        Rect totalBounding = sizeAddPadding(textBounding);
+
+        // Set the text size
+        operatorPaint.setTextSize(textSize);
         
-		    final float textSize = findTextSize(level);
+        // Set the paint color
+        operatorPaint.setColor(getColor());
+
         // Draw the main operator
         canvas.save();
-        operatorPaint.setColor(getColor());
-        operatorPaint.setTextSize(textSize);
-        Rect boundingBox = getBoundingBox();
-        canvas.drawText("Tan", boundingBox.left,boundingBox.height()/2 + (int)(85* Math.pow(2.0/3.0, level)), operatorPaint);
+        canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
+        operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
+        canvas.drawText(tmpStr, bounds.left, textBounding.height() - bounds.height() - bounds.top, operatorPaint);
         canvas.restore();
         
         this.drawChildren(canvas);
 	}
 
 }
+

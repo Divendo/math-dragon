@@ -12,12 +12,13 @@ import android.graphics.Region;
 
 public class MathOperationArcTangent extends MathObjectSinoid
 {
+	//String of which to get the TextBounds
     public MathOperationArcTangent()
     {
-    	sineWidth = 110*6;
+    	tmpStr = "tan" + "\u207b" + "\u00b9";
     }
 
-    //returns a cosine (or does it?)
+    //returns a arctan
 	@Override
 	public IExpr eval() throws EmptyChildException 
 	{
@@ -27,19 +28,28 @@ public class MathOperationArcTangent extends MathObjectSinoid
 	@Override
 	public void draw(Canvas canvas) 
 	{
-        // Draw the bounding boxes
-        drawBoundingBoxes(canvas);
-        
-		    final float textSize = findTextSize(level);
-        // Draw the main operator
-        canvas.save();
-        operatorPaint.setColor(getColor());
-        operatorPaint.setTextSize(textSize);
-        Rect boundingBox = getBoundingBox();
-        canvas.drawText("Tan" + "\u207b" + "\u00b9" , boundingBox.left,boundingBox.height()/2 + (int)(85* Math.pow(2.0/3.0, level)), operatorPaint);
-        canvas.restore();
-        
-        this.drawChildren(canvas);
+		// Draw the bounding boxes
+	    drawBoundingBoxes(canvas);
+			
+	    // Get the text size and the bounding box
+	    final float textSize = findTextSize(level);
+	    Rect textBounding = getSize(textSize);
+	    Rect totalBounding = sizeAddPadding(textBounding);
+
+	    // Set the text size
+	    operatorPaint.setTextSize(textSize);
+	        
+	    // Set the paint color
+	    operatorPaint.setColor(getColor());
+
+	    // Draw the main operator
+	    canvas.save();
+	    canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
+	    operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
+	    canvas.drawText(tmpStr, bounds.left, textBounding.height() - bounds.height() - bounds.top, operatorPaint);
+	    canvas.restore();
+	        
+	    this.drawChildren(canvas);
 	}
 
 }
