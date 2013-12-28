@@ -1,23 +1,22 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
 
 public abstract class MathObjectSinoid extends MathObject 
 {
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
+    /** The paint that is used for drawing the exponent */
+    protected Paint exponentPaint = new Paint();
+    
     protected String tmpStr = "";
+    protected String tmpStr2 = "-1";
     protected Rect bounds = new Rect();
-    protected int exponent = 0;
+    protected Rect bounds2 = new Rect();
+    protected int arc = 0;
     
     /** The text size factor for exponents */
     protected static final float EXPONENT_FACTOR = 1.0f / 2;
@@ -64,14 +63,27 @@ public abstract class MathObjectSinoid extends MathObject
     {
         // Set the text size
         operatorPaint.setTextSize(fontSize);
-        operatorPaint.setTextSize(fontSize * EXPONENT_FACTOR);
+        exponentPaint.setTextSize(fontSize * EXPONENT_FACTOR);
 
         // Calculate the total width and the height of the text
         Rect out = new Rect(0, 0, 0, 0);
+        
+        //if the operator is arcsin, arctan or arccos, get add the size of the -1
+    	if(arc == 1)
+    	{
+    	operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);	
+    	exponentPaint.getTextBounds(tmpStr2, 0, tmpStr2.length(), bounds2);
+    	out.right += bounds.width() + bounds2.width() +((int) (40 / MathObject.lineWidth));
+        out.bottom = Math.max(out.bottom, bounds.height());
+    	}
+    	
+    	// If not, get the size without -1
+    	else 
+    	{
         operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
         out.right += bounds.width();
         out.bottom = Math.max(out.bottom, bounds.height());
-                
+    	}
         return out;
     }
     

@@ -5,10 +5,8 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
+
 
 public class MathOperationCosh extends MathObjectSinoid
 {
@@ -18,7 +16,7 @@ public class MathOperationCosh extends MathObjectSinoid
 		tmpStr = "cosh";
 	}
 	
-    //returns a cosine (or does it?)
+    //returns a cosh
 	@Override
 	public IExpr eval() throws EmptyChildException 
 	{

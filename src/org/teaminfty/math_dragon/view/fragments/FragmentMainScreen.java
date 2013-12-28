@@ -42,10 +42,11 @@ public class FragmentMainScreen extends Fragment
         MathOperationSinh sinh = new MathOperationSinh();
         MathOperationCosh cosh = new MathOperationCosh();
         MathOperationArcCos arccos = new MathOperationArcCos();
+        MathOperationArcSine arcsin = new MathOperationArcSine();
         MathOperationArcTangent arctan = new MathOperationArcTangent();
        
         MathOperationAdd add = new MathOperationAdd();
-        add.setChild(0, cos);
+        add.setChild(0, arcsin);
         add.setChild(1, five);
 
         

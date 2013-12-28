@@ -5,10 +5,9 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
+
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
+
 
 public class MathOperationTangent extends MathObjectSinoid
 {
@@ -18,7 +17,7 @@ public class MathOperationTangent extends MathObjectSinoid
 		tmpStr = "tan";
 	}
 	
-    //returns a cosine
+    //returns a tan
 	@Override
 	public IExpr eval() throws EmptyChildException 
 	{
