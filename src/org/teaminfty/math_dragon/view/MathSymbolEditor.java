@@ -162,13 +162,16 @@ public class MathSymbolEditor extends View
         iPow = "";
         showI = false;
         
+        // We'll be editing the factor again
+        setEditingSymbol(EditingSymbol.FACTOR);
+        
         // Redraw
         invalidate();
     }
     
     /** Copies the values from the given {@link MathConstant}
      * @param mathConstant The {@link MathConstant} to copy the values from */
-    public void set(MathConstant mathConstant)
+    public void fromMathConstant(MathConstant mathConstant)
     {
         // Reset all values
         reset();
@@ -235,15 +238,15 @@ public class MathSymbolEditor extends View
         
         // Set the PI power
         if(showPi)
-            out.setPiPow(Long.parseLong(piPow));
+            out.setPiPow(piPow.isEmpty() ? 1 : Long.parseLong(piPow));
 
         // Set the E power
         if(showE)
-            out.setEPow(Long.parseLong(ePow));
+            out.setEPow(ePow.isEmpty() ? 1 : Long.parseLong(ePow));
 
         // Set the I power
         if(showI)
-            out.setIPow(Long.parseLong(iPow));
+            out.setIPow(iPow.isEmpty() ? 1 : Long.parseLong(iPow));
         
         // Return the result
         return out;
@@ -441,28 +444,28 @@ public class MathSymbolEditor extends View
             case FACTOR:
                 if(factor.equals("0"))
                     factor = nStr;
-                else if(factor != "" || nStr != "0")
+                else if(!factor.isEmpty() || !nStr.equals("0"))
                     factor += nStr;
             break;
             
             case PI:
                 if(piPow.equals("0"))
                     piPow = nStr;
-                else if(piPow != "" || nStr != "0")
+                else if(!piPow.isEmpty() || !nStr.equals("0"))
                     piPow += nStr;
             break;
             
             case E:
                 if(ePow.equals("0"))
                     ePow = nStr;
-                else if(ePow != "" || nStr != "0")
+                else if(!ePow.isEmpty() || !nStr.equals("0"))
                     ePow += nStr;
             break;
             
             case I:
                 if(iPow.equals("0"))
                     iPow = nStr;
-                else if(iPow != "" || nStr != "0")
+                else if(!iPow.isEmpty() || !nStr.equals("0"))
                     iPow += nStr;
             break;
         }

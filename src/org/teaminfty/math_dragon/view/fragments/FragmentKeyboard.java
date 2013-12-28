@@ -143,6 +143,7 @@ public class FragmentKeyboard extends Fragment
         {
             // Reset the values in the MathConstantView
             mathConstantView.reset();
+            refreshButtonState();
         }
     }
 }
