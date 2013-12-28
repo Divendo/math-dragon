@@ -73,7 +73,7 @@ public abstract class MathObjectSinoid extends MathObject
     	{
     	operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);	
     	exponentPaint.getTextBounds(tmpStr2, 0, tmpStr2.length(), bounds2);
-    	out.right += bounds.width() + bounds2.width() +((int) (40 / MathObject.lineWidth));
+    	out.right += bounds.width() + bounds2.width() +((int) (30 / MathObject.lineWidth));
         out.bottom = Math.max(out.bottom, bounds.height());
     	}
     	
@@ -93,7 +93,6 @@ public abstract class MathObjectSinoid extends MathObject
 	{
 		 return new Rect[]{ sizeAddPadding(getSize(findTextSize(level))) };
 	}
-	
 	
 	@Override
 	public Rect getChildBoundingBox( int index) throws IndexOutOfBoundsException 
