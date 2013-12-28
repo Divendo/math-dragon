@@ -3,141 +3,133 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightgray" >
-	
-	<Button
-        android:id="@+id/button1"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/editText1"
-        android:layout_marginTop="60dp"
-        android:text="1" />
-	
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_toRightOf="@+id/button1"
-        android:text="2"/>
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button2"
-        android:layout_toRightOf="@+id/button2"
-        android:text="3"/>
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
-        android:layout_toLeftOf="@+id/button2"
-        android:text="4"/>
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
-        android:layout_toLeftOf="@+id/button3"
-        android:text="5"/>
-
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button5"
-        android:layout_alignBottom="@+id/button5"
-        android:layout_alignLeft="@+id/button3"
-        android:text="6" />
-
-    <Button
-        android:id="@+id/button7"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button4"
-        android:text="7"/>
-
-    <Button
-        android:id="@+id/button9"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button8"
-        android:layout_alignBottom="@+id/button8"
-        android:layout_alignLeft="@+id/button6"
-        android:text="9"/>
-
-    <Button
-        android:id="@+id/button8"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button5"
-        android:layout_toLeftOf="@+id/button6"
-        android:text="8" />
-
-    <Button
-        android:id="@+id/button10"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button7"
-        android:text="pi"
-        android:onClick="addpi" />
-
-    <Button
-        android:id="@+id/button11"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button10"
-        android:layout_alignBottom="@+id/button10"
-        android:layout_alignLeft="@+id/button8"
-        android:text="0"/>
-
-    <Button
-        android:id="@+id/button12"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button11"
-        android:layout_alignBottom="@+id/button11"
-        android:layout_alignLeft="@+id/button9"
-        android:text="e"/>
-
-    <Button
-        android:id="@+id/button13"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button10"
-        android:text="Clear" />
-
-    <Button
-        android:id="@+id/button14"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button13"
-        android:layout_alignBottom="@+id/button13"
-        android:layout_alignLeft="@+id/button11"
-        android:text="Delete"/>
-
-    <Button
-        android:id="@+id/button15"
-        android:layout_width="@dimen/button_size"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button11"
-        android:layout_toRightOf="@+id/button11"
-        android:text="Enter" />
-
-    <org.teaminfty.math_dragon.view.MathConstantView
-        android:id="@+id/mCV"
+    <org.teaminfty.math_dragon.view.MathSymbolEditor
+        android:id="@+id/mathConstantView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/button2"
-        android:layout_alignParentRight="true" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/keyboard_button_margin" />
 
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/mathConstantView" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        	android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButton1"
+                style="@style/KeyboardButton"
+                android:text="1" />
+
+            <Button
+                android:id="@+id/keyboardButton2"
+                style="@style/KeyboardButton"
+                android:text="2" />
+
+            <Button
+                android:id="@+id/keyboardButton3"
+                style="@style/KeyboardButton"
+                android:text="3" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        	android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButton4"
+                style="@style/KeyboardButton"
+                android:text="4" />
+
+            <Button
+                android:id="@+id/keyboardButton5"
+                style="@style/KeyboardButton"
+                android:text="5" />
+
+            <Button
+                android:id="@+id/keyboardButton6"
+                style="@style/KeyboardButton"
+                android:text="6" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        	android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButton7"
+                style="@style/KeyboardButton"
+                android:text="7" />
+
+            <Button
+                android:id="@+id/keyboardButton8"
+                style="@style/KeyboardButton"
+                android:text="8" />
+
+            <Button
+                android:id="@+id/keyboardButton9"
+                style="@style/KeyboardButton"
+                android:text="9" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        	android:gravity="center" >
+
+            <ToggleButton
+                android:id="@+id/keyboardButtonPi"
+                style="@style/KeyboardButton"
+                android:text="@string/pi"
+                android:textOn="@string/pi"
+                android:textOff="@string/pi" />
+
+            <Button
+                android:id="@+id/keyboardButton0"
+                style="@style/KeyboardButton"
+                android:text="0" />
+
+            <ToggleButton
+                android:id="@+id/keyboardButtonE"
+                style="@style/KeyboardButton"
+                android:text="@string/e_eulers_number"
+                android:textOn="@string/e_eulers_number"
+                android:textOff="@string/e_eulers_number" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        	android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButtonDelete"
+                style="@style/KeyboardButton"
+                android:text="@string/backspace_symbol" />
+
+            <Button
+                android:id="@+id/keyboardButtonClear"
+                style="@style/KeyboardButton"
+                android:text="@string/clear" />
+
+            <Button
+                android:id="@+id/keyboardButtonConfirm"
+                style="@style/KeyboardButton"
+                android:text="@string/ok" />
+
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

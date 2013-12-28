@@ -3,10 +3,10 @@
     <dimen name="drawer_width">240dp</dimen>
     <dimen name="drawer_height">150dp</dimen>
     <dimen name="margin_bottom">75dp</dimen>
-    <dimen name="button_size">80dp</dimen>
     
     <dimen name="main_screen_button_margin">24dp</dimen>
     <dimen name="circle_button_size">32dp</dimen>
+    <dimen name="circle_button_big_size">64dp</dimen>
     <dimen name="circle_button_line_width">2dp</dimen>
     
     <dimen name="math_source_height">64dp</dimen>
@@ -17,5 +17,8 @@
     <dimen name="math_object_drag_default_size">48dp</dimen>
 
     <dimen name="math_object_line_width">2dp</dimen>
+    
+    <dimen name="math_constant_view_font_size">60sp</dimen>
+    <dimen name="keyboard_button_margin">8dp</dimen>
 
 </resources>
