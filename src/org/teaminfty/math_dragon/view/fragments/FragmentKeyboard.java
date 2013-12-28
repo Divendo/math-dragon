@@ -14,7 +14,7 @@ import android.widget.ToggleButton;
 public class FragmentKeyboard extends Fragment
 {
     /** The {@link MathSymbolEditor} in this fragment */
-    private MathSymbolEditor mathConstantView = null;
+    private MathSymbolEditor mathSymbolEditor = null;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -23,7 +23,7 @@ public class FragmentKeyboard extends Fragment
     	View myFragmentView = inflater.inflate(R.layout.fragment_keyboard, container, false);
     	
     	// Get the MathConstantView
-    	mathConstantView = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathConstantView);
+    	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
 		
     	// Acquire access to all buttons
     	final Button button1 =  (Button) myFragmentView.findViewById(R.id.keyboardButton1);
@@ -78,7 +78,7 @@ public class FragmentKeyboard extends Fragment
         buttonE.setChecked(false);
         
         // Check the right button
-        switch(mathConstantView.getEditingSymbol())
+        switch(mathSymbolEditor.getEditingSymbol())
         {
             case PI:    buttonPi.setChecked(true);      break;
             case E:     buttonE.setChecked(true);       break;
@@ -94,7 +94,7 @@ public class FragmentKeyboard extends Fragment
         {
             // Get the number we pressed and add it to the MathConstantView
             final int number = Integer.parseInt(((Button) v).getText().toString());
-            mathConstantView.addNumber(number);
+            mathSymbolEditor.addNumber(number);
         }
     }
     
@@ -108,11 +108,11 @@ public class FragmentKeyboard extends Fragment
             switch(v.getId())
             {
                 case R.id.keyboardButtonPi:
-                    mathConstantView.toggleEditingSymbol(MathSymbolEditor.EditingSymbol.PI);
+                    mathSymbolEditor.toggleEditingSymbol(MathSymbolEditor.EditingSymbol.PI);
                 break;
 
                 case R.id.keyboardButtonE:
-                    mathConstantView.toggleEditingSymbol(MathSymbolEditor.EditingSymbol.E);
+                    mathSymbolEditor.toggleEditingSymbol(MathSymbolEditor.EditingSymbol.E);
                 break;
             }
             
@@ -128,7 +128,7 @@ public class FragmentKeyboard extends Fragment
         public void onClick(final View v)
         {
             // Delete a number
-            mathConstantView.deleteNumber();
+            mathSymbolEditor.deleteNumber();
             
             // The button state might need refreshing
             refreshButtonState();
@@ -142,7 +142,7 @@ public class FragmentKeyboard extends Fragment
         public void onClick(final View v)
         {
             // Reset the values in the MathConstantView
-            mathConstantView.reset();
+            mathSymbolEditor.reset();
             refreshButtonState();
         }
     }

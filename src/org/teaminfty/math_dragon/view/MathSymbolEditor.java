@@ -68,9 +68,9 @@ public class MathSymbolEditor extends View
     private void initPaints()
     {
         paint.setAntiAlias(true);
-        paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_constant_view_font_size));
+        paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_font_size));
         exponentPaint.setAntiAlias(true);
-        exponentPaint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_constant_view_font_size) * EXPONENT_FACTOR);
+        exponentPaint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_font_size) * EXPONENT_FACTOR);
     }
     
     /** Set the symbol we're currently editing
@@ -140,9 +140,10 @@ public class MathSymbolEditor extends View
                 setEditingSymbol(newSymbol);
             break;
         }
-        
-        // Redraw
+
+        // Redraw and recalculate the size
         invalidate();
+        requestLayout();
     }
 
     /** Get the symbol we're currently editing
@@ -164,9 +165,10 @@ public class MathSymbolEditor extends View
         
         // We'll be editing the factor again
         setEditingSymbol(EditingSymbol.FACTOR);
-        
-        // Redraw
+
+        // Redraw and recalculate the size
         invalidate();
+        requestLayout();
     }
     
     /** Copies the values from the given {@link MathConstant}
@@ -256,10 +258,10 @@ public class MathSymbolEditor extends View
     protected void onMeasure(int widthSpec, int heightSpec)
     {
         // Get the size we want to take
-        Rect size = getTextSize();
+        final Rect size = getTextSize();
         
         // Determine the width we'll take
-        int width = size.width();
+        int width = size.width() + 2 * getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_padding);
         switch(View.MeasureSpec.getMode(widthSpec))
         {
             case View.MeasureSpec.EXACTLY:
@@ -295,6 +297,9 @@ public class MathSymbolEditor extends View
         // Translate the canvas
         final Rect textBounding = getTextSize();
         canvas.translate((canvas.getWidth() - textBounding.width()) / 2, (canvas.getHeight() - textBounding.height()) / 2);
+
+        // The padding between each symbol
+        final int symbolPadding = getResources().getDimensionPixelSize(R.dimen.math_object_line_width) * 2;
         
         // Keep track the x-coordinate where the next string should be drawn
         int x = 0;
@@ -313,6 +318,10 @@ public class MathSymbolEditor extends View
         // Draw the PI constant
         if(showPi)
         {
+            // Add the padding
+            if(x != 0)
+                x += symbolPadding;
+            
             // Set the colours
             paint.setColor(editingSymbol == EditingSymbol.PI ? COLOR_EDITING : COlOR_NORMAL);
             exponentPaint.setColor(editingSymbol == EditingSymbol.PI ? COLOR_EDITING : COlOR_NORMAL);
@@ -332,6 +341,10 @@ public class MathSymbolEditor extends View
         // Draw the E constant
         if(showE)
         {
+            // Add the padding
+            if(x != 0)
+                x += symbolPadding;
+            
             // Set the colours
             paint.setColor(editingSymbol == EditingSymbol.E ? COLOR_EDITING : COlOR_NORMAL);
             exponentPaint.setColor(editingSymbol == EditingSymbol.E ? COLOR_EDITING : COlOR_NORMAL);
@@ -351,6 +364,10 @@ public class MathSymbolEditor extends View
         // Draw the imaginary unit
         if(showI)
         {
+            // Add the padding
+            if(x != 0)
+                x += symbolPadding;
+            
             // Set the colours
             paint.setColor(editingSymbol == EditingSymbol.I ? COLOR_EDITING : COlOR_NORMAL);
             exponentPaint.setColor(editingSymbol == EditingSymbol.I ? COLOR_EDITING : COlOR_NORMAL);
@@ -376,6 +393,9 @@ public class MathSymbolEditor extends View
      */
     protected Rect getTextSize()
     {
+        // The padding between each symbol
+        final int symbolPadding = getResources().getDimensionPixelSize(R.dimen.math_object_line_width) * 2;
+        
         // We'll store the total width and the height of the text in here
         Rect out = new Rect(0, 0, 0, 0);
         Rect bounds = new Rect();
@@ -388,6 +408,10 @@ public class MathSymbolEditor extends View
         // Add the width of the PI constant
         if(showPi)
         {
+            // Add the padding
+            if(out.right != 0)
+                out.right += symbolPadding;
+            
             // The PI sign
             String tmpStr = "\u03C0";
             paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
@@ -402,6 +426,10 @@ public class MathSymbolEditor extends View
         // Add the width of the E constant
         if(showE)
         {
+            // Add the padding
+            if(out.right != 0)
+                out.right += symbolPadding;
+            
             // The e sign
             String tmpStr = "e";
             paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
@@ -416,6 +444,10 @@ public class MathSymbolEditor extends View
         // Add the width of the imaginary unit
         if(showI)
         {
+            // Add the padding
+            if(out.right != 0)
+                out.right += symbolPadding;
+            
             // The i sign
             String tmpStr = "i";
             paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
@@ -470,8 +502,9 @@ public class MathSymbolEditor extends View
             break;
         }
         
-        // Redraw
+        // Redraw and recalculate the size
         invalidate();
+        requestLayout();
     }
     
     /** Deletes the last number from the current symbol.
@@ -521,7 +554,8 @@ public class MathSymbolEditor extends View
         if(factor.length() == 0 && !(showPi || showE || showI))
             factor = "0";
         
-        // Redraw
+        // Redraw and recalculate the size
         invalidate();
+        requestLayout();
     }
 }

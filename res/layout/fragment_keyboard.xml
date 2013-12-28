@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightgray" >
+    android:background="@color/lightgray"
+    android:orientation="vertical" >
 
-    <org.teaminfty.math_dragon.view.MathSymbolEditor
-        android:id="@+id/mathConstantView"
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/keyboard_button_margin" />
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:minHeight="@dimen/math_symbol_editor_min_height"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:requiresFadingEdge="horizontal"
+        android:fillViewport="true" >
+
+        <org.teaminfty.math_dragon.view.MathSymbolEditor
+            android:id="@+id/mathSymbolEditor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+        
+    </HorizontalScrollView>
 
     <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/mathConstantView" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-        	android:gravity="center" >
+            android:gravity="center" >
 
             <Button
                 android:id="@+id/keyboardButton1"
@@ -44,7 +51,7 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-        	android:gravity="center" >
+            android:gravity="center" >
 
             <Button
                 android:id="@+id/keyboardButton4"
@@ -65,7 +72,7 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-        	android:gravity="center" >
+            android:gravity="center" >
 
             <Button
                 android:id="@+id/keyboardButton7"
@@ -86,14 +93,14 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-        	android:gravity="center" >
+            android:gravity="center" >
 
             <ToggleButton
                 android:id="@+id/keyboardButtonPi"
                 style="@style/KeyboardButton"
                 android:text="@string/pi"
-                android:textOn="@string/pi"
-                android:textOff="@string/pi" />
+                android:textOff="@string/pi"
+                android:textOn="@string/pi" />
 
             <Button
                 android:id="@+id/keyboardButton0"
@@ -104,15 +111,14 @@
                 android:id="@+id/keyboardButtonE"
                 style="@style/KeyboardButton"
                 android:text="@string/e_eulers_number"
-                android:textOn="@string/e_eulers_number"
-                android:textOff="@string/e_eulers_number" />
-
+                android:textOff="@string/e_eulers_number"
+                android:textOn="@string/e_eulers_number" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-        	android:gravity="center" >
+            android:gravity="center" >
 
             <Button
                 android:id="@+id/keyboardButtonDelete"
@@ -128,8 +134,7 @@
                 android:id="@+id/keyboardButtonConfirm"
                 style="@style/KeyboardButton"
                 android:text="@string/ok" />
-
         </TableRow>
     </TableLayout>
 
-</RelativeLayout>
+</LinearLayout>
