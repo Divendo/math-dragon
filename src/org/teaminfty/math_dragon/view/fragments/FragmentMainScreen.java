@@ -17,7 +17,14 @@ public class FragmentMainScreen extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_screen, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
+        
+        // Disable the undo and redo buttons
+        view.findViewById(R.id.btn_undo).setEnabled(false);
+        view.findViewById(R.id.btn_redo).setEnabled(false);
+        
+        // Return the view
+        return view;
     }
     
     @Override

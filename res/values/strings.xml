@@ -13,4 +13,9 @@
 	<string name="e_eulers_number">e</string>
 	<string name="ok">OK</string>
 	<string name="backspace_symbol">⇦</string>
+	<string name="favourite">Favourite</string>
+	<string name="undo">Undo</string>
+	<string name="redo">Redo</string>
+	<string name="substitute">Substitute</string>
+	<string name="help">Help</string>
 </resources>
