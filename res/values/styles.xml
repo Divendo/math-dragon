@@ -17,5 +17,13 @@
         <item name="android:layout_height">@dimen/circle_button_size</item>
         <item name="android:background">@drawable/circle_button_bg</item>
     </style>
+    
+    <style name="KeyboardButton" parent="@android:style/Widget.Holo.Button.Borderless">
+        <item name="android:layout_width">@dimen/circle_button_big_size</item>
+        <item name="android:layout_height">@dimen/circle_button_big_size</item>
+        <item name="android:layout_margin">@dimen/keyboard_button_margin</item>
+        <item name="android:textColor">@color/circle_button_colors</item>
+        <item name="android:background">@drawable/circle_button_bg</item>
+    </style>
 
 </resources>

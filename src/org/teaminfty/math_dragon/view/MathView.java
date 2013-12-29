@@ -4,15 +4,14 @@ import java.util.ArrayDeque;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
+import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.math.MathBinaryOperationLinear;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 import org.teaminfty.math_dragon.view.math.MathVariable;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -22,7 +21,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.EditText;
 
 /** A view that can hold and draw a mathematical formula */
 public class MathView extends View
@@ -101,6 +99,32 @@ public class MathView extends View
     {
         gestureDetector = new GestureDetector(getContext(), new GestureListener());
         scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
+    }
+    
+    /** A listener that can be implemented by the parent fragment to listen when to show a keyboard */
+    public interface OnShowKeyboardListener
+    {
+        /** Called when a keyboard with the given confirm listener should be shown
+         * @param mathConstant The initial value for the input (can be <tt>null</tt>)
+         * @param listener The confirm listener */
+        public void showKeyboard(MathConstant mathConstant, FragmentKeyboard.OnConfirmListener listener);
+    }
+    
+    /** The current {@link OnShowKeyboardListener} */
+    private OnShowKeyboardListener onShowKeyboardListener = null;
+    
+    /** Set the current {@link OnShowKeyboardListener}
+     * @param listener The new {@link OnShowKeyboardListener} */
+    public void setOnShowKeyboardListener(OnShowKeyboardListener listener)
+    { onShowKeyboardListener = listener; }
+    
+    /** Asks the parent fragment to show the keyboard with the given confirm listener
+         * @param mathConstant The initial value for the input (can be <tt>null</tt>)
+     * @param listener The confirm listener */
+    protected void showKeyboard(MathConstant mathConstant, FragmentKeyboard.OnConfirmListener listener)
+    {
+        if(onShowKeyboardListener != null)
+            onShowKeyboardListener.showKeyboard(mathConstant, listener);
     }
 
     /** Recursively sets the given state for the given {@link MathObject} and all of its children
@@ -198,58 +222,14 @@ public class MathView extends View
                     // If we click inside the object, we're done looking
                     if(info.boundingBox.contains(clickPos.x, clickPos.y))
                     {
-                        // Remember the info about the box we clicked
-                        emptyBoxReplaceInfo = info;
-                        
                         // Light up the box we clicked
                         info.mathObject.setState(HoverState.HOVER);
                         
-                        // Create a dialog
-                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                        alert.setTitle("Enter the constant");
-                        alert.setMessage("Enter the value, then press OK!");
-
-                        // Set an EditText view to get user input   
-                        final EditText input = new EditText(getContext());
-                        alert.setView(input);
-
-                        // Create an OK button
-                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog, int whichButton)
-                            {
-                                String inp = input.getText().toString();
-                                MathObject res;
-                                // any letter but e or i
-                                if(inp.matches("[a-df-hj-z]"))
-                                {
-                                    res = new MathVariable(inp);
-                                }
-                                else
-                                {
-                                    // Create a MathConstant from the
-                                    // user input
-                                    res = new MathConstant(inp);
-                                }
-
-                                // Replace the empty box we clicked with
-                                // the new MathConstant
-                                
-                                replaceEmptyBox(res);
-                            }
-                        });
-
-                        // Create a cancel button
-                        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog, int whichButton)
-                            {
-                                emptyBoxReplaceInfo.mathObject.setState(HoverState.NONE);
-                            }
-                        });
-
-                        // Show the dialog
-                        alert.show();
+                        // Show the keyboard with the given confirm listener
+                        if(info.mathObject instanceof MathConstant)
+                            showKeyboard((MathConstant) info.mathObject, new MathObjectReplacer(info));
+                        else
+                            showKeyboard(null, new MathObjectReplacer(info));
                     }
                 }
                 else
@@ -586,22 +566,32 @@ public class MathView extends View
         }
     }
     
-    /** The information about the {@link MathObject} that is to be replaced in the next call to {@link MathView#replaceEmptyBox(MathConstant) replaceEmptyBox()} */
-    private HoverInformation emptyBoxReplaceInfo = null;
-    
-    /** Replaces the {@link MathObject} (whose information is stored in {@link MathView#emptyBoxReplaceInfo emptyBoxReplaceInfo}) with the given {@link MathConstant}.
-     * @param res The {@link MathConstant} to replace the {@link MathObject} with
-     */
-    private void replaceEmptyBox(MathObject res)
+    /** Replaces an {@link MathObject} with the {@link MathConstant} that the keyboard returns */
+    private class MathObjectReplacer implements FragmentKeyboard.OnConfirmListener
     {
-        // Place the constant
-        if(emptyBoxReplaceInfo.parent == null)
-            setMathObjectHelper(res);
-        else
-            emptyBoxReplaceInfo.parent.setChild(emptyBoxReplaceInfo.childIndex, res);
+        /** The info about the {@link MathObject} that is to replaced */
+        private HoverInformation mathObjectInfo = null;
         
-        // Redraw
-        invalidate();
+        /** Constructs the replacer with the given info
+         * @param info The info about the {@link MathObject} that is to replaced */
+        public MathObjectReplacer(HoverInformation info)
+        {
+            mathObjectInfo = info;
+        }
+
+        @Override
+        public void confirmed(MathConstant mathConstant)
+        {
+            // Place the symbol
+            if(mathObjectInfo.parent == null)
+                setMathObjectHelper(mathConstant);
+            else
+                mathObjectInfo.parent.setChild(mathObjectInfo.childIndex, mathConstant);
+            
+            // Redraw
+            invalidate();
+        }
+        
     }
 
     @Override

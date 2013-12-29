@@ -22,16 +22,6 @@ public class FragmentEvaluation extends Fragment
        
         return inflater.inflate(R.layout.fragment_evaluation, container, false);
     }
-
-    public void onStart()
-    {
-    	 super.onStart();
-
-         
-       
-         
-   
-    }
     
     public void showMathObject(MathObject mathObject)
     {
