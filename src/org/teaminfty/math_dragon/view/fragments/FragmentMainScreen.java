@@ -2,6 +2,8 @@ package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathView;
+import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
+import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Fragment;
@@ -22,6 +24,9 @@ public class FragmentMainScreen extends Fragment
         // Disable the undo and redo buttons
         view.findViewById(R.id.btn_undo).setEnabled(false);
         view.findViewById(R.id.btn_redo).setEnabled(false);
+        
+        // Listen for keyboard show requests
+        ((MathView) view.findViewById(R.id.mathView)).setOnShowKeyboardListener(new ShowKeyboardListener());
         
         // Return the view
         return view;
@@ -69,5 +74,23 @@ public class FragmentMainScreen extends Fragment
     {
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
         return mathView.getMathObject();
+    }
+    
+    /** We'll want to listen for keyboard show requests from the {@link MathView} */
+    private class ShowKeyboardListener implements MathView.OnShowKeyboardListener
+    {
+        @Override
+        public void showKeyboard(MathConstant mathConstant, OnConfirmListener listener)
+        {
+            // Create a keyboard
+            FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
+            
+            // Set the listener and the math symbol
+            fragmentKeyboard.setOnConfirmListener(listener);
+            fragmentKeyboard.setMathSymbol(mathConstant);
+            
+            // Show the keyboard
+            fragmentKeyboard.show(getFragmentManager(), "keyboard");
+        }
     }
 }

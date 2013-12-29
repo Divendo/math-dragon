@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
+import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.math.MathConstant;
@@ -205,13 +206,14 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     
     public void temporary(View view)
     {
-    	// Get the DrawerLayout object DrawerLayout drawerLayout =
+    	/*// Get the DrawerLayout object DrawerLayout drawerLayout =
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
          
         // Show the favourites drawer
-        drawerLayout.openDrawer(Gravity.CENTER);
+        drawerLayout.openDrawer(Gravity.CENTER);*/
          
-
+        FragmentKeyboard fragKeyboard = new FragmentKeyboard();
+        fragKeyboard.show(getFragmentManager(), "keyboard");
     }
 
     @Override

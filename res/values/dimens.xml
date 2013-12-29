@@ -22,5 +22,6 @@
     <dimen name="math_symbol_editor_min_height">60dp</dimen>
     <dimen name="math_symbol_editor_padding">16dp</dimen>
     <dimen name="keyboard_button_margin">8dp</dimen>
+    <dimen name="keyboard_padding">16dp</dimen>
 
 </resources>

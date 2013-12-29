@@ -185,44 +185,37 @@ public class MathSymbolEditor extends View
         if(mathConstant.getFactor() != 0)
         {
             // PI
-            if(mathConstant.getPiPow() == 0)
+            if(mathConstant.getPiPow() != 0)
             {
-                piPow = "";
-                showPi = false;
-            }
-            else
-            {
-                piPow = Long.toString(mathConstant.getPiPow());
+                if(mathConstant.getPiPow() != 1)
+                    piPow = Long.toString(mathConstant.getPiPow());
                 showPi = true;
             }
             
             // E
-            if(mathConstant.getEPow() == 0)
+            if(mathConstant.getEPow() != 0)
             {
-                ePow = "";
-                showE = false;
-            }
-            else
-            {
-                ePow = Long.toString(mathConstant.getEPow());
+                if(mathConstant.getEPow() != 1)
+                    ePow = Long.toString(mathConstant.getEPow());
                 showE = true;
             }
 
             // I
-            if(mathConstant.getIPow() == 0)
+            if(mathConstant.getIPow() != 0)
             {
-                iPow = "";
-                showI = false;
-            }
-            else
-            {
-                iPow = Long.toString(mathConstant.getIPow());
+                if(mathConstant.getIPow() != 1)
+                    iPow = Long.toString(mathConstant.getIPow());
                 showI = true;
             }
         }
         
-        // Redraw
+        // Beautify the display
+        if(factor.equals("1") && (showPi || showE || showI))
+            factor = "";
+
+        // Redraw and recalculate the size
         invalidate();
+        requestLayout();
     }
     
     /** Constructs a {@link MathConstant} from the current values
