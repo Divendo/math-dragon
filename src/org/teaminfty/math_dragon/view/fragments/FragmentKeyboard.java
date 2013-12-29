@@ -2,7 +2,7 @@ package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSymbolEditor;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -20,8 +20,8 @@ public class FragmentKeyboard extends DialogFragment
     /** The {@link MathSymbolEditor} in this fragment */
     private MathSymbolEditor mathSymbolEditor = null;
     
-    /** A {@link MathConstant} we saved for later to set to {@link FragmentKeyboard#mathSymbolEditor mathSymbolEditor} */
-    private MathConstant mathSymbolForLater = null;
+    /** A {@link MathSymbol} we saved for later to set to {@link FragmentKeyboard#mathSymbolEditor mathSymbolEditor} */
+    private MathSymbol mathSymbolForLater = null;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -95,9 +95,9 @@ public class FragmentKeyboard extends DialogFragment
         getDialog().getWindow().setAttributes(params);
     }
     
-    /** Sets the current value from the given {@link MathConstant}
-     * @param mathSymbol The {@link MathConstant} to set the current value to (can be <tt>null</tt> in which case the value will be reset) */
-    public void setMathSymbol(MathConstant mathSymbol)
+    /** Sets the current value from the given {@link MathSymbol}
+     * @param mathSymbol The {@link MathSymbol} to set the current value to (can be <tt>null</tt> in which case the value will be reset) */
+    public void setMathSymbol(MathSymbol mathSymbol)
     {
         if(mathSymbolEditor == null)
             mathSymbolForLater = mathSymbol;
@@ -114,7 +114,7 @@ public class FragmentKeyboard extends DialogFragment
     {
         /** Called when the symbol has been confirmed
          * @param mathSymbol The input */
-        public void confirmed(MathConstant mathSymbol);
+        public void confirmed(MathSymbol mathSymbol);
     }
     
     /** The current {@link OnConfirmListener} */
@@ -127,7 +127,7 @@ public class FragmentKeyboard extends DialogFragment
     
     /** Calls the {@link OnConfirmListener}
      * @param mathConstant The input */
-    private void callOnConfirmListener(MathConstant mathConstant)
+    private void callOnConfirmListener(MathSymbol mathConstant)
     {
         if(onConfirmListener != null)
             onConfirmListener.confirmed(mathConstant);

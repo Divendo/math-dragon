@@ -2,6 +2,7 @@ package org.teaminfty.math_dragon.view.math;
 
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.ISymbol;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.NotConstantException;
 
@@ -10,7 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 /** This class represents a math constant */
-public class MathConstant extends MathObject
+public class MathSymbol extends MathObject
 {
     /** The factor of this constant */
     private long factor = 0;
@@ -29,9 +30,18 @@ public class MathConstant extends MathObject
     
     /** The text size factor for exponents */
     protected static final float EXPONENT_FACTOR = 1.0f / 2;
+    
+    /** Symbol lookup table */
+    private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d, F.e,
+            F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r,
+            F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
+    
+    
+    
+    private final ISymbol variable;
 
     /** Default constructor */
-    public MathConstant()
+    public MathSymbol()
     { 
         this(0, 0, 0, 0);
     }
@@ -39,11 +49,21 @@ public class MathConstant extends MathObject
     /** Constructor, constructs with the given value
      * @param value The value that this constant should be initialized with
      */
-    public MathConstant(String value)
+    public MathSymbol(String value)
     {
+        
         super();
         initPaints();
-        readString(value);
+        if (value.matches("[a-df-hj-z]"))
+        {
+            this.variable = SYMBOLS[value.charAt(0) - 'a'];
+        }
+        else
+        {
+            readString(value);
+            this.variable = null;
+        }
+
     }
     
     /** Construct mathematical constant using specified values for simplicity.
@@ -52,13 +72,14 @@ public class MathConstant extends MathObject
      * @param piPow The pi power
      * @param iPow The imaginary power
      */
-    public MathConstant(long factor, long ePow, long piPow, long iPow)
+    public MathSymbol(long factor, long ePow, long piPow, long iPow)
     {
     	initPaints();
     	this.factor = factor;
     	this.ePow = ePow;
     	this.piPow = piPow;
     	this.iPow = iPow;
+    	this.variable = null;
     }
     
     /** Initialises the paints */
@@ -74,7 +95,7 @@ public class MathConstant extends MathObject
     	set(0, 0, 0, 0);
     }
     
-    /** Used in {@link MathConstant#readString(String) readString()} to keep track of the current power type */
+    /** Used in {@link MathSymbol#readString(String) readString()} to keep track of the current power type */
     private enum PowerType { factor, i, e, pi }
     
     /** Reads the constant from the given string.
@@ -175,9 +196,9 @@ public class MathConstant extends MathObject
             setFactor(getFactor() * -1);
     }
     
-    /** Calculates the size of this {@link MathConstant} when using the given font size
+    /** Calculates the size of this {@link MathSymbol} when using the given font size
      * @param fontSize The font size
-     * @return The size of this {@link MathConstant}
+     * @return The size of this {@link MathSymbol}
      */
     protected Rect getSize(float fontSize)
     {
@@ -295,6 +316,13 @@ public class MathConstant extends MathObject
     @Override
     public Rect[] getOperatorBoundingBoxes()
     {
+        if(variable != null)
+        {
+            paint.setTextSize(findTextSize(level));
+            Rect bounds = new Rect();
+            paint.getTextBounds(variable.toString().toLowerCase(), 0, 1, bounds);
+            return new Rect[] {sizeAddPadding(bounds)};
+        }
         // Find the right text size and return the bounding box for it
         return new Rect[]{ sizeAddPadding(getSize(findTextSize(level))) };
     }
@@ -309,6 +337,27 @@ public class MathConstant extends MathObject
     
     public void draw(Canvas canvas)
     {
+        if (variable != null)
+        {
+
+            String c = variable.toString().toLowerCase();
+            // Draw the bounding boxes
+            drawBoundingBoxes(canvas);
+            
+            // Set the text size and calculate the bounding boxes
+            paint.setTextSize(findTextSize(level));
+            Rect textBounding = new Rect();
+            paint.getTextBounds(c, 0, 1, textBounding);
+            Rect totalBounding = sizeAddPadding(textBounding);
+
+            // Draw the variable
+            canvas.save();
+            canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
+            paint.setColor(getColor());
+            canvas.drawText(c, -textBounding.left, -textBounding.top, paint);
+            canvas.restore();
+            return;
+        }
         // Draw the bounding boxes
         drawBoundingBoxes(canvas);
         
@@ -429,6 +478,10 @@ public class MathConstant extends MathObject
     
     public IExpr eval()
     {
+        if (variable != null)
+        {
+            return variable;
+        }
         // This will be our result, and if the factor is 0, we're done already
         IExpr result = F.ZZ(getFactor());
         if(getFactor() == 0) return result;
@@ -477,14 +530,16 @@ public class MathConstant extends MathObject
      */
     public boolean equals(Object o)
     {
-    	if (!(o instanceof MathConstant))
+    	if (!(o instanceof MathSymbol))
     		return false;
-    	MathConstant c = (MathConstant) o;
-    	return c.factor == factor && c.ePow == ePow && c.piPow == piPow && c.iPow == iPow;
+    	MathSymbol c = (MathSymbol) o;
+    	if (variable == null)
+    	    return c.factor == factor && c.ePow == ePow && c.piPow == piPow && c.iPow == iPow;
+    	else return c.variable.toString().toLowerCase().equals(variable.toString().toLowerCase());
     }
     
     /**
-     * Gives the constant as a string (in the format that's supported by {@link MathConstant#readString(String) readString()}
+     * Gives the constant as a string (in the format that's supported by {@link MathSymbol#readString(String) readString()}
      * @return The constant as a string
      */
     public String toString()

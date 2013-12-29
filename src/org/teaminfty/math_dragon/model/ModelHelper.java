@@ -8,13 +8,12 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.IRational;
 import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
-import org.teaminfty.math_dragon.view.math.MathVariable;
 
 /**
  * Hack helper class that communicates as a wrapper between our model and the
@@ -62,30 +61,30 @@ public final class ModelHelper
         }
         else if(expr.isInteger())
         {
-            MathConstant c = new MathConstant();
+            MathSymbol c = new MathSymbol();
             c.setFactor(((IInteger) expr).longValue());
             return c;
         }
         else if(expr.isFraction())
         {
             IRational rational = (IRational) expr;
-            return new MathOperationDivide(new MathConstant(Long.toString(rational.getNumerator().longValue())), new MathConstant(Long.toString(rational.getDenominator().longValue())));
+            return new MathOperationDivide(new MathSymbol(Long.toString(rational.getNumerator().longValue())), new MathSymbol(Long.toString(rational.getDenominator().longValue())));
         }
         else if(expr instanceof Symbol)
         {
             Symbol s = (Symbol) expr;
-            
-            String str = s.toString();
-            
-            if (str.matches("[a-df-hj-z]")) 
+
+            String str = s.toString().toLowerCase();
+
+            if(str.matches("[a-df-hj-z]"))
             {
-                MathVariable v = new MathVariable(str);
+                MathSymbol v = new MathSymbol(str);
                 return v;
             }
-            MathConstant c = new MathConstant();
-                c.setFactor(1);
-                if(s.equals(F.Pi))
-                {
+            MathSymbol c = new MathSymbol();
+            c.setFactor(1);
+            if(s.equals(F.Pi))
+            {
                 c.setPiPow(1);
                 return c;
             }
@@ -142,7 +141,7 @@ public final class ModelHelper
                 if((b = a.get(1)) instanceof Symbol)
                 {
                     Symbol s = (Symbol) b;
-                    MathConstant c = new MathConstant();
+                    MathSymbol c = new MathSymbol();
                     c.setFactor(1);
                     if(s.equals(F.Pi))
                     {

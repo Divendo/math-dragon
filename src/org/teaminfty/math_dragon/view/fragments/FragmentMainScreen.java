@@ -3,7 +3,7 @@ package org.teaminfty.math_dragon.view.fragments;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Fragment;
@@ -80,7 +80,7 @@ public class FragmentMainScreen extends Fragment
     private class ShowKeyboardListener implements MathView.OnShowKeyboardListener
     {
         @Override
-        public void showKeyboard(MathConstant mathConstant, OnConfirmListener listener)
+        public void showKeyboard(MathSymbol mathConstant, OnConfirmListener listener)
         {
             // Create a keyboard
             FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
