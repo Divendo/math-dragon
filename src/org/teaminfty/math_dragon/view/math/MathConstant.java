@@ -4,6 +4,8 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.NotConstantException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -37,7 +39,7 @@ public class MathConstant extends MathObject
     }
 
     /** Constructor, constructs with the given value
-     * @param value The value that this constant should be initialized with
+     * @param v The value that this constant should be initialised with
      */
     public MathConstant(String value)
     {
@@ -581,4 +583,15 @@ public class MathConstant extends MathObject
 		setPiPow(piPow);
 		setIPow(iPow);
 	}
+
+    @Override
+    public void writeToXML(Document doc, Element el)
+    {
+        Element e = doc.createElement("constant");
+        e.setAttribute("f", String.valueOf(factor));
+        e.setAttribute("e", String.valueOf(ePow));
+        e.setAttribute("pi", String.valueOf(piPow));
+        e.setAttribute("i", String.valueOf(iPow));
+        el.appendChild(e);
+    }
 }

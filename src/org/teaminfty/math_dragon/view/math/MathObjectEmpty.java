@@ -3,6 +3,8 @@ package org.teaminfty.math_dragon.view.math;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.view.HoverState;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -92,4 +94,9 @@ public class MathObjectEmpty extends MathObject
     	return new Rect[] { this.getBoundingBox()};
     }
 
+    @Override
+    public void writeToXML(Document doc, Element el)
+    {
+        el.appendChild(doc.createElement("empty"));
+    }
 }
