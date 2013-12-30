@@ -22,12 +22,8 @@ import org.teaminfty.math_dragon.view.math.MathVariable;
  * <p>
  * <h1>Reporting issues</h1>
  * Use our repo to report issues and show how to reproduce incorrect output.
- * <p>
- * <b>Note:</b> your eyes may start to bleed when you try to read this code. So,
- * keep your hands of this code and let me do da hacks for ya.
  * 
  * @author Folkert van Verseveld
- * 
  */
 public final class ModelHelper
 {
@@ -139,7 +135,7 @@ public final class ModelHelper
             {
                 if(p.isNegative())
                     return toOpDiv(ast.get(1), a);
-                if((b = a.get(1)) instanceof Symbol)
+                if ((b = a.get(1)) instanceof Symbol)
                 {
                     Symbol s = (Symbol) b;
                     MathConstant c = new MathConstant();
@@ -147,17 +143,24 @@ public final class ModelHelper
                     if(s.equals(F.Pi))
                     {
                         c.setPiPow(((IInteger) p).longValue());
-                        return c;
                     }
                     else if(s.equals(F.E))
                     {
                         c.setEPow(((IInteger) p).longValue());
-                        return c;
                     }
                     else if(s.equals(F.I))
                     {
                         c.setIPow(((IInteger) p).longValue());
-                        return c;
+                    }
+                    b = ast.get(1);
+                    if (b.isInteger())
+                    {
+                    	c.setFactor(((IInteger) b).longValue());
+                    	return c;
+                    }
+                    else
+                    {
+                    	return new MathOperationMultiply(toMathObject(b), c);
                     }
                 }
             }
