@@ -222,9 +222,6 @@ public class MathView extends View
                     // If we click inside the object, we're done looking
                     if(info.boundingBox.contains(clickPos.x, clickPos.y))
                     {
-                        // Light up the box we clicked
-                        info.mathObject.setState(HoverState.HOVER);
-                        
                         // Show the keyboard with the given confirm listener
                         if(info.mathObject instanceof MathConstant)
                             showKeyboard((MathConstant) info.mathObject, new MathObjectReplacer(info));
@@ -591,7 +588,6 @@ public class MathView extends View
             // Redraw
             invalidate();
         }
-        
     }
 
     @Override
