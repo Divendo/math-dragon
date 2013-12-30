@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISymbol;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,11 +20,6 @@ public class MathVariable extends MathObject
     
     /** The paint that is used to draw the variable */
     private final Paint paint = new Paint();
-
-    /** Symbol lookup table */
-    private final ISymbol[] symbols = new ISymbol[] {F.a, F.b, F.c, F.d, F.e,
-            F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r,
-            F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
     /** Default constructor */
     public MathVariable()
@@ -68,15 +59,6 @@ public class MathVariable extends MathObject
         
         // Return the result
         return out;
-    }
-
-    /**
-     * simply looks up the correct Symja symbol in a symbol table
-     */
-    @Override
-    public IExpr eval() throws EmptyChildException
-    {
-       return symbols[c.charAt(0) - 'a'];
     }
     
     /**

@@ -2,8 +2,6 @@ package org.teaminfty.math_dragon.view.math;
 
 import java.util.ArrayList;
 
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.view.HoverState;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -101,16 +99,6 @@ public abstract class MathObject
         for(MathObject child : children)
             child.setDefaultHeight(defaultHeight);
     }
-    
-
-    /**
-     * Symbolically evaluates this {@link MathObject}
-     * 
-     * @return The symbolic solution of this {@link MathObject}
-     * @throws EmptyChildException
-     *         If an empty child is detected where no empty child is allowed
-     */
-    public abstract IExpr eval() throws EmptyChildException;
 
     /**
      * Returns the bounding boxes of the operator of this {@link MathObject}.

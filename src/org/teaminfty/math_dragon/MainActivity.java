@@ -5,6 +5,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
+import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
@@ -22,7 +23,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -130,7 +130,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         {
             // Get the expression as a string
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            IExpr expr = fragmentMainScreen.getMathObject().eval();
+            IExpr expr = EvalHelper.eval(fragmentMainScreen.getMathObject());
             String query = expr.toString();
             
             // Start an intent to send the user to Wolfram|Alpha
@@ -141,6 +141,12 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         }
         catch(EmptyChildException e)
         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch(MathException e)
+        {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -151,15 +157,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         {
             // Calculate the answer
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            long start = System.currentTimeMillis();
-            IExpr a = fragmentMainScreen.getMathObject().eval();
-            long between = System.currentTimeMillis();
-            IExpr result = EvalEngine.eval(a);
-            
-            
-            System.out.println(result.toScript());
-            long end = System.currentTimeMillis();
-            Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
+            IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
 
             // Get the evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);

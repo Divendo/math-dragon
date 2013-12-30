@@ -1,7 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -35,12 +33,6 @@ public class MathParentheses extends MathObject
         // Initialise the paint
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
-    }
-
-    @Override
-    public IExpr eval() throws EmptyChildException
-    {
-        return getChild(0).eval();
     }
     
     @Override

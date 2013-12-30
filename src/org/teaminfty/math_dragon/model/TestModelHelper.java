@@ -22,7 +22,7 @@ public class TestModelHelper
 		MathConstant rc = new MathConstant();
 		rc.setFactor(-34);
 		MathOperationAdd a = new MathOperationAdd(lc, rc);
-		MathObject result = ModelHelper.toMathObject(a.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
 		assertTrue(result instanceof MathOperationAdd);
 		MathOperationAdd add = (MathOperationAdd) a;
 		MathObject tmp = add.getLeft();
@@ -33,7 +33,7 @@ public class TestModelHelper
 		MathConstant right = (MathConstant) tmp;
 		assertTrue(lc.equals(left));
 		assertTrue(rc.equals(right));
-		result = ModelHelper.toMathObject(EvalEngine.eval(a.eval()));
+		result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
 		assertTrue(result instanceof MathConstant);
 		MathConstant c = new MathConstant(-28, 0, 0, 0);
 		assertTrue(c.equals((MathConstant) result));
@@ -47,7 +47,7 @@ public class TestModelHelper
 		MathConstant rc = new MathConstant();
 		rc.setFactor(-4);
 		MathOperationMultiply m = new MathOperationMultiply(lc, rc);
-		MathObject result = ModelHelper.toMathObject(m.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(m));
 		assertTrue(result instanceof MathOperationMultiply);
 	}
 	
@@ -60,7 +60,7 @@ public class TestModelHelper
 		rc.setFactor(8);
 		MathOperationDivide d = new MathOperationDivide();
 		d.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(d.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(d));
 		assertTrue(result instanceof MathOperationDivide);
 	}
 	
@@ -73,7 +73,7 @@ public class TestModelHelper
 		rc.setFactor(12);
 		MathOperationPower p = new MathOperationPower();
 		p.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(p.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(p));
 		assertTrue(result instanceof MathOperationPower);
 	}
 	
@@ -87,7 +87,7 @@ public class TestModelHelper
 		rc.setFactor(21);
 		MathOperationAdd a = new MathOperationAdd();
 		a.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(a.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
 		assertTrue(result instanceof MathOperationAdd);
 	}
 	
@@ -101,7 +101,7 @@ public class TestModelHelper
 		rc.setEPow(1);
 		MathOperationMultiply m = new MathOperationMultiply();
 		m.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(m.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(m));
 		assertTrue(result instanceof MathOperationMultiply);
 	}
 	
@@ -115,7 +115,7 @@ public class TestModelHelper
 		rc.setIPow(1);
 		MathOperationMultiply m = new MathOperationMultiply();
 		m.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(m.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(m));
 		assertTrue(result instanceof MathOperationMultiply);
 	}
 	
@@ -128,7 +128,7 @@ public class TestModelHelper
 		MathConstant rc = new MathConstant(1, 0, 1, 0);
 		MathOperationAdd ra = new MathOperationAdd(mc, rc);
 		MathOperationAdd a = new MathOperationAdd(lc, ra);
-		MathObject result = ModelHelper.toMathObject(a.eval());
+		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
 		assertTrue(result instanceof MathOperationAdd);
 		MathOperationAdd add = (MathOperationAdd) result;
 		MathOperationAdd radd = (MathOperationAdd) add.getRight();
@@ -138,7 +138,7 @@ public class TestModelHelper
 		assertTrue(lc.equals(left));
 		assertTrue(mc.equals(middle));
 		assertTrue(rc.equals(right));
-		result = ModelHelper.toMathObject(EvalEngine.eval(a.eval()));
+		result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
 		assertTrue(result instanceof MathOperationAdd);
 		add = (MathOperationAdd) result;
 		radd = (MathOperationAdd) add.getRight();
@@ -163,7 +163,7 @@ public class TestModelHelper
 	    MathConstant rc = new MathConstant(2, 0, 0, 0);
 	    MathOperationDivide d = new MathOperationDivide(rc, cpi);
 	    MathOperationAdd a = new MathOperationAdd(cpi, d);
-	    MathObject result = ModelHelper.toMathObject(a.eval());
+	    MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
 	    assertTrue(result instanceof MathOperationAdd);
 	    MathOperationAdd add = (MathOperationAdd) result;
 	    MathObject tmp = add.getRight();
@@ -181,7 +181,7 @@ public class TestModelHelper
 	    assertTrue(cpi.equals(c1));
 	    assertTrue(rc.equals(c2));
 	    assertTrue(cpi.equals(c3));
-	    result = ModelHelper.toMathObject(EvalEngine.eval(a.eval()));
+	    result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
 	    // TODO test result
 	}
 }
