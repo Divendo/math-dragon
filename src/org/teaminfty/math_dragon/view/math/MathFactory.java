@@ -54,20 +54,20 @@ public final class MathFactory
     static MathObject toMath(Element e) throws ParseException {
         String tag = e.getTagName();
         try {
-            if (tag.equals("constant")) {
+            if (tag.equals(MathConstant.NAME)) {
                 return new MathConstant(
-                        Long.parseLong(e.getAttribute("f")),
-                        Long.parseLong(e.getAttribute("e")),
-                        Long.parseLong(e.getAttribute("pi")),
-                        Long.parseLong(e.getAttribute("i"))
-                        );
-            } else if (tag.equals("variable")) {
-                return new MathVariable(e.getAttribute("name"));
+                        Long.parseLong(e.getAttribute(MathConstant.ATTR_FACTOR)),
+                        Long.parseLong(e.getAttribute(MathConstant.ATTR_E)),
+                        Long.parseLong(e.getAttribute(MathConstant.ATTR_PI)),
+                        Long.parseLong(e.getAttribute(MathConstant.ATTR_I))
+                );
+            } else if (tag.equals(MathVariable.NAME)) {
+                return new MathVariable(e.getAttribute(MathVariable.ATTR_NAME));
             } else if (tag.equals("operation")) {
                 if (Integer.parseInt(e.getAttribute("operands")) == 2) {
                     return toOpBin(e);
                 }
-            } else if (tag.equals("empty")) {
+            } else if (tag.equals(MathObjectEmpty.NAME)) {
                 return new MathObjectEmpty();
             }
         } catch (RuntimeException ex) {}

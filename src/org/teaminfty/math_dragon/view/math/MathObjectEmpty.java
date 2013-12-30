@@ -15,6 +15,8 @@ import android.graphics.Rect;
 /** Represents an empty child */
 public class MathObjectEmpty extends MathObject
 {
+	public static final String NAME = "empty";
+	
     /** The ratio (width : height) of the empty child box (i.e. the golden ratio) */
     public final static float RATIO = 1 / 1.61803398874989f;
     
@@ -97,6 +99,6 @@ public class MathObjectEmpty extends MathObject
     @Override
     public void writeToXML(Document doc, Element el)
     {
-        el.appendChild(doc.createElement("empty"));
+        el.appendChild(doc.createElement(NAME));
     }
 }

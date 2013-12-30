@@ -14,6 +14,11 @@ import android.graphics.Rect;
 
 public class MathVariable extends MathObject
 {
+	/** The XML element name */
+	public static final String NAME = "variable";
+	/** The name XML element attribute */
+	public static final String ATTR_NAME = "name";
+	
     /** The name of the variable */
     private String c;
     
@@ -117,8 +122,8 @@ public class MathVariable extends MathObject
 	@Override
 	public void writeToXML(Document doc, Element el)
 	{
-		Element e = doc.createElement("variable");
-		e.setAttribute("name", c);
+		Element e = doc.createElement(NAME);
+		e.setAttribute(ATTR_NAME, c);
 		el.appendChild(e);
 	}
 }
