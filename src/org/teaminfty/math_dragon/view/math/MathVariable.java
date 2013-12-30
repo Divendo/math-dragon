@@ -4,6 +4,8 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -112,4 +114,11 @@ public class MathVariable extends MathObject
         canvas.restore();
     }
 
+	@Override
+	public void writeToXML(Document doc, Element el)
+	{
+		Element e = doc.createElement("variable");
+		e.setAttribute("name", c);
+		el.appendChild(e);
+	}
 }
