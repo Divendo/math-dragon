@@ -30,11 +30,11 @@
         android:layout_height="wrap_content" >
 
         <ToggleButton
-            android:id="@+id/btn_tab_constants"
+            android:id="@+id/btn_tab_numpad"
             style="@style/KeyboardTabButton"
-            android:text="@string/constants"
-            android:textOn="@string/constants"
-            android:textOff="@string/constants" />
+            android:text="@string/numpad"
+            android:textOff="@string/numpad"
+            android:textOn="@string/numpad" />
 
         <ToggleButton
             android:id="@+id/btn_tab_variables"
@@ -45,13 +45,68 @@
 
     </LinearLayout>
 
-    <!-- Constants keyboard -->
-    <TableLayout
-        android:id="@+id/table_keyboard_constants"
+    <!-- Numpad keyboard -->
+    <TableLayout
+        android:id="@+id/table_keyboard_numpad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center" >
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+            
+            <FrameLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="match_parent"
+        		android:layout_gravity="center" >
+	            <ToggleButton
+	                android:id="@+id/keyboardButtonT"
+	                style="@style/KeyboardButtonSmall"
+	                android:text="t"
+	                android:textOff="t"
+	                android:textOn="t" />
+            </FrameLayout>
+            
+            <FrameLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="match_parent"
+        		android:layout_gravity="center" >
+	            <ToggleButton
+	                android:id="@+id/keyboardButtonX"
+	                style="@style/KeyboardButtonSmall"
+	                android:text="x"
+	                android:textOff="x"
+	                android:textOn="x" />
+            </FrameLayout>
+            
+            <FrameLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="match_parent"
+        		android:layout_gravity="center" >
+	            <ToggleButton
+	                android:id="@+id/keyboardButtonY"
+	                style="@style/KeyboardButtonSmall"
+	                android:text="y"
+	                android:textOff="y"
+	                android:textOn="y" />
+            </FrameLayout>
+            
+            <FrameLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="match_parent"
+        		android:layout_gravity="center" >
+	            <ToggleButton
+	                android:id="@+id/keyboardButtonZ"
+	                style="@style/KeyboardButtonSmall"
+	                android:text="z"
+	                android:textOff="z"
+	                android:textOn="z" />
+            </FrameLayout>
+            
+        </TableRow>
+        
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

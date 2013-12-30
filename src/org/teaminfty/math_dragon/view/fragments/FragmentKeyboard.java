@@ -40,7 +40,7 @@ public class FragmentKeyboard extends DialogFragment
         // Inflate the layout for this fragment
     	View myFragmentView = inflater.inflate(R.layout.fragment_keyboard, container, false);
     	
-    	// Get the MathConstantView
+    	// Get the MathSymbolEditor
     	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
         if(mathSymbolForLater != null)
             mathSymbolEditor.fromMathConstant(mathSymbolForLater);
@@ -62,7 +62,11 @@ public class FragmentKeyboard extends DialogFragment
         final ToggleButton buttonPi = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonE);
         final ToggleButton buttonI  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonI);
-        final ToggleButton buttonTabConstants = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_constants);
+        final ToggleButton buttonX  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonX);
+        final ToggleButton buttonY  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonY);
+        final ToggleButton buttonZ  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonZ);
+        final ToggleButton buttonT  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonT);
+        final ToggleButton buttonTabNumpad = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_numpad);
         final ToggleButton buttonTabVariables  = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_variables);
     	
     	// Create the OnClickListeners we're going to use multiple times
@@ -88,15 +92,19 @@ public class FragmentKeyboard extends DialogFragment
     	buttonDel.setOnClickListener(new ButtonDeleteOnClickListener());
     	buttonClr.setOnClickListener(new ButtonClearOnClickListener());
     	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
-    	buttonTabConstants.setOnClickListener(buttonTabOnClickListener);
+    	buttonTabNumpad.setOnClickListener(buttonTabOnClickListener);
     	buttonTabVariables.setOnClickListener(buttonTabOnClickListener);
+    	buttonX.setOnClickListener(buttonVarOnClickListener);
+        buttonY.setOnClickListener(buttonVarOnClickListener);
+        buttonZ.setOnClickListener(buttonVarOnClickListener);
+        buttonT.setOnClickListener(buttonVarOnClickListener);
     	
     	// Set the buttons to the right state
         buttonPi.setChecked(false);
         buttonE.setChecked(false);
         
         // Set the tabs to the right state
-        buttonTabConstants.setChecked(true);
+        buttonTabNumpad.setChecked(true);
         
         // Generate the buttons for the variables keyboard
         TableLayout varTable = (TableLayout) myFragmentView.findViewById(R.id.table_keyboard_variables);
@@ -191,12 +199,20 @@ public class FragmentKeyboard extends DialogFragment
         // Get the buttons
         final ToggleButton buttonPi = (ToggleButton) getView().findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) getView().findViewById(R.id.keyboardButtonE);
-        final ToggleButton buttonI = (ToggleButton) getView().findViewById(R.id.keyboardButtonI);
+        final ToggleButton buttonI  = (ToggleButton) getView().findViewById(R.id.keyboardButtonI);
+        final ToggleButton buttonX  = (ToggleButton) getView().findViewById(R.id.keyboardButtonX);
+        final ToggleButton buttonY  = (ToggleButton) getView().findViewById(R.id.keyboardButtonY);
+        final ToggleButton buttonZ  = (ToggleButton) getView().findViewById(R.id.keyboardButtonZ);
+        final ToggleButton buttonT  = (ToggleButton) getView().findViewById(R.id.keyboardButtonT);
         
         // Uncheck all buttons
         buttonPi.setChecked(false);
         buttonE.setChecked(false);
         buttonI.setChecked(false);
+        buttonX.setChecked(false);
+        buttonY.setChecked(false);
+        buttonZ.setChecked(false);
+        buttonT.setChecked(false);
         for(ToggleButton btn : varButtons)
             btn.setChecked(false);
         
@@ -212,6 +228,14 @@ public class FragmentKeyboard extends DialogFragment
                     if(btn.getText().charAt(0) == mathSymbolEditor.getCurrVar())
                     {
                         btn.setChecked(true);
+                        switch(mathSymbolEditor.getCurrVar())
+                        {
+                            case 'x': buttonX.setChecked(true); break;
+                            case 'y': buttonY.setChecked(true); break;
+                            case 'z': buttonZ.setChecked(true); break;
+                            case 't': buttonT.setChecked(true); break;
+                        }
+                        
                         break;
                     }
                 }
@@ -226,7 +250,7 @@ public class FragmentKeyboard extends DialogFragment
         @Override
         public void onClick(final View v)
         {
-            // Get the number we pressed and add it to the MathConstantView
+            // Get the number we pressed and add it to the MathSymbolEditor
             final int number = Integer.parseInt(((Button) v).getText().toString());
             mathSymbolEditor.addNumber(number);
         }
@@ -279,7 +303,7 @@ public class FragmentKeyboard extends DialogFragment
         @Override
         public void onClick(final View v)
         {
-            // Reset the values in the MathConstantView
+            // Reset the values in the MathSymbolEditor
             mathSymbolEditor.reset();
             refreshButtonState();
         }
@@ -303,15 +327,15 @@ public class FragmentKeyboard extends DialogFragment
         public void onClick(final View v)
         {
             // Find out which button was pressed
-            final boolean showConstants = v.getId() == R.id.btn_tab_constants;
+            final boolean showNumpad = v.getId() == R.id.btn_tab_numpad;
             
             // Set the tab buttons to the right state
-            ((ToggleButton) getView().findViewById(R.id.btn_tab_constants)).setChecked(showConstants);
-            ((ToggleButton) getView().findViewById(R.id.btn_tab_variables)).setChecked(!showConstants);
+            ((ToggleButton) getView().findViewById(R.id.btn_tab_numpad)).setChecked(showNumpad);
+            ((ToggleButton) getView().findViewById(R.id.btn_tab_variables)).setChecked(!showNumpad);
             
             // Show the right keyboard
-            getView().findViewById(R.id.table_keyboard_constants).setVisibility(showConstants ? View.VISIBLE : View.GONE);
-            getView().findViewById(R.id.table_keyboard_variables).setVisibility(showConstants ? View.GONE : View.VISIBLE);
+            getView().findViewById(R.id.table_keyboard_numpad).setVisibility(showNumpad ? View.VISIBLE : View.GONE);
+            getView().findViewById(R.id.table_keyboard_variables).setVisibility(showNumpad ? View.GONE : View.VISIBLE);
         }
     }
     

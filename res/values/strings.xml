@@ -18,6 +18,6 @@
 	<string name="redo">Redo</string>
 	<string name="substitute">Substitute</string>
 	<string name="help">Help</string>
-	<string name="constants">Constants</string>
+	<string name="numpad">Numpad</string>
 	<string name="variables">Variables</string>
 </resources>
