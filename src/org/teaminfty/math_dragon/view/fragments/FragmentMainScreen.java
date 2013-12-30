@@ -2,17 +2,9 @@ package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathView;
+import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathOperationAdd;
-import org.teaminfty.math_dragon.view.math.MathOperationArcCos;
-import org.teaminfty.math_dragon.view.math.MathOperationArcSine;
-import org.teaminfty.math_dragon.view.math.MathOperationArcTangent;
-import org.teaminfty.math_dragon.view.math.MathOperationCosh;
-import org.teaminfty.math_dragon.view.math.MathOperationCosine;
-import org.teaminfty.math_dragon.view.math.MathOperationSine;
-import org.teaminfty.math_dragon.view.math.MathOperationSinh;
-import org.teaminfty.math_dragon.view.math.MathOperationTangent;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -27,32 +19,45 @@ public class FragmentMainScreen extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_screen, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
+        
+        // Disable the undo and redo buttons
+        view.findViewById(R.id.btn_undo).setEnabled(false);
+        view.findViewById(R.id.btn_redo).setEnabled(false);
+        
+        // Listen for keyboard show requests
+        ((MathView) view.findViewById(R.id.mathView)).setOnShowKeyboardListener(new ShowKeyboardListener());
+        
+        // Return the view
+        return view;
     }
     
     @Override
     public void onStart()
     {
         super.onStart();
-   
-        MathConstant five = new MathConstant("5");
-        MathOperationSine sin = new MathOperationSine();
-        MathOperationCosine cos = new MathOperationCosine();
-        MathOperationTangent tan = new MathOperationTangent();
-        MathOperationSinh sinh = new MathOperationSinh();
-        MathOperationCosh cosh = new MathOperationCosh();
-        MathOperationArcCos arccos = new MathOperationArcCos();
-        MathOperationArcSine arcsin = new MathOperationArcSine();
-        MathOperationArcTangent arctan = new MathOperationArcTangent();
-       
-        MathOperationAdd add = new MathOperationAdd();
-        add.setChild(0, cos);
-        add.setChild(1, arccos);
-
+        
+        /*// Create MathObjects to test the functionality 
+        MathConstant five = new MathConstant("5", 100,100);
+        MathOperationDivide div = new MathOperationDivide(100,100);
+        div.setChild(0, five);
+        div.setChild(1, five);
+        MathOperationAdd add = new MathOperationAdd(100,100);
+        add.setChild(0, five);
+        add.setChild(1, five);
+        MathOperationAdd add2 = new MathOperationAdd(100,100);
+        add2.setChild(0, add);
+        add2.setChild(1, five);
+        MathOperationDivide div2 = new MathOperationDivide(100,100);
+        div2.setChild(0, add2);
+        div2.setChild(1, five);
+        MathOperationRoot root = new MathOperationRoot(100,100);
+        root.setChild(0, div);
+        root.setChild(1, div2);
         
         // Just to test MathView
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
-        mathView.setMathObject(add);
+        mathView.setMathObject(root);*/
     }
 
     /** Clears the current formula */
@@ -69,5 +74,23 @@ public class FragmentMainScreen extends Fragment
     {
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
         return mathView.getMathObject();
+    }
+    
+    /** We'll want to listen for keyboard show requests from the {@link MathView} */
+    private class ShowKeyboardListener implements MathView.OnShowKeyboardListener
+    {
+        @Override
+        public void showKeyboard(MathConstant mathConstant, OnConfirmListener listener)
+        {
+            // Create a keyboard
+            FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
+            
+            // Set the listener and the math symbol
+            fragmentKeyboard.setOnConfirmListener(listener);
+            fragmentKeyboard.setMathSymbol(mathConstant);
+            
+            // Show the keyboard
+            fragmentKeyboard.show(getFragmentManager(), "keyboard");
+        }
     }
 }

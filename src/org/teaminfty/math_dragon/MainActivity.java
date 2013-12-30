@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
+import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.math.MathConstant;
@@ -197,9 +198,22 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
     public void clear(View view)
     {
+
         // Simply clear the current formula
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();
+    }
+    
+    public void temporary(View view)
+    {
+    	/*// Get the DrawerLayout object DrawerLayout drawerLayout =
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+         
+        // Show the favourites drawer
+        drawerLayout.openDrawer(Gravity.CENTER);*/
+         
+        FragmentKeyboard fragKeyboard = new FragmentKeyboard();
+        fragKeyboard.show(getFragmentManager(), "keyboard");
     }
 
     @Override
@@ -217,5 +231,5 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             // there was no drawer to open.
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
-    }
+    }   
 }

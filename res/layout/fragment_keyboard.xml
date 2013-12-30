@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/keyboard_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/keyboard_padding"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:minHeight="@dimen/math_symbol_editor_min_height"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:requiresFadingEdge="horizontal"
+        android:fillViewport="true" >
+
+        <org.teaminfty.math_dragon.view.MathSymbolEditor
+            android:id="@+id/mathSymbolEditor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+        
+    </HorizontalScrollView>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButton1"
+                style="@style/KeyboardButton"
+                android:text="1" />
+
+            <Button
+                android:id="@+id/keyboardButton2"
+                style="@style/KeyboardButton"
+                android:text="2" />
+
+            <Button
+                android:id="@+id/keyboardButton3"
+                style="@style/KeyboardButton"
+                android:text="3" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButton4"
+                style="@style/KeyboardButton"
+                android:text="4" />
+
+            <Button
+                android:id="@+id/keyboardButton5"
+                style="@style/KeyboardButton"
+                android:text="5" />
+
+            <Button
+                android:id="@+id/keyboardButton6"
+                style="@style/KeyboardButton"
+                android:text="6" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButton7"
+                style="@style/KeyboardButton"
+                android:text="7" />
+
+            <Button
+                android:id="@+id/keyboardButton8"
+                style="@style/KeyboardButton"
+                android:text="8" />
+
+            <Button
+                android:id="@+id/keyboardButton9"
+                style="@style/KeyboardButton"
+                android:text="9" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <ToggleButton
+                android:id="@+id/keyboardButtonPi"
+                style="@style/KeyboardButton"
+                android:text="@string/pi"
+                android:textOff="@string/pi"
+                android:textOn="@string/pi" />
+
+            <Button
+                android:id="@+id/keyboardButton0"
+                style="@style/KeyboardButton"
+                android:text="0" />
+
+            <ToggleButton
+                android:id="@+id/keyboardButtonE"
+                style="@style/KeyboardButton"
+                android:text="@string/e_eulers_number"
+                android:textOff="@string/e_eulers_number"
+                android:textOn="@string/e_eulers_number" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/keyboardButtonDelete"
+                style="@style/KeyboardButton"
+                android:text="@string/backspace_symbol" />
+
+            <Button
+                android:id="@+id/keyboardButtonClear"
+                style="@style/KeyboardButton"
+                android:text="@string/clear" />
+
+            <Button
+                android:id="@+id/keyboardButtonConfirm"
+                style="@style/KeyboardButton"
+                android:text="@string/ok" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
