@@ -79,10 +79,9 @@ public class MathSymbolEditor extends View
     /** Initialises the paints */
     private void initPaints()
     {
+        paint.setTypeface(TypefaceHolder.dejavuSans);
         paint.setAntiAlias(true);
         paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_font_size));
-        exponentPaint.setAntiAlias(true);
-        exponentPaint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_font_size) * EXPONENT_FACTOR);
     }
     
     /** Sets the variable we're currently editing.
@@ -332,7 +331,7 @@ public class MathSymbolEditor extends View
     protected void onMeasure(int widthSpec, int heightSpec)
     {
         // Get the size we want to take
-        final Rect size = getTextSize();
+        final Rect size = getTextBounds();
         
         // Determine the width we'll take
         int width = size.width() + 2 * getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_padding);
@@ -364,227 +363,142 @@ public class MathSymbolEditor extends View
         setMeasuredDimension(width, height);
     }
     
+    /** Converts the number in the given string to superscript
+     * @param str The string that is to be converted to superscript
+     * @return The superscript of the given string
+     */
+    private String toSuperScript(String str)
+    {
+        // The string we're going to return
+        String out = "";
+        
+        // Loop through all characters
+        for(int i = 0; i < str.length(); ++i)
+        {
+            switch(str.charAt(i))
+            {
+                case '-': out += '\u207b'; break;
+                case '0': out += '\u2070'; break;
+                case '1': out += '\u00b9'; break;
+                case '2': out += '\u00b2'; break;
+                case '3': out += '\u00b3'; break;
+                case '4': out += '\u2074'; break;
+                case '5': out += '\u2075'; break;
+                case '6': out += '\u2076'; break;
+                case '7': out += '\u2077'; break;
+                case '8': out += '\u2078'; break;
+                case '9': out += '\u2079'; break;
+            }
+        }
+        
+        // Return the result
+        return out;
+    }
+    
     @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas)
     {
         // Translate the canvas
-        final Rect textBounding = getTextSize();
-        canvas.translate((canvas.getWidth() - textBounding.width()) / 2, (canvas.getHeight() - textBounding.height()) / 2);
-
-        // The padding between each symbol
-        final int symbolPadding = getResources().getDimensionPixelSize(R.dimen.math_object_line_width) * 2;
+        final Rect totalTextBounds = getTextBounds();
+        canvas.translate((canvas.getWidth() - totalTextBounds.width()) / 2, (canvas.getHeight() - totalTextBounds.height()) / 2);
         
-        // Keep track the x-coordinate where the next string should be drawn
-        int x = 0;
+        // Distinguish the parts of the string
+        String[] parts = {"", "", ""};
+        int currentPart = 0;
         
-        // The colours that are used for drawing
-        final int COLOR_EDITING = getResources().getColor(R.color.blue);
-        final int COlOR_NORMAL = getResources().getColor(R.color.black);
-        
-        // Draw the factor
-        Rect bounds = new Rect();
-        paint.setColor(editingSymbol == EditingSymbol.FACTOR ? COLOR_EDITING : COlOR_NORMAL);
-        paint.getTextBounds(factor, 0, factor.length(), bounds);
-        canvas.drawText(factor, -bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-        x += bounds.width();
-        
-        // Draw the PI constant
+        if(editingSymbol == EditingSymbol.FACTOR)
+            ++currentPart;
+        parts[currentPart] = factor;
+        if(editingSymbol == EditingSymbol.FACTOR)
+            ++currentPart;
+            
+        if(editingSymbol == EditingSymbol.PI)
+            ++currentPart;
         if(showPi)
-        {
-            // Add the padding
-            if(x != 0)
-                x += symbolPadding;
-            
-            // Set the colours
-            paint.setColor(editingSymbol == EditingSymbol.PI ? COLOR_EDITING : COlOR_NORMAL);
-            exponentPaint.setColor(editingSymbol == EditingSymbol.PI ? COLOR_EDITING : COlOR_NORMAL);
-            
-            // The PI sign
-            String tmpStr = "\u03C0";
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-            x += bounds.width();
-
-            // Draw the exponent
-            exponentPaint.getTextBounds(piPow, 0, piPow.length(), bounds);
-            canvas.drawText(piPow, x - bounds.left, -bounds.top, exponentPaint);
-            x += bounds.width();
-        }
+            parts[currentPart] += '\u03c0' + toSuperScript(piPow);
+        if(editingSymbol == EditingSymbol.PI)
+            ++currentPart;
         
-        // Draw the E constant
+        if(editingSymbol == EditingSymbol.E)
+            ++currentPart;
         if(showE)
-        {
-            // Add the padding
-            if(x != 0)
-                x += symbolPadding;
-            
-            // Set the colours
-            paint.setColor(editingSymbol == EditingSymbol.E ? COLOR_EDITING : COlOR_NORMAL);
-            exponentPaint.setColor(editingSymbol == EditingSymbol.E ? COLOR_EDITING : COlOR_NORMAL);
-            
-            // The E sign
-            String tmpStr = "e";
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-            x += bounds.width();
-
-            // Draw the exponent
-            exponentPaint.getTextBounds(ePow, 0, ePow.length(), bounds);
-            canvas.drawText(ePow, x - bounds.left, -bounds.top, exponentPaint);
-            x += bounds.width();
-        }
+            parts[currentPart] += 'e' + toSuperScript(ePow);
+        if(editingSymbol == EditingSymbol.E)
+            ++currentPart;
         
-        // Draw the imaginary unit
+        if(editingSymbol == EditingSymbol.I)
+            ++currentPart;
         if(showI)
-        {
-            // Add the padding
-            if(x != 0)
-                x += symbolPadding;
-            
-            // Set the colours
-            paint.setColor(editingSymbol == EditingSymbol.I ? COLOR_EDITING : COlOR_NORMAL);
-            exponentPaint.setColor(editingSymbol == EditingSymbol.I ? COLOR_EDITING : COlOR_NORMAL);
-            
-            // The imaginary unit sign
-            String tmpStr = "i";
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-            x += bounds.width();
-
-            // Draw the exponent
-            exponentPaint.getTextBounds(iPow, 0, iPow.length(), bounds);
-            canvas.drawText(iPow, x - bounds.left, -bounds.top, exponentPaint);
-            x += bounds.width();
-        }
+            parts[currentPart] += '\u03b9' + toSuperScript(iPow);
+        if(editingSymbol == EditingSymbol.I)
+            ++currentPart;
         
-        // Draw all variables
         for(int i = 0; i < varPowers.length; ++i)
         {
+            final char chr = (char) ('a' + i);
+            
+            if(editingSymbol == EditingSymbol.VAR && currVar == chr)
+                ++currentPart;
             if(showVars[i])
-            {
-                // Add the padding
-                if(x != 0)
-                    x += symbolPadding;
-                
-                // Set the colours
-                int color = COlOR_NORMAL;
-                if(editingSymbol == EditingSymbol.VAR && currVar - 'a' == i)
-                    color = COLOR_EDITING;
-                paint.setColor(color);
-                exponentPaint.setColor(color);
-                
-                // The variable name
-                String tmpStr = new String(new char[] { (char) ('a' + i) });
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-                x += bounds.width();
-
-                // Draw the exponent
-                exponentPaint.getTextBounds(varPowers[i], 0, varPowers[i].length(), bounds);
-                canvas.drawText(varPowers[i], x - bounds.left, -bounds.top, exponentPaint);
-                x += bounds.width();
-            }
+                parts[currentPart] += chr + toSuperScript(varPowers[i]);
+            if(editingSymbol == EditingSymbol.VAR && currVar == chr)
+                ++currentPart;
+        }
+        
+        // Keep track of the current x position
+        int x = 0;
+        
+        // Draw the parts
+        if(parts[0] != "")
+        {
+            paint.setColor(getResources().getColor(R.color.black));
+            canvas.drawText(parts[0], x - totalTextBounds.left, -totalTextBounds.top, paint);
+            
+            x += paint.measureText(parts[0]);
+        }
+        if(parts[1] != "")
+        {
+            paint.setColor(getResources().getColor(R.color.blue));
+            canvas.drawText(parts[1], x - totalTextBounds.left, -totalTextBounds.top, paint);
+            
+            x += paint.measureText(parts[1]);
+        }
+        if(parts[2] != "")
+        {
+            paint.setColor(getResources().getColor(R.color.black));
+            canvas.drawText(parts[2], x - totalTextBounds.left, -totalTextBounds.top, paint);
+            
+            x += paint.measureText(parts[2]);
         }
         
         // Restore the canvas translation
         canvas.restore();
     }
 
-    /** Calculates the size of the text in this {@link MathSymbolEditor}
-     * @return The size of the text in this {@link MathSymbolEditor}
+    /** Calculates the bounds of the text in this {@link MathSymbolEditor}
+     * @return The bounds of the text in this {@link MathSymbolEditor}
      */
-    protected Rect getTextSize()
+    protected Rect getTextBounds()
     {
-        // The padding between each symbol
-        final int symbolPadding = getResources().getDimensionPixelSize(R.dimen.math_object_line_width) * 2;
-        
-        // We'll store the total width and the height of the text in here
-        Rect out = new Rect(0, 0, 0, 0);
-        Rect bounds = new Rect();
-        
-        // First add the width of the factor
-        paint.getTextBounds(factor, 0, factor.length(), bounds);
-        out.right += bounds.width();
-        out.bottom = bounds.height();
-
-        // Add the width of the PI constant
+        // Determine the string we're going to draw
+        String drawMe = factor;
         if(showPi)
-        {
-            // Add the padding
-            if(out.right != 0)
-                out.right += symbolPadding;
-            
-            // The PI sign
-            String tmpStr = "\u03C0";
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            out.right += bounds.width();
-            out.bottom = Math.max(out.bottom, bounds.height());
-
-            // The exponent
-            exponentPaint.getTextBounds(piPow, 0, piPow.length(), bounds);
-            out.right += bounds.width();
-        }
-        
-        // Add the width of the E constant
+            drawMe += '\u03c0' + toSuperScript(piPow);
         if(showE)
-        {
-            // Add the padding
-            if(out.right != 0)
-                out.right += symbolPadding;
-            
-            // The e sign
-            String tmpStr = "e";
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            out.right += bounds.width();
-            out.bottom = Math.max(out.bottom, bounds.height());
-
-            // The exponent
-            exponentPaint.getTextBounds(ePow, 0, ePow.length(), bounds);
-            out.right += bounds.width();
-        }
-        
-        // Add the width of the imaginary unit
+            drawMe += 'e' + toSuperScript(ePow);
         if(showI)
-        {
-            // Add the padding
-            if(out.right != 0)
-                out.right += symbolPadding;
-            
-            // The i sign
-            String tmpStr = "i";
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            out.right += bounds.width();
-            out.bottom = Math.max(out.bottom, bounds.height());
-            
-            // The exponent
-            exponentPaint.getTextBounds(iPow, 0, iPow.length(), bounds);
-            out.right += bounds.width();
-        }
-
-        // Add the width of all variables
+            drawMe += '\u03b9' + toSuperScript(iPow);
         for(int i = 0; i < varPowers.length; ++i)
         {
             if(showVars[i])
-            {
-                // Add the padding
-                if(out.right != 0)
-                    out.right += symbolPadding;
-                
-                // The variable name
-                String tmpStr = new String(new char[] { (char) ('a' + i) });
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                out.right += bounds.width();
-                out.bottom = Math.max(out.bottom, bounds.height());
-
-                // Draw the exponent
-                exponentPaint.getTextBounds(varPowers[i], 0, varPowers[i].length(), bounds);
-                out.right += bounds.width();
-            }
+                drawMe += (char) ('a' + i) + toSuperScript(varPowers[i]);
         }
         
-        // Return the result
-        return out;
+        // Determine and return the text bounds
+        Rect bounds = new Rect();
+        paint.getTextBounds(drawMe, 0, drawMe.length(), bounds);
+        return bounds;
     }
     
     /** Adds the given number to the symbol we're currently editing

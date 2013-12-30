@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
+import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
@@ -51,6 +52,9 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        
+        // Load the typefaces
+        TypefaceHolder.loadFromAssets(getAssets());
 
         // Set the default size in the MathObject class
         MathObject.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
