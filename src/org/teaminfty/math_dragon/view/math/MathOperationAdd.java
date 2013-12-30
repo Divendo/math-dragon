@@ -59,4 +59,9 @@ public class MathOperationAdd extends MathBinaryOperationLinear
         drawChildren(canvas);
     }
 
+    @Override
+    protected String getType()
+    {
+        return "add";
+    }
 }

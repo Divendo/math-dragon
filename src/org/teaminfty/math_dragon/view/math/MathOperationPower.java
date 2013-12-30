@@ -124,5 +124,9 @@ public class MathOperationPower extends MathBinaryOperation
         drawChildren(canvas);
 	}
 	
-	
+	@Override
+	protected String getType()
+	{
+	    return "power";
+	}
 }

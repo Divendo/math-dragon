@@ -62,4 +62,10 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
         // Draw the children
         drawChildren(canvas);
     }
+    
+    @Override
+    protected String getType()
+    {
+        return "multiply";
+    }
 }

@@ -51,4 +51,10 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
         // Draw the children
         drawChildren(canvas);
     }
+    
+    @Override
+    protected String getType()
+    {
+        return "subtract";
+    }
 }

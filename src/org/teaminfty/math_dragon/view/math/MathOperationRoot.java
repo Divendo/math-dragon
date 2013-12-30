@@ -149,4 +149,10 @@ public class MathOperationRoot extends MathBinaryOperation
         // Draw the children
         drawChildren(canvas);
     }
+    
+    @Override
+    protected String getType()
+    {
+        return "root";
+    }
 }
