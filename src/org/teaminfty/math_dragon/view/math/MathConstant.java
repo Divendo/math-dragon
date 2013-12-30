@@ -4,6 +4,8 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.NotConstantException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -12,6 +14,17 @@ import android.graphics.Rect;
 /** This class represents a math constant */
 public class MathConstant extends MathObject
 {
+	/** The XML element name */
+	public static final String NAME = "constant";
+	/** The factor XML element attribute */
+	public static final String ATTR_FACTOR = "f";
+	/** The E constant XML element attribute */
+	public static final String ATTR_E = "e";
+	/** The PI constant XML element attribute */
+	public static final String ATTR_PI = "pi";
+	/** The I constant XML element attribute */
+	public static final String ATTR_I = "i";
+	
     /** The factor of this constant */
     private long factor = 0;
     /** The power of the E constant */
@@ -37,7 +50,7 @@ public class MathConstant extends MathObject
     }
 
     /** Constructor, constructs with the given value
-     * @param value The value that this constant should be initialized with
+     * @param v The value that this constant should be initialised with
      */
     public MathConstant(String value)
     {
@@ -581,4 +594,15 @@ public class MathConstant extends MathObject
 		setPiPow(piPow);
 		setIPow(iPow);
 	}
+
+    @Override
+    public void writeToXML(Document doc, Element el)
+    {
+        Element e = doc.createElement(NAME);
+        e.setAttribute(ATTR_FACTOR, String.valueOf(factor));
+        e.setAttribute(ATTR_E, String.valueOf(ePow));
+        e.setAttribute(ATTR_PI, String.valueOf(piPow));
+        e.setAttribute(ATTR_I, String.valueOf(iPow));
+        el.appendChild(e);
+    }
 }

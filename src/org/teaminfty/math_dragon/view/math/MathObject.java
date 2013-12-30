@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.view.HoverState;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
 /** This class represents a mathematical object that can be drawn */
 public abstract class MathObject
@@ -298,5 +301,16 @@ public abstract class MathObject
         paint.setColor(0x44ff0000);
         for(int i = 0; i < getChildCount(); ++i)
             canvas.drawRect(getChildBoundingBox(i), paint);
+    }
+    
+    /**
+     * Serialize current instance in a XML document in a specified element. 
+     * @param doc The XML document
+     * @param parent The parent XML element
+     */
+    public void writeToXML(Document doc, Element parent)
+    {
+    	Log.w("XML", "not a writable element yet");
+    	parent.appendChild(doc.createElement(MathObjectEmpty.NAME));
     }
 }

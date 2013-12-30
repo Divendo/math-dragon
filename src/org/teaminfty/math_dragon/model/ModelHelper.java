@@ -6,7 +6,6 @@ import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.IRational;
-import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
@@ -22,12 +21,8 @@ import org.teaminfty.math_dragon.view.math.MathVariable;
  * <p>
  * <h1>Reporting issues</h1>
  * Use our repo to report issues and show how to reproduce incorrect output.
- * <p>
- * <b>Note:</b> your eyes may start to bleed when you try to read this code. So,
- * keep your hands of this code and let me do da hacks for ya.
  * 
  * @author Folkert van Verseveld
- * 
  */
 public final class ModelHelper
 {
@@ -43,16 +38,16 @@ public final class ModelHelper
      * @param h
      *        The specified height.
      * @return A viewer that contains <tt>expr</tt>.
-     * @throws MathException
+     * @throws ParseException
      *         Thrown when conversion is impossible.
      */
-    public static MathObject toMathObject(IExpr expr) throws MathException
+    public static MathObject toMathObject(IExpr expr) throws ParseException
     {
         if(expr.isAST())
         {
             AST ast = (AST) expr;
             if(!(ast.get(0) instanceof Symbol))
-                throw new MathException(ast.toString() + ": invalid operation");
+                throw new ParseException(ast.toString() + ": invalid operation");
             if(expr.isPlus())
                 return toOpAdd(ast);
             if(expr.isTimes())
@@ -103,7 +98,7 @@ public final class ModelHelper
         throw new ParseException();
     }
 
-    static MathObject toOpAdd(AST ast) throws MathException
+    static MathObject toOpAdd(AST ast) throws ParseException
     {
         if(ast.size() > 3)
         {
@@ -119,7 +114,7 @@ public final class ModelHelper
         return new MathOperationAdd(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
     }
 
-    static MathObject toOpMul(AST ast) throws MathException
+    static MathObject toOpMul(AST ast) throws ParseException
     {
         if (ast.size() > 3) {
             int n = ast.size() - 1;
@@ -139,7 +134,7 @@ public final class ModelHelper
             {
                 if(p.isNegative())
                     return toOpDiv(ast.get(1), a);
-                if((b = a.get(1)) instanceof Symbol)
+                if ((b = a.get(1)) instanceof Symbol)
                 {
                     Symbol s = (Symbol) b;
                     MathConstant c = new MathConstant();
@@ -147,17 +142,24 @@ public final class ModelHelper
                     if(s.equals(F.Pi))
                     {
                         c.setPiPow(((IInteger) p).longValue());
-                        return c;
                     }
                     else if(s.equals(F.E))
                     {
                         c.setEPow(((IInteger) p).longValue());
-                        return c;
                     }
                     else if(s.equals(F.I))
                     {
                         c.setIPow(((IInteger) p).longValue());
-                        return c;
+                    }
+                    b = ast.get(1);
+                    if (b.isInteger())
+                    {
+                    	c.setFactor(((IInteger) b).longValue());
+                    	return c;
+                    }
+                    else
+                    {
+                    	return new MathOperationMultiply(toMathObject(b), c);
                     }
                 }
             }
@@ -166,15 +168,15 @@ public final class ModelHelper
     }
 
     // TODO implement more than 2 children for operation divide
-    static MathObject toOpDiv(IExpr l, IExpr r) throws MathException
+    static MathObject toOpDiv(IExpr l, IExpr r) throws ParseException
     {
         return new MathOperationDivide(toMathObject(l), toMathObject(r));
     }
     
-    static MathObject toOpDiv(IExpr l, AST r) throws MathException
+    static MathObject toOpDiv(IExpr l, AST r) throws ParseException
     {
         if (r.size() > 3) {
-            throw new MathException("no more than 2 children supported for division");
+            throw new ParseException("no more than 2 children supported for division");
         }
         // XXX ugly hack
         r.set(2, r.get(2).negate());
@@ -185,7 +187,7 @@ public final class ModelHelper
         return new MathOperationDivide(toMathObject(l), toMathObject(r));
     }
 
-    static MathObject toOpPow(AST ast) throws MathException
+    static MathObject toOpPow(AST ast) throws ParseException
     {
         if(ast.size() > 3)
         {
