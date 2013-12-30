@@ -29,13 +29,16 @@ public class MathSourceOperationDerivative extends MathSourceObject
         paintOperator.getTextBounds("d", 0, "d".length(), textBox);
         
         // Draw the boxes
-        emptyBox.offsetTo((w - emptyBox.width()) / 2, (int) (h - 2 * emptyBox.height() - 3 * MathObject.lineWidth) / 2);
+        emptyBox.offsetTo((w - textBox.width() / 5) / 2, (int) (h - 2 * emptyBox.height() - 3 * MathObject.lineWidth) / 2);
         drawEmptyBox(canvas, emptyBox);
-        emptyBox.offset(textBox.width() / 2, (int) (emptyBox.height() + 3 * MathObject.lineWidth));
+        
+        emptyBox = getRectBoundingBox(w, (int) (h - 3 * MathObject.lineWidth) / 2, MathObjectEmpty.RATIO);
+        emptyBox.offset((w - textBox.width() / 5) / 2, (int) (emptyBox.height() + 3 * MathObject.lineWidth));
         drawEmptyBox(canvas, emptyBox);
         
         // Draw the text
         canvas.drawText("d", (w - emptyBox.width()) / 2 - textBox.width(), emptyBox.height() * 2 + MathObject.lineWidth, paintOperator);
+        canvas.drawText("d", (w - emptyBox.width()) / 2 - textBox.width(), emptyBox.height(), paintOperator);
         
         // Draw the operator
         paintOperator.setStrokeWidth(MathObject.lineWidth);
