@@ -17,6 +17,7 @@ public class MathOperationDerivative extends MathBinaryOperation
     protected Paint operatorPaint = new Paint();
     final int maxFontSize = 500;
     final float RATIO = 0.5f / 1.61803398874989f;
+    public static final String TYPE = "derivative";
     
     public MathOperationDerivative()
     { }
@@ -230,4 +231,10 @@ public class MathOperationDerivative extends MathBinaryOperation
         // Draw the children
         drawChildren(canvas);
     }
+
+	@Override
+	protected String getType() 
+	{
+		return TYPE;
+	}
 }
