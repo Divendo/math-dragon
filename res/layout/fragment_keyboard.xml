@@ -71,6 +71,14 @@
                 android:id="@+id/keyboardButton3"
                 style="@style/KeyboardButton"
                 android:text="3" />
+            
+
+            <ToggleButton
+                android:id="@+id/keyboardButtonPi"
+                style="@style/KeyboardButton"
+                android:text="@string/pi"
+                android:textOff="@string/pi"
+                android:textOn="@string/pi" />
         </TableRow>
 
         <TableRow
@@ -92,6 +100,13 @@
                 android:id="@+id/keyboardButton6"
                 style="@style/KeyboardButton"
                 android:text="6" />
+
+            <ToggleButton
+                android:id="@+id/keyboardButtonE"
+                style="@style/KeyboardButton"
+                android:text="@string/e_eulers_number"
+                android:textOff="@string/e_eulers_number"
+                android:textOn="@string/e_eulers_number" />
         </TableRow>
 
         <TableRow
@@ -113,48 +128,35 @@
                 android:id="@+id/keyboardButton9"
                 style="@style/KeyboardButton"
                 android:text="9" />
+            
+            <ToggleButton
+                android:id="@+id/keyboardButtonI"
+                style="@style/KeyboardButton"
+                android:text="@string/iota"
+                android:textOff="@string/iota"
+                android:textOn="@string/iota" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center" >
-
-            <ToggleButton
-                android:id="@+id/keyboardButtonPi"
-                style="@style/KeyboardButton"
-                android:text="@string/pi"
-                android:textOff="@string/pi"
-                android:textOn="@string/pi" />
 
             <Button
                 android:id="@+id/keyboardButton0"
                 style="@style/KeyboardButton"
                 android:text="0" />
-
-            <ToggleButton
-                android:id="@+id/keyboardButtonE"
-                style="@style/KeyboardButton"
-                android:text="@string/e_eulers_number"
-                android:textOff="@string/e_eulers_number"
-                android:textOn="@string/e_eulers_number" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" >
-
+            
             <Button
                 android:id="@+id/keyboardButtonDelete"
                 style="@style/KeyboardButton"
                 android:text="@string/backspace_symbol" />
-
+            
             <Button
                 android:id="@+id/keyboardButtonClear"
                 style="@style/KeyboardButton"
                 android:text="@string/clear" />
-
+            
             <Button
                 android:id="@+id/keyboardButtonConfirm"
                 style="@style/KeyboardButton"

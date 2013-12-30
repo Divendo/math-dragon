@@ -61,6 +61,7 @@ public class FragmentKeyboard extends DialogFragment
     	final Button buttonOK  = (Button) myFragmentView.findViewById(R.id.keyboardButtonConfirm);
         final ToggleButton buttonPi = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonE);
+        final ToggleButton buttonI  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonI);
         final ToggleButton buttonTabConstants = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_constants);
         final ToggleButton buttonTabVariables  = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_variables);
     	
@@ -83,6 +84,7 @@ public class FragmentKeyboard extends DialogFragment
     	button0.setOnClickListener(buttonNumberOnClickListener);
     	buttonPi.setOnClickListener(buttonSymbolOnClickListener);
     	buttonE.setOnClickListener(buttonSymbolOnClickListener);
+    	buttonI.setOnClickListener(buttonSymbolOnClickListener);
     	buttonDel.setOnClickListener(new ButtonDeleteOnClickListener());
     	buttonClr.setOnClickListener(new ButtonClearOnClickListener());
     	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
@@ -189,10 +191,12 @@ public class FragmentKeyboard extends DialogFragment
         // Get the buttons
         final ToggleButton buttonPi = (ToggleButton) getView().findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) getView().findViewById(R.id.keyboardButtonE);
+        final ToggleButton buttonI = (ToggleButton) getView().findViewById(R.id.keyboardButtonI);
         
         // Uncheck all buttons
         buttonPi.setChecked(false);
         buttonE.setChecked(false);
+        buttonI.setChecked(false);
         for(ToggleButton btn : varButtons)
             btn.setChecked(false);
         
@@ -201,6 +205,7 @@ public class FragmentKeyboard extends DialogFragment
         {
             case PI:    buttonPi.setChecked(true);      break;
             case E:     buttonE.setChecked(true);       break;
+            case I:     buttonI.setChecked(true);       break;
             case VAR:
                 for(ToggleButton btn : varButtons)
                 {
@@ -211,7 +216,7 @@ public class FragmentKeyboard extends DialogFragment
                     }
                 }
             break;
-            default:    /* Just to suppress warnings */ break;
+            default:  /* Just to suppress warnings */   break;
         }
     }
     
@@ -242,6 +247,10 @@ public class FragmentKeyboard extends DialogFragment
 
                 case R.id.keyboardButtonE:
                     mathSymbolEditor.toggleEditingSymbol(MathSymbolEditor.EditingSymbol.E);
+                break;
+
+                case R.id.keyboardButtonI:
+                    mathSymbolEditor.toggleEditingSymbol(MathSymbolEditor.EditingSymbol.I);
                 break;
             }
             
