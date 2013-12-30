@@ -14,6 +14,17 @@ import android.graphics.Rect;
 /** This class represents a math constant */
 public class MathConstant extends MathObject
 {
+	/** The XML element name */
+	public static final String NAME = "constant";
+	/** The factor XML element attribute */
+	public static final String ATTR_FACTOR = "f";
+	/** The E constant XML element attribute */
+	public static final String ATTR_E = "e";
+	/** The PI constant XML element attribute */
+	public static final String ATTR_PI = "pi";
+	/** The I constant XML element attribute */
+	public static final String ATTR_I = "i";
+	
     /** The factor of this constant */
     private long factor = 0;
     /** The power of the E constant */
@@ -587,11 +598,11 @@ public class MathConstant extends MathObject
     @Override
     public void writeToXML(Document doc, Element el)
     {
-        Element e = doc.createElement("constant");
-        e.setAttribute("f", String.valueOf(factor));
-        e.setAttribute("e", String.valueOf(ePow));
-        e.setAttribute("pi", String.valueOf(piPow));
-        e.setAttribute("i", String.valueOf(iPow));
+        Element e = doc.createElement(NAME);
+        e.setAttribute(ATTR_FACTOR, String.valueOf(factor));
+        e.setAttribute(ATTR_E, String.valueOf(ePow));
+        e.setAttribute(ATTR_PI, String.valueOf(piPow));
+        e.setAttribute(ATTR_I, String.valueOf(iPow));
         el.appendChild(e);
     }
 }
