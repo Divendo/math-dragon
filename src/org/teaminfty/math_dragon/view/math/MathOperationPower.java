@@ -28,6 +28,50 @@ public class MathOperationPower extends MathBinaryOperation
     @Override
     public int getPrecedence()
     { return MathObjectPrecedence.POWER; }
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to base expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setBase(MathObject o)
+    {
+        setLeft(o);
+    }
+
+    /**
+     * Retrieve the base mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The base mathematical expression.
+     */
+    public MathObject getBase()
+    {
+        return getLeft();
+    }
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to exponent expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setExponent(MathObject o)
+    {
+        setRight(o);
+    }
+
+    /**
+     * Retrieve the exponent mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The exponent mathematical expression.
+     */
+    public MathObject getExponent()
+    {
+        return getRight();
+    }
 
 	@Override
 	public IExpr eval() throws EmptyChildException 
@@ -36,7 +80,7 @@ public class MathOperationPower extends MathBinaryOperation
 		this.checkChildren();
 		
 		// Return the result
-		return F.Power( getChild(0).eval(), getChild(1).eval() );
+		return F.Power( getBase().eval(), getExponent().eval() );
 	}
 
 	@Override
@@ -103,8 +147,8 @@ public class MathOperationPower extends MathBinaryOperation
 	public void setLevel(int l)
 	{
 		level = l;
-		getChild(0).setLevel(level);
-		getChild(1).setLevel(level + 1);
+		getBase().setLevel(level);
+		getExponent().setLevel(level + 1);
 	}
 	
 	//We regard the base operand as the vertical center of the mathObject
