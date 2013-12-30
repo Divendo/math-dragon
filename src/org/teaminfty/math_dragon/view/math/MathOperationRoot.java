@@ -27,6 +27,50 @@ public class MathOperationRoot extends MathBinaryOperation
         operatorPaint.setAntiAlias(true);
         operatorPaint.setStyle(Paint.Style.STROKE);
     }
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to base expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setBase(MathObject o)
+    {
+        setLeft(o);
+    }
+
+    /**
+     * Retrieve the base mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The base mathematical expression.
+     */
+    public MathObject getBase()
+    {
+        return getLeft();
+    }
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to exponent expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setExponent(MathObject o)
+    {
+        setRight(o);
+    }
+
+    /**
+     * Retrieve the exponent mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The exponent mathematical expression.
+     */
+    public MathObject getExponent()
+    {
+        return getRight();
+    }
 
     @Override
     public IExpr eval() throws EmptyChildException 
