@@ -13,6 +13,10 @@ import org.w3c.dom.Element;
 
 public abstract class MathBinaryOperation extends MathObject
 {
+	public static final String NAME = "operation";
+	public static final String ATTR_OPERANDS = "operands";
+	public static final String ATTR_TYPE = "type";
+	
     public MathBinaryOperation()
     {
         this(null, null);
@@ -109,9 +113,9 @@ public abstract class MathBinaryOperation extends MathObject
     
     public void writeToXML(Document doc, Element el)
     {
-        Element e = doc.createElement("operation");
-        e.setAttribute("operands", "2");
-        e.setAttribute("type", getType());
+        Element e = doc.createElement(NAME);
+        e.setAttribute(ATTR_OPERANDS, "2");
+        e.setAttribute(ATTR_TYPE, getType());
         getLeft().writeToXML(doc, e);
         getRight().writeToXML(doc, e);
         el.appendChild(e);

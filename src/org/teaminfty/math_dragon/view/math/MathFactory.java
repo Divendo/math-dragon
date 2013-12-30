@@ -16,32 +16,32 @@ public final class MathFactory
     static MathBinaryOperation toOpBin(Element e) throws ParseException {
         final String type = e.getAttribute("type");
         try {
-            if (type.equals("add")) {
+            if (type.equals(MathOperationAdd.TYPE)) {
                 return new MathOperationAdd(
                         toMath((Element) e.getFirstChild()),
                         toMath((Element) e.getLastChild())
                         );
-            } else if (type.equals("multiply")) {
+            } else if (type.equals(MathOperationMultiply.TYPE)) {
                 return new MathOperationMultiply(
                         toMath((Element) e.getFirstChild()),
                         toMath((Element) e.getLastChild())
                         );
-            } else if (type.equals("divide")) {
+            } else if (type.equals(MathOperationDivide.TYPE)) {
                 return new MathOperationDivide(
                         toMath((Element) e.getFirstChild()),
                         toMath((Element) e.getLastChild())
                         );
-            } else if (type.equals("subtract")) {
+            } else if (type.equals(MathOperationSubtract.TYPE)) {
                 return new MathOperationSubtract(
                         toMath((Element) e.getFirstChild()),
                         toMath((Element) e.getLastChild())
                         );
-            } else if (type.equals("power")) {
+            } else if (type.equals(MathOperationPower.TYPE)) {
                 return new MathOperationPower(
                         toMath((Element) e.getFirstChild()),
                         toMath((Element) e.getLastChild())
                         );
-            } else if (type.equals("root")) {
+            } else if (type.equals(MathOperationRoot.TYPE)) {
                 return new MathOperationRoot(
                         toMath((Element) e.getFirstChild()),
                         toMath((Element) e.getLastChild())
@@ -63,8 +63,8 @@ public final class MathFactory
                 );
             } else if (tag.equals(MathVariable.NAME)) {
                 return new MathVariable(e.getAttribute(MathVariable.ATTR_NAME));
-            } else if (tag.equals("operation")) {
-                if (Integer.parseInt(e.getAttribute("operands")) == 2) {
+            } else if (tag.equals(MathBinaryOperation.NAME)) {
+                if (Integer.parseInt(e.getAttribute(MathBinaryOperation.ATTR_OPERANDS)) == 2) {
                     return toOpBin(e);
                 }
             } else if (tag.equals(MathObjectEmpty.NAME)) {

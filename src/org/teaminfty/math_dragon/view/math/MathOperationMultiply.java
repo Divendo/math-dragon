@@ -9,6 +9,8 @@ import android.graphics.Rect;
 
 public class MathOperationMultiply extends MathBinaryOperationLinear
 {
+	public static final String TYPE = "multiply";
+	
     public MathOperationMultiply()
     {}
     
@@ -66,6 +68,6 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
     @Override
     protected String getType()
     {
-        return "multiply";
+        return TYPE;
     }
 }

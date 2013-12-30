@@ -15,6 +15,8 @@ import android.graphics.Rect;
  */
 public class MathOperationDivide extends MathBinaryOperation
 {
+	public static final String TYPE = "divide";
+	
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
 
@@ -163,6 +165,6 @@ public class MathOperationDivide extends MathBinaryOperation
     @Override
     protected String getType()
     {
-        return "divide";
+        return TYPE;
     }
 }

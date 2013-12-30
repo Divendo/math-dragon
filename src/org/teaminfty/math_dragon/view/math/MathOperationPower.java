@@ -10,6 +10,8 @@ import android.graphics.Rect;
 
 public class MathOperationPower extends MathBinaryOperation
 {
+	public static final String TYPE = "power";
+	
     public MathOperationPower()
     {}
     
@@ -127,6 +129,6 @@ public class MathOperationPower extends MathBinaryOperation
 	@Override
 	protected String getType()
 	{
-	    return "power";
+	    return TYPE;
 	}
 }

@@ -12,7 +12,9 @@ import android.graphics.Rect;
 
 public class MathOperationRoot extends MathBinaryOperation
 {
-     protected Paint operatorPaint = new Paint();
+	public static final String TYPE = "root";
+	
+    protected Paint operatorPaint = new Paint();
     
     public MathOperationRoot()
     { this(null, null); }
@@ -153,6 +155,6 @@ public class MathOperationRoot extends MathBinaryOperation
     @Override
     protected String getType()
     {
-        return "root";
+        return TYPE;
     }
 }
