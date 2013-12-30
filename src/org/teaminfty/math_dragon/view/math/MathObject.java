@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
 /** This class represents a mathematical object that can be drawn */
 public abstract class MathObject
@@ -302,5 +303,14 @@ public abstract class MathObject
             canvas.drawRect(getChildBoundingBox(i), paint);
     }
     
-    public abstract void writeToXML(Document doc, Element el);
+    /**
+     * Serialize current instance in a XML document in a specified element. 
+     * @param doc The XML document
+     * @param parent The parent XML element
+     */
+    public void writeToXML(Document doc, Element parent)
+    {
+    	Log.w("XML", "not a writable element yet");
+    	parent.appendChild(doc.createElement(MathObjectEmpty.NAME));
+    }
 }
