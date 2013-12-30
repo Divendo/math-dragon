@@ -147,8 +147,8 @@ public class MathOperationPower extends MathBinaryOperation
 	public void setLevel(int l)
 	{
 		level = l;
-		getChild(0).setLevel(level);
-		getChild(1).setLevel(level + 1);
+		getBase().setLevel(level);
+		getExponent().setLevel(level + 1);
 	}
 	
 	//We regard the base operand as the vertical center of the mathObject
