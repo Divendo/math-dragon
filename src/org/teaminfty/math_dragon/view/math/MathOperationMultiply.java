@@ -9,6 +9,8 @@ import android.graphics.Rect;
 
 public class MathOperationMultiply extends MathBinaryOperationLinear
 {
+	public static final String TYPE = "multiply";
+	
     public MathOperationMultiply()
     {}
     
@@ -61,5 +63,11 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
         
         // Draw the children
         drawChildren(canvas);
+    }
+    
+    @Override
+    protected String getType()
+    {
+        return TYPE;
     }
 }

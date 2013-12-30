@@ -2,6 +2,8 @@ package org.teaminfty.math_dragon.view.math;
 
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -57,6 +59,16 @@ public class MathParentheses extends MathObject
     	final Rect childRect = getChild(0).getBoundingBox();
     	return new Rect(0, 0, 2 * (int)(childRect.height() * RATIO) + childRect.width(), childRect.height());
     }
+    
+    public MathObject getChild()
+    {
+        return getChild(0);
+    }
+    
+    public void setChild(MathObject child)
+    {
+        setChild(0, child);
+    }
 
     @Override
     public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
@@ -109,4 +121,11 @@ public class MathParentheses extends MathObject
         drawChildren(canvas);
     }
 
+    @Override
+    public void writeToXML(Document doc, Element el)
+    {
+        Element e = doc.createElement("parentheses");
+        children.get(0).writeToXML(doc, e);
+        el.appendChild(e);
+    }
 }

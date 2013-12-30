@@ -1,6 +1,8 @@
 package org.teaminfty.math_dragon.view.math;
 
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * This class draws binary operations and provides simply functions to modify
@@ -11,6 +13,10 @@ import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 
 public abstract class MathBinaryOperation extends MathObject
 {
+	public static final String NAME = "operation";
+	public static final String ATTR_OPERANDS = "operands";
+	public static final String ATTR_TYPE = "type";
+	
     public MathBinaryOperation()
     {
         this(null, null);
@@ -101,5 +107,17 @@ public abstract class MathBinaryOperation extends MathObject
     public MathObject getRight()
     {
         return getChild(1);
+    }
+    
+    protected abstract String getType();
+    
+    public void writeToXML(Document doc, Element el)
+    {
+        Element e = doc.createElement(NAME);
+        e.setAttribute(ATTR_OPERANDS, "2");
+        e.setAttribute(ATTR_TYPE, getType());
+        getLeft().writeToXML(doc, e);
+        getRight().writeToXML(doc, e);
+        el.appendChild(e);
     }
 }

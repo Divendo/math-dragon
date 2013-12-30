@@ -9,6 +9,8 @@ import android.graphics.Rect;
 
 public class MathOperationSubtract extends MathBinaryOperationLinear
 {
+	public static final String TYPE = "subtract";
+	
     public MathOperationSubtract()
     {}
 
@@ -50,5 +52,11 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
         
         // Draw the children
         drawChildren(canvas);
+    }
+    
+    @Override
+    protected String getType()
+    {
+        return TYPE;
     }
 }
