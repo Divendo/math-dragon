@@ -59,7 +59,7 @@ public class MathOperationPower extends MathBinaryOperation
      */
     public void setExponent(MathObject o)
     {
-        setLeft(o);
+        setRight(o);
     }
 
     /**
@@ -70,7 +70,7 @@ public class MathOperationPower extends MathBinaryOperation
      */
     public MathObject getExponent()
     {
-        return getLeft();
+        return getRight();
     }
 
 	@Override
