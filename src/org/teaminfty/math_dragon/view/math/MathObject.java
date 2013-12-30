@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.view.HoverState;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -299,4 +301,6 @@ public abstract class MathObject
         for(int i = 0; i < getChildCount(); ++i)
             canvas.drawRect(getChildBoundingBox(i), paint);
     }
+    
+    public abstract void writeToXML(Document doc, Element el);
 }
