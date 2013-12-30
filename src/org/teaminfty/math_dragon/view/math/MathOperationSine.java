@@ -41,11 +41,8 @@ public class MathOperationSine extends MathObjectSinoid
         operatorPaint.setColor(getColor());
 
         // Draw the main operator
-        canvas.save();
-        canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
         operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-        canvas.drawText(tmpStr, bounds.left, textBounding.height() - bounds.height() - bounds.top, operatorPaint);
-        canvas.restore();
+        canvas.drawText(tmpStr, bounds.left, this.getCenter().y + textBounding.height()/2 , operatorPaint);
         
         this.drawChildren(canvas);
 	}

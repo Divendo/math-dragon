@@ -42,12 +42,12 @@ public class MathOperationArcTangent extends MathObjectSinoid
         
         // Set the paint color
         operatorPaint.setColor(getColor());
+        exponentPaint.setColor(getColor());
         
         // Gap between the sin and -1
         final int smallGap = (int) (30 / MathObject.lineWidth);
 
         // Draw the main operator
-        canvas.save();
         canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
         operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
         canvas.drawText(tmpStr, bounds.left, textBounding.height() - bounds.height() - bounds.top, operatorPaint);
@@ -57,7 +57,6 @@ public class MathOperationArcTangent extends MathObjectSinoid
         canvas.drawText(tmpStr2, (x + smallGap) - bounds2.left, bounds.height()/2  , exponentPaint);
         x += bounds2.width();
 
-        canvas.restore();
         this.drawChildren(canvas);
 	}
 

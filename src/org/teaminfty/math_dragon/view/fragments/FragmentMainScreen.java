@@ -46,8 +46,8 @@ public class FragmentMainScreen extends Fragment
         MathOperationArcTangent arctan = new MathOperationArcTangent();
        
         MathOperationAdd add = new MathOperationAdd();
-        add.setChild(0, arcsin);
-        add.setChild(1, five);
+        add.setChild(0, cos);
+        add.setChild(1, arccos);
 
         
         // Just to test MathView

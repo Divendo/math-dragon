@@ -71,9 +71,9 @@ public abstract class MathObjectSinoid extends MathObject
         //if the operator is arcsin, arctan or arccos, get add the size of the -1
     	if(arc == 1)
     	{
-    	operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);	
+    	operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
     	exponentPaint.getTextBounds(tmpStr2, 0, tmpStr2.length(), bounds2);
-    	out.right += bounds.width() + bounds2.width() +((int) (30 / MathObject.lineWidth));
+    	out.right += bounds.width() + bounds2.width();
         out.bottom = Math.max(out.bottom, bounds.height());
     	}
     	
@@ -82,7 +82,7 @@ public abstract class MathObjectSinoid extends MathObject
     	{
         operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
         out.right += bounds.width();
-        out.bottom = Math.max(out.bottom, bounds.height());
+        out.bottom =  bounds.height();
     	}
         return out;
     }
@@ -91,6 +91,7 @@ public abstract class MathObjectSinoid extends MathObject
 	@Override
 	public Rect[] getOperatorBoundingBoxes() 
 	{
+		
 		 return new Rect[]{ sizeAddPadding(getSize(findTextSize(level))) };
 	}
 	
@@ -118,7 +119,7 @@ public abstract class MathObjectSinoid extends MathObject
 	{
 		Rect[] operatorSizes = getOperatorBoundingBoxes();
 		
-		return new Rect(0,0, operatorSizes[0].width() + getChild(0).getBoundingBox().width(), getChild(0).getBoundingBox().height());
+		return new Rect(0,0, operatorSizes[0].width() + getChild(0).getBoundingBox().width(), Math.max(getChild(0).getBoundingBox().height(), operatorSizes[0].height()));
 	}
 
 	
