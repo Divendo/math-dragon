@@ -16,7 +16,7 @@ public class MathSymbolEditor extends View
     /** An enum that represents the symbol we're currently editing */
     public enum EditingSymbol
     {
-        FACTOR, PI, E, I
+        FACTOR, PI, E, I, VAR
     }
     
     /** The factor of this constant */
@@ -33,9 +33,15 @@ public class MathSymbolEditor extends View
     private String iPow = "";
     /** Whether the I constant is shown or not */
     private boolean showI = false;
+    /** The powers of the variables */
+    private String[] varPowers = new String[26];
+    /** The whether or not to show the variables */
+    private boolean[] showVars = new boolean[26];
     
     /** The symbol we're currently editing */
-    EditingSymbol editingSymbol = EditingSymbol.FACTOR;
+    private EditingSymbol editingSymbol = EditingSymbol.FACTOR;
+    /** The variable we're currently editing */
+    private char currVar = 'a';
     
     /** The paint that is used to draw the factor and the constants */
     protected Paint paint = new Paint();
@@ -50,18 +56,24 @@ public class MathSymbolEditor extends View
     {
         super(context);
         initPaints();
+        for(int i = 0; i < varPowers.length; ++i)
+            varPowers[i] = "";
     }
 
     public MathSymbolEditor(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         initPaints();
+        for(int i = 0; i < varPowers.length; ++i)
+            varPowers[i] = "";
     }
 
     public MathSymbolEditor(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
         initPaints();
+        for(int i = 0; i < varPowers.length; ++i)
+            varPowers[i] = "";
     }
 
     /** Initialises the paints */
@@ -73,12 +85,60 @@ public class MathSymbolEditor extends View
         exponentPaint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_font_size) * EXPONENT_FACTOR);
     }
     
+    /** Sets the variable we're currently editing.
+     * @param name The name of the variable */
+    public void setCurrVar(char name)
+    {
+        currVar = name;
+        invalidate();
+    }
+    
+    /** Returns the name of the variable we're currently editing
+     * @return The name of the variable we're currently editing */
+    public char getCurrVar()
+    { return currVar; }
+    
     /** Set the symbol we're currently editing
      * @param newSymbol The symbol we're editing from now on */
     public void setEditingSymbol(EditingSymbol newSymbol)
     {
         editingSymbol = newSymbol;
         invalidate();
+    }
+    
+    /** Toggle the symbol we're currently editing for the given variable name
+     * @param varName The name of the variable we're toggling */
+    public void toggleEditingSymbol(char varName)
+    {
+        if(editingSymbol == EditingSymbol.VAR)
+        {
+            if(currVar == varName)
+                toggleEditingSymbol(EditingSymbol.FACTOR);
+            else
+            {
+                // Set the current variable
+                setCurrVar(varName);
+                
+                // Show the current variable (if it isn't visible already)
+                final int currVarIndex = currVar - 'a';
+                if(!showVars[currVarIndex])
+                {
+                    varPowers[currVarIndex] = "";
+                    showVars[currVarIndex] = true;
+                    if(factor.equals("0"))
+                        factor = "";
+                }
+
+                // Redraw and recalculate the size
+                invalidate();
+                requestLayout();
+            }
+        }
+        else
+        {
+            setCurrVar(varName);
+            toggleEditingSymbol(EditingSymbol.VAR);
+        }
     }
 
     /** Toggle the symbol we're currently editing
@@ -135,6 +195,23 @@ public class MathSymbolEditor extends View
                     setEditingSymbol(EditingSymbol.I);
                 }
             break;
+
+            case VAR:
+                if(editingSymbol == EditingSymbol.VAR)
+                    setEditingSymbol(EditingSymbol.FACTOR);
+                else
+                {
+                    final int currVarIndex = currVar - 'a';
+                    if(!showVars[currVarIndex])
+                    {
+                        varPowers[currVarIndex] = "";
+                        showVars[currVarIndex] = true;
+                        if(factor.equals("0"))
+                            factor = "";
+                    }
+                    setEditingSymbol(EditingSymbol.VAR);
+                }
+            break;
             
             default:
                 setEditingSymbol(newSymbol);
@@ -162,6 +239,10 @@ public class MathSymbolEditor extends View
         showE = false;
         iPow = "";
         showI = false;
+        varPowers = new String[26];
+        for(int i = 0; i < varPowers.length; ++i)
+            varPowers[i] = "";
+        showVars = new boolean[26];
         
         // We'll be editing the factor again
         setEditingSymbol(EditingSymbol.FACTOR);
@@ -210,7 +291,7 @@ public class MathSymbolEditor extends View
         }
         
         // Beautify the display
-        if(factor.equals("1") && (showPi || showE || showI))
+        if(factor.equals("1") && symbolVisible())
             factor = "";
 
         // Redraw and recalculate the size
@@ -227,7 +308,7 @@ public class MathSymbolEditor extends View
         
         // Set the factor
         if(factor.isEmpty())
-            out.setFactor(showPi || showE || showI ? 1 : 0);
+            out.setFactor(symbolVisible() ? 1 : 0);
         else
             out.setFactor(Long.parseLong(factor));
         
@@ -377,6 +458,35 @@ public class MathSymbolEditor extends View
             x += bounds.width();
         }
         
+        // Draw all variables
+        for(int i = 0; i < varPowers.length; ++i)
+        {
+            if(showVars[i])
+            {
+                // Add the padding
+                if(x != 0)
+                    x += symbolPadding;
+                
+                // Set the colours
+                int color = COlOR_NORMAL;
+                if(editingSymbol == EditingSymbol.VAR && currVar - 'a' == i)
+                    color = COLOR_EDITING;
+                paint.setColor(color);
+                exponentPaint.setColor(color);
+                
+                // The variable name
+                String tmpStr = new String(new char[] { (char) ('a' + i) });
+                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
+                canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
+                x += bounds.width();
+
+                // Draw the exponent
+                exponentPaint.getTextBounds(varPowers[i], 0, varPowers[i].length(), bounds);
+                canvas.drawText(varPowers[i], x - bounds.left, -bounds.top, exponentPaint);
+                x += bounds.width();
+            }
+        }
+        
         // Restore the canvas translation
         canvas.restore();
     }
@@ -451,6 +561,27 @@ public class MathSymbolEditor extends View
             exponentPaint.getTextBounds(iPow, 0, iPow.length(), bounds);
             out.right += bounds.width();
         }
+
+        // Add the width of all variables
+        for(int i = 0; i < varPowers.length; ++i)
+        {
+            if(showVars[i])
+            {
+                // Add the padding
+                if(out.right != 0)
+                    out.right += symbolPadding;
+                
+                // The variable name
+                String tmpStr = new String(new char[] { (char) ('a' + i) });
+                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
+                out.right += bounds.width();
+                out.bottom = Math.max(out.bottom, bounds.height());
+
+                // Draw the exponent
+                exponentPaint.getTextBounds(varPowers[i], 0, varPowers[i].length(), bounds);
+                out.right += bounds.width();
+            }
+        }
         
         // Return the result
         return out;
@@ -492,6 +623,16 @@ public class MathSymbolEditor extends View
                     iPow = nStr;
                 else if(!iPow.isEmpty() || !nStr.equals("0"))
                     iPow += nStr;
+            break;
+            
+            case VAR:
+            {
+                final int currVarIndex = currVar - 'a';
+                if(varPowers[currVarIndex].equals("0"))
+                    varPowers[currVarIndex] = nStr;
+                else if(!varPowers[currVarIndex].isEmpty() || !nStr.equals("0"))
+                    varPowers[currVarIndex] += nStr;
+            }
             break;
         }
         
@@ -541,14 +682,41 @@ public class MathSymbolEditor extends View
                     setEditingSymbol(EditingSymbol.FACTOR);
                 }
             break;
+            
+            case VAR:
+            {
+                final int currVarIndex = currVar - 'a';
+                if(varPowers[currVarIndex].length() != 0)
+                    varPowers[currVarIndex] = varPowers[currVarIndex].substring(0, varPowers[currVarIndex].length() - 1);
+                else
+                {
+                    showVars[currVarIndex] = false;
+                    setEditingSymbol(EditingSymbol.FACTOR);
+                }
+            }
+            break;
         }
         
         // If nothing is shown, we show a 0
-        if(factor.length() == 0 && !(showPi || showE || showI))
+        if(factor.length() == 0 && !symbolVisible())
             factor = "0";
         
         // Redraw and recalculate the size
         invalidate();
         requestLayout();
+    }
+    
+    /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible
+     * @return True if one or more symbols are visible, false otherwise */
+    private boolean symbolVisible()
+    {
+        if(showPi || showE || showI)
+            return true;
+        for(int i = 0; i < showVars.length; ++i)
+        {
+            if(showVars[i])
+                return true;
+        }
+        return false;
     }
 }

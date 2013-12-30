@@ -1,5 +1,7 @@
 package org.teaminfty.math_dragon.view.fragments;
 
+import java.util.ArrayList;
+
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSymbolEditor;
 import org.teaminfty.math_dragon.view.math.MathConstant;
@@ -24,6 +26,9 @@ public class FragmentKeyboard extends DialogFragment
     
     /** A {@link MathConstant} we saved for later to set to {@link FragmentKeyboard#mathSymbolEditor mathSymbolEditor} */
     private MathConstant mathSymbolForLater = null;
+    
+    /** We'll keep a list of all variable buttons */
+    private ArrayList<ToggleButton> varButtons = new ArrayList<ToggleButton>();
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -94,6 +99,7 @@ public class FragmentKeyboard extends DialogFragment
         // Generate the buttons for the variables keyboard
         TableLayout varTable = (TableLayout) myFragmentView.findViewById(R.id.table_keyboard_variables);
         final String[] varNames = {"a", "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+        varButtons = new ArrayList<ToggleButton>();
         for(int i = 0; i < varNames.length; )
         {
             inflater.inflate(R.layout.keyboad_variable_button_row, varTable, true);
@@ -107,6 +113,7 @@ public class FragmentKeyboard extends DialogFragment
                     btn.setTextOn(varNames[i]);
                     btn.setTextOff(varNames[i]);
                     btn.setOnClickListener(buttonVarOnClickListener);
+                    varButtons.add(btn);
                     ++i;
                 }
             }
@@ -186,12 +193,24 @@ public class FragmentKeyboard extends DialogFragment
         // Uncheck all buttons
         buttonPi.setChecked(false);
         buttonE.setChecked(false);
+        for(ToggleButton btn : varButtons)
+            btn.setChecked(false);
         
         // Check the right button
         switch(mathSymbolEditor.getEditingSymbol())
         {
             case PI:    buttonPi.setChecked(true);      break;
             case E:     buttonE.setChecked(true);       break;
+            case VAR:
+                for(ToggleButton btn : varButtons)
+                {
+                    if(btn.getText().charAt(0) == mathSymbolEditor.getCurrVar())
+                    {
+                        btn.setChecked(true);
+                        break;
+                    }
+                }
+            break;
             default:    /* Just to suppress warnings */ break;
         }
     }
@@ -293,6 +312,14 @@ public class FragmentKeyboard extends DialogFragment
         @Override
         public void onClick(final View v)
         {
+            // Get the button that is clicked
+            ToggleButton btn = (ToggleButton) v;
+            
+            // Toggle the editing state
+            mathSymbolEditor.toggleEditingSymbol(btn.getText().charAt(0));
+            
+            // Refresh the buttons
+            refreshButtonState();
         }
     }
 }
