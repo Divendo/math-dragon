@@ -25,9 +25,32 @@
         
     </HorizontalScrollView>
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
+        <ToggleButton
+            android:id="@+id/btn_tab_constants"
+            style="@style/KeyboardTabButton"
+            android:text="@string/constants"
+            android:textOn="@string/constants"
+            android:textOff="@string/constants" />
+
+        <ToggleButton
+            android:id="@+id/btn_tab_variables"
+            style="@style/KeyboardTabButton"
+            android:text="@string/variables"
+            android:textOn="@string/variables"
+            android:textOff="@string/variables" />
+
+    </LinearLayout>
+
+    <!-- Constants keyboard -->
+    <TableLayout
+        android:id="@+id/table_keyboard_constants"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
 
         <TableRow
             android:layout_width="match_parent"
@@ -137,6 +160,15 @@
                 style="@style/KeyboardButton"
                 android:text="@string/ok" />
         </TableRow>
+    </TableLayout>
+    
+    <!-- Variables keyboard -->
+    <TableLayout
+        android:id="@+id/table_keyboard_variables"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
     </TableLayout>
 
 </LinearLayout>
