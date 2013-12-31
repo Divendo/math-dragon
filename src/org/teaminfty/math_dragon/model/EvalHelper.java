@@ -10,6 +10,7 @@ import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 import org.teaminfty.math_dragon.view.math.MathOperationAdd;
+import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
@@ -50,6 +51,8 @@ public class EvalHelper {
                 return pow((MathOperationPower) op);
             if (op instanceof MathOperationRoot)
                 return root((MathOperationRoot) op);
+            if (op instanceof MathOperationDerivative)
+                return derivative((MathOperationDerivative) op);
         }
         else if(o instanceof MathConstant)
             return symbol((MathConstant) o);
@@ -121,5 +124,10 @@ public class EvalHelper {
     public static IExpr sub(MathOperationSubtract sub) throws MathException {
         checkChildren(sub);
         return F.Subtract(eval(sub.getLeft()), eval(sub.getRight()));
+    }
+    
+    public static IExpr derivative(MathOperationDerivative ddx) throws MathException {
+        checkChildren(ddx);
+        return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
     }
 }

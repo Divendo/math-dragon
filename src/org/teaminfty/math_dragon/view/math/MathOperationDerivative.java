@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -146,16 +142,6 @@ public class MathOperationDerivative extends MathBinaryOperation
         int height = sizes[0].height() + sizes[1].height() + sizes[2].height();
 
         return new Rect(0, 0, width, height);
-    }
-    
-    @Override
-    public IExpr eval() throws EmptyChildException
-    {
-        // Check if the children are not empty
-        this.checkChildren();
-        
-        // Return the result
-        return F.D(getLeft().eval(), getRight().eval());
     }
     
     @Override
