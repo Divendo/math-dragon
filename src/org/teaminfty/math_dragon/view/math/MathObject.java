@@ -2,6 +2,10 @@ package org.teaminfty.math_dragon.view.math;
 
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.teaminfty.math_dragon.view.HoverState;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -291,8 +295,32 @@ public abstract class MathObject
             canvas.drawRect(getChildBoundingBox(i), paint);
     }
     
-    /**
-     * Serialize current instance in a XML document in a specified element. 
+    /** The name of the XML root element */
+    public static final String XML_ROOT = "root";
+
+    /** The current version of the XML structure */
+    public static final int XML_VERSION = 1;
+    
+    /** Creates an empty XML document that can be used for the {@link MathObject#writeToXML(Document, Element) writeToXML()} method
+     * @return The created document 
+     * @throws ParserConfigurationException If something goes wrong while creating the document */
+    public static Document createXMLDocument() throws ParserConfigurationException
+    {
+        // Create an empty document
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        
+        // Create a root element
+        Element root = doc.createElement(XML_ROOT);
+        root.setAttribute("version", Integer.toString(XML_VERSION));
+        doc.appendChild(root);
+        
+        // Return the document
+        return doc;
+    }
+    
+    /** Serialize current instance in a XML document in a specified element. 
      * @param doc The XML document
      * @param parent The parent XML element
      */

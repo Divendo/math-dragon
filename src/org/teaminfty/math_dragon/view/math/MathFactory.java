@@ -43,8 +43,8 @@ public final class MathFactory
                         );
             } else if (type.equals(MathOperationRoot.TYPE)) {
                 return new MathOperationRoot(
-                        toMath((Element) e.getFirstChild()),
-                        toMath((Element) e.getLastChild())
+                        toMath((Element) e.getLastChild()),
+                        toMath((Element) e.getFirstChild())
                         );
             }
         } catch (RuntimeException ex) {}
@@ -82,6 +82,7 @@ public final class MathFactory
      * @throws ParseException Thrown if anything couldn't be parsed.
      */
     public static MathObject fromXML(Document doc) throws ParseException {
-        return toMath(doc.getDocumentElement());
+        Element root = doc.getDocumentElement();
+        return toMath((Element) root.getFirstChild());
     }
 }
