@@ -46,6 +46,11 @@ public final class MathFactory
                         toMath((Element) e.getLastChild()),
                         toMath((Element) e.getFirstChild())
                         );
+            } else if (type.equals(MathOperationDerivative.TYPE)) {
+                return new MathOperationDerivative(
+                        toMath((Element) e.getFirstChild()),
+                        toMath((Element) e.getLastChild())
+                        );
             }
         } catch (RuntimeException ex) {}
         throw new ParseException(e.getTagName() + "." + type);
