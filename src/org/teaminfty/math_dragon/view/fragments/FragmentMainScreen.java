@@ -5,6 +5,10 @@ import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.MathOperationArcCos;
+import org.teaminfty.math_dragon.view.math.MathOperationCosine;
+import org.teaminfty.math_dragon.view.math.MathOperationLn;
+import org.teaminfty.math_dragon.view.math.MathOperationLog;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -37,7 +41,7 @@ public class FragmentMainScreen extends Fragment
     {
         super.onStart();
         
-        /*// Create MathObjects to test the functionality 
+        /* Create MathObjects to test the functionality 
         MathConstant five = new MathConstant("5", 100,100);
         MathOperationDivide div = new MathOperationDivide(100,100);
         div.setChild(0, five);
@@ -58,6 +62,11 @@ public class FragmentMainScreen extends Fragment
         // Just to test MathView
         MathView mathView = (MathView) getView().findViewById(R.id.mathView);
         mathView.setMathObject(root);*/
+        MathOperationLog cos = new MathOperationLog();
+        MathView mathView = (MathView) getView().findViewById(R.id.mathView);
+        mathView.setMathObject(cos);
+        
+        
     }
 
     /** Clears the current formula */

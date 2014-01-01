@@ -32,8 +32,7 @@ public class MathOperationSine extends MathObjectSinoid
         // Get the text size and the bounding box
         final float textSize = findTextSize(level);
         Rect textBounding = getSize(textSize);
-        Rect totalBounding = sizeAddPadding(textBounding);
-
+        
         // Set the text size
         operatorPaint.setTextSize(textSize);
         
@@ -44,6 +43,7 @@ public class MathOperationSine extends MathObjectSinoid
         operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
         canvas.drawText(tmpStr, bounds.left, this.getCenter().y + textBounding.height()/2 , operatorPaint);
         
+        super.draw(canvas);
         this.drawChildren(canvas);
 	}
 

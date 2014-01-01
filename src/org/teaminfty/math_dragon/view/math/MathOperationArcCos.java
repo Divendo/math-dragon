@@ -54,6 +54,8 @@ public class MathOperationArcCos extends MathObjectSinoid
         operatorPaint.getTextBounds(tmpStr2, 0, tmpStr2.length(), bounds2);
         canvas.drawText(tmpStr2, (x + smallGap) - bounds2.left, this.getCenter().y - (textBounding.height())/2 + bounds2.height()/2 , exponentPaint);
         x += bounds2.width();
+        
+        super.draw(canvas);
         this.drawChildren(canvas);
 	}
 

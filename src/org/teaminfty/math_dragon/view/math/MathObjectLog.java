@@ -8,7 +8,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public abstract class MathObjectSinoid extends MathObject 
+public abstract class MathObjectLog extends MathBinaryOperationLinear
 {
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
@@ -30,9 +30,8 @@ public abstract class MathObjectSinoid extends MathObject
     final float HALF_RATIO = 0.5f / 1.61803398874989f;
     public final float FULL_RATIO = 1 / 1.61803398874989f;
     
-    public MathObjectSinoid()
+    public MathObjectLog()
     {
-        children.add(new MathObjectEmpty());
         operatorPaint.setStyle(Paint.Style.STROKE);
         operatorPaint.setAntiAlias(true);
     }
@@ -100,16 +99,36 @@ public abstract class MathObjectSinoid extends MathObject
 	//Returns the bounding boxes of the Operator
 	@Override
 	public Rect[] getOperatorBoundingBoxes() 
-	{
-		final Rect childRect = getChild(0).getBoundingBox();
-    	final int width = (int)(childRect.height() * RATIO);
+	{	
+		Rect[]	childrenSize = getChildrenSize();
+    	final int width = (int)(childrenSize[1].height() * RATIO);
+    	final int height = childrenSize[1].height();
+    	
     	Rect vierkant = sizeAddPadding(getSize(findTextSize(level)));
-    	System.out.println(width);
-    	System.out.println("vierkant" + vierkant.width());
+    	vierkant.offsetTo(childrenSize[0].width(), 0);
+    	
         
 		 return new Rect[]{ vierkant,
-				 new Rect(vierkant.width(), 0, vierkant.width() + width, childRect.height()), 
-				 new Rect(vierkant.width() + width + childRect.width(), 0,vierkant.width() + childRect.width() + 2* width, childRect.height())};
+				 new Rect(vierkant.width() + childrenSize[0].width(), 0, vierkant.width() + width + childrenSize[0].width(), height), 
+				 new Rect(vierkant.width() + width + childrenSize[0].width() + childrenSize[1].width(), 0,vierkant.width() + childrenSize[0].width() + childrenSize[1].width() + 2* width, height)};
+	}
+	
+	@Override
+	public void setLevel(int l)
+	{
+		level = l;
+		getChild(0).setLevel(level + 2);
+		getChild(1).setLevel(level);
+	}
+	
+	public Rect[] getChildrenSize()
+	{
+		// Get the sizes both operands want to take
+        Rect leftSize = getChild(0).getBoundingBox();
+        Rect rightSize = getChild(1).getBoundingBox();
+        
+        // Return the Sizes
+		return new Rect[] {leftSize, rightSize};
 	}
 	
 	@Override
@@ -121,13 +140,15 @@ public abstract class MathObjectSinoid extends MathObject
         
 		//Gets the needed sizes and centers
 		Rect[] operatorSizes = getOperatorBoundingBoxes();
-		Rect childSize = getChild(index).getBoundingBox();
+		Rect[] childSize = getChildrenSize();
 		int centerY = this.getCenter().y;
-		int centerY_child = this.getChild(0).getCenter().y;
+		int centerY_child = this.getChild(1).getCenter().y;
 		
 		//offsets the child.
-		childSize.offsetTo(operatorSizes[0].width() + operatorSizes[1].width(), centerY - centerY_child );
-		return childSize;
+		childSize[0].offsetTo(0, centerY - (operatorSizes[0].height() + childSize[0].height())/2);
+		childSize[1].offsetTo(childSize[0]. width() + operatorSizes[0].width() + operatorSizes[1].width(), centerY - centerY_child );
+		
+		return childSize[index];
 	}
 	
 	//Complete bounding box
@@ -135,16 +156,20 @@ public abstract class MathObjectSinoid extends MathObject
 	public Rect getBoundingBox()
 	{
 		Rect[] operatorSizes = getOperatorBoundingBoxes();
-		System.out.println("operator" + operatorSizes[1].width());
+		Rect[] childrenSize = getChildrenSize();
 		
-		return new Rect(0,0, operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + getChild(0).getBoundingBox().width(), Math.max(getChild(0).getBoundingBox().height(), operatorSizes[0].height()));
+		return new Rect(0,0, operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + childrenSize[0].width() + childrenSize[1].width(), childrenSize[0].height() + childrenSize[1].height());
 	}
 
 	
 	@Override
 	public Point getCenter()
 	{		
-		return new Point(getBoundingBox().centerX(), getBoundingBox().centerY());
+		Rect[] operatorSizes = getOperatorBoundingBoxes();
+		Rect[] childrenSize = getChildrenSize();
+		
+		Rect betaBounding = new Rect(0,0, operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + childrenSize[0].width() + childrenSize[1].width(), childrenSize[0].height() + childrenSize[1].height());
+		return new Point(betaBounding.centerX(), betaBounding.centerY());
 	}
 	
 	@Override

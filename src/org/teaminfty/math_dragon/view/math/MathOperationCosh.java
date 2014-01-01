@@ -43,6 +43,7 @@ public class MathOperationCosh extends MathObjectSinoid
         operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
         canvas.drawText(tmpStr, bounds.left, this.getCenter().y + textBounding.height()/2 , operatorPaint);
         
+        super.draw(canvas);
         this.drawChildren(canvas);
 	}
 
