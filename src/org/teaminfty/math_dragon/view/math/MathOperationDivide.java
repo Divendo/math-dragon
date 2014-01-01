@@ -115,7 +115,7 @@ public class MathOperationDivide extends MathBinaryOperation
         // Get the operator bounding box
         Rect operatorBounding = getOperatorBoundingBoxes()[0];
         
-        // Return the centre, which is the centre of the operator
+        // Return the center, which is the center of the operator
         return new Point(operatorBounding.centerX(), operatorBounding.centerY());
     }
     

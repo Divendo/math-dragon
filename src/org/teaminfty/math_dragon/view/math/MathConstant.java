@@ -359,7 +359,7 @@ public class MathConstant extends MathObject
         if(tmpStr != "" && !addMinusSign)
         {
             paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            canvas.drawText(tmpStr, -bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
+            canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
             x += bounds.width();
             tmpStr = "";
         }
