@@ -192,7 +192,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
                 .findFragmentById(R.id.fragmentEvaluation);
 
-        MathSymbol mathConstant = new MathSymbol("42");
+        MathSymbol mathConstant = new MathSymbol(42,0,0,0,null);
         fragmentEvaluation.showMathObject(mathConstant);
     }
 

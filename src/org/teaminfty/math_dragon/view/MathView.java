@@ -78,7 +78,6 @@ public class MathView extends View
         // Remember the new MathObject, if it is null we create a MathObjectEmpty
         if((mathObject = newMathObject) == null)
             mathObject = new MathObjectEmpty();
-        
         // Set the default size and the level for the MathObject
         mathObject.setDefaultHeight((int) mathObjectDefaultHeight);
         mathObject.setLevel(0);

@@ -68,7 +68,8 @@ public final class ModelHelper
         else if(expr.isFraction())
         {
             IRational rational = (IRational) expr;
-            return new MathOperationDivide(new MathSymbol(Long.toString(rational.getNumerator().longValue())), new MathSymbol(Long.toString(rational.getDenominator().longValue())));
+            return new MathOperationDivide(new MathSymbol(rational.getNumerator().longValue(),0,0,0,new long[]{}),
+                          new MathSymbol(rational.getDenominator().longValue(),0,0,0,new long[]{}));
         }
         else if(expr instanceof Symbol)
         {
@@ -78,7 +79,10 @@ public final class ModelHelper
 
             if(str.matches("[a-df-hj-z]"))
             {
-                MathSymbol v = new MathSymbol(str);
+                int idx = str.charAt(0) - 'a';
+                long vars[] = new long[26];
+                vars[idx] = 1;
+                MathSymbol v = new MathSymbol(0,0,0,0,vars);
                 return v;
             }
             MathSymbol c = new MathSymbol();

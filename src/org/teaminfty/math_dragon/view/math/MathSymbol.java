@@ -9,6 +9,7 @@ import org.teaminfty.math_dragon.exceptions.NotConstantException;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 
 /** This class represents a math constant */
 public class MathSymbol extends MathObject
@@ -21,6 +22,9 @@ public class MathSymbol extends MathObject
     private long piPow = 0;
     /** The power of the imaginary unit */
     private long iPow = 0;
+    
+    
+    private long varPows[];
     
     /** The paint that is used to draw the factor and the constants */
     protected Paint paint = new Paint();
@@ -38,32 +42,19 @@ public class MathSymbol extends MathObject
     
     
     
+    private final static char[] POWS = new char[] {'\u2070', '\u00b9', '\u00b2',
+            '\u00b3','\u2074','\u2075','\u2076','\u2077', '\u2078', '\u2079'};
+    
+    
+    
+    
+    
     private final ISymbol variable;
 
     /** Default constructor */
     public MathSymbol()
     { 
-        this(0, 0, 0, 0);
-    }
-
-    /** Constructor, constructs with the given value
-     * @param value The value that this constant should be initialized with
-     */
-    public MathSymbol(String value)
-    {
-        
-        super();
-        initPaints();
-        if (value.matches("[a-df-hj-z]"))
-        {
-            this.variable = SYMBOLS[value.charAt(0) - 'a'];
-        }
-        else
-        {
-            readString(value);
-            this.variable = null;
-        }
-
+        this(0, 0, 0, 0, new long[0]);
     }
     
     /** Construct mathematical constant using specified values for simplicity.
@@ -72,13 +63,14 @@ public class MathSymbol extends MathObject
      * @param piPow The pi power
      * @param iPow The imaginary power
      */
-    public MathSymbol(long factor, long ePow, long piPow, long iPow)
+    public MathSymbol(long factor, long ePow, long piPow, long iPow, long[]varPows)
     {
     	initPaints();
     	this.factor = factor;
     	this.ePow = ePow;
     	this.piPow = piPow;
     	this.iPow = iPow;
+    	this.varPows = varPows;
     	this.variable = null;
     }
     
@@ -88,112 +80,30 @@ public class MathSymbol extends MathObject
         paint.setAntiAlias(true);
         exponentPaint.setAntiAlias(true);
     }
-    
-    /** Resets the value of this constant */
-    private void reset()
-    {
-    	set(0, 0, 0, 0);
-    }
-    
-    /** Used in {@link MathSymbol#readString(String) readString()} to keep track of the current power type */
-    private enum PowerType { factor, i, e, pi }
-    
-    /** Reads the constant from the given string.
-     * The string should be in the form: <tt>&lt;factor&gt;&lt;constant 1&gt;^&lt;constant 1 exponent&gt;&lt;constant 2&gt;^&lt;constant 2 exponent&gt;&lt;etc&gt;</tt>
-     * The constants can be: pi, e or i, the factor and exponents may only be numbers.
-     * For example: "5pi^3" or  "2piei^3".
-     * Note that this method does not much error detection, so passing invalid strings may result in undefined behaviour.
-     * @param value The string representation of the constant
-     */
-    // FIXME fails to parse if <tt>value</tt> equals <tt>Long.MIN_VALUE</tt>
-    public void readString(String value)
-    {
-        // Reset the current values
-        reset();
-        
-        // Loop through the string
-        PowerType type = PowerType.factor;
-        boolean negative = false;
-        for(int i = 0; i < value.length(); ++i)
-        {
-            // If the value is a number, add that number
-            if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
-                    setFactor(getFactor() * 10 + (value.charAt(i) - '0'));
-            // If it is one of the mathematical constants, add them and change the PowerType
-            else
-            {
-                // A minus sign negates the sign of the constant
-                if(value.charAt(i) == '-')
-                {
-                    negative = !negative;
-                    continue;
-                }
 
-                // If we're still the first character, then there is an implicit 1
-                if(i == 0)
-                    setFactor(1);
-                
-                // Check for constants
-                if(value.charAt(i) == 'i')
+    /**
+     * Helper method for appending literals.
+     * @param sb
+     * @param c
+     * @param pow
+     */
+    private static void appendLit(StringBuilder sb, char c, long pow)
+    {
+        if (pow != 0)
+        {
+            sb.append(c);
+            if (pow != 1)
+            {
+                long num = pow;
+                StringBuilder sb2 = new StringBuilder();
+                while (num > 0)
                 {
-                    setIPow(getIPow() + 1);
-                    type = PowerType.i;
+                    sb2.append(POWS[(int) (num % 10)]);
+                    num /= 10;
                 }
-                else if(value.charAt(i) == 'e')
-                {
-                    setEPow(getEPow() + 1);
-                    type = PowerType.e;
-                }
-                // If you see a 'p', check if they mean 'pi'.
-                else if(value.charAt(i) == 'p')
-                {
-                    i++;
-                    if (value.charAt(i) == 'i')
-                    {
-                        setPiPow(getPiPow() + 1);
-                        type = PowerType.pi;
-                    }
-                }
-                // If you see the sign for power, check which power you were handling and handle that
-                else if(value.charAt(i) == '^')
-                {
-                    // Determine whether or not the power is negative
-                    boolean powNegative = value.charAt(++i) == '-';
-                    if(powNegative) ++i;
-                    
-                    // Determine the power
-                    long tempPow = 0;
-                    while(i < value.length())
-                    {
-                        if(value.charAt(i) >= '0' && value.charAt(i)<= '9')
-                        {
-                            tempPow = 10 * tempPow + value.charAt(i) - '0';
-                            i++;
-                        }
-                        else   // Don't forget the useful information that you can't use here!
-                        {
-                            i--;
-                            break;
-                        }
-                    }
-                    
-                    // Add the power to the right power variable
-                    // Subtract 1 from the power because that was added before (in case no exponent would be specified)
-                    if(type == PowerType.factor)
-                        setFactor((long) Math.pow(getFactor(), tempPow));
-                    else if(type == PowerType.i)
-                        setIPow(getIPow() + tempPow - 1);
-                    else if(type == PowerType.e)
-                        setEPow(getEPow() + tempPow - 1);
-                    else if(type == PowerType.pi)
-                        setPiPow(getPiPow() + tempPow - 1);
-                }
+                sb.append(sb2.reverse());
             }
         }
-        
-        // If value is negative, just negate the factor
-        if(negative)
-            setFactor(getFactor() * -1);
     }
     
     /** Calculates the size of this {@link MathSymbol} when using the given font size
@@ -209,82 +119,11 @@ public class MathSymbol extends MathObject
         // Calculate the total width and the height of the text
         Rect out = new Rect(0, 0, 0, 0);
         Rect bounds = new Rect();
-        
-        // First add the width of the factor part
-        String tmpStr = Long.toString(getFactor());
-        if((getPiPow() | getEPow() | getIPow()) != 0)
-        {
-            if(getFactor() == 1)
-                tmpStr = "";
-            else if(getFactor() == -1)
-                tmpStr = "-";
-        }
-        if(tmpStr != "")
-        {
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            out.right += bounds.width();
-            out.bottom = bounds.height();
-        }
-
-        // We only show the other constants if the factor is not 0
-        if(getFactor() != 0)
-        {
-            // Add the width of the PI constant
-            if(getPiPow() != 0)
-            {
-                // The PI sign
-                tmpStr = "\u03C0";
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                out.right += bounds.width();
-                out.bottom = Math.max(out.bottom, bounds.height());
-
-                // The exponent
-                if(getPiPow() != 1)
-                {
-                    tmpStr = Long.toString(getPiPow());
-                    exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                    out.right += bounds.width();
-                }
-            }
-            
-            // Add the width of the E constant
-            if(getEPow() != 0)
-            {
-                // The e sign
-                tmpStr = "e";
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                out.right += bounds.width();
-                out.bottom = Math.max(out.bottom, bounds.height());
-                
-                // The exponent
-                if(getEPow() != 1)
-                {
-                    tmpStr = Long.toString(getEPow());
-                    exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                    out.right += bounds.width();
-                }
-            }
-            
-            // Add the width of the imaginary unit
-            if(getIPow() != 0)
-            {
-                // The i sign
-                tmpStr = "i";
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                out.right += bounds.width();
-                out.bottom = Math.max(out.bottom, bounds.height());
-                
-                // The exponent
-                if(getIPow() != 1)
-                {
-                    tmpStr = Long.toString(getIPow());
-                    exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                    out.right += bounds.width();
-                }
-            }
-        }
-        
-        // Return the result
+        String str = toString();
+        str = str.substring(1, str.length() - 1);
+        paint.getTextBounds(str, 0, str.length(), bounds);      
+        out.right = bounds.width();
+        out.bottom = bounds.height();
         return out;
     }
 
@@ -297,8 +136,7 @@ public class MathSymbol extends MathObject
         // Copy the rectangle
         Rect out = new Rect(size);
         
-        // Add the padding
-        out.inset(-out.width() / 10, -out.height() / 10);
+        out.inset(-(int)(MathObject.lineWidth  * 2.5), -(int)(MathObject.lineWidth * 2.5));
         out.offsetTo(0, 0);
         
         // Return the result
@@ -316,13 +154,6 @@ public class MathSymbol extends MathObject
     @Override
     public Rect[] getOperatorBoundingBoxes()
     {
-        if(variable != null)
-        {
-            paint.setTextSize(findTextSize(level));
-            Rect bounds = new Rect();
-            paint.getTextBounds(variable.toString().toLowerCase(), 0, 1, bounds);
-            return new Rect[] {sizeAddPadding(bounds)};
-        }
         // Find the right text size and return the bounding box for it
         return new Rect[]{ sizeAddPadding(getSize(findTextSize(level))) };
     }
@@ -337,27 +168,6 @@ public class MathSymbol extends MathObject
     
     public void draw(Canvas canvas)
     {
-        if (variable != null)
-        {
-
-            String c = variable.toString().toLowerCase();
-            // Draw the bounding boxes
-            drawBoundingBoxes(canvas);
-            
-            // Set the text size and calculate the bounding boxes
-            paint.setTextSize(findTextSize(level));
-            Rect textBounding = new Rect();
-            paint.getTextBounds(c, 0, 1, textBounding);
-            Rect totalBounding = sizeAddPadding(textBounding);
-
-            // Draw the variable
-            canvas.save();
-            canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
-            paint.setColor(getColor());
-            canvas.drawText(c, -textBounding.left, -textBounding.top, paint);
-            canvas.restore();
-            return;
-        }
         // Draw the bounding boxes
         drawBoundingBoxes(canvas);
         
@@ -377,111 +187,37 @@ public class MathSymbol extends MathObject
         // Translate the canvas
         canvas.save();
         canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
+
         
-        // Keep track the x-coordinate where the next string should be drawn
-        int x = 0;
+        StringBuilder sb = new StringBuilder();
         
-        // Draw the factor part
-        String tmpStr = Long.toString(getFactor());
+        if (factor == -1)
+        {
+            sb.append("-");
+        }
+        else
+        {
+            sb.append(Long.toString(factor));
+        }
+        
+        if (factor != 0)
+        {
+            appendLit(sb,'\u03c0', piPow);
+            appendLit(sb, 'e', ePow);
+            appendLit(sb, 'i', iPow);
+            for (int i = 0; i < varPows.length; i++) appendLit(sb, (char)(i+'a'), varPows[i]);
+        }
+        String str = toString();
+        str = str.substring(1, str.length() - 1);
         Rect bounds = new Rect();
-        boolean addMinusSign = false;
-        if((getPiPow() | getEPow() | getIPow()) != 0)
-        {
-            if(getFactor() == 1)
-                tmpStr = "";
-            else if(getFactor() == -1)
-                addMinusSign = true;    // Just remember to add a minus sign to the next constant
-        }
-        if(tmpStr != "" && !addMinusSign)
-        {
-            paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-            canvas.drawText(tmpStr, -bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-            x += bounds.width();
-            tmpStr = "";
-        }
-        
-        // Only draw the other constants if the factor is not 0
-        if(getFactor() != 0)
-        {
-            // Draw the PI constant
-            if(getPiPow() != 0)
-            {
-                // The PI sign
-                tmpStr = (addMinusSign ? "-" : "") + "\u03C0";
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-                x += bounds.width();
-                
-                // The exponent
-                if(getPiPow() != 1)
-                {
-                    tmpStr = Long.toString(getPiPow());
-                    exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                    canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
-                    x += bounds.width();
-                }
-                
-                // If we've been here the minus sign has been added (if it was to be added)
-                addMinusSign = false;
-            }
-            
-            // Draw the E constant
-            if(getEPow() != 0)
-            {
-                // The E sign
-                tmpStr = (addMinusSign ? "-" : "") + "e";
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-                x += bounds.width();
-                tmpStr = "";
-                
-                // The exponent
-                if(getEPow() != 1)
-                {
-                    tmpStr = Long.toString(getEPow());
-                    exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                    canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
-                    x += bounds.width();
-                }
-                
-                // If we've been here the minus sign has been added (if it was to be added)
-                addMinusSign = false;
-            }
-            
-            // Draw the imaginary unit
-            if(getIPow() != 0)
-            {
-                // The imaginary unit sign
-                tmpStr = (addMinusSign ? "-" : "") + "i";
-                paint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                canvas.drawText(tmpStr, x - bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
-                x += bounds.width();
-                tmpStr = "";
-                
-                // The exponent
-                if(getIPow() != 1)
-                {
-                    tmpStr = Long.toString(getIPow());
-                    exponentPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-                    canvas.drawText(tmpStr, x - bounds.left, -bounds.top, exponentPaint);
-                    x += bounds.width();
-                }
-                
-                // If we've been here the minus sign has been added (if it was to be added)
-                addMinusSign = false;
-            }
-        }
-        
+        paint.getTextBounds(str, 0, str.length(), bounds);
+        canvas.drawText(str, -bounds.left, textBounding.height() - bounds.height() - bounds.top, paint);
         // Restore the canvas translation
         canvas.restore();
     }
     
     public IExpr eval()
     {
-        if (variable != null)
-        {
-            return variable;
-        }
         // This will be our result, and if the factor is 0, we're done already
         IExpr result = F.ZZ(getFactor());
         if(getFactor() == 0) return result;
@@ -493,6 +229,15 @@ public class MathSymbol extends MathObject
             result = F.Times(result, F.Power(F.E, getEPow()));
         if(getIPow() != 0)
             result = F.Times(result, F.Power(F.I, getIPow()));
+        
+        
+        for (int i = 0; i < varPows.length; i++)
+        {
+            if (varPows[i] != 0)
+            {
+                result = F.Times(result, F.Power(SYMBOLS[i], varPows[i]));
+            }
+        }
         
         // Return the result
         return result;
@@ -539,41 +284,24 @@ public class MathSymbol extends MathObject
     }
     
     /**
-     * Gives the constant as a string (in the format that's supported by {@link MathSymbol#readString(String) readString()}
+     * Gives the constant as a string
      * @return The constant as a string
      */
+    @Override
     public String toString()
     {
-        // Add the factor to the string, if that is 0 we're done
-        String str = Long.toString(getFactor());
-        if(getFactor() == 0) return str;
+        StringBuilder sb = new StringBuilder();
 
-        // Add PI to the string
-        if(getPiPow() != 0)
+        sb.append(factor == -1 ? '-' : Long.toString(factor));
+        if(factor != 0)
         {
-            str += "\u03C0";
-            if(getPiPow() != 1)
-                str += "^" + getPiPow();
+            appendLit(sb, '\u03c0', piPow);
+            appendLit(sb, 'e', ePow);
+            appendLit(sb, 'i', iPow);
+            for(int i = 0; i < varPows.length; i++)
+                appendLit(sb, (char) (i + 'a'), varPows[i]);
         }
-        
-        // Add the constant E to the string
-        if(getEPow() != 0)
-        {
-            str += "e";
-            if(getEPow() != 1)
-                str += "^" + getEPow();
-        }
-        
-        // Add the imaginary unit to the string
-        if(getIPow() != 0)
-        { 
-            str += "i";
-            if(getIPow() != 1)
-                str += "^" + getIPow();
-        }
-        
-        // Return the string
-        return str;
+        return "(" + sb.toString() + ")";
     }
 
     /** Retrieve the ground base number factor.
@@ -636,4 +364,6 @@ public class MathSymbol extends MathObject
 		setPiPow(piPow);
 		setIPow(iPow);
 	}
+	
+
 }
