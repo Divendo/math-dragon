@@ -189,6 +189,10 @@ public class FragmentKeyboard extends DialogFragment
     }
     
     @Override
+    public void onCancel(DialogInterface dialog)
+    { dismiss(); }
+    
+    @Override
     public void onDismiss(DialogInterface dialog)
     {
         mathSymbolEditor = null;
