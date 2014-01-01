@@ -15,8 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 public class FragmentKeyboard extends DialogFragment
@@ -107,13 +106,13 @@ public class FragmentKeyboard extends DialogFragment
         buttonTabNumpad.setChecked(true);
         
         // Generate the buttons for the variables keyboard
-        TableLayout varTable = (TableLayout) myFragmentView.findViewById(R.id.table_keyboard_variables);
+        LinearLayout varTable = (LinearLayout) myFragmentView.findViewById(R.id.table_keyboard_variables);
         final String[] varNames = {"a", "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
         varButtons = new ArrayList<ToggleButton>();
         for(int i = 0; i < varNames.length; )
         {
             inflater.inflate(R.layout.keyboad_variable_button_row, varTable, true);
-            TableRow row = (TableRow) varTable.getChildAt(varTable.getChildCount() - 1);
+            LinearLayout row = (LinearLayout) varTable.getChildAt(varTable.getChildCount() - 1);
             for(int j = 0; j < row.getChildCount(); ++j)
             {
                 if(row.getChildAt(j) instanceof ToggleButton)

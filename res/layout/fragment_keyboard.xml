@@ -46,71 +46,56 @@
     </LinearLayout>
 
     <!-- Numpad keyboard -->
-    <TableLayout
+    <LinearLayout
         android:id="@+id/table_keyboard_numpad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" >
+        android:layout_gravity="center"
+    	android:orientation="vertical" >
 
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" >
+    		android:orientation="horizontal" >
             
-            <FrameLayout
-            	android:layout_width="match_parent"
-            	android:layout_height="match_parent"
-        		android:layout_gravity="center" >
-	            <ToggleButton
-	                android:id="@+id/keyboardButtonT"
-	                style="@style/KeyboardButtonSmall"
-	                android:text="t"
-	                android:textOff="t"
-	                android:textOn="t" />
-            </FrameLayout>
+			<ToggleButton
+			    android:id="@+id/keyboardButtonT"
+			    style="@style/KeyboardButtonSmall"
+			    android:layout_margin="@dimen/keyboard_small_btn_margin"
+			    android:text="t"
+			    android:textOff="t"
+			    android:textOn="t" />
+			
+			<ToggleButton
+			    android:id="@+id/keyboardButtonX"
+			    style="@style/KeyboardButtonSmall"
+			    android:layout_margin="@dimen/keyboard_small_btn_margin"
+			    android:text="x"
+			    android:textOff="x"
+			    android:textOn="x" />
+			
+			<ToggleButton
+			    android:id="@+id/keyboardButtonY"
+			    style="@style/KeyboardButtonSmall"
+			    android:layout_margin="@dimen/keyboard_small_btn_margin"
+			    android:text="y"
+			    android:textOff="y"
+			    android:textOn="y" />
+			
+			<ToggleButton
+			    android:id="@+id/keyboardButtonZ"
+			    style="@style/KeyboardButtonSmall"
+			    android:layout_margin="@dimen/keyboard_small_btn_margin"
+			    android:text="z"
+			    android:textOff="z"
+			    android:textOn="z" />
             
-            <FrameLayout
-            	android:layout_width="match_parent"
-            	android:layout_height="match_parent"
-        		android:layout_gravity="center" >
-	            <ToggleButton
-	                android:id="@+id/keyboardButtonX"
-	                style="@style/KeyboardButtonSmall"
-	                android:text="x"
-	                android:textOff="x"
-	                android:textOn="x" />
-            </FrameLayout>
-            
-            <FrameLayout
-            	android:layout_width="match_parent"
-            	android:layout_height="match_parent"
-        		android:layout_gravity="center" >
-	            <ToggleButton
-	                android:id="@+id/keyboardButtonY"
-	                style="@style/KeyboardButtonSmall"
-	                android:text="y"
-	                android:textOff="y"
-	                android:textOn="y" />
-            </FrameLayout>
-            
-            <FrameLayout
-            	android:layout_width="match_parent"
-            	android:layout_height="match_parent"
-        		android:layout_gravity="center" >
-	            <ToggleButton
-	                android:id="@+id/keyboardButtonZ"
-	                style="@style/KeyboardButtonSmall"
-	                android:text="z"
-	                android:textOff="z"
-	                android:textOn="z" />
-            </FrameLayout>
-            
-        </TableRow>
+        </LinearLayout>
         
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" >
+    		android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/keyboardButton1"
@@ -134,12 +119,12 @@
                 android:text="@string/pi"
                 android:textOff="@string/pi"
                 android:textOn="@string/pi" />
-        </TableRow>
+        </LinearLayout>
 
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" >
+    		android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/keyboardButton4"
@@ -162,12 +147,12 @@
                 android:text="@string/e_eulers_number"
                 android:textOff="@string/e_eulers_number"
                 android:textOn="@string/e_eulers_number" />
-        </TableRow>
+        </LinearLayout>
 
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" >
+    		android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/keyboardButton7"
@@ -190,12 +175,12 @@
                 android:text="@string/iota"
                 android:textOff="@string/iota"
                 android:textOn="@string/iota" />
-        </TableRow>
+        </LinearLayout>
 
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" >
+    		android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/keyboardButton0"
@@ -216,16 +201,17 @@
                 android:id="@+id/keyboardButtonConfirm"
                 style="@style/KeyboardButton"
                 android:text="@string/ok" />
-        </TableRow>
-    </TableLayout>
+        </LinearLayout>
+    </LinearLayout>
     
-    <!-- Variables keyboard -->
-    <TableLayout
+    <LinearLayout
         android:id="@+id/table_keyboard_variables"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" >
-    </TableLayout>
+        android:layout_gravity="center"
+    	android:gravity="center"
+    	android:orientation="vertical" >
+    </LinearLayout>
 
 </LinearLayout>

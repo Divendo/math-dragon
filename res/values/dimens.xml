@@ -24,5 +24,6 @@
     <dimen name="math_symbol_editor_padding">16dp</dimen>
     <dimen name="keyboard_button_margin">8dp</dimen>
     <dimen name="keyboard_padding">16dp</dimen>
+    <dimen name="keyboard_small_btn_margin">16dp</dimen>
 
 </resources>
