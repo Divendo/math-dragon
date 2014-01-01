@@ -1,5 +1,7 @@
 package org.teaminfty.math_dragon.view.math;
 
+import java.util.Arrays;
+
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -40,16 +42,8 @@ public class MathSymbol extends MathObject
             F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r,
             F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
     
-    
-    
     private final static char[] POWS = new char[] {'\u2070', '\u00b9', '\u00b2',
             '\u00b3','\u2074','\u2075','\u2076','\u2077', '\u2078', '\u2079'};
-    
-    
-    
-    
-    
-    private final ISymbol variable;
 
     /** Default constructor */
     public MathSymbol()
@@ -71,7 +65,6 @@ public class MathSymbol extends MathObject
     	this.piPow = piPow;
     	this.iPow = iPow;
     	this.varPows = varPows;
-    	this.variable = null;
     }
     
     /** Initialises the paints */
@@ -275,12 +268,13 @@ public class MathSymbol extends MathObject
      */
     public boolean equals(Object o)
     {
-    	if (!(o instanceof MathSymbol))
-    		return false;
-    	MathSymbol c = (MathSymbol) o;
-    	if (variable == null)
-    	    return c.factor == factor && c.ePow == ePow && c.piPow == piPow && c.iPow == iPow;
-    	else return c.variable.toString().toLowerCase().equals(variable.toString().toLowerCase());
+        if(!(o instanceof MathSymbol))
+            return false;
+        MathSymbol c = (MathSymbol) o;
+
+        return c.factor == factor && c.ePow == ePow && c.piPow == piPow
+                && c.iPow == iPow && Arrays.equals(c.varPows, varPows);
+
     }
     
     /**
