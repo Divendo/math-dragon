@@ -1,9 +1,7 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.matheclipse.core.interfaces.ISymbol;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -12,16 +10,16 @@ import android.graphics.Rect;
 
 public class MathVariable extends MathObject
 {
+	/** The XML element name */
+	public static final String NAME = "variable";
+	/** The name XML element attribute */
+	public static final String ATTR_NAME = "name";
+	
     /** The name of the variable */
     private String c;
     
     /** The paint that is used to draw the variable */
     private final Paint paint = new Paint();
-
-    /** Symbol lookup table */
-    private final ISymbol[] symbols = new ISymbol[] {F.a, F.b, F.c, F.d, F.e,
-            F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r,
-            F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
     /** Default constructor */
     public MathVariable()
@@ -61,15 +59,6 @@ public class MathVariable extends MathObject
         
         // Return the result
         return out;
-    }
-
-    /**
-     * simply looks up the correct Symja symbol in a symbol table
-     */
-    @Override
-    public IExpr eval() throws EmptyChildException
-    {
-       return symbols[c.charAt(0) - 'a'];
     }
     
     /**
@@ -112,4 +101,11 @@ public class MathVariable extends MathObject
         canvas.restore();
     }
 
+	@Override
+	public void writeToXML(Document doc, Element el)
+	{
+		Element e = doc.createElement(NAME);
+		e.setAttribute(ATTR_NAME, c);
+		el.appendChild(e);
+	}
 }

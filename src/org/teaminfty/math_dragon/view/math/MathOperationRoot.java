@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -12,7 +8,9 @@ import android.graphics.Rect;
 
 public class MathOperationRoot extends MathBinaryOperation
 {
-     protected Paint operatorPaint = new Paint();
+	public static final String TYPE = "root";
+	
+    protected Paint operatorPaint = new Paint();
     
     public MathOperationRoot()
     { this(null, null); }
@@ -25,15 +23,49 @@ public class MathOperationRoot extends MathBinaryOperation
         operatorPaint.setAntiAlias(true);
         operatorPaint.setStyle(Paint.Style.STROKE);
     }
-
-    @Override
-    public IExpr eval() throws EmptyChildException 
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to base expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setBase(MathObject o)
     {
-        // Check the children
-        this.checkChildren();
-        
-        // Return the result
-        return F.Power(getChild(1).eval(), F.Divide(F.ZZ(1), getChild(0).eval()));
+        setLeft(o);
+    }
+
+    /**
+     * Retrieve the base mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The base mathematical expression.
+     */
+    public MathObject getBase()
+    {
+        return getLeft();
+    }
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to exponent expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setExponent(MathObject o)
+    {
+        setRight(o);
+    }
+
+    /**
+     * Retrieve the exponent mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The exponent mathematical expression.
+     */
+    public MathObject getExponent()
+    {
+        return getRight();
     }
 
     @Override
@@ -148,5 +180,11 @@ public class MathOperationRoot extends MathBinaryOperation
         
         // Draw the children
         drawChildren(canvas);
+    }
+    
+    @Override
+    protected String getType()
+    {
+        return TYPE;
     }
 }

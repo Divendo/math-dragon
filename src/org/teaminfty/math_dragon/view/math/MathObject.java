@@ -2,15 +2,20 @@ package org.teaminfty.math_dragon.view.math;
 
 import java.util.ArrayList;
 
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.teaminfty.math_dragon.view.HoverState;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
 /** This class represents a mathematical object that can be drawn */
 public abstract class MathObject
@@ -98,16 +103,6 @@ public abstract class MathObject
         for(MathObject child : children)
             child.setDefaultHeight(defaultHeight);
     }
-    
-
-    /**
-     * Symbolically evaluates this {@link MathObject}
-     * 
-     * @return The symbolic solution of this {@link MathObject}
-     * @throws EmptyChildException
-     *         If an empty child is detected where no empty child is allowed
-     */
-    public abstract IExpr eval() throws EmptyChildException;
 
     /**
      * Returns the bounding boxes of the operator of this {@link MathObject}.
@@ -298,5 +293,40 @@ public abstract class MathObject
         paint.setColor(0x44ff0000);
         for(int i = 0; i < getChildCount(); ++i)
             canvas.drawRect(getChildBoundingBox(i), paint);
+    }
+    
+    /** The name of the XML root element */
+    public static final String XML_ROOT = "root";
+
+    /** The current version of the XML structure */
+    public static final int XML_VERSION = 1;
+    
+    /** Creates an empty XML document that can be used for the {@link MathObject#writeToXML(Document, Element) writeToXML()} method
+     * @return The created document 
+     * @throws ParserConfigurationException If something goes wrong while creating the document */
+    public static Document createXMLDocument() throws ParserConfigurationException
+    {
+        // Create an empty document
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        
+        // Create a root element
+        Element root = doc.createElement(XML_ROOT);
+        root.setAttribute("version", Integer.toString(XML_VERSION));
+        doc.appendChild(root);
+        
+        // Return the document
+        return doc;
+    }
+    
+    /** Serialize current instance in a XML document in a specified element. 
+     * @param doc The XML document
+     * @param parent The parent XML element
+     */
+    public void writeToXML(Document doc, Element parent)
+    {
+    	Log.w("XML", "not a writable element yet");
+    	parent.appendChild(doc.createElement(MathObjectEmpty.NAME));
     }
 }

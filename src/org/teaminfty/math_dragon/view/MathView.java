@@ -62,15 +62,29 @@ public class MathView extends View
     }
     
     /** Set the top-level {@link MathObject}
-     * @param newMathObject The new value for the top-level {@link MathObject}
-     */
+     * @param newMathObject The new value for the top-level {@link MathObject} */
     public void setMathObject(MathObject newMathObject)
     {
         // Reset the translation
-        scrollTranslate.set(0, 0);
+        resetScroll();
         
         // Set the MathObject
         setMathObjectHelper(newMathObject);
+        
+        // Notify the listener of the change
+        mathObjectChanged();
+    }
+
+    /** Set the top-level {@link MathObject} without sending an {@link OnMathObjectChangeListener} event.
+     * This also won't reset the scroll translation.
+     * @param newMathObject The new value for the top-level {@link MathObject} */
+    public void setMathObjectSilent(MathObject newMathObject)
+    {
+        // Set the MathObject
+        setMathObjectHelper(newMathObject);
+        
+        // Make sure the scroll translation is still bounded
+        boundScrollTranslation();
     }
     
     /** Private helper for {@link MathView#setMathObject(MathObject) setMathObject()} */
@@ -85,6 +99,13 @@ public class MathView extends View
         mathObject.setLevel(0);
         
         // Redraw
+        invalidate();
+    }
+    
+    /** Resets the scroll position */
+    public void resetScroll()
+    {
+        scrollTranslate.set(0, 0);
         invalidate();
     }
     
@@ -119,12 +140,35 @@ public class MathView extends View
     { onShowKeyboardListener = listener; }
     
     /** Asks the parent fragment to show the keyboard with the given confirm listener
-         * @param mathConstant The initial value for the input (can be <tt>null</tt>)
+     * @param mathConstant The initial value for the input (can be <tt>null</tt>)
      * @param listener The confirm listener */
     protected void showKeyboard(MathConstant mathConstant, FragmentKeyboard.OnConfirmListener listener)
     {
         if(onShowKeyboardListener != null)
             onShowKeyboardListener.showKeyboard(mathConstant, listener);
+    }
+    
+    /** A listener that can be implemented to be notified of when the {@link MathObject} changes */
+    public interface OnMathObjectChangeListener
+    {
+        /** Called when the {@link MathObject} has changed
+         * @param mathObject The current {@link MathObject} */
+        public void changed(MathObject mathObject);
+    }
+    
+    /** The current {@link OnMathObjectChangeListener} */
+    private OnMathObjectChangeListener onMathObjectChange = null;
+    
+    /** Set the current {@link OnMathObjectChangeListener}
+     * @param listener The new {@link OnMathObjectChangeListener} */
+    public void setOnMathObjectChangeListener(OnMathObjectChangeListener listener)
+    { onMathObjectChange = listener; }
+    
+    /** Call {@link OnMathObjectChangeListener#change() OnMathObjectChange.change()} on the current {@link OnMathObjectChangeListener} */
+    protected void mathObjectChanged()
+    {
+        if(onMathObjectChange != null)
+            onMathObjectChange.changed(mathObject);
     }
 
     /** Recursively sets the given state for the given {@link MathObject} and all of its children
@@ -222,9 +266,6 @@ public class MathView extends View
                     // If we click inside the object, we're done looking
                     if(info.boundingBox.contains(clickPos.x, clickPos.y))
                     {
-                        // Light up the box we clicked
-                        info.mathObject.setState(HoverState.HOVER);
-                        
                         // Show the keyboard with the given confirm listener
                         if(info.mathObject instanceof MathConstant)
                             showKeyboard((MathConstant) info.mathObject, new MathObjectReplacer(info));
@@ -562,6 +603,9 @@ public class MathView extends View
                 
                 // Make sure every MathObject has the right level
                 mathObject.setLevel(0);
+                
+                // Notify the listener of the change
+                mathObjectChanged();
             }
         }
     }
@@ -590,8 +634,10 @@ public class MathView extends View
             
             // Redraw
             invalidate();
+            
+            // Notify the listener of the change
+            mathObjectChanged();
         }
-        
     }
 
     @Override

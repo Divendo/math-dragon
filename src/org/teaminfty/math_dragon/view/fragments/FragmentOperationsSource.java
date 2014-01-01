@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.view.fragments;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSourceBinaryOperationLinear;
 import org.teaminfty.math_dragon.view.MathSourceObject;
+import org.teaminfty.math_dragon.view.MathSourceOperationDerivative;
 import org.teaminfty.math_dragon.view.MathSourceOperationDivide;
 import org.teaminfty.math_dragon.view.MathSourceOperationPower;
 import org.teaminfty.math_dragon.view.MathSourceOperationRoot;
@@ -29,6 +30,7 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         setMathSourceObjectFor(layout, R.id.mathSourceDivide, new MathSourceOperationDivide());
         setMathSourceObjectFor(layout, R.id.mathSourcePower, new MathSourceOperationPower());
         setMathSourceObjectFor(layout, R.id.mathSourceRoot, new MathSourceOperationRoot());
+        setMathSourceObjectFor(layout, R.id.mathSourceDerivative, new MathSourceOperationDerivative());
         
         // Return the layout
         return layout;

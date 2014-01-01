@@ -1,8 +1,8 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.view.HoverState;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +13,8 @@ import android.graphics.Rect;
 /** Represents an empty child */
 public class MathObjectEmpty extends MathObject
 {
+	public static final String NAME = "empty";
+	
     /** The ratio (width : height) of the empty child box (i.e. the golden ratio) */
     public final static float RATIO = 1 / 1.61803398874989f;
     
@@ -26,13 +28,6 @@ public class MathObjectEmpty extends MathObject
         paint.setColor(Color.rgb(0x88, 0x88, 0x88));
         paint.setStyle(Paint.Style.STROKE);
         paint.setPathEffect(new DashPathEffect(new float[] {16.0f, 16.0f}, 0));
-    }
-
-    @Override
-    public IExpr eval() throws EmptyChildException
-    {
-        // Just throw an error
-        throw new EmptyChildException();
     }
 
     @Override
@@ -92,4 +87,9 @@ public class MathObjectEmpty extends MathObject
     	return new Rect[] { this.getBoundingBox()};
     }
 
+    @Override
+    public void writeToXML(Document doc, Element el)
+    {
+        el.appendChild(doc.createElement(NAME));
+    }
 }

@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -15,6 +11,8 @@ import android.graphics.Rect;
  */
 public class MathOperationDivide extends MathBinaryOperation
 {
+	public static final String TYPE = "divide";
+	
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
 
@@ -112,16 +110,6 @@ public class MathOperationDivide extends MathBinaryOperation
     }
     
     @Override
-    public IExpr eval() throws EmptyChildException
-    {
-        // Check if the children are not empty
-        this.checkChildren();
-        
-        // Return the result
-        return F.Divide(getLeft().eval(), getRight().eval());
-    }
-    
-    @Override
     public Point getCenter()
     {
         // Get the operator bounding box
@@ -158,5 +146,11 @@ public class MathOperationDivide extends MathBinaryOperation
 
         // Draw the children
         drawChildren(canvas);
+    }
+
+    @Override
+    protected String getType()
+    {
+        return TYPE;
     }
 }

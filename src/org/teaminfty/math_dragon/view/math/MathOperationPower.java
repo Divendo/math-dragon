@@ -1,21 +1,28 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.view.HoverState;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
 public class MathOperationPower extends MathBinaryOperation
 {
+	public static final String TYPE = "power";
+	
+	/** A paint that's used to draw the operator when the user is hovering over this object */
+	private Paint operatorPaint = new Paint();
+	
     public MathOperationPower()
-    {}
+    { this(null, null); }
     
 	public MathOperationPower(MathObject base, MathObject power)
 	{
 		super(base, power);
+		
+		// Initialise the paint
+		operatorPaint.setColor(0xcc4444ff);
 	}
 	
 	public String toString()
@@ -26,16 +33,50 @@ public class MathOperationPower extends MathBinaryOperation
     @Override
     public int getPrecedence()
     { return MathObjectPrecedence.POWER; }
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to base expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setBase(MathObject o)
+    {
+        setLeft(o);
+    }
 
-	@Override
-	public IExpr eval() throws EmptyChildException 
-	{
-		// Check the children
-		this.checkChildren();
-		
-		// Return the result
-		return F.Power( getChild(0).eval(), getChild(1).eval() );
-	}
+    /**
+     * Retrieve the base mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The base mathematical expression.
+     */
+    public MathObject getBase()
+    {
+        return getLeft();
+    }
+    
+    /**
+     * Assign <tt>o</tt> to mathematical expression to exponent expression.
+     * 
+     * @param o
+     *        The mathematical expression.
+     */
+    public void setExponent(MathObject o)
+    {
+        setRight(o);
+    }
+
+    /**
+     * Retrieve the exponent mathematical expression. <b>Note:</b> <tt>null</tt>
+     * may be returned.
+     * 
+     * @return The exponent mathematical expression.
+     */
+    public MathObject getExponent()
+    {
+        return getRight();
+    }
 
 	@Override
 	public Rect[] getOperatorBoundingBoxes() 
@@ -102,8 +143,8 @@ public class MathOperationPower extends MathBinaryOperation
 	public void setLevel(int l)
 	{
 		level = l;
-		getChild(0).setLevel(level);
-		getChild(1).setLevel(level + 1);
+		getBase().setLevel(level);
+		getExponent().setLevel(level + 1);
 	}
 	
 	//We regard the base operand as the vertical center of the mathObject
@@ -121,9 +162,21 @@ public class MathOperationPower extends MathBinaryOperation
         // Draw the bounding boxes
         drawBoundingBoxes(canvas);
         
+        // Draw the operator if we're hovering
+        if(state == HoverState.HOVER)
+        {
+            final Rect[] boxes = getOperatorBoundingBoxes();
+            for(Rect box : boxes)
+                canvas.drawRect(box, operatorPaint);
+        }
+        
         // Only draw the children
         drawChildren(canvas);
 	}
 	
-	
+	@Override
+	protected String getType()
+	{
+	    return TYPE;
+	}
 }
