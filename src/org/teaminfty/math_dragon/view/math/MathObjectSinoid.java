@@ -33,12 +33,12 @@ public abstract class MathObjectSinoid extends MathObject
     public MathObjectSinoid()
     {
         children.add(new MathObjectEmpty());
-        operatorPaint.setStyle(Paint.Style.STROKE);
         operatorPaint.setAntiAlias(true);
+        operatorPaint.setStrokeWidth(MathObject.lineWidth);
     }
     
     public int getPrecedence()
-    { return MathObjectPrecedence.SINOID; }
+    { return MathObjectPrecedence.FUNCTION; }
 
     /** Calculates the right text size for the given level
      * @param lvl The level
@@ -152,7 +152,10 @@ public abstract class MathObjectSinoid extends MathObject
 	{
 		Rect[] boxes = getOperatorBoundingBoxes();
 		
-		 // Draw the left bracket
+		// Use stroke style for the parentheses
+        operatorPaint.setStyle(Paint.Style.STROKE);
+		
+		// Draw the left bracket
         canvas.save();
         canvas.clipRect(boxes[1], Region.Op.INTERSECT);
         RectF bracket = new RectF(boxes[1]);
@@ -169,5 +172,8 @@ public abstract class MathObjectSinoid extends MathObject
         bracket.offset(-bracket.width() / 4, 0);
         canvas.drawArc(bracket, -80.0f, 160.0f, false, operatorPaint);
         canvas.restore();
+
+        // Set the paint back to fill style
+        operatorPaint.setStyle(Paint.Style.FILL);
 	}
 }

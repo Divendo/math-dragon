@@ -7,6 +7,7 @@ import org.teaminfty.math_dragon.view.MathSourceOperationDerivative;
 import org.teaminfty.math_dragon.view.MathSourceOperationDivide;
 import org.teaminfty.math_dragon.view.MathSourceOperationPower;
 import org.teaminfty.math_dragon.view.MathSourceOperationRoot;
+import org.teaminfty.math_dragon.view.MathSourceOperationSinoid;
 import org.teaminfty.math_dragon.view.MathSourceView;
 
 import android.app.Fragment;
@@ -31,6 +32,10 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         setMathSourceObjectFor(layout, R.id.mathSourcePower, new MathSourceOperationPower());
         setMathSourceObjectFor(layout, R.id.mathSourceRoot, new MathSourceOperationRoot());
         setMathSourceObjectFor(layout, R.id.mathSourceDerivative, new MathSourceOperationDerivative());
+        setMathSourceObjectFor(layout, R.id.mathSourceSin, new MathSourceOperationSinoid(MathSourceOperationSinoid.OperatorType.SIN));
+        setMathSourceObjectFor(layout, R.id.mathSourceArcSin, new MathSourceOperationSinoid(MathSourceOperationSinoid.OperatorType.ARCSIN));
+        setMathSourceObjectFor(layout, R.id.mathSourceSinh, new MathSourceOperationSinoid(MathSourceOperationSinoid.OperatorType.SINH));
+        setMathSourceObjectFor(layout, R.id.mathSourceCos, new MathSourceOperationSinoid(MathSourceOperationSinoid.OperatorType.COS));
         
         // Return the layout
         return layout;

@@ -37,7 +37,7 @@ public abstract class MathObjectLog extends MathBinaryOperationLinear
     }
     
     public int getPrecedence()
-    { return MathObjectPrecedence.SINOID; }
+    { return MathObjectPrecedence.FUNCTION; }
 
     /** Calculates the right text size for the given level
      * @param lvl The level

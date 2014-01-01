@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
@@ -14,13 +10,6 @@ public class MathOperationLog extends MathObjectLog
 	public MathOperationLog()
 	{
 		tmpStr = "log";
-	}
-	
-    //returns a cosine
-	@Override
-	public IExpr eval() throws EmptyChildException 
-	{
-		return F.Log(this.getChild(1).eval());
 	}
 
 	@Override
@@ -46,6 +35,13 @@ public class MathOperationLog extends MathObjectLog
         super.draw(canvas);
         this.drawChildren(canvas);
 	}
+
+    @Override
+    protected String getType()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
 

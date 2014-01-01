@@ -9,13 +9,22 @@ import org.teaminfty.math_dragon.view.math.MathBinaryOperation;
 import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
+import org.teaminfty.math_dragon.view.math.MathObjectSinoid;
 import org.teaminfty.math_dragon.view.math.MathOperationAdd;
+import org.teaminfty.math_dragon.view.math.MathOperationArcCos;
+import org.teaminfty.math_dragon.view.math.MathOperationArcSine;
+import org.teaminfty.math_dragon.view.math.MathOperationArcTangent;
+import org.teaminfty.math_dragon.view.math.MathOperationCosh;
+import org.teaminfty.math_dragon.view.math.MathOperationCosine;
 import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
+import org.teaminfty.math_dragon.view.math.MathOperationSine;
+import org.teaminfty.math_dragon.view.math.MathOperationSinh;
 import org.teaminfty.math_dragon.view.math.MathOperationSubtract;
+import org.teaminfty.math_dragon.view.math.MathOperationTangent;
 import org.teaminfty.math_dragon.view.math.MathParentheses;
 
 /**
@@ -54,6 +63,27 @@ public class EvalHelper {
             if (op instanceof MathOperationDerivative)
                 return derivative((MathOperationDerivative) op);
         }
+        else if(o instanceof MathObjectSinoid)
+        {
+            MathObjectSinoid sinusoid = (MathObjectSinoid) o;
+            
+            if (sinusoid instanceof MathOperationArcCos)
+                return arccos((MathOperationArcCos) sinusoid);
+            if (sinusoid instanceof MathOperationArcSine)
+                return arcsin((MathOperationArcSine) sinusoid);
+            if (sinusoid instanceof MathOperationArcTangent)
+                return arctan((MathOperationArcTangent) sinusoid);
+            if (sinusoid instanceof MathOperationCosine)
+                return cos((MathOperationCosine) sinusoid);
+            if (sinusoid instanceof MathOperationSine)
+                return sin((MathOperationSine) sinusoid);
+            if (sinusoid instanceof MathOperationTangent)
+                return tan((MathOperationTangent) sinusoid);
+            if (sinusoid instanceof MathOperationCosh)
+                return cosh((MathOperationCosh) sinusoid);
+            if (sinusoid instanceof MathOperationSinh)
+                return sinh((MathOperationSinh) sinusoid);
+        }
         else if(o instanceof MathConstant)
             return symbol((MathConstant) o);
         else if(o instanceof MathParentheses)
@@ -72,9 +102,9 @@ public class EvalHelper {
      * invalid.
      */
     static void checkChildren(MathBinaryOperation op) throws EmptyChildException {
-        if(op.getLeft() == null)
+        if(op.getLeft() instanceof MathObjectEmpty)
             throw new EmptyChildException(0);
-        if(op.getRight() == null)
+        if(op.getRight() instanceof MathObjectEmpty)
             throw new EmptyChildException(1);
     }
     
@@ -129,5 +159,47 @@ public class EvalHelper {
     public static IExpr derivative(MathOperationDerivative ddx) throws MathException {
         checkChildren(ddx);
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
+    }
+    
+    // Sinusoids
+    public static IExpr arccos(MathOperationArcCos f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.ArcCos(eval(f.getChild(0)));
+    }
+    public static IExpr arcsin(MathOperationArcSine f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.ArcSin(eval(f.getChild(0)));
+    }
+    public static IExpr arctan(MathOperationArcTangent f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.ArcTan(eval(f.getChild(0)));
+    }
+    public static IExpr cos(MathOperationCosine f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.Cos(eval(f.getChild(0)));
+    }
+    public static IExpr sin(MathOperationSine f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.Sin(eval(f.getChild(0)));
+    }
+    public static IExpr tan(MathOperationTangent f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.Tan(eval(f.getChild(0)));
+    }
+    public static IExpr cosh(MathOperationCosh f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.Cosh(eval(f.getChild(0)));
+    }
+    public static IExpr sinh(MathOperationSinh f) throws MathException {
+        if(f.getChild(0) instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        return F.Sinh(eval(f.getChild(0)));
     }
 }

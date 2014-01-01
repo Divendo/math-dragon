@@ -115,11 +115,10 @@ public class MathOperationPower extends MathBinaryOperation
     public Rect getBoundingBox()
     {
         // Get the sizes
-        Rect leftSize = getChild(0).getBoundingBox();
-        Rect rightSize = getChild(1).getBoundingBox();
+        Rect[] sizes = getChildrenSize();
         
         // Return a bounding box, containing the bounding boxes of the children
-        return new Rect(0, 0, leftSize.width() + rightSize.width(), Math.max(leftSize.height(), rightSize.height()));
+        return new Rect(0, 0, sizes[0].width() + sizes[1].width(), sizes[0].height() + sizes[1].height());
     }
 	
 	@Override

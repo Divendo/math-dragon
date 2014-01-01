@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
@@ -14,13 +10,6 @@ public class MathOperationLn extends MathObjectSinoid
 	public MathOperationLn()
 	{
 		tmpStr = "ln";
-	}
-	
-    //returns a sine
-	@Override
-	public IExpr eval() throws EmptyChildException 
-	{
-		return F.Log(this.getChild(1).eval());
 	}
 
 	@Override

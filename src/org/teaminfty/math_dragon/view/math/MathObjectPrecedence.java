@@ -15,6 +15,6 @@ public abstract class MathObjectPrecedence
     /** The precedence add operations have */
     public static final int ADD = 3;
     
-    /** The precedence sinoid operations have */
-    public static final int SINOID = 4;
+    /** The precedence functions have */
+    public static final int FUNCTION = 4;
 }

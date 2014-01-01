@@ -30,7 +30,7 @@ public class MathParentheses extends MathObject
         // We have one child
         children.add(child == null ? new MathObjectEmpty() : child);
         
-        // Initialize the paint
+        // Initialise the paint
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
     }

@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
@@ -16,13 +12,6 @@ public class MathOperationArcTangent extends MathObjectSinoid
     	tmpStr = "tan" ;
     	arc = 1;
     }
-
-    //returns a arctan 
-	@Override
-	public IExpr eval() throws EmptyChildException 
-	{
-		return F.ArcTan(getChild(0).eval());
-	}
 
 	@Override
 	public void draw(Canvas canvas) 
