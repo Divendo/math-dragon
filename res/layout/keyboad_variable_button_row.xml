@@ -5,20 +5,10 @@
     android:orientation="horizontal"
     android:gravity="center" >
     
-	    <ToggleButton
-	        android:id="@+id/keyboard_variable_btn_1"
-	        style="@style/KeyboardButtonSmall" />
-	    
-	    <ToggleButton
-	        android:id="@+id/keyboard_variable_btn_2"
-	        style="@style/KeyboardButtonSmall" />
-	    
-	    <ToggleButton
-	        android:id="@+id/keyboard_variable_btn_3"
-	        style="@style/KeyboardButtonSmall" />
-	    
-	    <ToggleButton
-	        android:id="@+id/keyboard_variable_btn_4"
-	        style="@style/KeyboardButtonSmall" />
+	    <ToggleButton style="@style/KeyboardButtonSmall" />
+	    <ToggleButton style="@style/KeyboardButtonSmall" />
+	    <ToggleButton style="@style/KeyboardButtonSmall" />
+	    <ToggleButton style="@style/KeyboardButtonSmall" />
+	    <ToggleButton style="@style/KeyboardButtonSmall" />
 
 </LinearLayout>

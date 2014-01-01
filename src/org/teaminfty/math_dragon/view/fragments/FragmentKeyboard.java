@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
@@ -55,16 +56,16 @@ public class FragmentKeyboard extends DialogFragment
     	final Button button8 =  (Button) myFragmentView.findViewById(R.id.keyboardButton8);
     	final Button button9 =  (Button) myFragmentView.findViewById(R.id.keyboardButton9);
     	final Button button0 =  (Button) myFragmentView.findViewById(R.id.keyboardButton0);
-    	final Button buttonClr = (Button) myFragmentView.findViewById(R.id.keyboardButtonClear);
-    	final Button buttonDel = (Button) myFragmentView.findViewById(R.id.keyboardButtonDelete);
-    	final Button buttonOK  = (Button) myFragmentView.findViewById(R.id.keyboardButtonConfirm);
+    	final ImageButton buttonClr = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonClear);
+    	final ImageButton buttonDel = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonDelete);
+        final ImageButton buttonCancel = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonCancel);
+    	final ImageButton buttonOK  = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonConfirm);
         final ToggleButton buttonPi = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonE);
         final ToggleButton buttonI  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonI);
         final ToggleButton buttonX  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonX);
         final ToggleButton buttonY  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonY);
         final ToggleButton buttonZ  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonZ);
-        final ToggleButton buttonT  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonT);
         final ToggleButton buttonTabNumpad = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_numpad);
         final ToggleButton buttonTabVariables  = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_variables);
     	
@@ -90,13 +91,13 @@ public class FragmentKeyboard extends DialogFragment
     	buttonI.setOnClickListener(buttonSymbolOnClickListener);
     	buttonDel.setOnClickListener(new ButtonDeleteOnClickListener());
     	buttonClr.setOnClickListener(new ButtonClearOnClickListener());
+        buttonCancel.setOnClickListener(new ButtonCancelOnClickListener());
     	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
     	buttonTabNumpad.setOnClickListener(buttonTabOnClickListener);
     	buttonTabVariables.setOnClickListener(buttonTabOnClickListener);
     	buttonX.setOnClickListener(buttonVarOnClickListener);
         buttonY.setOnClickListener(buttonVarOnClickListener);
         buttonZ.setOnClickListener(buttonVarOnClickListener);
-        buttonT.setOnClickListener(buttonVarOnClickListener);
     	
     	// Set the buttons to the right state
         buttonPi.setChecked(false);
@@ -117,13 +118,18 @@ public class FragmentKeyboard extends DialogFragment
             {
                 if(row.getChildAt(j) instanceof ToggleButton)
                 {
-                    ToggleButton btn = (ToggleButton) row.getChildAt(j);
-                    btn.setText(varNames[i]);
-                    btn.setTextOn(varNames[i]);
-                    btn.setTextOff(varNames[i]);
-                    btn.setOnClickListener(buttonVarOnClickListener);
-                    varButtons.add(btn);
-                    ++i;
+                    if(i < varNames.length)
+                    {
+                        ToggleButton btn = (ToggleButton) row.getChildAt(j);
+                        btn.setText(varNames[i]);
+                        btn.setTextOn(varNames[i]);
+                        btn.setTextOff(varNames[i]);
+                        btn.setOnClickListener(buttonVarOnClickListener);
+                        varButtons.add(btn);
+                        ++i;
+                    }
+                    else
+                        row.removeViewAt(j);
                 }
             }
         }
@@ -202,7 +208,6 @@ public class FragmentKeyboard extends DialogFragment
         final ToggleButton buttonX  = (ToggleButton) getView().findViewById(R.id.keyboardButtonX);
         final ToggleButton buttonY  = (ToggleButton) getView().findViewById(R.id.keyboardButtonY);
         final ToggleButton buttonZ  = (ToggleButton) getView().findViewById(R.id.keyboardButtonZ);
-        final ToggleButton buttonT  = (ToggleButton) getView().findViewById(R.id.keyboardButtonT);
         
         // Uncheck all buttons
         buttonPi.setChecked(false);
@@ -211,7 +216,6 @@ public class FragmentKeyboard extends DialogFragment
         buttonX.setChecked(false);
         buttonY.setChecked(false);
         buttonZ.setChecked(false);
-        buttonT.setChecked(false);
         for(ToggleButton btn : varButtons)
             btn.setChecked(false);
         
@@ -232,7 +236,6 @@ public class FragmentKeyboard extends DialogFragment
                             case 'x': buttonX.setChecked(true); break;
                             case 'y': buttonY.setChecked(true); break;
                             case 'z': buttonZ.setChecked(true); break;
-                            case 't': buttonT.setChecked(true); break;
                         }
                         
                         break;
@@ -315,6 +318,16 @@ public class FragmentKeyboard extends DialogFragment
         public void onClick(final View v)
         {
             callOnConfirmListener(mathSymbolEditor.getMathConstant());
+            dismiss();
+        }
+    }
+    
+    /** The OnClickListener for the OK button */
+    private class ButtonCancelOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View v)
+        {
             dismiss();
         }
     }
