@@ -10,7 +10,6 @@ import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
-import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.math.MathConstant;
@@ -204,18 +203,6 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Simply clear the current formula
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();
-    }
-    
-    public void temporary(View view)
-    {
-    	/*// Get the DrawerLayout object DrawerLayout drawerLayout =
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-         
-        // Show the favourites drawer
-        drawerLayout.openDrawer(Gravity.CENTER);*/
-         
-        FragmentKeyboard fragKeyboard = new FragmentKeyboard();
-        fragKeyboard.show(getFragmentManager(), "keyboard");
     }
 
     @Override
