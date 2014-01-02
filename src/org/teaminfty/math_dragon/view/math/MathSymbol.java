@@ -181,25 +181,6 @@ public class MathSymbol extends MathObject
         canvas.save();
         canvas.translate((totalBounding.width() - textBounding.width()) / 2, (totalBounding.height() - textBounding.height()) / 2);
 
-        
-        StringBuilder sb = new StringBuilder();
-        
-        if (factor == -1)
-        {
-            sb.append("-");
-        }
-        else if (factor != 1)
-        {
-            sb.append(Long.toString(factor));
-        }
-        
-        if (factor != 0)
-        {
-            appendLit(sb,'\u03c0', piPow);
-            appendLit(sb, 'e', ePow);
-            appendLit(sb, 'i', iPow);
-            for (int i = 0; i < varPows.length; i++) appendLit(sb, (char)(i+'a'), varPows[i]);
-        }
         String str = toString();
         str = str.substring(1, str.length() - 1);
         Rect bounds = new Rect();
@@ -286,7 +267,7 @@ public class MathSymbol extends MathObject
     {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(factor == -1 ? '-' : Long.toString(factor));
+        sb.append(factor == -1 ? '-' : factor == 1 ? "" : Long.toString(factor) );
         if(factor != 0)
         {
             appendLit(sb, '\u03c0', piPow);
