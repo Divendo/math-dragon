@@ -188,7 +188,7 @@ public class MathSymbol extends MathObject
         {
             sb.append("-");
         }
-        else
+        else if (factor != 1)
         {
             sb.append(Long.toString(factor));
         }
