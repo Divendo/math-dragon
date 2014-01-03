@@ -329,4 +329,22 @@ public abstract class MathObject
     	Log.w("XML", "not a writable element yet");
     	parent.appendChild(doc.createElement(MathObjectEmpty.NAME));
     }
+    
+    /**
+     * Checks if all children have been fully filled in, and also their children and so on recursively down the tree.
+     * @return returns true if all children of this MathObject have been filled in.
+     */
+    public boolean isCompleted()
+    {
+        if(this instanceof MathObjectEmpty)
+            return false;
+        
+        for(MathObject child : children)
+        {
+            if(child instanceof MathObjectEmpty || !child.isCompleted())
+                return false;
+        }
+        
+        return true;
+    }
 }

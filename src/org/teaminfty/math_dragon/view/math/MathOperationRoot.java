@@ -9,7 +9,6 @@ import android.graphics.Rect;
 public class MathOperationRoot extends MathBinaryOperation
 {
 	public static final String TYPE = "root";
-	
     protected Paint operatorPaint = new Paint();
     
     public MathOperationRoot()
@@ -42,8 +41,12 @@ public class MathOperationRoot extends MathBinaryOperation
      * @return The base mathematical expression.
      */
     public MathObject getBase()
+    { return getLeft(); }
+
+    @Override
+    public String toString()
     {
-        return getLeft();
+        return "(" + getBase().toString() + "^ (1/" + getExponent().toString() + "))";
     }
     
     /**
