@@ -43,7 +43,7 @@ public class FragmentKeyboard extends DialogFragment
     	// Get the MathSymbolEditor
     	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
         if(mathSymbolForLater != null)
-            mathSymbolEditor.fromMathConstant(mathSymbolForLater);
+            mathSymbolEditor.fromMathSymbol(mathSymbolForLater);
 		
     	// Acquire access to all buttons
     	final Button button1 =  (Button) myFragmentView.findViewById(R.id.keyboardButton1);
@@ -159,7 +159,7 @@ public class FragmentKeyboard extends DialogFragment
         else if(mathSymbol == null)
             mathSymbolEditor.reset();
         else
-            mathSymbolEditor.fromMathConstant(mathSymbol);
+            mathSymbolEditor.fromMathSymbol(mathSymbol);
         
         refreshButtonState();
     }
@@ -181,11 +181,11 @@ public class FragmentKeyboard extends DialogFragment
     { onConfirmListener = listener; }
     
     /** Calls the {@link OnConfirmListener}
-     * @param mathConstant The input */
-    private void callOnConfirmListener(MathSymbol mathConstant)
+     * @param mathSymbol The input */
+    private void callOnConfirmListener(MathSymbol mathSymbol)
     {
         if(onConfirmListener != null)
-            onConfirmListener.confirmed(mathConstant);
+            onConfirmListener.confirmed(mathSymbol);
     }
     
     @Override
@@ -321,7 +321,7 @@ public class FragmentKeyboard extends DialogFragment
         @Override
         public void onClick(final View v)
         {
-            callOnConfirmListener(mathSymbolEditor.getMathConstant());
+            callOnConfirmListener(mathSymbolEditor.getMathSymbol());
             dismiss();
         }
     }

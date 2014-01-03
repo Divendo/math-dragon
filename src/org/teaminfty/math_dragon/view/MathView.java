@@ -124,9 +124,9 @@ public class MathView extends View
     public interface OnShowKeyboardListener
     {
         /** Called when a keyboard with the given confirm listener should be shown
-         * @param mathConstant The initial value for the input (can be <tt>null</tt>)
+         * @param mathSymbol The initial value for the input (can be <tt>null</tt>)
          * @param listener The confirm listener */
-        public void showKeyboard(MathSymbol mathConstant, FragmentKeyboard.OnConfirmListener listener);
+        public void showKeyboard(MathSymbol mathSymbol, FragmentKeyboard.OnConfirmListener listener);
     }
     
     /** The current {@link OnShowKeyboardListener} */
@@ -138,12 +138,12 @@ public class MathView extends View
     { onShowKeyboardListener = listener; }
     
     /** Asks the parent fragment to show the keyboard with the given confirm listener
-     * @param mathConstant The initial value for the input (can be <tt>null</tt>)
+     * @param mathSymbol The initial value for the input (can be <tt>null</tt>)
      * @param listener The confirm listener */
-    protected void showKeyboard(MathSymbol mathConstant, FragmentKeyboard.OnConfirmListener listener)
+    protected void showKeyboard(MathSymbol mathSymbol, FragmentKeyboard.OnConfirmListener listener)
     {
         if(onShowKeyboardListener != null)
-            onShowKeyboardListener.showKeyboard(mathConstant, listener);
+            onShowKeyboardListener.showKeyboard(mathSymbol, listener);
     }
     
     /** A listener that can be implemented to be notified of when the {@link MathObject} changes */
@@ -258,7 +258,7 @@ public class MathView extends View
                 // Pop off an element of the queue
                 HoverInformation info = queue.pollFirst();
                 
-                // If the MathObject is a MathObjectEmpty or MathConstant, we check if we clicked on it
+                // If the MathObject is a MathObjectEmpty or MathSymbol, we check if we clicked on it
                 if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathSymbol)
                 {
                     // If we click inside the object, we're done looking
@@ -622,13 +622,13 @@ public class MathView extends View
         }
 
         @Override
-        public void confirmed(MathSymbol mathConstant)
+        public void confirmed(MathSymbol mathSymbol)
         {
             // Place the symbol
             if(mathObjectInfo.parent == null)
-                setMathObjectHelper(mathConstant);
+                setMathObjectHelper(mathSymbol);
             else
-                mathObjectInfo.parent.setChild(mathObjectInfo.childIndex, mathConstant);
+                mathObjectInfo.parent.setChild(mathObjectInfo.childIndex, mathSymbol);
             
             // Redraw
             invalidate();
