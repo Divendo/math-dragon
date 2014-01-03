@@ -6,10 +6,9 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.math.MathBinaryOperationLinear;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-import org.teaminfty.math_dragon.view.math.MathVariable;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -93,7 +92,6 @@ public class MathView extends View
         // Remember the new MathObject, if it is null we create a MathObjectEmpty
         if((mathObject = newMathObject) == null)
             mathObject = new MathObjectEmpty();
-        
         // Set the default size and the level for the MathObject
         mathObject.setDefaultHeight((int) mathObjectDefaultHeight);
         mathObject.setLevel(0);
@@ -128,7 +126,7 @@ public class MathView extends View
         /** Called when a keyboard with the given confirm listener should be shown
          * @param mathConstant The initial value for the input (can be <tt>null</tt>)
          * @param listener The confirm listener */
-        public void showKeyboard(MathConstant mathConstant, FragmentKeyboard.OnConfirmListener listener);
+        public void showKeyboard(MathSymbol mathConstant, FragmentKeyboard.OnConfirmListener listener);
     }
     
     /** The current {@link OnShowKeyboardListener} */
@@ -142,7 +140,7 @@ public class MathView extends View
     /** Asks the parent fragment to show the keyboard with the given confirm listener
      * @param mathConstant The initial value for the input (can be <tt>null</tt>)
      * @param listener The confirm listener */
-    protected void showKeyboard(MathConstant mathConstant, FragmentKeyboard.OnConfirmListener listener)
+    protected void showKeyboard(MathSymbol mathConstant, FragmentKeyboard.OnConfirmListener listener)
     {
         if(onShowKeyboardListener != null)
             onShowKeyboardListener.showKeyboard(mathConstant, listener);
@@ -261,14 +259,14 @@ public class MathView extends View
                 HoverInformation info = queue.pollFirst();
                 
                 // If the MathObject is a MathObjectEmpty or MathConstant, we check if we clicked on it
-                if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathConstant || info.mathObject instanceof MathVariable)
+                if(info.mathObject instanceof MathObjectEmpty || info.mathObject instanceof MathSymbol)
                 {
                     // If we click inside the object, we're done looking
                     if(info.boundingBox.contains(clickPos.x, clickPos.y))
                     {
                         // Show the keyboard with the given confirm listener
-                        if(info.mathObject instanceof MathConstant)
-                            showKeyboard((MathConstant) info.mathObject, new MathObjectReplacer(info));
+                        if(info.mathObject instanceof MathSymbol)
+                            showKeyboard((MathSymbol) info.mathObject, new MathObjectReplacer(info));
                         else
                             showKeyboard(null, new MathObjectReplacer(info));
                     }
@@ -610,7 +608,7 @@ public class MathView extends View
         }
     }
     
-    /** Replaces an {@link MathObject} with the {@link MathConstant} that the keyboard returns */
+    /** Replaces an {@link MathObject} with the {@link MathSymbol} that the keyboard returns */
     private class MathObjectReplacer implements FragmentKeyboard.OnConfirmListener
     {
         /** The info about the {@link MathObject} that is to replaced */
@@ -624,7 +622,7 @@ public class MathView extends View
         }
 
         @Override
-        public void confirmed(MathConstant mathConstant)
+        public void confirmed(MathSymbol mathConstant)
         {
             // Place the symbol
             if(mathObjectInfo.parent == null)

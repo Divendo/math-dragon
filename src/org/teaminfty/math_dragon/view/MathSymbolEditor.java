@@ -1,7 +1,7 @@
 package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -251,9 +251,9 @@ public class MathSymbolEditor extends View
         requestLayout();
     }
     
-    /** Copies the values from the given {@link MathConstant}
-     * @param mathConstant The {@link MathConstant} to copy the values from */
-    public void fromMathConstant(MathConstant mathConstant)
+    /** Copies the values from the given {@link MathSymbol}
+     * @param mathConstant The {@link MathSymbol} to copy the values from */
+    public void fromMathConstant(MathSymbol mathConstant)
     {
         // Reset all values
         reset();
@@ -298,12 +298,12 @@ public class MathSymbolEditor extends View
         requestLayout();
     }
     
-    /** Constructs a {@link MathConstant} from the current values
-     * @return The constructed {@link MathConstant} */
-    public MathConstant getMathConstant()
+    /** Constructs a {@link MathSymbol} from the current values
+     * @return The constructed {@link MathSymbol} */
+    public MathSymbol getMathConstant()
     {
         // The MathConstant we're going to return
-        MathConstant out = new MathConstant();
+        MathSymbol out = new MathSymbol();
         
         // Set the factor
         if(factor.isEmpty())

@@ -12,7 +12,7 @@ import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
@@ -193,7 +193,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
                 .findFragmentById(R.id.fragmentEvaluation);
 
-        MathConstant mathConstant = new MathConstant("42");
+        MathSymbol mathConstant = new MathSymbol(42,0,0,0,null);
         fragmentEvaluation.showMathObject(mathConstant);
     }
 
