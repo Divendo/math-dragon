@@ -92,6 +92,11 @@ public abstract class MathObject
         setDefaultHeight(defaultHeight);
     }
     
+    /** Returns the default height for this {@link MathObject}
+     * @return The default height for this {@link MathObject} */
+    public int getDefaultHeight()
+    { return defaultHeight; }
+    
     /** Sets the default height for this {@link MathObject} and all of its children
      * @param height The default height */
     public void setDefaultHeight(int height)
