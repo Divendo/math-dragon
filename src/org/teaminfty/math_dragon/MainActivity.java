@@ -141,7 +141,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             
             // Strip the query of unnecessary outer parentheses
             if(query.startsWith("(") && query.endsWith(")"))
-                    query = query.substring(1, query.length() - 1);
+                query = query.substring(1, query.length() - 1);
 
             // Start an intent to send the user to Wolfram|Alpha
             Intent intent = new Intent(Intent.ACTION_VIEW);

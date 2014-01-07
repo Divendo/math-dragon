@@ -8,24 +8,17 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-public class MathSourceOperationSinoid extends MathSourceObject
+public class MathSourceOperationFunction extends MathSourceObject
 {
-	/** An enumeration that describes the types this source object can hold */
-    public enum OperatorType
-    {
-        SIN, COS, TAN, SINH, COSH, ARCSIN, ARCCOS, ARCTAN, LN
-    }
-	
-    
     /** The type this source object holds */
-    private OperatorType type;
+    private MathOperationFunction.FunctionType type;
     
     /** The paint we use to draw the operator */
     private Paint paintOperator = new Paint();
     
     /** Constructor
      * @param t The type this source object holds */
-	public MathSourceOperationSinoid(OperatorType t) 
+	public MathSourceOperationFunction(MathOperationFunction.FunctionType t) 
 	{ type = t;	}
 
     @Override
@@ -58,9 +51,9 @@ public class MathSourceOperationSinoid extends MathSourceObject
                 final int segmentSize = w / 9;
                 paintOperator.setAntiAlias(false);
                 canvas.drawLine(centerX - segmentSize, centerY, centerX + segmentSize, centerY, paintOperator);
-                if(type == OperatorType.COS)
+                if(type == MathOperationFunction.FunctionType.COS)
                     canvas.drawLine(centerX, centerY - segmentSize, centerX, centerY + segmentSize, paintOperator);
-                if(type == OperatorType.TAN)
+                if(type == MathOperationFunction.FunctionType.TAN)
                     canvas.drawLine(centerX, centerY - segmentSize, centerX, centerY + segmentSize, paintOperator);
             }
             break;
@@ -71,7 +64,7 @@ public class MathSourceOperationSinoid extends MathSourceObject
             {
                 paintOperator.setAntiAlias(true);
                 canvas.drawCircle(centerX, centerY, MathObject.lineWidth * 2, paintOperator);
-                if(type == OperatorType.COSH)
+                if(type == MathOperationFunction.FunctionType.COSH)
                 	canvas.drawCircle(centerX, centerY, MathObject.lineWidth * 2, paintOperator);
             }
             break;

@@ -94,6 +94,13 @@ public final class MathFactory
                 if(Integer.parseInt(e.getAttribute(MathOperation.ATTR_OPERANDS)) == 2)
                     return toOpBin(e);
             }
+            else if(tag.equals(MathOperationFunction.NAME))
+            {
+                MathOperationFunction.FunctionType type = MathOperationFunction.FunctionType.getByXmlName(e.getAttribute(MathOperationFunction.ATTR_TYPE));
+                MathOperationFunction f = new MathOperationFunction(type);
+                f.setChild(0, toMath((Element) e.getFirstChild()));
+                return f;
+            }
             else if(tag.equals(MathObjectEmpty.NAME))
                 return new MathObjectEmpty();
         }

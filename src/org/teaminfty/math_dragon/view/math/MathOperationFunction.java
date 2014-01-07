@@ -1,8 +1,9 @@
 package org.teaminfty.math_dragon.view.math;
 
 
-import org.teaminfty.math_dragon.view.MathSourceOperationSinoid.OperatorType;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,8 +12,83 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public class MathOperationFunction extends MathObject 
+public class MathOperationFunction extends MathObject
 {
+    /** An enumeration that describes the types of functions this function can be */
+    public static enum FunctionType
+    {
+        SIN("sin"),
+        COS("cos"),
+        TAN("tan"),
+        SINH("sinh"),
+        COSH("cosh"),
+        ARCSIN("sin\u207B\u00B9", "arcsin"),
+        ARCCOS("cos\u207B\u00B9", "arccos"),
+        ARCTAN("tan\u207B\u00B9", "arctan"),
+        LN("ln");
+        
+        /** The name of the function type */
+        private String name;
+        
+        /** The xml-safe name of the function type */
+        private String xmlName;
+        
+        /** Constructor
+         * @param nameAndXmlName The name of the function type and its xml-safe name
+         */
+        private FunctionType(String nameAndXmlName)
+        {
+            name = nameAndXmlName;
+            xmlName = nameAndXmlName;
+        }
+
+        /** Constructor
+         * @param normalName The name of the function type
+         * @param xmlSafeName The xml-safe name of the function type
+         */
+        private FunctionType(String normalName, String xmlSafeName)
+        {
+            name = normalName;
+            xmlName = xmlSafeName;
+        }
+        
+        /** Returns the name of the function type
+         * @return The name of the function type as a string (may contain high unicode characters) */
+        public String getName()
+        { return name; }
+
+        /** Returns the XML safe name of the function type
+         * @return The XML safe name of the function type as a string */
+        public String getXmlName()
+        { return xmlName; }
+        
+        /** Returns the {@link FunctionType} that belongs to the given XML safe name
+         * @param xmlName The XML safe name
+         * @return The {@link FunctionType}, or <tt>null</tt> if none belong to the given XML safe name */
+        public static FunctionType getByXmlName(String xmlName)
+        {
+            if(xmlName.equals("sin"))
+                return SIN;
+            else if(xmlName.equals("cos"))
+                return COS;
+            else if(xmlName.equals("tan"))
+                return TAN;
+            else if(xmlName.equals("sinh"))
+                return SINH;
+            else if(xmlName.equals("cosh"))
+                return COSH;
+            else if(xmlName.equals("arcsin"))
+                return ARCSIN;
+            else if(xmlName.equals("arccos"))
+                return ARCCOS;
+            else if(xmlName.equals("arctan"))
+                return ARCTAN;
+            else if(xmlName.equals("ln"))
+                return LN;
+            return null;
+        }
+    }
+    
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
     
@@ -20,17 +96,17 @@ public class MathOperationFunction extends MathObject
     private final float PARENTHESES_RATIO = 0.5f / 1.61803398874989f;
 
     /** Which function we represent */
-    public OperatorType type = null;
+    public FunctionType type = null;
     
     /** Default constructor */
     public MathOperationFunction()
     {
-        this(OperatorType.SIN);
+        this(FunctionType.SIN);
     }
     
     /** Constructor
      * @param t The kind of function that we're constructing */
-    public MathOperationFunction(OperatorType t)
+    public MathOperationFunction(FunctionType t)
     {
         type = t;
         children.add(new MathObjectEmpty());
@@ -39,32 +115,17 @@ public class MathOperationFunction extends MathObject
         operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
     }
     
-    /** Returns the name of this function as a string
-     * @return The name of this function as a string (may contain high unicode characters) */
-    public String getName()
+    /** Returns the current function type */
+    public FunctionType getType()
+    { return type; }
+    
+    @Override
+    public String toString()
     {
-        switch(type)
-        {
-            case ARCCOS:
-                  return "cos\u207B\u00B9";
-            case ARCSIN:
-                  return "sin\u207B\u00B9";
-            case ARCTAN:
-                  return "tan\u207B\u00B9";
-            case COS:
-                return "cos";
-            case SIN:
-                return "sin";
-            case TAN:
-                return "tan";
-            case COSH:
-                return "cosh";
-            case SINH:
-                return "sinh";
-            case LN:
-                return "ln";
-        }
-        return "error";
+        String childString = getChild(0).toString();
+        if(childString.startsWith("(") && childString.endsWith(")"))
+            childString = childString.substring(1, childString.length() - 1);
+        return type.getXmlName() + '(' + childString + ')';
     }
     
     public int getPrecedence()
@@ -102,13 +163,10 @@ public class MathOperationFunction extends MathObject
     {
         // Set the text size
         operatorPaint.setTextSize(fontSize);
-        
-        // Get the name of this function
-        final String operatorName = getName();
 
         // Calculate the total width and the height of the text
         Rect out = new Rect(0, 0, 0, 0);
-        operatorPaint.getTextBounds(operatorName, 0, operatorName.length(), out);
+        operatorPaint.getTextBounds(type.getName(), 0, type.getName().length(), out);
         out.offsetTo(0, 0);
         
         // Return the size
@@ -185,11 +243,10 @@ public class MathOperationFunction extends MathObject
         
         //Draws the operator
         canvas.save();
-        final String operatorName = getName();
         Rect textBounding = new Rect();
-        operatorPaint.getTextBounds(operatorName, 0, operatorName.length(), textBounding);
+        operatorPaint.getTextBounds(type.getName(), 0, type.getName().length(), textBounding);
         canvas.translate((operatorBounding[0].width() - textBounding.width()) / 2, (operatorBounding[0].height() - textBounding.height()) / 2);
-        canvas.drawText(operatorName, operatorBounding[0].left - textBounding.left, operatorBounding[0].top - textBounding.top, operatorPaint);
+        canvas.drawText(type.getName(), operatorBounding[0].left - textBounding.left, operatorBounding[0].top - textBounding.top, operatorPaint);
         canvas.restore();
 
         // Use stroke style for the parentheses
@@ -218,5 +275,20 @@ public class MathOperationFunction extends MathObject
         
         // Draw the children
         drawChildren(canvas);
+    }
+    
+    /** The name of the XML node for this class */
+    public static final String NAME = "function";
+    
+    /** The XML attribute for which type of function this is */
+    public static final String ATTR_TYPE = "type";
+
+    @Override
+    public final void writeToXML(Document doc, Element el)
+    {
+        Element e = doc.createElement(NAME);
+        e.setAttribute(ATTR_TYPE, type.getXmlName());
+        getChild(0).writeToXML(doc, el);
+        el.appendChild(e);
     }
 }

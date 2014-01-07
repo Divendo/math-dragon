@@ -12,6 +12,7 @@ import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathOperationFunction;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
@@ -20,8 +21,7 @@ import org.teaminfty.math_dragon.view.math.MathParentheses;
 import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 /**
- * Mathematical evaluator for {@link MathObject}s into expressions returned by
- * the symja library.
+ * Mathematical evaluator for {@link MathObject}s into expressions returned by the Symja library.
  * 
  * @author Folkert van Verseveld
  */
@@ -63,6 +63,8 @@ public class EvalHelper
             if(op instanceof MathOperationDerivative)
                 return derivative((MathOperationDerivative) op);
         }
+        else if(o instanceof MathOperationFunction)
+            return function((MathOperationFunction) o);
         else if(o instanceof MathSymbol)
             return symbol((MathSymbol) o);
         else if(o instanceof MathParentheses)
@@ -85,9 +87,9 @@ public class EvalHelper
     static void checkChildren(MathBinaryOperation op)
             throws EmptyChildException
     {
-        if(op.getLeft() == null)
+        if(op.getLeft() instanceof MathObjectEmpty)
             throw new EmptyChildException(0);
-        if(op.getRight() == null)
+        if(op.getRight() instanceof MathObjectEmpty)
             throw new EmptyChildException(1);
     }
 
@@ -196,8 +198,7 @@ public class EvalHelper
     public static IExpr root(MathOperationRoot root) throws MathException
     {
         checkChildren(root);
-        return F.Power(eval(root.getExponent()),
-                F.Divide(F.ZZ(1), eval(root.getBase())));
+        return F.Power(eval(root.getBase()), F.Divide(F.ZZ(1), eval(root.getExponent())));
     }
 
     /**
@@ -224,10 +225,35 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>ddx</tt> contains invalid children.
      */
-    public static IExpr derivative(MathOperationDerivative ddx)
-            throws MathException
+    public static IExpr derivative(MathOperationDerivative ddx) throws MathException
     {
         checkChildren(ddx);
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
+    }
+
+    /**
+     * Evaluate mathematical function using specified argument.
+     * 
+     * @param f The mathematical function.
+     * @return Converted mathematical function for Symja
+     * @throws MathException
+     *         Thrown when <tt>f</tt> contains invalid children
+     */
+    public static IExpr function(MathOperationFunction f) throws MathException
+    {
+        switch(f.getType())
+        {
+            case ARCCOS:    return F.ArcCos(eval(f.getChild(0)));
+            case ARCSIN:    return F.ArcSin(eval(f.getChild(0)));
+            case ARCTAN:    return F.ArcTan(eval(f.getChild(0)));
+            case COS:       return F.Cos(eval(f.getChild(0)));
+            case COSH:      return F.Cosh(eval(f.getChild(0)));
+            case LN:        return F.Log(eval(f.getChild(0)));
+            case SIN:       return F.Sin(eval(f.getChild(0)));
+            case SINH:      return F.Sinh(eval(f.getChild(0)));
+            case TAN:       return F.Tan(eval(f.getChild(0)));
+        }
+        
+        throw new ParseException(f.toString());
     }
 }
