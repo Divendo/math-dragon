@@ -62,7 +62,7 @@ public class MathSourceView extends View
     public boolean onTouchEvent(MotionEvent me)
     {
         // We only want ACTION_DOWN events
-        if(me.getAction() != MotionEvent.ACTION_DOWN)
+        if(mathSourceObject == null || me.getAction() != MotionEvent.ACTION_DOWN)
             return false;
         
         // Prepare a MathObject for dragging
