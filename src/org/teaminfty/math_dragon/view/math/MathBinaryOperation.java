@@ -11,12 +11,8 @@ import org.w3c.dom.Element;
  * @see MathBinaryOperationLinear
  */
 
-public abstract class MathBinaryOperation extends MathObject
-{
-	public static final String NAME = "operation";
-	public static final String ATTR_OPERANDS = "operands";
-	public static final String ATTR_TYPE = "type";
-	
+public abstract class MathBinaryOperation extends MathOperation
+{	
     public MathBinaryOperation()
     {
         this(null, null);
@@ -109,15 +105,9 @@ public abstract class MathBinaryOperation extends MathObject
         return getChild(1);
     }
     
-    protected abstract String getType();
-    
-    public void writeToXML(Document doc, Element el)
+    protected final void writeChildrenToXML(Document doc, Element el)
     {
-        Element e = doc.createElement(NAME);
-        e.setAttribute(ATTR_OPERANDS, "2");
-        e.setAttribute(ATTR_TYPE, getType());
-        getLeft().writeToXML(doc, e);
-        getRight().writeToXML(doc, e);
-        el.appendChild(e);
+        getLeft().writeToXML(doc, el);
+        getRight().writeToXML(doc, el);
     }
 }
