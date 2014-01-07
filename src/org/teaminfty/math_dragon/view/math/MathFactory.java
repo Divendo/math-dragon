@@ -101,6 +101,8 @@ public final class MathFactory
                 f.setChild(0, toMath((Element) e.getFirstChild()));
                 return f;
             }
+            else if(tag.equals(MathParentheses.NAME))
+                return new MathParentheses(toMath((Element) e.getFirstChild()));
             else if(tag.equals(MathObjectEmpty.NAME))
                 return new MathObjectEmpty();
         }
