@@ -2,6 +2,7 @@ package org.teaminfty.math_dragon.view.math;
 
 
 import org.teaminfty.math_dragon.view.MathSourceOperationSinoid.OperatorType;
+import org.teaminfty.math_dragon.view.TypefaceHolder;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,7 +11,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public class MathObjectSinoid extends MathObject 
+public class MathOperationFunction extends MathObject 
 {
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
@@ -22,6 +23,7 @@ public class MathObjectSinoid extends MathObject
     protected String operatorName = "";
     protected Rect bounds = new Rect();
     public OperatorType type = null;
+    protected Boolean arc = false;
     
     /** The text size factor for exponents */
     protected static final float EXPONENT_FACTOR = 1.0f / 2;
@@ -30,7 +32,7 @@ public class MathObjectSinoid extends MathObject
     final float HALF_RATIO = 0.5f / 1.61803398874989f;
     public final float FULL_RATIO = 1 / 1.61803398874989f;
     
-    public MathObjectSinoid(OperatorType t)
+    public MathOperationFunction(OperatorType t)
     {
     	operatorName = getName(t);
     	type = t;
@@ -42,23 +44,26 @@ public class MathObjectSinoid extends MathObject
     public String getName(OperatorType t)
     {
     	if(t == OperatorType.ARCCOS)
-    	  return "Cos";
+    	{	arc = true;
+    	  	return "cos\u207B\u00B9";}
     	if(t == OperatorType.ARCSIN)
-    	  return "Sin";
+    	{	arc = true;
+    	  	return "sin\u207B\u00B9";}
     	if(t == OperatorType.ARCTAN)
-    	  return "Tan";
+    	{	arc = true;
+    	  	return "tan\u207B\u00B9";}
     	if(t == OperatorType.COS)
-    		return "Cos";
+    		return "cos";
     	if(t == OperatorType.SIN)
-    		return "Sin";
+    		return "sin";
     	if(t == OperatorType.TAN)
-    		return "Tan";
+    		return "tan";
     	if(t == OperatorType.COSH)
-    		return "Cosh";
+    		return "cosh";
     	if(t == OperatorType.SINH)
-    		return "Sinh";
+    		return "sinh";
     	if(t == OperatorType.LN)
-    		return "Ln";
+    		return "ln";
     	return "error";
     }
     
@@ -82,9 +87,12 @@ public class MathObjectSinoid extends MathObject
         // Copy the rectangle
         Rect out = new Rect(size);
         
+        if(!arc)
+        {
         // Add the padding
         out.inset(-out.width() / 10, -out.height() / 10);
         out.offsetTo(0, 0);
+        }
         
         // Return the result
         return out;
@@ -118,8 +126,6 @@ public class MathObjectSinoid extends MathObject
 		final Rect childRect = getChild(0).getBoundingBox();
     	final int width = (int)(childRect.height() * RATIO);
     	Rect vierkant = sizeAddPadding(getSize(findTextSize(level)));
-    	System.out.println(width);
-    	System.out.println("vierkant" + vierkant.width());
         
 		 return new Rect[]{ vierkant,
 				 new Rect(vierkant.width(), 0, vierkant.width() + width, childRect.height()), 
@@ -136,11 +142,9 @@ public class MathObjectSinoid extends MathObject
 		//Gets the needed sizes and centers
 		Rect[] operatorSizes = getOperatorBoundingBoxes();
 		Rect childSize = getChild(index).getBoundingBox();
-		int centerY = this.getCenter().y;
-		int centerY_child = this.getChild(0).getCenter().y;
 		
 		//offsets the child.
-		childSize.offsetTo(operatorSizes[0].width() + operatorSizes[1].width(), centerY - centerY_child );
+		childSize.offsetTo(operatorSizes[0].width() + operatorSizes[1].width(), 0 );
 		return childSize;
 	}
 	
@@ -149,9 +153,9 @@ public class MathObjectSinoid extends MathObject
 	public Rect getBoundingBox()
 	{
 		Rect[] operatorSizes = getOperatorBoundingBoxes();
-		System.out.println("operator" + operatorSizes[1].width());
+		Rect child = getChild(0).getBoundingBox();
 		
-		return new Rect(0,0, operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + getChild(0).getBoundingBox().width(), Math.max(getChild(0).getBoundingBox().height(), operatorSizes[0].height()));
+		return new Rect(0,Math.min(operatorSizes[0].top, child.top), operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + child.width(), Math.max(getChild(0).getBoundingBox().height(), operatorSizes[0].height()));
 	}
 
 	
@@ -164,15 +168,27 @@ public class MathObjectSinoid extends MathObject
 	@Override
 	public void draw(Canvas canvas)
 	{
-		Rect[] boxes = getOperatorBoundingBoxes();
+		this.drawBoundingBoxes(canvas);
+		Rect[] operatorBounding = this.getOperatorBoundingBoxes();
 		
+		operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
+        operatorPaint.setAntiAlias(true);
+        operatorPaint.setColor(this.getColor());
+		
+        //Draws the operator
+        canvas.save();
+        canvas.drawText(operatorName, 0, getChild(0).getCenter().y + operatorBounding[0].height()/2, operatorPaint);
+        canvas.restore();
+        
+
 		// Use stroke style for the parentheses
         operatorPaint.setStyle(Paint.Style.STROKE);
+        
 		
 		// Draw the left bracket
         canvas.save();
-        canvas.clipRect(boxes[1], Region.Op.INTERSECT);
-        RectF bracket = new RectF(boxes[1]);
+        canvas.clipRect(operatorBounding[1], Region.Op.INTERSECT);
+        RectF bracket = new RectF(operatorBounding[1]);
         bracket.inset(0, -operatorPaint.getStrokeWidth());
         bracket.offset(bracket.width() / 4, 0);
         canvas.drawArc(bracket, 100.0f, 160.0f, false, operatorPaint);
@@ -180,8 +196,8 @@ public class MathObjectSinoid extends MathObject
         
         // Draw the right bracket
         canvas.save();
-        canvas.clipRect(boxes[2], Region.Op.INTERSECT);
-        bracket = new RectF(boxes[2]);
+        canvas.clipRect(operatorBounding[2], Region.Op.INTERSECT);
+        bracket = new RectF(operatorBounding[2]);
         bracket.inset(0, -operatorPaint.getStrokeWidth());
         bracket.offset(-bracket.width() / 4, 0);
         canvas.drawArc(bracket, -80.0f, 160.0f, false, operatorPaint);
@@ -189,5 +205,6 @@ public class MathObjectSinoid extends MathObject
 
         // Set the paint back to fill style
         operatorPaint.setStyle(Paint.Style.FILL);
+        this.drawChildren(canvas);
 	}
 }

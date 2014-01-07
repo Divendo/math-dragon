@@ -2,14 +2,7 @@ package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-import org.teaminfty.math_dragon.view.math.MathOperationArcCos;
-import org.teaminfty.math_dragon.view.math.MathOperationArcSine;
-import org.teaminfty.math_dragon.view.math.MathOperationArcTangent;
-import org.teaminfty.math_dragon.view.math.MathOperationCosh;
-import org.teaminfty.math_dragon.view.math.MathOperationCosine;
-import org.teaminfty.math_dragon.view.math.MathOperationSine;
-import org.teaminfty.math_dragon.view.math.MathOperationSinh;
-import org.teaminfty.math_dragon.view.math.MathOperationTangent;
+import org.teaminfty.math_dragon.view.math.MathOperationFunction;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -38,21 +31,7 @@ public class MathSourceOperationSinoid extends MathSourceObject
     @Override
     public MathObject createMathObject()
     {
-        // Return the right MathObject
-        switch(type)
-        {
-            case SIN:       return new MathOperationSine();
-            case COS:  		return new MathOperationCosine();
-            case TAN:  		return new MathOperationTangent();
-            case SINH:      return new MathOperationSinh();
-            case COSH:  	return new MathOperationCosh();
-            case ARCSIN:    return new MathOperationArcSine();
-            case ARCCOS: 	return new MathOperationArcCos();
-            case ARCTAN:  	return new MathOperationArcTangent();
-        }
-        
-        // We'll never get here
-        return null;
+        return new MathOperationFunction(type);
     }
 	
     public void draw(Canvas canvas, int w, int h)
@@ -88,6 +67,7 @@ public class MathSourceOperationSinoid extends MathSourceObject
                 
             case SINH:
             case COSH:
+            case LN:
             {
                 paintOperator.setAntiAlias(true);
                 canvas.drawCircle(centerX, centerY, MathObject.lineWidth * 2, paintOperator);
