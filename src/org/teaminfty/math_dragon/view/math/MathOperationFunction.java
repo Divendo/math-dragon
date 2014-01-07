@@ -15,67 +15,66 @@ public class MathOperationFunction extends MathObject
 {
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
-    /** The paint that is used for drawing the exponent */
-    protected Paint exponentPaint = new Paint();
+    
     /** The ratio (width : height) of a bracket (i.e. half the golden ratio) */
-    final float RATIO = 0.5f / 1.61803398874989f;
-    
-    protected String operatorName = "";
-    protected Rect bounds = new Rect();
+    private final float PARENTHESES_RATIO = 0.5f / 1.61803398874989f;
+
+    /** Which function we represent */
     public OperatorType type = null;
-    protected Boolean arc = false;
     
-    /** The text size factor for exponents */
-    protected static final float EXPONENT_FACTOR = 1.0f / 2;
+    /** Default constructor */
+    public MathOperationFunction()
+    {
+        this(OperatorType.SIN);
+    }
     
-    /** The ratio (width : height) of a bracket (i.e. the golden ratio) */
-    final float HALF_RATIO = 0.5f / 1.61803398874989f;
-    public final float FULL_RATIO = 1 / 1.61803398874989f;
-    
+    /** Constructor
+     * @param t The kind of function that we're constructing */
     public MathOperationFunction(OperatorType t)
     {
-    	operatorName = getName(t);
-    	type = t;
+        type = t;
         children.add(new MathObjectEmpty());
         operatorPaint.setAntiAlias(true);
         operatorPaint.setStrokeWidth(MathObject.lineWidth);
+        operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
     }
     
-    public String getName(OperatorType t)
+    /** Returns the name of this function as a string
+     * @return The name of this function as a string (may contain high unicode characters) */
+    public String getName()
     {
-    	if(t == OperatorType.ARCCOS)
-    	{	arc = true;
-    	  	return "cos\u207B\u00B9";}
-    	if(t == OperatorType.ARCSIN)
-    	{	arc = true;
-    	  	return "sin\u207B\u00B9";}
-    	if(t == OperatorType.ARCTAN)
-    	{	arc = true;
-    	  	return "tan\u207B\u00B9";}
-    	if(t == OperatorType.COS)
-    		return "cos";
-    	if(t == OperatorType.SIN)
-    		return "sin";
-    	if(t == OperatorType.TAN)
-    		return "tan";
-    	if(t == OperatorType.COSH)
-    		return "cosh";
-    	if(t == OperatorType.SINH)
-    		return "sinh";
-    	if(t == OperatorType.LN)
-    		return "ln";
-    	return "error";
+        switch(type)
+        {
+            case ARCCOS:
+                  return "cos\u207B\u00B9";
+            case ARCSIN:
+                  return "sin\u207B\u00B9";
+            case ARCTAN:
+                  return "tan\u207B\u00B9";
+            case COS:
+                return "cos";
+            case SIN:
+                return "sin";
+            case TAN:
+                return "tan";
+            case COSH:
+                return "cosh";
+            case SINH:
+                return "sinh";
+            case LN:
+                return "ln";
+        }
+        return "error";
     }
     
     public int getPrecedence()
     { return MathObjectPrecedence.FUNCTION; }
 
     /** Calculates the right text size for the given level
-     * @param lvl The level
      * @return The right text size for the given level */
-    protected float findTextSize(int lvl)
+    protected float findTextSize()
     {
-        return defaultHeight * (float) Math.pow(2.0 / 3.0, lvl);
+        return defaultHeight * (float) Math.pow(2.0 / 3.0, level + 1);
     }   
     
     /** Adds padding to the given size rectangle
@@ -87,18 +86,15 @@ public class MathOperationFunction extends MathObject
         // Copy the rectangle
         Rect out = new Rect(size);
         
-        if(!arc)
-        {
         // Add the padding
-        out.inset(-out.width() / 10, -out.height() / 10);
+        out.inset(-(int)(MathObject.lineWidth  * 2.5), -(int)(MathObject.lineWidth * 2.5));
         out.offsetTo(0, 0);
-        }
         
         // Return the result
         return out;
     }
     
-    /** Calculates the size of this Sinoid when using the given font size
+    /** Calculates the size of this function when using the given font size
      * @param fontSize The font size
      * @return The size of this {@link MathConstant}
      */
@@ -106,86 +102,100 @@ public class MathOperationFunction extends MathObject
     {
         // Set the text size
         operatorPaint.setTextSize(fontSize);
-        exponentPaint.setTextSize(fontSize * EXPONENT_FACTOR);
+        
+        // Get the name of this function
+        final String operatorName = getName();
 
         // Calculate the total width and the height of the text
         Rect out = new Rect(0, 0, 0, 0);
-    
-        //Draws the operator
-        operatorPaint.getTextBounds(operatorName, 0, operatorName.length(), bounds);
-        out.right += bounds.width();
-        out.bottom =  bounds.height();
-    	
+        operatorPaint.getTextBounds(operatorName, 0, operatorName.length(), out);
+        out.offsetTo(0, 0);
+        
+        // Return the size
         return out;
     }
     
-	//Returns the bounding boxes of the Operator
-	@Override
-	public Rect[] getOperatorBoundingBoxes() 
-	{
-		final Rect childRect = getChild(0).getBoundingBox();
-    	final int width = (int)(childRect.height() * RATIO);
-    	Rect vierkant = sizeAddPadding(getSize(findTextSize(level)));
+    @Override
+    public Rect[] getOperatorBoundingBoxes() 
+    {
+        // Get the sizes
+        final Rect childRect = getChild(0).getBoundingBox();
+        final int parentheseWidth = (int)(childRect.height() * PARENTHESES_RATIO);
+        Rect textBounding = sizeAddPadding(getSize(findTextSize()));
         
-		 return new Rect[]{ vierkant,
-				 new Rect(vierkant.width(), 0, vierkant.width() + width, childRect.height()), 
-				 new Rect(vierkant.width() + width + childRect.width(), 0,vierkant.width() + childRect.width() + 2* width, childRect.height())};
-	}
-	
-	@Override
-	public Rect getChildBoundingBox( int index) throws IndexOutOfBoundsException 
-	{
-		
-		// Make sure the child index is valid
+        // Make sure everything is aligned nicely
+        final int childCenterY = getChild(0).getCenter().y;
+        final int childTop = Math.max(textBounding.centerY() - childCenterY, 0);
+        textBounding.offsetTo(0, Math.max(childCenterY - textBounding.centerY(), 0));
+        
+        // Return the bounding boxes
+        return new Rect[]{ textBounding,
+                 new Rect(textBounding.width(), childTop, textBounding.width() + parentheseWidth, childTop + childRect.height()), 
+                 new Rect(textBounding.width() + parentheseWidth + childRect.width(), childTop, textBounding.width() + childRect.width() + 2 * parentheseWidth, childTop + childRect.height())};
+    }
+    
+    @Override
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException 
+    {
+        // Make sure the child index is valid
         checkChildIndex(index);
         
-		//Gets the needed sizes and centers
-		Rect[] operatorSizes = getOperatorBoundingBoxes();
-		Rect childSize = getChild(index).getBoundingBox();
-		
-		//offsets the child.
-		childSize.offsetTo(operatorSizes[0].width() + operatorSizes[1].width(), 0 );
-		return childSize;
-	}
-	
-	//Complete bounding box
-	@Override
-	public Rect getBoundingBox()
-	{
-		Rect[] operatorSizes = getOperatorBoundingBoxes();
-		Rect child = getChild(0).getBoundingBox();
-		
-		return new Rect(0,Math.min(operatorSizes[0].top, child.top), operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + child.width(), Math.max(getChild(0).getBoundingBox().height(), operatorSizes[0].height()));
-	}
+        // Gets the needed sizes and centres
+        final Rect childRect = getChild(index).getBoundingBox();
+        final int parentheseWidth = (int)(childRect.height() * PARENTHESES_RATIO);
+        Rect textBounding = sizeAddPadding(getSize(findTextSize()));
+        
+        // Align the child's vertical centre with the text's vertical centre
+        // also offset it horizontally to place it behind the opening bracket
+        childRect.offsetTo(textBounding.width() + parentheseWidth, Math.max(textBounding.centerY() - getChild(index).getCenter().y, 0));
+        
+        // Return the result
+        return childRect;
+    }
+    
+    //Complete bounding box
+    @Override
+    public Rect getBoundingBox()
+    {
+        Rect[] operatorSizes = getOperatorBoundingBoxes();
+        Rect child = getChild(0).getBoundingBox();
+        
+        return new Rect(0,Math.min(operatorSizes[0].top, child.top), operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + child.width(), Math.max(getChild(0).getBoundingBox().height(), operatorSizes[0].height()));
+    }
 
-	
-	@Override
-	public Point getCenter()
-	{		
-		return new Point(getBoundingBox().centerX(), getBoundingBox().centerY());
-	}
-	
-	@Override
-	public void draw(Canvas canvas)
-	{
-		this.drawBoundingBoxes(canvas);
-		Rect[] operatorBounding = this.getOperatorBoundingBoxes();
-		
-		operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
-        operatorPaint.setAntiAlias(true);
-        operatorPaint.setColor(this.getColor());
-		
+    
+    @Override
+    public Point getCenter()
+    {        
+        return new Point(getBoundingBox().centerX(), getBoundingBox().centerY());
+    }
+    
+    @Override
+    public void draw(Canvas canvas)
+    {
+        // Draw the bounding boxes 
+        drawBoundingBoxes(canvas);
+        
+        // Set the right values for the paint
+        operatorPaint.setColor(getColor());
+        operatorPaint.setTextSize(findTextSize());
+        
+        // Get our operator bounding boxes
+        Rect[] operatorBounding = this.getOperatorBoundingBoxes();
+        
         //Draws the operator
         canvas.save();
-        canvas.drawText(operatorName, 0, getChild(0).getCenter().y + operatorBounding[0].height()/2, operatorPaint);
+        final String operatorName = getName();
+        Rect textBounding = new Rect();
+        operatorPaint.getTextBounds(operatorName, 0, operatorName.length(), textBounding);
+        canvas.translate((operatorBounding[0].width() - textBounding.width()) / 2, (operatorBounding[0].height() - textBounding.height()) / 2);
+        canvas.drawText(operatorName, operatorBounding[0].left - textBounding.left, operatorBounding[0].top - textBounding.top, operatorPaint);
         canvas.restore();
-        
 
-		// Use stroke style for the parentheses
+        // Use stroke style for the parentheses
         operatorPaint.setStyle(Paint.Style.STROKE);
         
-		
-		// Draw the left bracket
+        // Draw the left bracket
         canvas.save();
         canvas.clipRect(operatorBounding[1], Region.Op.INTERSECT);
         RectF bracket = new RectF(operatorBounding[1]);
@@ -205,6 +215,8 @@ public class MathOperationFunction extends MathObject
 
         // Set the paint back to fill style
         operatorPaint.setStyle(Paint.Style.FILL);
-        this.drawChildren(canvas);
-	}
+        
+        // Draw the children
+        drawChildren(canvas);
+    }
 }
