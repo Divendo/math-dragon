@@ -33,10 +33,30 @@ public class MathSymbol extends MathObject
     /** Default constructor */
     public MathSymbol()
     { 
-        this(0, 0, 0, 0, new long[0]);
+        this(0);
+    }
+    
+    /**
+     * Simple constructor with a factor just for simplicity.
+     * @param factor The base number
+     */
+    public MathSymbol(long factor)
+    {
+        this(factor, 0, 0, 0);
     }
     
     /** Construct mathematical constant using specified values for simplicity.
+     * @param factor The base number
+     * @param ePow The Euler power
+     * @param piPow The pi power
+     * @param iPow The imaginary power
+     */
+    public MathSymbol(long factor, long ePow, long piPow, long iPow)
+    {
+        this(factor, ePow, piPow, iPow, new long[0]);
+    }
+    
+    /** Construct mathematical constant using specified values.
      * @param factor The base number
      * @param ePow The Euler power
      * @param piPow The pi power
@@ -52,8 +72,8 @@ public class MathSymbol extends MathObject
     	this.iPow = iPow;
     	if(varPows != null)
     	{
-    	    for(int i = 0; i < varPows.length && i < this.varPows.length; ++i)
-    	        this.varPows[i] = varPows[i];
+    	    // arraycopy is safer and more efficient.
+    	    System.arraycopy(varPows, 0, this.varPows, 0, Math.min(varPows.length, this.varPows.length));
     	}
     }
     

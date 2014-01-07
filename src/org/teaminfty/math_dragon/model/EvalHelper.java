@@ -82,7 +82,8 @@ public class EvalHelper
      * @throws EmptyChildException
      *         Thrown when one or more children are invalid.
      */
-    static void checkChildren(MathBinaryOperation op) throws EmptyChildException
+    static void checkChildren(MathBinaryOperation op)
+            throws EmptyChildException
     {
         if(op.getLeft() == null)
             throw new EmptyChildException(0);
@@ -91,10 +92,10 @@ public class EvalHelper
     }
 
     /** Variable lookup table */
-    private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d, F.e,
-            F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r,
-            F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
-    
+    private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d,
+            F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
+            F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
+
     public static IExpr symbol(MathSymbol symbol)
     {
         if(symbol == null)
@@ -110,55 +111,121 @@ public class EvalHelper
             result = F.Times(result, F.Power(F.E, symbol.getEPow()));
         if(symbol.getIPow() != 0)
             result = F.Times(result, F.Power(F.I, symbol.getIPow()));
-        
+
         // Add the variables
         for(int i = 0; i < symbol.varPowCount(); i++)
         {
             if(symbol.getVarPow(i) != 0)
-                result = F.Times(result, F.Power(SYMBOLS[i], symbol.getVarPow(i)));
+                result = F.Times(result,
+                        F.Power(SYMBOLS[i], symbol.getVarPow(i)));
         }
 
         // Return the result
         return result;
     }
 
+    /**
+     * Evaluate mathematical unary addition using specified argument.
+     * 
+     * @param add
+     *        The mathematical unary addition.
+     * @return Converted mathematical unary addition for Symja.
+     * @throws MathException
+     *         Thrown when <tt>add</tt> contains invalid children.
+     */
     public static IExpr add(MathOperationAdd add) throws MathException
     {
         checkChildren(add);
         return F.Plus(eval(add.getLeft()), eval(add.getRight()));
     }
 
+    /**
+     * Evaluate mathematical unary division using specified argument.
+     * 
+     * @param div
+     *        The mathematical unary division.
+     * @return Converted mathematical unary division for Symja.
+     * @throws MathException
+     *         Thrown when <tt>div</tt> contains invalid children.
+     */
     public static IExpr div(MathOperationDivide div) throws MathException
     {
         checkChildren(div);
         return F.Divide(eval(div.getLeft()), eval(div.getRight()));
     }
 
+    /**
+     * Evaluate mathematical unary multiplication using specified argument.
+     * 
+     * @param mul
+     *        The mathematical unary multiplication.
+     * @return Converted mathematical unary multiplication for Symja.
+     * @throws MathException
+     *         Thrown when <tt>mul</tt> contains invalid children.
+     */
     public static IExpr mul(MathOperationMultiply mul) throws MathException
     {
         checkChildren(mul);
         return F.Times(eval(mul.getLeft()), eval(mul.getRight()));
     }
 
+    /**
+     * Evaluate mathematical unary power using specified argument.
+     * 
+     * @param pow
+     *        The mathematical unary power.
+     * @return Converted mathematical unary power for Symja.
+     * @throws MathException
+     *         Thrown when <tt>pow</tt> contains invalid children.
+     */
     public static IExpr pow(MathOperationPower pow) throws MathException
     {
         checkChildren(pow);
         return F.Power(eval(pow.getBase()), eval(pow.getExponent()));
     }
 
+    /**
+     * Evaluate mathematical unary root using specified argument.
+     * 
+     * @param root
+     *        The mathematical unary root.
+     * @return Converted mathematical unary root for Symja.
+     * @throws MathException
+     *         Thrown when <tt>root</tt> contains invalid children.
+     */
     public static IExpr root(MathOperationRoot root) throws MathException
     {
         checkChildren(root);
-        return F.Power(eval(root.getExponent()), F.Divide(F.ZZ(1), eval(root.getBase())));
+        return F.Power(eval(root.getExponent()),
+                F.Divide(F.ZZ(1), eval(root.getBase())));
     }
 
+    /**
+     * Evaluate mathematical unary subtraction using specified argument.
+     * 
+     * @param sub
+     *        The mathematical unary subtraction.
+     * @return Converted mathematical unary subtraction for Symja.
+     * @throws MathException
+     *         Thrown when <tt>sub</tt> contains invalid children.
+     */
     public static IExpr sub(MathOperationSubtract sub) throws MathException
     {
         checkChildren(sub);
         return F.Subtract(eval(sub.getLeft()), eval(sub.getRight()));
     }
 
-    public static IExpr derivative(MathOperationDerivative ddx) throws MathException
+    /**
+     * Evaluate mathematical derivation using specified argument.
+     * 
+     * @param ddx
+     *        The mathematical derivation.
+     * @return Converted mathematical derivation for Symja.
+     * @throws MathException
+     *         Thrown when <tt>ddx</tt> contains invalid children.
+     */
+    public static IExpr derivative(MathOperationDerivative ddx)
+            throws MathException
     {
         checkChildren(ddx);
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));

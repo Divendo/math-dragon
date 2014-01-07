@@ -89,9 +89,9 @@ public final class MathFactory
                 // Create and return the symbol
                 return new MathSymbol(factor, ePow, piPow, iPow, varPows);
             }
-            else if(tag.equals(MathBinaryOperation.NAME))
+            else if(tag.equals(MathOperation.NAME))
             {
-                if(Integer.parseInt(e.getAttribute(MathBinaryOperation.ATTR_OPERANDS)) == 2)
+                if(Integer.parseInt(e.getAttribute(MathOperation.ATTR_OPERANDS)) == 2)
                     return toOpBin(e);
             }
             else if(tag.equals(MathObjectEmpty.NAME))
