@@ -5,13 +5,14 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
+import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
+import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
-import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
@@ -22,7 +23,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +51,9 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        
+        // Load the typefaces
+        TypefaceHolder.loadFromAssets(getAssets());
 
         // Set the default size in the MathObject class
         MathObject.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
@@ -126,22 +129,24 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
      */
     public void wolfram(View view)
     {
-        try
+        // Get the MathObject
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+        MathObject obj = fragmentMainScreen.getMathObject();
+        
+        // Only send to Wolfram|Alpha if the MathObject is completed
+        if(obj.isCompleted())
         {
-            // Get the expression as a string
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            IExpr expr = fragmentMainScreen.getMathObject().eval();
-            String query = expr.toString();
+            // Get the query
+            String query = obj.toString();
             
+            // Strip the query of unnecessary outer parentheses
+            if(query.startsWith("(") && query.endsWith(")"))
+                    query = query.substring(1, query.length() - 1);
+
             // Start an intent to send the user to Wolfram|Alpha
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            // TODO one might be able to insert weird queries here using variables? not sure.
             intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
             startActivity(intent);
-        }
-        catch(EmptyChildException e)
-        {
-            e.printStackTrace();
         }
     }
 
@@ -151,15 +156,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         {
             // Calculate the answer
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            long start = System.currentTimeMillis();
-            IExpr a = fragmentMainScreen.getMathObject().eval();
-            long between = System.currentTimeMillis();
-            IExpr result = EvalEngine.eval(a);
-            
-            
-            System.out.println(result.toScript());
-            long end = System.currentTimeMillis();
-            Log.i("Timings", Long.toString(between - start) + "ms, " + Long.toString(end - between) + "ms");
+            IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
 
             // Get the evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
@@ -192,7 +189,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
                 .findFragmentById(R.id.fragmentEvaluation);
 
-        MathConstant mathConstant = new MathConstant("42");
+        MathSymbol mathConstant = new MathSymbol(42,0,0,0,null);
         fragmentEvaluation.showMathObject(mathConstant);
     }
 
@@ -202,18 +199,6 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Simply clear the current formula
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();
-    }
-    
-    public void temporary(View view)
-    {
-    	/*// Get the DrawerLayout object DrawerLayout drawerLayout =
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-         
-        // Show the favourites drawer
-        drawerLayout.openDrawer(Gravity.CENTER);*/
-         
-        FragmentKeyboard fragKeyboard = new FragmentKeyboard();
-        fragKeyboard.show(getFragmentManager(), "keyboard");
     }
 
     @Override

@@ -1,10 +1,9 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.view.HoverState;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
@@ -12,12 +11,18 @@ public class MathOperationPower extends MathBinaryOperation
 {
 	public static final String TYPE = "power";
 	
+	/** A paint that's used to draw the operator when the user is hovering over this object */
+	private Paint operatorPaint = new Paint();
+	
     public MathOperationPower()
-    {}
+    { this(null, null); }
     
 	public MathOperationPower(MathObject base, MathObject power)
 	{
 		super(base, power);
+		
+		// Initialise the paint
+		operatorPaint.setColor(0xcc4444ff);
 	}
 	
 	public String toString()
@@ -72,16 +77,6 @@ public class MathOperationPower extends MathBinaryOperation
     {
         return getRight();
     }
-
-	@Override
-	public IExpr eval() throws EmptyChildException 
-	{
-		// Check the children
-		this.checkChildren();
-		
-		// Return the result
-		return F.Power( getBase().eval(), getExponent().eval() );
-	}
 
 	@Override
 	public Rect[] getOperatorBoundingBoxes() 
@@ -165,6 +160,14 @@ public class MathOperationPower extends MathBinaryOperation
 	{
         // Draw the bounding boxes
         drawBoundingBoxes(canvas);
+        
+        // Draw the operator if we're hovering
+        if(state == HoverState.HOVER)
+        {
+            final Rect[] boxes = getOperatorBoundingBoxes();
+            for(Rect box : boxes)
+                canvas.drawRect(box, operatorPaint);
+        }
         
         // Only draw the children
         drawChildren(canvas);

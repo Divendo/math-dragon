@@ -6,6 +6,7 @@
     
     <dimen name="main_screen_button_margin">24dp</dimen>
     <dimen name="circle_button_size">32dp</dimen>
+    <dimen name="circle_button_medium_size">48dp</dimen>
     <dimen name="circle_button_big_size">64dp</dimen>
     <dimen name="circle_button_line_width">2dp</dimen>
     
@@ -23,5 +24,6 @@
     <dimen name="math_symbol_editor_padding">16dp</dimen>
     <dimen name="keyboard_button_margin">8dp</dimen>
     <dimen name="keyboard_padding">16dp</dimen>
+    <dimen name="keyboard_button_small_margin">16dp</dimen>
 
 </resources>

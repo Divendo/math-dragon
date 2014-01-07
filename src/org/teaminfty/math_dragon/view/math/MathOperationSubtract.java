@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
@@ -22,16 +18,6 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
     @Override
     public int getPrecedence()
     { return MathObjectPrecedence.ADD; }
-    
-    @Override
-    public IExpr eval() throws EmptyChildException
-    {
-        // Check if the children are not empty
-        this.checkChildren();
-        
-        // Return the result
-        return F.Subtract(getChild(0).eval(), getChild(1).eval());
-    }
     
     @Override
     public void draw(Canvas canvas)

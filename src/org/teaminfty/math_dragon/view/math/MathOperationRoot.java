@@ -1,9 +1,5 @@
 package org.teaminfty.math_dragon.view.math;
 
-import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -13,7 +9,6 @@ import android.graphics.Rect;
 public class MathOperationRoot extends MathBinaryOperation
 {
 	public static final String TYPE = "root";
-	
     protected Paint operatorPaint = new Paint();
     
     public MathOperationRoot()
@@ -46,8 +41,12 @@ public class MathOperationRoot extends MathBinaryOperation
      * @return The base mathematical expression.
      */
     public MathObject getBase()
+    { return getLeft(); }
+
+    @Override
+    public String toString()
     {
-        return getLeft();
+        return "(" + getBase().toString() + "^ (1/" + getExponent().toString() + "))";
     }
     
     /**
@@ -70,16 +69,6 @@ public class MathOperationRoot extends MathBinaryOperation
     public MathObject getExponent()
     {
         return getRight();
-    }
-
-    @Override
-    public IExpr eval() throws EmptyChildException 
-    {
-        // Check the children
-        this.checkChildren();
-        
-        // Return the result
-        return F.Power(getChild(1).eval(), F.Divide(F.ZZ(1), getChild(0).eval()));
     }
 
     @Override

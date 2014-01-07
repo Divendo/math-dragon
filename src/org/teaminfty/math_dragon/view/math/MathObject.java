@@ -2,8 +2,10 @@ package org.teaminfty.math_dragon.view.math;
 
 import java.util.ArrayList;
 
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.teaminfty.math_dragon.view.HoverState;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -90,6 +92,11 @@ public abstract class MathObject
         setDefaultHeight(defaultHeight);
     }
     
+    /** Returns the default height for this {@link MathObject}
+     * @return The default height for this {@link MathObject} */
+    public int getDefaultHeight()
+    { return defaultHeight; }
+    
     /** Sets the default height for this {@link MathObject} and all of its children
      * @param height The default height */
     public void setDefaultHeight(int height)
@@ -101,16 +108,6 @@ public abstract class MathObject
         for(MathObject child : children)
             child.setDefaultHeight(defaultHeight);
     }
-    
-
-    /**
-     * Symbolically evaluates this {@link MathObject}
-     * 
-     * @return The symbolic solution of this {@link MathObject}
-     * @throws EmptyChildException
-     *         If an empty child is detected where no empty child is allowed
-     */
-    public abstract IExpr eval() throws EmptyChildException;
 
     /**
      * Returns the bounding boxes of the operator of this {@link MathObject}.
@@ -303,8 +300,32 @@ public abstract class MathObject
             canvas.drawRect(getChildBoundingBox(i), paint);
     }
     
-    /**
-     * Serialize current instance in a XML document in a specified element. 
+    /** The name of the XML root element */
+    public static final String XML_ROOT = "root";
+
+    /** The current version of the XML structure */
+    public static final int XML_VERSION = 1;
+    
+    /** Creates an empty XML document that can be used for the {@link MathObject#writeToXML(Document, Element) writeToXML()} method
+     * @return The created document 
+     * @throws ParserConfigurationException If something goes wrong while creating the document */
+    public static Document createXMLDocument() throws ParserConfigurationException
+    {
+        // Create an empty document
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        
+        // Create a root element
+        Element root = doc.createElement(XML_ROOT);
+        root.setAttribute("version", Integer.toString(XML_VERSION));
+        doc.appendChild(root);
+        
+        // Return the document
+        return doc;
+    }
+    
+    /** Serialize current instance in a XML document in a specified element. 
      * @param doc The XML document
      * @param parent The parent XML element
      */
@@ -312,5 +333,23 @@ public abstract class MathObject
     {
     	Log.w("XML", "not a writable element yet");
     	parent.appendChild(doc.createElement(MathObjectEmpty.NAME));
+    }
+    
+    /**
+     * Checks if all children have been fully filled in, and also their children and so on recursively down the tree.
+     * @return returns true if all children of this MathObject have been filled in.
+     */
+    public boolean isCompleted()
+    {
+        if(this instanceof MathObjectEmpty)
+            return false;
+        
+        for(MathObject child : children)
+        {
+            if(child instanceof MathObjectEmpty || !child.isCompleted())
+                return false;
+        }
+        
+        return true;
     }
 }
