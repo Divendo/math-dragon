@@ -20,7 +20,7 @@ public class MathSourceOperationSinoid extends MathSourceObject
 	/** An enumeration that describes the types this source object can hold */
     public enum OperatorType
     {
-        SIN, COS, TAN, SINH, COSH, ARCSIN, ARCCOS, ARCTAN
+        SIN, COS, TAN, SINH, COSH, ARCSIN, ARCCOS, ARCTAN, LN
     }
 	
     

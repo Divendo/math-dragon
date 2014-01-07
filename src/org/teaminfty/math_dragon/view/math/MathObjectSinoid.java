@@ -1,6 +1,8 @@
 package org.teaminfty.math_dragon.view.math;
 
 
+import org.teaminfty.math_dragon.view.MathSourceOperationSinoid.OperatorType;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -8,7 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public abstract class MathObjectSinoid extends MathObject 
+public class MathObjectSinoid extends MathObject 
 {
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
@@ -17,11 +19,9 @@ public abstract class MathObjectSinoid extends MathObject
     /** The ratio (width : height) of a bracket (i.e. half the golden ratio) */
     final float RATIO = 0.5f / 1.61803398874989f;
     
-    protected String tmpStr = "";
-    protected String tmpStr2 = "-1";
+    protected String operatorName = "";
     protected Rect bounds = new Rect();
-    protected Rect bounds2 = new Rect();
-    protected int arc = 0;
+    public OperatorType type = null;
     
     /** The text size factor for exponents */
     protected static final float EXPONENT_FACTOR = 1.0f / 2;
@@ -30,11 +30,36 @@ public abstract class MathObjectSinoid extends MathObject
     final float HALF_RATIO = 0.5f / 1.61803398874989f;
     public final float FULL_RATIO = 1 / 1.61803398874989f;
     
-    public MathObjectSinoid()
+    public MathObjectSinoid(OperatorType t)
     {
+    	operatorName = getName(t);
+    	type = t;
         children.add(new MathObjectEmpty());
         operatorPaint.setAntiAlias(true);
         operatorPaint.setStrokeWidth(MathObject.lineWidth);
+    }
+    
+    public String getName(OperatorType t)
+    {
+    	if(t == OperatorType.ARCCOS)
+    	  return "Cos";
+    	if(t == OperatorType.ARCSIN)
+    	  return "Sin";
+    	if(t == OperatorType.ARCTAN)
+    	  return "Tan";
+    	if(t == OperatorType.COS)
+    		return "Cos";
+    	if(t == OperatorType.SIN)
+    		return "Sin";
+    	if(t == OperatorType.TAN)
+    		return "Tan";
+    	if(t == OperatorType.COSH)
+    		return "Cosh";
+    	if(t == OperatorType.SINH)
+    		return "Sinh";
+    	if(t == OperatorType.LN)
+    		return "Ln";
+    	return "error";
     }
     
     public int getPrecedence()
@@ -77,23 +102,12 @@ public abstract class MathObjectSinoid extends MathObject
 
         // Calculate the total width and the height of the text
         Rect out = new Rect(0, 0, 0, 0);
-        
-        //if the operator is arcsin, arctan or arccos, get add the size of the -1
-    	if(arc == 1)
-    	{
-    	operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
-    	exponentPaint.getTextBounds(tmpStr2, 0, tmpStr2.length(), bounds2);
-    	out.right += bounds.width() + bounds2.width();
-        out.bottom = Math.max(out.bottom, bounds.height());
-    	}
-    	
-    	// If not, get the size without -1
-    	else 
-    	{
-        operatorPaint.getTextBounds(tmpStr, 0, tmpStr.length(), bounds);
+    
+        //Draws the operator
+        operatorPaint.getTextBounds(operatorName, 0, operatorName.length(), bounds);
         out.right += bounds.width();
         out.bottom =  bounds.height();
-    	}
+    	
         return out;
     }
     
