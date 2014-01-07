@@ -300,7 +300,8 @@ public class MathView extends View
         @Override
         public boolean onScale(ScaleGestureDetector detector)
         {
-            mathObjectDefaultHeight = Math.max(mathObjectDefaultHeight * detector.getScaleFactor(), getResources().getDimensionPixelSize(R.dimen.math_object_min_default_size));
+            mathObjectDefaultHeight = Math.min(getResources().getDimensionPixelSize(R.dimen.math_object_max_default_size),
+                    Math.max(mathObjectDefaultHeight * detector.getScaleFactor(), getResources().getDimensionPixelSize(R.dimen.math_object_min_default_size)));
             mathObject.setDefaultHeight((int) mathObjectDefaultHeight);
             invalidate();
             return true;
