@@ -92,6 +92,11 @@ public abstract class MathObject
         setDefaultHeight(defaultHeight);
     }
     
+    /** Returns the default height for this {@link MathObject}
+     * @return The default height for this {@link MathObject} */
+    public int getDefaultHeight()
+    { return defaultHeight; }
+    
     /** Sets the default height for this {@link MathObject} and all of its children
      * @param height The default height */
     public void setDefaultHeight(int height)
@@ -328,5 +333,23 @@ public abstract class MathObject
     {
     	Log.w("XML", "not a writable element yet");
     	parent.appendChild(doc.createElement(MathObjectEmpty.NAME));
+    }
+    
+    /**
+     * Checks if all children have been fully filled in, and also their children and so on recursively down the tree.
+     * @return returns true if all children of this MathObject have been filled in.
+     */
+    public boolean isCompleted()
+    {
+        if(this instanceof MathObjectEmpty)
+            return false;
+        
+        for(MathObject child : children)
+        {
+            if(child instanceof MathObjectEmpty || !child.isCompleted())
+                return false;
+        }
+        
+        return true;
     }
 }

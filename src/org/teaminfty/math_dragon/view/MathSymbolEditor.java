@@ -1,7 +1,7 @@
 package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,19 +19,19 @@ public class MathSymbolEditor extends View
         FACTOR, PI, E, I, VAR
     }
     
-    /** The factor of this constant */
+    /** The factor of this symbol */
     private String factor = "0";
-    /** The power of the PI constant */
+    /** The power of the PI symbol */
     private String piPow = "";
-    /** Whether the PI constant is shown or not */
+    /** Whether the PI symbol is shown or not */
     private boolean showPi = false;
-    /** The power of the E constant */
+    /** The power of the E symbol */
     private String ePow = "";
-    /** Whether the E constant is shown or not */
+    /** Whether the E symbol is shown or not */
     private boolean showE = false;
     /** The power of the imaginary unit */
     private String iPow = "";
-    /** Whether the I constant is shown or not */
+    /** Whether the I symbol is shown or not */
     private boolean showI = false;
     /** The powers of the variables */
     private String[] varPowers = new String[26];
@@ -43,7 +43,7 @@ public class MathSymbolEditor extends View
     /** The variable we're currently editing */
     private char currVar = 'a';
     
-    /** The paint that is used to draw the factor and the constants */
+    /** The paint that is used to draw the factor and the symbols */
     protected Paint paint = new Paint();
 
     /** The paint that is used to draw the exponents */
@@ -227,7 +227,7 @@ public class MathSymbolEditor extends View
     public EditingSymbol getEditingSymbol()
     { return editingSymbol; }
 
-    /** Resets the constant in this editor */
+    /** Resets the symbol in this editor */
     public void reset()
     {
         // Set all fields back to their initial values
@@ -251,41 +251,52 @@ public class MathSymbolEditor extends View
         requestLayout();
     }
     
-    /** Copies the values from the given {@link MathConstant}
-     * @param mathConstant The {@link MathConstant} to copy the values from */
-    public void fromMathConstant(MathConstant mathConstant)
+    /** Copies the values from the given {@link MathSymbol}
+     * @param mathSymbol The {@link MathSymbol} to copy the values from */
+    public void fromMathSymbol(MathSymbol mathSymbol)
     {
         // Reset all values
         reset();
         
         // Set the factor
-        factor = Long.toString(mathConstant.getFactor());
+        factor = Long.toString(mathSymbol.getFactor());
         
         // If the factor is not 0, we need to set the powers (and their visibility)
-        if(mathConstant.getFactor() != 0)
+        if(mathSymbol.getFactor() != 0)
         {
             // PI
-            if(mathConstant.getPiPow() != 0)
+            if(mathSymbol.getPiPow() != 0)
             {
-                if(mathConstant.getPiPow() != 1)
-                    piPow = Long.toString(mathConstant.getPiPow());
+                if(mathSymbol.getPiPow() != 1)
+                    piPow = Long.toString(mathSymbol.getPiPow());
                 showPi = true;
             }
             
             // E
-            if(mathConstant.getEPow() != 0)
+            if(mathSymbol.getEPow() != 0)
             {
-                if(mathConstant.getEPow() != 1)
-                    ePow = Long.toString(mathConstant.getEPow());
+                if(mathSymbol.getEPow() != 1)
+                    ePow = Long.toString(mathSymbol.getEPow());
                 showE = true;
             }
 
             // I
-            if(mathConstant.getIPow() != 0)
+            if(mathSymbol.getIPow() != 0)
             {
-                if(mathConstant.getIPow() != 1)
-                    iPow = Long.toString(mathConstant.getIPow());
+                if(mathSymbol.getIPow() != 1)
+                    iPow = Long.toString(mathSymbol.getIPow());
                 showI = true;
+            }
+            
+            // Variables
+            for(int i = 0; i < mathSymbol.varPowCount() && i < varPowers.length; ++i)
+            {
+                if(mathSymbol.getVarPow(i) != 0)
+                {
+                    if(mathSymbol.getVarPow(i) != 1)
+                        varPowers[i] = Long.toString(mathSymbol.getVarPow(i));
+                    showVars[i] = true;
+                }
             }
         }
         
@@ -298,12 +309,12 @@ public class MathSymbolEditor extends View
         requestLayout();
     }
     
-    /** Constructs a {@link MathConstant} from the current values
-     * @return The constructed {@link MathConstant} */
-    public MathConstant getMathConstant()
+    /** Constructs a {@link MathSymbol} from the current values
+     * @return The constructed {@link MathSymbol} */
+    public MathSymbol getMathSymbol()
     {
-        // The MathConstant we're going to return
-        MathConstant out = new MathConstant();
+        // The MathSymbol we're going to return
+        MathSymbol out = new MathSymbol();
         
         // Set the factor
         if(factor.isEmpty())
@@ -322,6 +333,13 @@ public class MathSymbolEditor extends View
         // Set the I power
         if(showI)
             out.setIPow(iPow.isEmpty() ? 1 : Long.parseLong(iPow));
+        
+        // Set the powers for the variables
+        for(int i = 0; i < varPowers.length && i < out.varPowCount(); ++i)
+        {
+            if(showVars[i])
+                out.setVarPow(i, varPowers[i].isEmpty() ? 1 : Long.parseLong(varPowers[i]));
+        }
         
         // Return the result
         return out;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSymbolEditor;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -24,8 +24,8 @@ public class FragmentKeyboard extends DialogFragment
     /** The {@link MathSymbolEditor} in this fragment */
     private MathSymbolEditor mathSymbolEditor = null;
     
-    /** A {@link MathConstant} we saved for later to set to {@link FragmentKeyboard#mathSymbolEditor mathSymbolEditor} */
-    private MathConstant mathSymbolForLater = null;
+    /** A {@link MathSymbol} we saved for later to set to {@link FragmentKeyboard#mathSymbolEditor mathSymbolEditor} */
+    private MathSymbol mathSymbolForLater = null;
     
     /** We'll keep a list of all variable buttons */
     private ArrayList<ToggleButton> varButtons = new ArrayList<ToggleButton>();
@@ -43,7 +43,7 @@ public class FragmentKeyboard extends DialogFragment
     	// Get the MathSymbolEditor
     	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
         if(mathSymbolForLater != null)
-            mathSymbolEditor.fromMathConstant(mathSymbolForLater);
+            mathSymbolEditor.fromMathSymbol(mathSymbolForLater);
 		
     	// Acquire access to all buttons
     	final Button button1 =  (Button) myFragmentView.findViewById(R.id.keyboardButton1);
@@ -150,16 +150,16 @@ public class FragmentKeyboard extends DialogFragment
         getDialog().getWindow().setAttributes(params);
     }
     
-    /** Sets the current value from the given {@link MathConstant}
-     * @param mathSymbol The {@link MathConstant} to set the current value to (can be <tt>null</tt> in which case the value will be reset) */
-    public void setMathSymbol(MathConstant mathSymbol)
+    /** Sets the current value from the given {@link MathSymbol}
+     * @param mathSymbol The {@link MathSymbol} to set the current value to (can be <tt>null</tt> in which case the value will be reset) */
+    public void setMathSymbol(MathSymbol mathSymbol)
     {
         if(mathSymbolEditor == null)
             mathSymbolForLater = mathSymbol;
         else if(mathSymbol == null)
             mathSymbolEditor.reset();
         else
-            mathSymbolEditor.fromMathConstant(mathSymbol);
+            mathSymbolEditor.fromMathSymbol(mathSymbol);
         
         refreshButtonState();
     }
@@ -169,7 +169,7 @@ public class FragmentKeyboard extends DialogFragment
     {
         /** Called when the symbol has been confirmed
          * @param mathSymbol The input */
-        public void confirmed(MathConstant mathSymbol);
+        public void confirmed(MathSymbol mathSymbol);
     }
     
     /** The current {@link OnConfirmListener} */
@@ -181,11 +181,11 @@ public class FragmentKeyboard extends DialogFragment
     { onConfirmListener = listener; }
     
     /** Calls the {@link OnConfirmListener}
-     * @param mathConstant The input */
-    private void callOnConfirmListener(MathConstant mathConstant)
+     * @param mathSymbol The input */
+    private void callOnConfirmListener(MathSymbol mathSymbol)
     {
         if(onConfirmListener != null)
-            onConfirmListener.confirmed(mathConstant);
+            onConfirmListener.confirmed(mathSymbol);
     }
     
     @Override
@@ -321,7 +321,7 @@ public class FragmentKeyboard extends DialogFragment
         @Override
         public void onClick(final View v)
         {
-            callOnConfirmListener(mathSymbolEditor.getMathConstant());
+            callOnConfirmListener(mathSymbolEditor.getMathSymbol());
             dismiss();
         }
     }

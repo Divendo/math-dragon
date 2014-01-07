@@ -29,7 +29,7 @@ public class MathObjectEmpty extends MathObject
         paint.setStyle(Paint.Style.STROKE);
         paint.setPathEffect(new DashPathEffect(new float[] {16.0f, 16.0f}, 0));
     }
-
+    
     @Override
     public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
     {

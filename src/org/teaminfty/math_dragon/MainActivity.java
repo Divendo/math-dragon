@@ -12,7 +12,7 @@ import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
-import org.teaminfty.math_dragon.view.math.MathConstant;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
@@ -129,28 +129,24 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
      */
     public void wolfram(View view)
     {
-        try
+        // Get the MathObject
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+        MathObject obj = fragmentMainScreen.getMathObject();
+        
+        // Only send to Wolfram|Alpha if the MathObject is completed
+        if(obj.isCompleted())
         {
-            // Get the expression as a string
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            IExpr expr = EvalHelper.eval(fragmentMainScreen.getMathObject());
-            String query = expr.toString();
+            // Get the query
+            String query = obj.toString();
             
+            // Strip the query of unnecessary outer parentheses
+            if(query.startsWith("(") && query.endsWith(")"))
+                    query = query.substring(1, query.length() - 1);
+
             // Start an intent to send the user to Wolfram|Alpha
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            // TODO one might be able to insert weird queries here using variables? not sure.
             intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
             startActivity(intent);
-        }
-        catch(EmptyChildException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch(MathException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
@@ -193,7 +189,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
                 .findFragmentById(R.id.fragmentEvaluation);
 
-        MathConstant mathConstant = new MathConstant("42");
+        MathSymbol mathConstant = new MathSymbol(42,0,0,0,null);
         fragmentEvaluation.showMathObject(mathConstant);
     }
 

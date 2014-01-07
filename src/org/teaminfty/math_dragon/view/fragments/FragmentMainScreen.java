@@ -8,8 +8,8 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
-import org.teaminfty.math_dragon.view.math.MathConstant;
 import org.teaminfty.math_dragon.view.math.MathFactory;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 import org.w3c.dom.Document;
@@ -127,7 +127,7 @@ public class FragmentMainScreen extends Fragment
     private class ShowKeyboardListener implements MathView.OnShowKeyboardListener
     {
         @Override
-        public void showKeyboard(MathConstant mathConstant, OnConfirmListener listener)
+        public void showKeyboard(MathSymbol mathConstant, OnConfirmListener listener)
         {
             // Create a keyboard
             FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();

@@ -103,9 +103,18 @@ public class MathOperationDerivative extends MathBinaryOperation
 
         // Position the bounding box and return it
         sizes[0].offsetTo( 0, sizes[1].height());
-        sizes[3].offsetTo( Math.max(0, sizes[0].width() - sizes[1].width() - sizes[3].width() - sizes[5].width()) / 2, sizes[1].height() - sizes[3].height());
+        sizes[3].offsetTo( Math.max(0, sizes[0].width() - sizes[1].width() - sizes[3].width() - sizes[5].width() - sizes[6].width()) / 2, sizes[1].height() - sizes[3].height());
         sizes[4].offsetTo( Math.max(0, sizes[0].width() - sizes[2].width() - sizes[4].width()) / 2, sizes[1].height() + sizes[0].height() + (sizes[2].height() - sizes[4].height()));
-        return new Rect[] {sizes[0], sizes[3], sizes[4]};
+        
+        // Make a rectangle the size of the brackets
+        Rect leftBracket = new Rect( 0, 0, sizes[5].width(), sizes[5].height());
+        Rect rightBracket = new Rect( 0, 0, sizes[6].width(), sizes[6].height());
+        
+        // Move them to the correct position
+        leftBracket.offsetTo( sizes[3].width() + Math.max( 0, sizes[0].width() - sizes[3].width() - sizes[1].width() - rightBracket.width() - leftBracket.width()) / 2, 0);
+        rightBracket.offsetTo( sizes[3].width() + sizes[1].width() + leftBracket.width() + Math.max( 0, sizes[0].width() - sizes[3].width() - sizes[1].width() - rightBracket.width() - leftBracket.width()) / 2, 0);
+        
+        return new Rect[] {sizes[0], sizes[3], sizes[4], leftBracket, rightBracket};
     }
 
     @Override

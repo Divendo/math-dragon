@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical" >
-     
+
     <org.teaminfty.math_dragon.view.MathView
         android:id="@+id/mathView"
         android:layout_width="match_parent"
@@ -13,90 +13,96 @@
         android:layout_alignParentTop="true" />
 
     <!-- Buttons in the bottom right corner -->
+
     <ImageButton
         android:id="@+id/btn_evaluate"
         style="@style/CircleButton"
-        android:src="@drawable/evaluate"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_margin="@dimen/main_screen_button_margin"
         android:contentDescription="@string/evaluate"
-        android:onClick="evaluate" />
-    
+        android:onClick="evaluate"
+        android:src="@drawable/evaluate" />
+
     <ImageButton
         android:id="@+id/btn_approximate"
         style="@style/CircleButton"
-        android:src="@drawable/approximate"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/btn_evaluate"
         android:layout_marginBottom="@dimen/main_screen_button_margin"
+        android:layout_toLeftOf="@id/btn_evaluate"
+        android:contentDescription="@string/approximate"
         android:onClick="approximate"
-        android:contentDescription="@string/approximate" />
-    
+        android:src="@drawable/approximate" />
+
     <ImageButton
         style="@style/CircleButton"
-        android:src="@drawable/wolfram"
+        android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/main_screen_button_margin"
         android:layout_toLeftOf="@id/btn_approximate"
-        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/wolfram"
         android:onClick="wolfram"
-        android:contentDescription="@string/wolfram" />
-    
+        android:src="@drawable/wolfram" />
+
     <!-- Buttons in the top right corner -->
+
     <ImageButton
         android:id="@+id/btn_favourite"
         style="@style/CircleButton"
-        android:src="@drawable/favourite"
-        android:layout_margin="@dimen/main_screen_button_margin"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:contentDescription="@string/favourite" />
-    
+        android:layout_margin="@dimen/main_screen_button_margin"
+        android:contentDescription="@string/favourite"
+        android:src="@drawable/favourite" />
+
     <ImageButton
         android:id="@+id/btn_clear"
         style="@style/CircleButton"
-        android:src="@drawable/clear"
-        android:layout_marginTop="@dimen/main_screen_button_margin"
-        android:layout_marginBottom="@dimen/main_screen_button_margin"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/main_screen_button_margin"
+        android:layout_marginTop="@dimen/main_screen_button_margin"
         android:layout_toLeftOf="@id/btn_favourite"
+        android:contentDescription="@string/clear"
         android:onClick="clear"
-        android:contentDescription="@string/clear" />
+        android:src="@drawable/clear" />
 
     <ImageButton
         android:id="@+id/btn_redo"
         style="@style/CircleButton"
-        android:src="@drawable/redo"
-        android:layout_marginRight="@dimen/main_screen_button_margin"
-        android:layout_marginLeft="@dimen/main_screen_button_margin"
         android:layout_alignParentRight="true"
         android:layout_below="@id/btn_favourite"
-        android:contentDescription="@string/redo" />
-    
+        android:layout_marginLeft="@dimen/main_screen_button_margin"
+        android:layout_marginRight="@dimen/main_screen_button_margin"
+        android:contentDescription="@string/redo"
+        android:src="@drawable/redo" />
+
     <ImageButton
         android:id="@+id/btn_undo"
         style="@style/CircleButton"
-        android:src="@drawable/undo"
         android:layout_below="@id/btn_clear"
         android:layout_toLeftOf="@id/btn_redo"
-        android:contentDescription="@string/undo" />
-    
+        android:contentDescription="@string/undo"
+        android:src="@drawable/undo" />
+
     <!-- Buttons in the bottom left corner -->
+
     <ImageButton
+        android:id="@+id/btn_substitute"
         style="@style/CircleButton"
-        android:src="@drawable/substitute"
-        android:layout_margin="@dimen/main_screen_button_margin"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:contentDescription="@string/substitute" />
-    
-    <!-- Buttons in the bottom top corner -->
-    <ImageButton
-        style="@style/CircleButton"
-        android:src="@drawable/help"
+        android:layout_alignParentLeft="true"
         android:layout_margin="@dimen/main_screen_button_margin"
+        android:contentDescription="@string/substitute"
+        android:src="@drawable/substitute" />
+
+    <!-- Buttons in the bottom top corner -->
+
+    <ImageButton
+        android:id="@+id/btn_help"
+        style="@style/CircleButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:contentDescription="@string/help" />
+        android:layout_margin="@dimen/main_screen_button_margin"
+        android:contentDescription="@string/help"
+        android:src="@drawable/help" />
 
 </RelativeLayout>
