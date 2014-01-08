@@ -6,6 +6,7 @@ import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
 import org.teaminfty.math_dragon.view.math.MathOperationSubtract;
 import org.teaminfty.math_dragon.view.math.MathParentheses;
+import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 /** Class that helps setting parentheses at the right places in a {@link MathObject} */
 public class ParenthesesHelper
@@ -31,15 +32,28 @@ public class ParenthesesHelper
         // Special case: the second operand of the subtract operator
         else if(parent instanceof MathOperationSubtract && index == 1 && parent.getPrecedence() == child.getPrecedence())
             child = new MathParentheses(child);
-        // Special case: the exponent in the power operator
-        else if(parent instanceof MathOperationPower && index == 1)
+        // Special case: the power operator
+        else if(parent instanceof MathOperationPower)
         {
-            if(child instanceof MathOperationPower)
-                child = new MathParentheses(child);
-            else if(child instanceof MathParentheses && !(child.getChild(0) instanceof MathOperationPower))
+            if(index == 0)
             {
-                makeChild(parent, child.getChild(0), index);
-                return;
+                if(child instanceof MathSymbol && ((MathSymbol) child).symbolVisible())
+                    child = new MathParentheses(child);
+                else if(child instanceof MathParentheses && !(child.getChild(0) instanceof MathSymbol && ((MathSymbol) child).symbolVisible()))
+                {
+                    makeChild(parent, child.getChild(0), index);
+                    return;
+                }
+            }
+            else if(index == 1)
+            {
+                if(child instanceof MathOperationPower)
+                    child = new MathParentheses(child);
+                else if(child instanceof MathParentheses && !(child.getChild(0) instanceof MathOperationPower))
+                {
+                    makeChild(parent, child.getChild(0), index);
+                    return;
+                }
             }
         }
         // Special case: the root operator (never place parentheses)
