@@ -5,6 +5,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
+import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.IRational;
 import org.teaminfty.math_dragon.exceptions.ParseException;
@@ -106,6 +107,12 @@ public final class ModelHelper
                 if (pow.isInteger()) {
                     imag.setIPow(((IInteger) pow).longValue());
                     return imag;
+                } else if (pow.isFraction()) {
+                    IFraction frac = (IFraction) pow;
+                    imag.setIPow(1);
+                    imag.setFactor(((MathSymbol) toOpDiv(frac.getNumerator(), frac.getDenominator())).getFactor());
+                    return imag;
+                    //return toOpDiv(frac.getNumerator(), frac.getDenominator());
                 } else {
                     imag.setIPow(1);
                     return new MathOperationPower(imag, toMathObject(pow));
@@ -118,9 +125,9 @@ public final class ModelHelper
                 return new MathOperationAdd(real, new MathOperationPower(imag, toMathObject(pow)));
             }
         }
-        else if (expr instanceof IRational) {
-            IRational rat = (IRational) expr;
-            return toOpDiv(rat.getNumerator(), rat.getDenominator());
+        else if (expr.isFraction()) {
+            IFraction frac = (IFraction) expr;
+            return toOpDiv(frac.getNumerator(), frac.getDenominator());
         }
         throw new ParseException(expr);
     }
