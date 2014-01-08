@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon.view.math;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,18 +49,18 @@ public abstract class MathOperation extends MathObject
         this.children.ensureCapacity(operands);
     }
 
-    public MathOperation(ArrayList<MathObject> list)
+    public MathOperation(List<MathObject> list)
     {
         this(list, true);
     }
 
-    protected MathOperation(ArrayList<MathObject> list,
+    protected MathOperation(List<MathObject> list,
             boolean replaceNullElements)
     {
         if (list == null) {
             throw new NullPointerException("list");
         }
-        children = list;
+        set(list);
         if(replaceNullElements)
         {
             for(int i = 0; i < list.size(); ++i)
@@ -78,31 +79,11 @@ public abstract class MathOperation extends MathObject
      * @param list
      *        The source collection.
      */
-    public void set(ArrayList<MathObject> list)
-    {
-        set(list, true);
-    }
-
-    /**
-     * Assign list to current children with or without a deep-copy.
-     * 
-     * @param list
-     *        The source collection.
-     * @param deepcopy
-     *        Whether to perform a deep-copy.
-     */
-    protected void set(ArrayList<MathObject> list, boolean deepcopy)
+    protected void set(List<MathObject> list)
     {
         if(list == null)
             throw new NullPointerException("list");
-        if(deepcopy)
-        {
-            this.children = new ArrayList<MathObject>(list);
-        }
-        else
-        {
-            this.children = list;
-        }
+        this.children = new ArrayList<MathObject>(list);
     }
     
     protected abstract String getType();
@@ -112,7 +93,7 @@ public abstract class MathOperation extends MathObject
     public final void writeToXML(Document doc, Element el)
     {
         Element e = doc.createElement(NAME);
-        e.setAttribute(ATTR_OPERANDS, String.valueOf(children.size()));
+        e.setAttribute(ATTR_OPERANDS, String.valueOf(getChildCount()));
         e.setAttribute(ATTR_TYPE, getType());
         writeChildrenToXML(doc, e);
         el.appendChild(e);
