@@ -36,6 +36,9 @@ public class MathView extends View
     /** The translation that's applied to the canvas because of the scrolling */
     private Point scrollTranslate = new Point(0, 0);
     
+    /** Whether or not this {@link MathView} is enabled (i.e. it can be edited) */
+    private boolean enabled = true;
+    
     public MathView(Context context)
     {
         super(context);
@@ -58,6 +61,17 @@ public class MathView extends View
         mathObjectDefaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
         setMathObject(null);    // Setting the MathObject to null will construct a MathObjectEmpty
         initGestureDetector();
+    }
+    
+    /** Set whether or not this {@link MathView} is enabled (i.e. it can be edited)
+     * @param enable Whether or not to enable this {@link MathView} */
+    public void setEnabled(boolean enable)
+    {
+        if(!(enabled = enable))
+        {
+            setHoverState(mathObject, HoverState.NONE);
+            invalidate();
+        }
     }
     
     /** Set the top-level {@link MathObject}
@@ -240,6 +254,9 @@ public class MathView extends View
         @Override
         public boolean onSingleTapConfirmed(MotionEvent me)
         {
+            // If we're disabled, ignore
+            if(!enabled) return true;
+            
             // Determine click position
             Point clickPos = new Point((int) me.getX(), (int) me.getY());
             
@@ -311,6 +328,9 @@ public class MathView extends View
     @Override
     public boolean onDragEvent(DragEvent event)
     {
+        // If we're disabled, ignore
+        if(!enabled) return false;
+        
         // Retrieve the shadow
         MathShadow mathShadow = (MathShadow) event.getLocalState();
         

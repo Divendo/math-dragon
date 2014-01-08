@@ -26,5 +26,7 @@
     <dimen name="keyboard_button_margin">8dp</dimen>
     <dimen name="keyboard_padding">16dp</dimen>
     <dimen name="keyboard_button_small_margin">16dp</dimen>
+    
+    <dimen name="dialog_title_font_size">24sp</dimen>
 
 </resources>
