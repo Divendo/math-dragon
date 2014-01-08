@@ -1,5 +1,6 @@
 package org.teaminfty.math_dragon.view.math;
 
+import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,6 +27,8 @@ public class MathOperationIntegral extends MathOperation
 		children.add(new MathObjectEmpty());
 		children.add(new MathObjectEmpty());
 		children.add(new MathObjectEmpty());
+		
+        initPaint();
 	}
 	
 	public MathOperationIntegral( MathObject integrate, MathObject over)
@@ -35,7 +38,8 @@ public class MathOperationIntegral extends MathOperation
         children.add(new MathObjectEmpty());
 		children.add(new MathObjectEmpty());
 		
-		set( integrate, over);
+		set(integrate, over);
+        initPaint();
 	}
 	
 	public MathOperationIntegral( MathObject integrate, MathObject over, MathObject from, MathObject to)
@@ -45,7 +49,14 @@ public class MathOperationIntegral extends MathOperation
         children.add(new MathObjectEmpty());
         children.add(new MathObjectEmpty());
         
-		set( integrate, over, from, to);
+		set(integrate, over, from, to);
+		initPaint();
+	}
+	
+	private void initPaint()
+	{
+	    operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
+	    operatorPaint.setAntiAlias(true);
 	}
 	
 	public String toString()
@@ -195,7 +206,7 @@ public class MathOperationIntegral extends MathOperation
 		drawBoundingBoxes( canvas);
 		
 		operatorPaint.setColor(getColor());
-		operatorPaint.setStrokeWidth( lineWidth);
+		operatorPaint.setStrokeWidth(lineWidth);
 		
 		// Get the sizes
 		Rect[] sizes = getSizes();
@@ -205,7 +216,6 @@ public class MathOperationIntegral extends MathOperation
 		
 		// Draw the brackets
         operatorPaint.setStyle(Paint.Style.STROKE);
-        operatorPaint.setAntiAlias(true);
 		
 		// Draw the left bracket
         canvas.save();
@@ -281,8 +291,9 @@ public class MathOperationIntegral extends MathOperation
 	}
 
 	@Override
-	protected void writeChildrenToXML(Document doc, Element el) {
-		// TODO Auto-generated method stub
-		
+	protected void writeChildrenToXML(Document doc, Element el)
+	{
+	    for(MathObject child : children)
+	        child.writeToXML(doc, el);
 	}
 }
