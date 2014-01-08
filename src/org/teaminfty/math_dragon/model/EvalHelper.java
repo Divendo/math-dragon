@@ -1,5 +1,6 @@
 package org.teaminfty.math_dragon.model;
 
+import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -9,9 +10,11 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.MathBinaryOperation;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
+import org.teaminfty.math_dragon.view.math.MathOperation;
 import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathOperationLimit;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
@@ -27,6 +30,8 @@ import org.teaminfty.math_dragon.view.math.MathSymbol;
  */
 public class EvalHelper
 {
+    private static final EvalEngine temporary = new EvalEngine();
+
     private EvalHelper()
     {}
 
@@ -63,6 +68,8 @@ public class EvalHelper
             if(op instanceof MathOperationDerivative)
                 return derivative((MathOperationDerivative) op);
         }
+        else if(o instanceof MathOperationLimit)
+            return limit((MathOperationLimit) o);
         else if(o instanceof MathSymbol)
             return symbol((MathSymbol) o);
         else if(o instanceof MathParentheses)
@@ -82,8 +89,7 @@ public class EvalHelper
      * @throws EmptyChildException
      *         Thrown when one or more children are invalid.
      */
-    static void checkChildren(MathBinaryOperation op)
-            throws EmptyChildException
+    static void checkChildren(MathBinaryOperation op) throws EmptyChildException
     {
         if(op.getLeft() == null)
             throw new EmptyChildException(0);
@@ -91,10 +97,26 @@ public class EvalHelper
             throw new EmptyChildException(1);
     }
 
+    /**
+     * Ensure all children are valid. An {@link EmptyChildException} is thrown
+     * when at least one child equals <tt>null</tt>.
+     * 
+     * @param op
+     *        The mathematical operation.
+     * @throws EmptyChildException
+     *         Thrown when one or more children are invalid.
+     */
+    static void checkChildren(MathOperation op) throws EmptyChildException
+    {
+        for(int i = 0; i < op.getChildCount(); ++i)
+        {
+            if(op.getChild(i) == null)
+                throw new EmptyChildException(i);
+        }
+    }
+
     /** Variable lookup table */
-    private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d,
-            F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
-            F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
+    private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d, F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
     public static IExpr symbol(MathSymbol symbol)
     {
@@ -116,8 +138,7 @@ public class EvalHelper
         for(int i = 0; i < symbol.varPowCount(); i++)
         {
             if(symbol.getVarPow(i) != 0)
-                result = F.Times(result,
-                        F.Power(SYMBOLS[i], symbol.getVarPow(i)));
+                result = F.Times(result, F.Power(SYMBOLS[i], symbol.getVarPow(i)));
         }
 
         // Return the result
@@ -125,10 +146,10 @@ public class EvalHelper
     }
 
     /**
-     * Evaluate mathematical unary addition using specified argument.
+     * Evaluate mathematical addition using specified argument.
      * 
      * @param add
-     *        The mathematical unary addition.
+     *        The mathematical addition.
      * @return Converted mathematical unary addition for Symja.
      * @throws MathException
      *         Thrown when <tt>add</tt> contains invalid children.
@@ -140,10 +161,10 @@ public class EvalHelper
     }
 
     /**
-     * Evaluate mathematical unary division using specified argument.
+     * Evaluate mathematical division using specified argument.
      * 
      * @param div
-     *        The mathematical unary division.
+     *        The mathematical division.
      * @return Converted mathematical unary division for Symja.
      * @throws MathException
      *         Thrown when <tt>div</tt> contains invalid children.
@@ -155,10 +176,10 @@ public class EvalHelper
     }
 
     /**
-     * Evaluate mathematical unary multiplication using specified argument.
+     * Evaluate mathematical multiplication using specified argument.
      * 
      * @param mul
-     *        The mathematical unary multiplication.
+     *        The mathematical multiplication.
      * @return Converted mathematical unary multiplication for Symja.
      * @throws MathException
      *         Thrown when <tt>mul</tt> contains invalid children.
@@ -170,10 +191,10 @@ public class EvalHelper
     }
 
     /**
-     * Evaluate mathematical unary power using specified argument.
+     * Evaluate mathematical power using specified argument.
      * 
      * @param pow
-     *        The mathematical unary power.
+     *        The mathematical power.
      * @return Converted mathematical unary power for Symja.
      * @throws MathException
      *         Thrown when <tt>pow</tt> contains invalid children.
@@ -185,10 +206,10 @@ public class EvalHelper
     }
 
     /**
-     * Evaluate mathematical unary root using specified argument.
+     * Evaluate mathematical root using specified argument.
      * 
      * @param root
-     *        The mathematical unary root.
+     *        The mathematical root.
      * @return Converted mathematical unary root for Symja.
      * @throws MathException
      *         Thrown when <tt>root</tt> contains invalid children.
@@ -196,8 +217,7 @@ public class EvalHelper
     public static IExpr root(MathOperationRoot root) throws MathException
     {
         checkChildren(root);
-        return F.Power(eval(root.getExponent()),
-                F.Divide(F.ZZ(1), eval(root.getBase())));
+        return F.Power(eval(root.getExponent()), F.Divide(F.ZZ(1), eval(root.getBase())));
     }
 
     /**
@@ -224,10 +244,48 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>ddx</tt> contains invalid children.
      */
-    public static IExpr derivative(MathOperationDerivative ddx)
-            throws MathException
+    public static IExpr derivative(MathOperationDerivative ddx) throws MathException
     {
         checkChildren(ddx);
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
+    }
+
+    public static IExpr limit(MathOperationLimit lim) throws MathException
+    {
+        checkChildren(lim);
+        // try {
+        // EvalEngine eng = new EvalEngine();
+        // IExpr result = eng.parse("Limit[x,x->34]");
+        // System.out.println(result);
+        // } catch (Throwable t) {
+        // }
+        // IExpr result = F.Limit(eval(lim.getExpression()),
+        // F.Rule(eval(lim.getStart()), eval(lim.getEnd())));
+        // System.out.println(result);
+        return temporary.parse("Limit[(" + eval(lim.getExpression()) + "),(" + eval(lim.getStart()) + ")->(" + eval(lim.getEnd()) + ")]");
+        // [5], symbol=limit, symbol=x, rule=x->34, null, null
+        // [5], symbol=limit, ast=1*x^1, ast=rule=1*a^1->34
+        // return F.Limit(eval(lim.getExpression()), F.unary(F.$p(F.SymbolHead,
+        // eval(lim.getStart())), eval(lim.getEnd())));
+        // return F.Limit(F.Rule(eval(lim.getStart()), eval(lim.getEnd())),
+        // eval(lim.getExpression()));
+        /*
+         * try { Field f = Limit.class.getDeclaredField("RULES");
+         * f.setAccessible(true); Class<?> t = f.getType();
+         * System.out.println("type: " + t.getCanonicalName());
+         * System.out.println(((IAST) f.get(Limit.class)).toString()); }
+         * catch(Exception e) { e.printStackTrace(); } evaluates to: 01-08
+         * 09:32:32.097: I/System.out(2206): type:
+         * org.matheclipse.core.interfaces.IAST 01-08 09:32:32.121:
+         * I/System.out(2206): {null, null,
+         * Limit[(x_^(-1)+1)^x_,x_symbol->Infinity]=E,
+         * Limit[(-x_^(-1)+1)^x_,x_symbol->Infinity]=E^(-1)}
+         * 
+         * Limit[(x_^(-1)+1)^x_,x_symbol->Infinity]=E
+         * 
+         * F.Limit(F.Power(F.Plus(F.C1, F.Power(F.$p(F.x), F.CN1)), F.$p(F.x)),
+         * F.Rule(F.$p(F.x, F.SymbolHead), F.CInfinity)) ((1) + ((x) ^ (-1))) ^
+         * (x), ((x) -> (Infinity))
+         */
     }
 }
