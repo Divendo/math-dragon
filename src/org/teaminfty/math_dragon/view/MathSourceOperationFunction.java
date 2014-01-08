@@ -29,32 +29,40 @@ public class MathSourceOperationFunction extends MathSourceObject
 	
     public void draw(Canvas canvas, int w, int h)
     {
-        // Get a box that fits the given width and height (we'll use it to draw the empty boxes)
-        Rect emptyBox = getRectBoundingBox(w / 3, h, MathObjectEmpty.RATIO);
-        
-        // Draw the the empty box
-        emptyBox.offsetTo(0, (h - emptyBox.height()) / 2);
-        drawEmptyBox(canvas, emptyBox);
-        emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
-        drawEmptyBox(canvas, emptyBox);
-        
-        // Draw the operator 
-        final int centerX = w / 2;
-        final int centerY = h / 2;
-        paintOperator.setStrokeWidth(MathObject.lineWidth);
+    	// Set the size of the the strings: sin, cos and tan
+    	paintOperator.setTextSize( (h - 3 * MathObject.lineWidth) / 2 );
+    	
+    	// Get a boxes that fit twice in the given height (we'll use it to draw the empty boxes)
+    	Rect emptyBox = getRectBoundingBox(3 * (w - (int) (3 * MathObject.lineWidth)) / 5, 3 * h / 4, MathObjectEmpty.RATIO);
+        Rect textBox = new Rect();
         switch(type)
         {
             case SIN:
             case COS:
             case TAN:
             {
-                final int segmentSize = w / 9;
-                paintOperator.setAntiAlias(false);
-                canvas.drawLine(centerX - segmentSize, centerY, centerX + segmentSize, centerY, paintOperator);
+            	paintOperator.setAntiAlias(true);
+                if(type == MathOperationFunction.FunctionType.SIN)
+                {
+	                paintOperator.getTextBounds("sin", 0, "sin".length(), textBox);
+	                emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+	                drawEmptyBox(canvas, emptyBox);
+	                canvas.drawText("sin", (w - textBox.width() - emptyBox.width()) / 2, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                }
                 if(type == MathOperationFunction.FunctionType.COS)
-                    canvas.drawLine(centerX, centerY - segmentSize, centerX, centerY + segmentSize, paintOperator);
+                {
+                    paintOperator.getTextBounds("cos", 0, "cos".length(), textBox);
+                    emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+                    drawEmptyBox(canvas, emptyBox);
+                    canvas.drawText("cos", (w - textBox.width() - emptyBox.width()) / 2, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                }
                 if(type == MathOperationFunction.FunctionType.TAN)
-                    canvas.drawLine(centerX, centerY - segmentSize, centerX, centerY + segmentSize, paintOperator);
+                {
+                	 paintOperator.getTextBounds("tan", 0, "cos".length(), textBox);
+                     emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+                     drawEmptyBox(canvas, emptyBox);
+                     canvas.drawText("tan", (w - textBox.width() - emptyBox.width()) / 2, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                } 
             }
             break;
                 
@@ -62,19 +70,50 @@ public class MathSourceOperationFunction extends MathSourceObject
             case COSH:
             case LN:
             {
-                paintOperator.setAntiAlias(true);
-                canvas.drawCircle(centerX, centerY, MathObject.lineWidth * 2, paintOperator);
-                if(type == MathOperationFunction.FunctionType.COSH)
-                	canvas.drawCircle(centerX, centerY, MathObject.lineWidth * 2, paintOperator);
-            }
+            	 if(type == MathOperationFunction.FunctionType.SINH)
+                 {
+                	 paintOperator.getTextBounds("sinh", 0, "cos".length(), textBox);
+                     emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+                     drawEmptyBox(canvas, emptyBox);
+                     canvas.drawText("sinh ", 0, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                 } 	
+                 if(type == MathOperationFunction.FunctionType.COSH)
+                 {
+                	 paintOperator.getTextBounds("cosh", 0, "cos".length(), textBox);
+                     emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+                     drawEmptyBox(canvas, emptyBox);
+                     canvas.drawText("cosh", 0, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                 } 
+                 }
             break;
             
             case ARCSIN:
             case ARCCOS:
             case ARCTAN:
             {
-            	
-            	
+            	paintOperator.setAntiAlias(true);
+                paintOperator.setTypeface(TypefaceHolder.dejavuSans);
+                if(type ==  MathOperationFunction.FunctionType.ARCSIN)
+                {
+	                paintOperator.getTextBounds("sin" + "\u207b" + "\u00b9", 0, ("sin" + "\u207b" + "\u00b9").length(), textBox);
+	                emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+	                drawEmptyBox(canvas, emptyBox);
+	                canvas.drawText("sin" + "\u207b" + "\u00b9", 0, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                }
+                if(type ==  MathOperationFunction.FunctionType.ARCCOS)
+                {
+                    paintOperator.getTextBounds("cos" + "\u207b" + "\u00b9", 0, ("cos" + "\u207b" + "\u00b9").length(), textBox);
+                    emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+                    drawEmptyBox(canvas, emptyBox);
+                    canvas.drawText("cos" + "\u207b" + "\u00b9", 0, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                }
+                if(type ==  MathOperationFunction.FunctionType.ARCTAN)
+                {
+                	 paintOperator.getTextBounds("tan" + "\u207b" + "\u00b9", 0, ("tan" + "\u207b" + "\u00b9").length(), textBox);
+                     emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+                     drawEmptyBox(canvas, emptyBox);
+                     canvas.drawText("tan" + "\u207b" + "\u00b9", 0, (h - textBox.height() - emptyBox.height()) / 2 + emptyBox.height(), paintOperator);
+                } 	
             }
             break;
         }
