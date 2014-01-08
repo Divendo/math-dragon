@@ -31,6 +31,10 @@ public class MathObjectEmpty extends MathObject
     }
     
     @Override
+    public String toString()
+    { return " "; }
+    
+    @Override
     public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Will always throw an error since empty boxes do not have children

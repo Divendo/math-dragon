@@ -61,11 +61,10 @@ public class MathOperationIntegral extends MathOperation
 	
 	public String toString()
 	{
-		//TODO: Add the correct if statement
-		// Check if the children 2 and 3 are empty
-			return "Integrate(" + getChild(0).toString() + "," + getChild(1).toString() + ")";
-		//else
-			//return "Integrate(" + getChild(0).toString() + ",{" + getChild(1).toString() + "," + getChild(2).toString() + "," + getChild(3).toString() "})";
+		if(getIntegrateFrom() instanceof MathObjectEmpty && getIntegrateTo() instanceof MathObjectEmpty)
+			return "Integrate(" + getIntegratePart().toString() + "," + getIntegrateOver().toString() + ")";
+		else
+			return "Integrate(" + getIntegratePart().toString() + ",{" + getIntegrateOver().toString() + "," + getIntegrateFrom().toString() + "," + getIntegrateTo().toString() + "})";
 	}
 	
 	public Rect[] getSizes()
