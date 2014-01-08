@@ -22,12 +22,5 @@
 	        android:layout_height="match_parent"
 	        tools:layout="@layout/fragment_main_screen" />
     </LinearLayout>
-    
-    <fragment 
-        android:id="@+id/fragmentEvaluation"
-        android:name="org.teaminfty.math_dragon.view.fragments.FragmentEvaluation"
-        android:layout_width="@dimen/drawer_width"
-        android:layout_height="@dimen/drawer_height"
-        android:layout_gravity="right|bottom" />
 
 </android.support.v4.widget.DrawerLayout>
