@@ -21,4 +21,7 @@
 	<string name="help">Help</string>
 	<string name="numpad">Numpad</string>
 	<string name="variables">Variables</string>
+	<string name="close">Close</string>
+	<string name="evaluate_exact">Exact evaluation</string>
+	<string name="evaluate_approximate">Approximation</string>
 </resources>

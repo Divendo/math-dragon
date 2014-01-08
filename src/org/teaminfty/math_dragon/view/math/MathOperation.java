@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.view.math;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -66,9 +67,7 @@ public abstract class MathOperation extends MathObject
             for(int i = 0; i < list.size(); ++i)
             {
                 if(children.get(i) == null)
-                {
                     children.set(i, new MathObjectEmpty());
-                }
             }
         }
     }

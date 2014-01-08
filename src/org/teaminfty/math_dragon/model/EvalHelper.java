@@ -13,6 +13,7 @@ import org.teaminfty.math_dragon.view.math.MathOperation;
 import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathOperationFunction;
 import org.teaminfty.math_dragon.view.math.MathOperationLimit;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
@@ -22,15 +23,12 @@ import org.teaminfty.math_dragon.view.math.MathParentheses;
 import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 /**
- * Mathematical evaluator for {@link MathObject}s into expressions returned by
- * the symja library.
+ * Mathematical evaluator for {@link MathObject}s into expressions returned by the Symja library.
  * 
  * @author Folkert van Verseveld
  */
 public class EvalHelper
 {
-//    private static final EvalEngine temporary = new EvalEngine();
-
     private EvalHelper()
     {}
 
@@ -69,6 +67,8 @@ public class EvalHelper
         }
         else if(o instanceof MathOperationLimit)
             return limit((MathOperationLimit) o);
+        else if(o instanceof MathOperationFunction)
+            return function((MathOperationFunction) o);
         else if(o instanceof MathSymbol)
             return symbol((MathSymbol) o);
         else if(o instanceof MathParentheses)
@@ -90,12 +90,12 @@ public class EvalHelper
      */
     static void checkChildren(MathBinaryOperation op) throws EmptyChildException
     {
-        if(op.getLeft() == null)
+        if(op.getLeft() == null || op.getLeft() instanceof MathObjectEmpty)
             throw new EmptyChildException(0);
-        if(op.getRight() == null)
+        if(op.getRight() == null || op.getRight() instanceof MathObjectEmpty)
             throw new EmptyChildException(1);
     }
-
+    
     /**
      * Ensure all children are valid. An {@link EmptyChildException} is thrown
      * when at least one child equals <tt>null</tt>.
@@ -109,13 +109,15 @@ public class EvalHelper
     {
         for(int i = 0; i < op.getChildCount(); ++i)
         {
-            if(op.getChild(i) == null)
+            if(op.getChild(i) == null || op.getChild(i) instanceof MathObjectEmpty)
                 throw new EmptyChildException(i);
         }
     }
 
     /** Variable lookup table */
-    private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d, F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q, F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
+    private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d,
+        F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
+        F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
     public static IExpr symbol(MathSymbol symbol)
     {
@@ -216,6 +218,7 @@ public class EvalHelper
     public static IExpr root(MathOperationRoot root) throws MathException
     {
         checkChildren(root);
+        // NOTE base and exponent are inverted!
         return F.Power(eval(root.getExponent()), F.Divide(F.ZZ(1), eval(root.getBase())));
     }
 
@@ -249,6 +252,32 @@ public class EvalHelper
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
     }
 
+    /**
+     * Evaluate mathematical function using specified argument.
+     * 
+     * @param f The mathematical function.
+     * @return Converted mathematical function for Symja
+     * @throws MathException
+     *         Thrown when <tt>f</tt> contains invalid children
+     */
+    public static IExpr function(MathOperationFunction f) throws MathException
+    {
+        switch(f.getType())
+        {
+            case ARCCOS:    return F.ArcCos(eval(f.getChild(0)));
+            case ARCSIN:    return F.ArcSin(eval(f.getChild(0)));
+            case ARCTAN:    return F.ArcTan(eval(f.getChild(0)));
+            case COS:       return F.Cos(eval(f.getChild(0)));
+            case COSH:      return F.Cosh(eval(f.getChild(0)));
+            case LN:        return F.Log(eval(f.getChild(0)));
+            case SIN:       return F.Sin(eval(f.getChild(0)));
+            case SINH:      return F.Sinh(eval(f.getChild(0)));
+            case TAN:       return F.Tan(eval(f.getChild(0)));
+        }
+
+        throw new ParseException(f.toString());
+    }
+    
     public static IExpr limit(MathOperationLimit lim) throws MathException
     {
         checkChildren(lim);

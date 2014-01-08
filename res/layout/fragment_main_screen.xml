@@ -13,7 +13,6 @@
         android:layout_alignParentTop="true" />
 
     <!-- Buttons in the bottom right corner -->
-
     <ImageButton
         android:id="@+id/btn_evaluate"
         style="@style/CircleButton"
@@ -44,7 +43,6 @@
         android:src="@drawable/wolfram" />
 
     <!-- Buttons in the top right corner -->
-
     <ImageButton
         android:id="@+id/btn_favourite"
         style="@style/CircleButton"
@@ -84,7 +82,6 @@
         android:src="@drawable/undo" />
 
     <!-- Buttons in the bottom left corner -->
-
     <ImageButton
         android:id="@+id/btn_substitute"
         style="@style/CircleButton"
@@ -94,8 +91,7 @@
         android:contentDescription="@string/substitute"
         android:src="@drawable/substitute" />
 
-    <!-- Buttons in the bottom top corner -->
-
+    <!-- Buttons in the top left corner -->
     <ImageButton
         android:id="@+id/btn_help"
         style="@style/CircleButton"

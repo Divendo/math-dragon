@@ -13,7 +13,6 @@ import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 import org.w3c.dom.Document;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;

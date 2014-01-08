@@ -311,7 +311,7 @@ public class MathSymbol extends MathObject
 
     /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible (i.e. their power >= 1)
      * @return True if one or more symbols are visible, false otherwise */
-    private boolean symbolVisible()
+    public boolean symbolVisible()
     {
         if((piPow | ePow | iPow) != 0)
             return true;

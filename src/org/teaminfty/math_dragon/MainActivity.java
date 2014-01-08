@@ -142,7 +142,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             
             // Strip the query of unnecessary outer parentheses
             if(query.startsWith("(") && query.endsWith(")"))
-                    query = query.substring(1, query.length() - 1);
+                query = query.substring(1, query.length() - 1);
 
             // Start an intent to send the user to Wolfram|Alpha
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -159,13 +159,11 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
             IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
 
-            // Get the evaluation fragment and show the result
-            FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
+            // Create an evaluation fragment and show the result
+            FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
             fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result)));
-
-            // Get the DrawerLayout object and open the drawer
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-            drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
+            fragmentEvaluation.setEvalType(true);
+            fragmentEvaluation.show(getFragmentManager(), "evaluation");
         }
         catch(EmptyChildException e)
         {
@@ -181,17 +179,29 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
     public void approximate(View view)
     {
-        // Get the DrawerLayout object
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        try
+        {
+            // Calculate the answer
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+            IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
+            // TODO Approximate the result
 
-        drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-        // TODO: Approximate the MathObject in the drawing space, and display the resulting constant
-
-        FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
-                .findFragmentById(R.id.fragmentEvaluation);
-
-        MathSymbol mathConstant = new MathSymbol(42,0,0,0,null);
-        fragmentEvaluation.showMathObject(mathConstant);
+            // Create an evaluation fragment and show the result
+            FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result)));
+            fragmentEvaluation.setEvalType(false);
+            fragmentEvaluation.show(getFragmentManager(), "evaluation");
+        }
+        catch(EmptyChildException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch(MathException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void clear(View view)
