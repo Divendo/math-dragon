@@ -77,8 +77,8 @@ public class MathOperationIntegral extends MathOperation
 		 * 3: bb of the left bracket
 		 * 4: bb of the right bracket
 		 * 5: bb of the "d"
-		 * 6: bb of the from integral
-		 * 7: bb of the to integral
+		 * 6: bb of the to integral
+		 * 7: bb of the from integral
 		 */
 		
 		// Get the bounding boxes of the children
@@ -121,8 +121,8 @@ public class MathOperationIntegral extends MathOperation
 								leftBracket,
 								rightBracket,
 								bounds,
-								from,
-								to							
+								to,
+								from
 							};
 	}
 	
@@ -175,10 +175,10 @@ public class MathOperationIntegral extends MathOperation
 			return sizes[2];
 
 		case 2:
-			return sizes[6];
+			return sizes[7];
 			
 		case 3:
-			return sizes[7];
+			return sizes[6];
 		}
 		
 		return null;
@@ -268,10 +268,26 @@ public class MathOperationIntegral extends MathOperation
 	public void set(MathObject integrate, MathObject over, MathObject from, MathObject to)
     {
 		// Set all the children
-        set( integrate, over);
+        set(integrate, over);
         setChild(2, from);
         setChild(3, to);
     }
+	
+	/** Returns the child that should be integrated */
+	public MathObject getIntegratePart()
+	{ return getChild(0); }
+
+    /** Returns the child over which should be integrated */
+    public MathObject getIntegrateOver()
+    { return getChild(1); }
+    
+    /** Returns the child from whose value should be integrated */
+    public MathObject getIntegrateFrom()
+    { return getChild(2); }
+
+    /** Returns the child to whose value should be integrated */
+    public MathObject getIntegrateTo()
+    { return getChild(3); }
 	
 	@Override
   	public void setLevel(int l)
@@ -286,7 +302,8 @@ public class MathOperationIntegral extends MathOperation
   	}
 	
 	@Override
-	protected String getType() {
+	protected String getType()
+	{
 		return TYPE;
 	}
 

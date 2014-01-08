@@ -13,6 +13,7 @@ import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationFunction;
+import org.teaminfty.math_dragon.view.math.MathOperationIntegral;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
@@ -65,6 +66,8 @@ public class EvalHelper
         }
         else if(o instanceof MathOperationFunction)
             return function((MathOperationFunction) o);
+        else if(o instanceof MathOperationIntegral)
+            return integral((MathOperationIntegral) o);
         else if(o instanceof MathSymbol)
             return symbol((MathSymbol) o);
         else if(o instanceof MathParentheses)
@@ -255,5 +258,35 @@ public class EvalHelper
         }
         
         throw new ParseException(f.toString());
+    }
+
+    /**
+     * Evaluate mathematical integral using specified argument.
+     * 
+     * @param i The mathematical integral.
+     * @return Converted mathematical integral for Symja
+     * @throws MathException
+     *         Thrown when <tt>i</tt> contains invalid children
+     */
+    public static IExpr integral(MathOperationIntegral i) throws MathException
+    {
+        // Check for empty children that are never allowed to be empty
+        if(i.getIntegratePart() instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        else if(i.getIntegrateOver() instanceof MathObjectEmpty)
+            throw new EmptyChildException(1);
+        
+        // Evaluate depending on whether or not a 'from' and 'to' value are given
+        if(i.getIntegrateFrom() instanceof MathObjectEmpty && i.getIntegrateTo() instanceof MathObjectEmpty)
+            return F.Integrate(eval(i.getIntegratePart()), eval(i.getIntegrateOver()));
+        else
+        {
+            if(i.getIntegrateFrom() instanceof MathObjectEmpty)
+                throw new EmptyChildException(2);
+            else if(i.getIntegrateTo() instanceof MathObjectEmpty)
+                throw new EmptyChildException(3);
+            
+            return F.Integrate( eval(i.getIntegratePart()), F.List(eval(i.getIntegrateOver()), eval(i.getIntegrateFrom()), eval(i.getIntegrateTo())) );
+        }
     }
 }
