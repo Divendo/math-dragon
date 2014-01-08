@@ -1,6 +1,5 @@
 package org.teaminfty.math_dragon.model;
 
-import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
@@ -30,7 +29,7 @@ import org.teaminfty.math_dragon.view.math.MathSymbol;
  */
 public class EvalHelper
 {
-    private static final EvalEngine temporary = new EvalEngine();
+//    private static final EvalEngine temporary = new EvalEngine();
 
     private EvalHelper()
     {}
@@ -262,7 +261,8 @@ public class EvalHelper
         // IExpr result = F.Limit(eval(lim.getExpression()),
         // F.Rule(eval(lim.getStart()), eval(lim.getEnd())));
         // System.out.println(result);
-        return temporary.parse("Limit[(" + eval(lim.getExpression()) + "),(" + eval(lim.getStart()) + ")->(" + eval(lim.getEnd()) + ")]");
+        return F.Limit(eval(lim.getExpression()), F.Rule(eval(lim.getStart()), eval(lim.getEnd())));
+        //return temporary.parse("Limit[(" + eval(lim.getExpression()) + "),(" + eval(lim.getStart()) + ")->(" + eval(lim.getEnd()) + ")]");
         // [5], symbol=limit, symbol=x, rule=x->34, null, null
         // [5], symbol=limit, ast=1*x^1, ast=rule=1*a^1->34
         // return F.Limit(eval(lim.getExpression()), F.unary(F.$p(F.SymbolHead,
