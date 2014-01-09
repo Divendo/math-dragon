@@ -63,31 +63,34 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Load Symja
         new SymjaLoader().execute();
 
-        // Get the DrawerLayout object
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-
-        // Remove the grey overlay
-        drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
-
-        // Set the shadow
-        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
-
-        try
+        // DrawLayout specific code
+        if(findViewById(R.id.drawerLayout) != null)
         {
-            drawerLayout.closeDrawer(Gravity.LEFT);
-
-            // Set the toggle for the action bar
-            actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-
-            // Listen when to close the operations drawer
-            // TODO only register this event when needed
-            ((FragmentOperationsSource) getFragmentManager().findFragmentById(R.id.fragmentOperationDrawer)).setOnCloseMeListener(this);
-        }
-        catch(IllegalArgumentException e)
-        {
-            // there was no drawer to open
-            // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
+            // Get the DrawerLayout object
+            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+    
+            // Remove the grey overlay
+            drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
+    
+            // Set the shadow
+            drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+    
+            try
+            {
+                // Make sure the source drawer is closed
+                drawerLayout.closeDrawer(Gravity.LEFT);
+    
+                // Set the toggle for the action bar
+                actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
+                getActionBar().setDisplayHomeAsUpEnabled(true);
+    
+                // Listen when to close the operations drawer
+                ((FragmentOperationsSource) getFragmentManager().findFragmentById(R.id.fragmentOperationDrawer)).setOnCloseMeListener(this);
+            }
+            catch(IllegalArgumentException e)
+            {
+                // There was no drawer to close
+            }
         }
     }
 
@@ -115,7 +118,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     public boolean onOptionsItemSelected(MenuItem item)
     {
         // Pass the event to ActionBarDrawerToggle, if it returns true, then it has handled the app icon touch event
-        if(actionBarDrawerToggle.onOptionsItemSelected(item))
+        if(actionBarDrawerToggle != null && actionBarDrawerToggle.onOptionsItemSelected(item))
             return true;
 
         // Handle other action bar items...
@@ -204,7 +207,6 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
     public void clear(View view)
     {
-
         // Simply clear the current formula
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();

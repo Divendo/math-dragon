@@ -10,6 +10,7 @@
     <dimen name="circle_button_line_width">2dp</dimen>
     
     <dimen name="math_source_height">64dp</dimen>
+    <dimen name="math_source_max_width">128dp</dimen>
     <dimen name="math_source_margin">8dp</dimen>
     
     <dimen name="math_object_default_size">60dp</dimen>

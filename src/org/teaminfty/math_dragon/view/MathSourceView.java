@@ -3,9 +3,11 @@ package org.teaminfty.math_dragon.view;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,12 +52,21 @@ public class MathSourceView extends View
     public void setOnDragStarted(DragStartedListener listener)
     { onDragStarted = listener; }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas)
     {
         // Simply draw the math source object
         if(mathSourceObject != null)
-            mathSourceObject.draw(canvas, getWidth(), getHeight());
+        {
+            final int maxWidth = getResources().getDimensionPixelSize(R.dimen.math_source_max_width);
+            if(getWidth() > maxWidth)
+            {
+                canvas.translate((getWidth() - maxWidth) / 2, 0);
+                canvas.clipRect(new Rect(0, 0, maxWidth, getHeight()));
+            }
+            mathSourceObject.draw(canvas, Math.min(maxWidth, getWidth()), getHeight());
+        }
     }
 
     @Override
