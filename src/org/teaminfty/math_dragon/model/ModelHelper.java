@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.model;
 import org.matheclipse.core.expression.AST;
 import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Symbol;
+import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
@@ -12,6 +13,8 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
+import org.teaminfty.math_dragon.view.math.MathOperationFunction;
+import org.teaminfty.math_dragon.view.math.MathOperationFunction.FunctionType;
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathSymbol;
@@ -55,6 +58,7 @@ public final class ModelHelper
                 return toOpMul(ast);
             if(expr.isPower())
                 return toOpPow(ast);
+            return toOpFunction(ast);
         }
         else if(expr.isInteger())
         {
@@ -129,6 +133,7 @@ public final class ModelHelper
             IFraction frac = (IFraction) expr;
             return toOpDiv(frac.getNumerator(), frac.getDenominator());
         }
+//        return toOpFunction(expr);
         throw new ParseException(expr);
     }
 
@@ -273,5 +278,24 @@ public final class ModelHelper
             return child;
         }
         return new MathOperationPower(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
+    }
+    
+    static MathObject toOpFunction(IAST ast) throws ParseException
+    {
+        if (ast.isSin())
+            return new MathOperationFunction(FunctionType.SIN, toMathObject(ast.get(1)));
+        if (ast.isCos())
+            return new MathOperationFunction(FunctionType.COS, toMathObject(ast.get(1)));
+        if (ast.isTan())
+            return new MathOperationFunction(FunctionType.TAN, toMathObject(ast.get(1)));
+        if (ast.isSinh())
+            return new MathOperationFunction(FunctionType.SINH, toMathObject(ast.get(1)));
+        if (ast.isCosh())
+            return new MathOperationFunction(FunctionType.COSH, toMathObject(ast.get(1)));
+        if (ast.isArcSin())
+            return new MathOperationFunction(FunctionType.ARCSIN, toMathObject(ast.get(1)));
+        if (ast.isArcCos())
+            return new MathOperationFunction(FunctionType.ARCCOS, toMathObject(ast.get(1)));
+        throw new ParseException(ast);
     }
 }
