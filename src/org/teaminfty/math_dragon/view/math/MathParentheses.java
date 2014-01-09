@@ -39,6 +39,15 @@ public class MathParentheses extends MathObject
     }
     
     @Override
+    public String toString()
+    {
+        final String str = getChild(0).toString();
+        if(str.startsWith("(") && str.endsWith(")"))
+            return str;
+        return "(" + str + ")";
+    }
+    
+    @Override
     public Rect[] getOperatorBoundingBoxes()
     {
     	final Rect childRect = getChild(0).getBoundingBox();
