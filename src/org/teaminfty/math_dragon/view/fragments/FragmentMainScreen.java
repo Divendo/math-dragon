@@ -232,6 +232,10 @@ public class FragmentMainScreen extends Fragment
         @Override
         public void showKeyboard(MathSymbol mathConstant, OnConfirmListener listener)
         {
+            // If a keyboard is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
+                return;
+            
             // Create a keyboard
             FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
             

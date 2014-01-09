@@ -1,11 +1,26 @@
 package org.teaminfty.math_dragon.view.fragments;
 
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.MathView;
+import org.teaminfty.math_dragon.view.math.MathFactory;
 import org.teaminfty.math_dragon.view.math.MathObject;
+import org.w3c.dom.Document;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,15 +56,67 @@ public class FragmentEvaluation extends DialogFragment
         mathView.setEnabled(false);
         if(showMathObject != null)
             mathView.setMathObject(showMathObject);
+        else if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_MATH_EXPRESSION) != null)
+        {
+            try
+            {
+                mathView.setMathObject(MathFactory.fromXML(savedInstanceState.getString(BUNDLE_MATH_EXPRESSION)));
+            }
+            catch(ParseException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         
         // The close button
         ((ImageButton) view.findViewById(R.id.btn_close)).setOnClickListener(new OnCloseBtnClickListener());
         
         // The title
         ((TextView) view.findViewById(R.id.textViewEvalType)).setText(exactEvaluation ? R.string.evaluate_exact : R.string.evaluate_approximate);
+        if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_TITLE) != null)
+            ((TextView) view.findViewById(R.id.textViewEvalType)).setText(savedInstanceState.getString(BUNDLE_TITLE));
         
         // Return the content view
         return view;
+    }
+
+    /** A string containing the title of the dialog */
+    private static final String BUNDLE_TITLE = "title";
+
+    /** A XML string containing the current the expressions that is to be shown */
+    private static final String BUNDLE_MATH_EXPRESSION = "math_expr";
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // Save the title
+        outState.putString(BUNDLE_TITLE, ((TextView) getView().findViewById(R.id.textViewEvalType)).getText().toString());
+        
+        // Save the current math expression
+        if(mathView != null)
+        {
+            try
+            {
+                // Convert the MathObject to a XML document
+                Document doc = MathObject.createXMLDocument();
+                mathView.getMathObject().writeToXML(doc, doc.getDocumentElement());
+                
+                // Convert the XML document to a string and add it to the list
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                transformer.transform(new DOMSource(doc), new StreamResult(byteStream));
+                outState.putString(BUNDLE_MATH_EXPRESSION, byteStream.toString());
+            }
+            catch(TransformerConfigurationException e)
+            { /* Never thrown, ignore */ }
+            catch(TransformerFactoryConfigurationError e)
+            { /* Ignore */ }
+            catch(TransformerException e)
+            { /* Ignore */ }
+            catch(ParserConfigurationException e)
+            { /* Ignore */ }
+        }
     }
     
     /** Sets the {@link MathObject} that is to be shown
@@ -73,10 +140,22 @@ public class FragmentEvaluation extends DialogFragment
     {
         super.onResume();
 
-        // Make sure the dialog takes up all width it can take up
+        // Set the right size for the keyboard dialog
+        Configuration resConfig = getResources().getConfiguration();
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        if((resConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE ||
+           (resConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
+        {
+            // Set the size of the dialog
+            params.width = getResources().getDimensionPixelSize(R.dimen.evaluation_dlg_width);
+            params.height = getResources().getDimensionPixelSize(R.dimen.evaluation_dlg_height);
+        }
+        else
+        {
+            // Make sure the dialog takes up all width and height it can take up
+            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        }
         getDialog().getWindow().setAttributes(params);
     }
     
