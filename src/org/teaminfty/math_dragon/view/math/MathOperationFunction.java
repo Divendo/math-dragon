@@ -288,7 +288,7 @@ public class MathOperationFunction extends MathObject
     {
         Element e = doc.createElement(NAME);
         e.setAttribute(ATTR_TYPE, type.getXmlName());
-        getChild(0).writeToXML(doc, el);
+        getChild(0).writeToXML(doc, e);
         el.appendChild(e);
     }
 }
