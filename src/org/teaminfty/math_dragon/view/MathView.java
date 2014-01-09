@@ -649,7 +649,10 @@ public class MathView extends View
             if(mathObjectInfo.parent == null)
                 setMathObjectHelper(mathSymbol);
             else
+            {
                 mathObjectInfo.parent.setChild(mathObjectInfo.childIndex, mathSymbol);
+                ParenthesesHelper.setParentheses(mathObject);
+            }
             
             // Redraw
             invalidate();

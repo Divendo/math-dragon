@@ -66,6 +66,9 @@ public class MathOperationIntegral extends MathOperation
 		else
 			return "Integrate(" + getIntegratePart().toString() + ",{" + getIntegrateOver().toString() + "," + getIntegrateFrom().toString() + "," + getIntegrateTo().toString() + "})";
 	}
+
+    public int getPrecedence()
+    { return MathObjectPrecedence.FUNCTION; }
 	
 	public Rect[] getSizes()
 	{
