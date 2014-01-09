@@ -230,8 +230,7 @@ public class EvalHelper
     public static IExpr root(MathOperationRoot root) throws MathException
     {
         checkChildren(root);
-        // NOTE base and exponent are inverted!
-        return F.Power(eval(root.getExponent()), F.Divide(F.ZZ(1), eval(root.getBase())));
+        return F.Power(eval(root.getBase()), F.Divide(F.ZZ(1), eval(root.getExponent())));
     }
 
     /**
