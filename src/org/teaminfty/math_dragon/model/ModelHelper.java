@@ -307,6 +307,8 @@ public final class ModelHelper
             return new MathOperationFunction(FunctionType.ARCSIN, toMathObject(ast.get(1)));
         if (ast.isArcCos())
             return new MathOperationFunction(FunctionType.ARCCOS, toMathObject(ast.get(1)));
+        if (ast.isLog())
+            return new MathOperationFunction(FunctionType.LN, toMathObject(ast.get(1)));
         throw new ParseException(ast);
     }
 }

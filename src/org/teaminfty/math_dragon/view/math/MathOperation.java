@@ -49,27 +49,12 @@ public abstract class MathOperation extends MathObject
         }
         this.children.ensureCapacity(operands);
     }
-
-    public MathOperation(List<MathObject> list)
+    
+    protected MathOperation(List<MathObject> list)
     {
-        this(list, true);
-    }
-
-    protected MathOperation(List<MathObject> list,
-            boolean replaceNullElements)
-    {
-        if (list == null) {
+        if (list == null)
             throw new NullPointerException("list");
-        }
         set(list);
-        if(replaceNullElements)
-        {
-            for(int i = 0; i < list.size(); ++i)
-            {
-                if(children.get(i) == null)
-                    children.set(i, new MathObjectEmpty());
-            }
-        }
     }
 
     /**
@@ -82,7 +67,13 @@ public abstract class MathOperation extends MathObject
     {
         if(list == null)
             throw new NullPointerException("list");
-        this.children = new ArrayList<MathObject>(list);
+        
+        children = new ArrayList<MathObject>(list);
+        for(int i = 0; i < list.size(); ++i)
+        {
+            if(children.get(i) == null)
+                children.set(i, new MathObjectEmpty());
+        }
     }
     
     protected abstract String getType();

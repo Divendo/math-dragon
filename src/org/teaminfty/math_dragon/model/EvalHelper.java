@@ -135,15 +135,15 @@ public class EvalHelper
         // Add the constants and their powers
         long pow;
         if((pow = symbol.getPiPow()) != 0) {
-            result = justOne ? pow != 1 ? F.Power(F.Pi, pow) : F.Pi : F.Times(result, pow != 1 ? F.Power(F.Pi, pow) : F.Pi);;
+            result = justOne ? (pow != 1 ? F.Power(F.Pi, pow) : F.Pi) : F.Times(result, pow != 1 ? F.Power(F.Pi, pow) : F.Pi);
             justOne = false;
         }
         if((pow = symbol.getEPow()) != 0) {
-            result = justOne ? pow != 1 ? F.Power(F.E, pow) : F.E : F.Times(result, pow != 1 ? F.Power(F.E, pow) : F.E);
+            result = justOne ? (pow != 1 ? F.Power(F.E, pow) : F.E) : F.Times(result, pow != 1 ? F.Power(F.E, pow) : F.E);
             justOne = false;
         }
         if((pow = symbol.getIPow()) != 0) {
-            result = justOne ? pow != 1 ? F.Power(F.I, pow) : F.I : F.Times(result, pow != 1 ? F.Power(F.I, pow) : F.I);
+            result = justOne ? (pow != 1 ? F.Power(F.I, pow) : F.I) : F.Times(result, pow != 1 ? F.Power(F.I, pow) : F.I);
             justOne = false;
         }
 

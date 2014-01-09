@@ -17,12 +17,20 @@ import android.graphics.Rect;
 public class MathOperationLimit extends MathOperation
 {
     public static final String TYPE = "limit";
-
-    public MathOperationLimit(MathObject start, MathObject end,
-            MathObject expression)
+    
+    /** Constructor
+     * @param start What variable should be approach the value of <tt>end</tt>
+     * @param end The value that <tt>start</tt> should approach
+     * @param expression The expression to calculate the limit of
+     */
+    public MathOperationLimit(MathObject start, MathObject end, MathObject expression)
     {
         super(Arrays.asList(start, end, expression));
     }
+    
+    /** Default constructor */
+    public MathOperationLimit()
+    { this(null, null, null); }
     
     public String toString()
     {
