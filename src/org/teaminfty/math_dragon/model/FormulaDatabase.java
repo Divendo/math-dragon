@@ -1,15 +1,11 @@
 package org.teaminfty.math_dragon.model;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -23,7 +19,6 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.MathFactory;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -108,27 +103,13 @@ public class FormulaDatabase extends SQLiteOpenHelper
             {
                 try
                 {
-                    InputStream in = new ByteArrayInputStream(xml);
-                    Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
-                    mathObject = MathFactory.fromXML(doc);
-                }
-                catch(SAXException e)
-                {
-                    // TODO Auto-generated catch block (when an error occurs during parsing)
-                    e.printStackTrace();
-                }
-                catch(IOException e)
-                {
-                    // TODO Auto-generated catch block (when an error occurs during IO operations on the InputStream)
-                    e.printStackTrace();
+                    mathObject = MathFactory.fromXML(xml);
                 }
                 catch(ParseException e)
                 {
                     // TODO Auto-generated catch block (when an error occurs during the conversion from the XML document to a MathObject)
                     e.printStackTrace();
                 }
-                catch(ParserConfigurationException e)
-                { /* Ignore */ }
             }
         }
         

@@ -1,10 +1,18 @@
 package org.teaminfty.math_dragon.view.math;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Factory for creating {@link MathObject}s from XML documents.
@@ -139,4 +147,41 @@ public final class MathFactory
         Element root = doc.getDocumentElement();
         return toMath((Element) root.getFirstChild());
     }
+    
+    /**
+     * Construct {@link MathObject} from an XML string (as a byte array). If anything fails
+     * while parsing the document, a {@link ParseException} is thrown.
+     * 
+     * @param xml The XML byte array
+     * @return The constructed mathematical object. Never returns <tt>null</tt>
+     * @throws ParseException
+     *         Thrown if anything couldn't be parsed.
+     */
+    public static MathObject fromXML(byte[] xml) throws ParseException
+    {
+        try
+        {
+            InputStream in = new ByteArrayInputStream(xml);
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
+            return fromXML(doc);
+        }
+        catch(SAXException e)
+        { throw new ParseException(e); }
+        catch(IOException e)
+        { throw new ParseException(e); }
+        catch(ParserConfigurationException e)
+        { throw new ParseException(e); }
+    }
+
+    /**
+     * Construct {@link MathObject} from an XML string. If anything fails
+     * while parsing the document, a {@link ParseException} is thrown.
+     * 
+     * @param xml The XML string
+     * @return The constructed mathematical object. Never returns <tt>null</tt>
+     * @throws ParseException
+     *         Thrown if anything couldn't be parsed.
+     */
+    public static MathObject fromXML(String xml) throws ParseException
+    { return fromXML(xml.getBytes()); }
 }
