@@ -45,6 +45,8 @@ public class FragmentKeyboard extends DialogFragment
     	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
         if(mathSymbolForLater != null)
             mathSymbolEditor.fromMathSymbol(mathSymbolForLater);
+        else if(savedInstanceState != null && savedInstanceState.getBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE) != null)
+            mathSymbolEditor.fromBundle(savedInstanceState.getBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE));
 		
     	// Acquire access to all buttons
     	final Button button1 =  (Button) myFragmentView.findViewById(R.id.keyboardButton1);
@@ -99,13 +101,12 @@ public class FragmentKeyboard extends DialogFragment
     	buttonX.setOnClickListener(buttonVarOnClickListener);
         buttonY.setOnClickListener(buttonVarOnClickListener);
         buttonZ.setOnClickListener(buttonVarOnClickListener);
-    	
-    	// Set the buttons to the right state
-        buttonPi.setChecked(false);
-        buttonE.setChecked(false);
         
-        // Set the tabs to the right state
-        buttonTabNumpad.setChecked(true);
+        // Show the right tab and highlight the right button
+        if(savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_NUMPAD_VISIBLE))
+            showTab(myFragmentView, savedInstanceState.getBoolean(BUNDLE_NUMPAD_VISIBLE));
+        else
+            showTab(myFragmentView, true);
         
         // Generate the buttons for the variables keyboard
         LinearLayout varTable = (LinearLayout) myFragmentView.findViewById(R.id.table_keyboard_variables);
@@ -134,6 +135,9 @@ public class FragmentKeyboard extends DialogFragment
                 }
             }
         }
+        
+        // Set the buttons to the right state
+        refreshButtonState(myFragmentView);
 
     	// Return the content view
         return myFragmentView;
@@ -161,6 +165,22 @@ public class FragmentKeyboard extends DialogFragment
             params.height = WindowManager.LayoutParams.MATCH_PARENT;
         }
         getDialog().getWindow().setAttributes(params);
+    }
+    
+    /** A boolean containing which tab is currently shown (<tt>true</tt> means the numpad tab is shown, <tt>false</tt> means the variables tab is shown) */
+    private static final String BUNDLE_NUMPAD_VISIBLE = "numpad_visible";
+    
+    /** A bundle containing the state of the {@link MathSymbolEditor} */
+    private static final String BUNDLE_MATH_SYMBOL_EDITOR_STATE = "math_symbol_editor_state";
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // Store which tab is shown
+        outState.putBoolean(BUNDLE_NUMPAD_VISIBLE, ((ToggleButton) getView().findViewById(R.id.btn_tab_numpad)).isChecked());
+        
+        // Save the current MathSymbolEditor state
+        outState.putBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE, mathSymbolEditor.toBundle());
     }
     
     /** Sets the current value from the given {@link MathSymbol}
@@ -215,21 +235,27 @@ public class FragmentKeyboard extends DialogFragment
     {
         mathSymbolEditor = null;
     }
+
+    /** Convenience method for calling {@link FragmentKeyboard#refreshButtonState(View) refreshButtonState(View)},
+     * where <tt>getView()</tt> is passed as argument. */
+    private void refreshButtonState()
+    { refreshButtonState(getView()); }
     
     /** Refreshes the state of the buttons.
-     * That is, the right symbol will be highlighted according to the value of {@link FragmentKeyboard#editingSymbol editingSymbol} */
-    private void refreshButtonState()
+     * That is, the right symbol will be highlighted according to the value of {@link FragmentKeyboard#editingSymbol editingSymbol}
+     * @param view The view that contains the buttons */
+    private void refreshButtonState(View view)
     {
         // Only execute if we're loaded
         if(mathSymbolEditor == null) return;
         
         // Get the buttons
-        final ToggleButton buttonPi = (ToggleButton) getView().findViewById(R.id.keyboardButtonPi);
-        final ToggleButton buttonE  = (ToggleButton) getView().findViewById(R.id.keyboardButtonE);
-        final ToggleButton buttonI  = (ToggleButton) getView().findViewById(R.id.keyboardButtonI);
-        final ToggleButton buttonX  = (ToggleButton) getView().findViewById(R.id.keyboardButtonX);
-        final ToggleButton buttonY  = (ToggleButton) getView().findViewById(R.id.keyboardButtonY);
-        final ToggleButton buttonZ  = (ToggleButton) getView().findViewById(R.id.keyboardButtonZ);
+        final ToggleButton buttonPi = (ToggleButton) view.findViewById(R.id.keyboardButtonPi);
+        final ToggleButton buttonE  = (ToggleButton) view.findViewById(R.id.keyboardButtonE);
+        final ToggleButton buttonI  = (ToggleButton) view.findViewById(R.id.keyboardButtonI);
+        final ToggleButton buttonX  = (ToggleButton) view.findViewById(R.id.keyboardButtonX);
+        final ToggleButton buttonY  = (ToggleButton) view.findViewById(R.id.keyboardButtonY);
+        final ToggleButton buttonZ  = (ToggleButton) view.findViewById(R.id.keyboardButtonZ);
         
         // Uncheck all buttons
         buttonPi.setChecked(false);
@@ -266,6 +292,20 @@ public class FragmentKeyboard extends DialogFragment
             break;
             default:  /* Just to suppress warnings */   break;
         }
+    }
+    
+    /** Activates the given tab
+     * @param view The root view
+     * @param showNumpad <tt>true</tt> if the numpad is to be shown, <tt>false</tt> if the variables are to be shown */
+    private void showTab(View view, boolean showNumpad)
+    {
+        // Set the tab buttons to the right state
+        ((ToggleButton) view.findViewById(R.id.btn_tab_numpad)).setChecked(showNumpad);
+        ((ToggleButton) view.findViewById(R.id.btn_tab_variables)).setChecked(!showNumpad);
+        
+        // Show the right keyboard
+        view.findViewById(R.id.table_keyboard_numpad).setVisibility(showNumpad ? View.VISIBLE : View.GONE);
+        view.findViewById(R.id.table_keyboard_variables).setVisibility(showNumpad ? View.GONE : View.VISIBLE);
     }
     
     /** The OnClickListener for the buttons with numbers */
@@ -360,16 +400,8 @@ public class FragmentKeyboard extends DialogFragment
         @Override
         public void onClick(final View v)
         {
-            // Find out which button was pressed
-            final boolean showNumpad = v.getId() == R.id.btn_tab_numpad;
-            
-            // Set the tab buttons to the right state
-            ((ToggleButton) getView().findViewById(R.id.btn_tab_numpad)).setChecked(showNumpad);
-            ((ToggleButton) getView().findViewById(R.id.btn_tab_variables)).setChecked(!showNumpad);
-            
-            // Show the right keyboard
-            getView().findViewById(R.id.table_keyboard_numpad).setVisibility(showNumpad ? View.VISIBLE : View.GONE);
-            getView().findViewById(R.id.table_keyboard_variables).setVisibility(showNumpad ? View.GONE : View.VISIBLE);
+            // Find out which button was pressed and show the right tab
+            showTab(getView(), v.getId() == R.id.btn_tab_numpad);
         }
     }
     
