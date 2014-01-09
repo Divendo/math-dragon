@@ -14,11 +14,8 @@ import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationFunction;
-<<<<<<< HEAD
 import org.teaminfty.math_dragon.view.math.MathOperationLimit;
-=======
 import org.teaminfty.math_dragon.view.math.MathOperationIntegral;
->>>>>>> 7ddf2bef4bc6b0c0809ff0314f81821418065c4c
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
@@ -101,6 +98,24 @@ public class EvalHelper
         if(op.getRight() == null || op.getRight() instanceof MathObjectEmpty)
             throw new EmptyChildException(1);
     }
+    
+    /**
+     * Ensure all children are valid. An {@link EmptyChildException} is thrown
+     * when at least one child equals <tt>null</tt>.
+     * 
+     * @param op
+     *        The mathematical operation.
+     * @throws EmptyChildException
+     *         Thrown when one or more children are invalid.
+     */
+    static void checkChildren(MathOperation op) throws EmptyChildException
+    {
+        for(int i = 0; i < op.getChildCount(); ++i)
+        {
+            if(op.getChild(i) == null || op.getChild(i) instanceof MathObjectEmpty)
+                throw new EmptyChildException(i);
+        }
+    }
 
     /** Variable lookup table */
     private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d,
@@ -114,14 +129,23 @@ public class EvalHelper
         IExpr result = F.ZZ(symbol.getFactor());
         if(symbol.getFactor() == 0)
             return result;
+        
+        boolean justOne = symbol.getFactor() == 1;
 
         // Add the constants and their powers
-        if(symbol.getPiPow() != 0)
-            result = F.Times(result, F.Power(F.Pi, symbol.getPiPow()));
-        if(symbol.getEPow() != 0)
-            result = F.Times(result, F.Power(F.E, symbol.getEPow()));
-        if(symbol.getIPow() != 0)
-            result = F.Times(result, F.Power(F.I, symbol.getIPow()));
+        long pow;
+        if((pow = symbol.getPiPow()) != 0) {
+            result = justOne ? pow != 1 ? F.Power(F.Pi, pow) : F.Pi : F.Times(result, pow != 1 ? F.Power(F.Pi, pow) : F.Pi);;
+            justOne = false;
+        }
+        if((pow = symbol.getEPow()) != 0) {
+            result = justOne ? pow != 1 ? F.Power(F.E, pow) : F.E : F.Times(result, pow != 1 ? F.Power(F.E, pow) : F.E);
+            justOne = false;
+        }
+        if((pow = symbol.getIPow()) != 0) {
+            result = justOne ? pow != 1 ? F.Power(F.I, pow) : F.I : F.Times(result, pow != 1 ? F.Power(F.I, pow) : F.I);
+            justOne = false;
+        }
 
         // Add the variables
         for(int i = 0; i < symbol.varPowCount(); i++)
@@ -304,5 +328,35 @@ public class EvalHelper
          * F.Rule(F.$p(F.x, F.SymbolHead), F.CInfinity)) ((1) + ((x) ^ (-1))) ^
          * (x), ((x) -> (Infinity))
          */
+    }
+    
+    /**
+     * Evaluate mathematical integral using specified argument.
+     * 
+     * @param i The mathematical integral.
+     * @return Converted mathematical integral for Symja
+     * @throws MathException
+     *         Thrown when <tt>i</tt> contains invalid children
+     */
+    public static IExpr integral(MathOperationIntegral i) throws MathException
+    {
+        // Check for empty children that are never allowed to be empty
+        if(i.getIntegratePart() instanceof MathObjectEmpty)
+            throw new EmptyChildException(0);
+        else if(i.getIntegrateOver() instanceof MathObjectEmpty)
+            throw new EmptyChildException(1);
+        
+        // Evaluate depending on whether or not a 'from' and 'to' value are given
+        if(i.getIntegrateFrom() instanceof MathObjectEmpty && i.getIntegrateTo() instanceof MathObjectEmpty)
+            return F.Integrate(eval(i.getIntegratePart()), eval(i.getIntegrateOver()));
+        else
+        {
+            if(i.getIntegrateFrom() instanceof MathObjectEmpty)
+                throw new EmptyChildException(2);
+            else if(i.getIntegrateTo() instanceof MathObjectEmpty)
+                throw new EmptyChildException(3);
+            
+            return F.Integrate( eval(i.getIntegratePart()), F.List(eval(i.getIntegrateOver()), eval(i.getIntegrateFrom()), eval(i.getIntegrateTo())) );
+        }
     }
 }
