@@ -1,15 +1,11 @@
 package org.teaminfty.math_dragon.model;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -23,7 +19,6 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.MathFactory;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,7 +35,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
     /** The database name */
     private static final String DATABASE_NAME = "formula_database";
     /** The database version */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     
     /** The information about the formulas table */
     public static final class TABLE_FORMULAS
@@ -50,6 +45,8 @@ public class FormulaDatabase extends SQLiteOpenHelper
         
         /** The ID of a formula */
         public static final String ID = "id";
+        /** The name of the formula */
+        public static final String FORMULA_NAME = "name";
         /** The date when formula was last changed */
         public static final String LAST_CHANGE = "last_change";
         /** An image of the formula (PNG format) */
@@ -65,9 +62,10 @@ public class FormulaDatabase extends SQLiteOpenHelper
     public static class Formula
     {
         /** Constructor */
-        public Formula(int id, long lastChange, Bitmap bmp, MathObject mathObject)
+        public Formula(int id, String name, long lastChange, Bitmap bmp, MathObject mathObject)
         {
             this.id = id;
+            this.name = name;
             this.lastChange = lastChange;
             this.bmp = bmp;
             this.mathObject = mathObject;
@@ -75,13 +73,15 @@ public class FormulaDatabase extends SQLiteOpenHelper
         
         /** Constructor for construction from raw data
          * @param id The ID
+         * @param name The name of the formula
          * @param datetime The last time the formula was changed as a string (format: yyyy-mm-dd hh:mm:ss)
          * @param bmp The bitmap as a byte array (PNG format)
          * @param xml The {@link MathObject} as a XML string */
-        public Formula(int id, String datetime, byte[] bmp, byte[] xml)
+        public Formula(int id, String name, String datetime, byte[] bmp, byte[] xml)
         {
-            // Set the ID
+            // Set the ID and name
             this.id = id;
+            this.name = name;
             
             // Parse and set the last change date
             try
@@ -103,32 +103,20 @@ public class FormulaDatabase extends SQLiteOpenHelper
             {
                 try
                 {
-                    InputStream in = new ByteArrayInputStream(xml);
-                    Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
-                    mathObject = MathFactory.fromXML(doc);
-                }
-                catch(SAXException e)
-                {
-                    // TODO Auto-generated catch block (when an error occurs during parsing)
-                    e.printStackTrace();
-                }
-                catch(IOException e)
-                {
-                    // TODO Auto-generated catch block (when an error occurs during IO operations on the InputStream)
-                    e.printStackTrace();
+                    mathObject = MathFactory.fromXML(xml);
                 }
                 catch(ParseException e)
                 {
                     // TODO Auto-generated catch block (when an error occurs during the conversion from the XML document to a MathObject)
                     e.printStackTrace();
                 }
-                catch(ParserConfigurationException e)
-                { /* Ignore */ }
             }
         }
         
         /** The ID */
         public int id = 0;
+        /** The name */
+        public String name = "";
         /** The last time the formula was changed expressed in the number of milliseconds since 1970-01-01 GMT */
         public long lastChange = 0;
         /** The image of the formula (can be <tt>null</tt>) */
@@ -149,6 +137,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
         // Create a table for the formulas
         db.execSQL("CREATE TABLE " + TABLE_FORMULAS.NAME + " (" +
                         TABLE_FORMULAS.ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                        TABLE_FORMULAS.FORMULA_NAME + " TEXT NOT NULL," +
                         TABLE_FORMULAS.LAST_CHANGE + " TIMESTAMP NOT NULL," +
                         TABLE_FORMULAS.IMAGE + " BLOB NOT NULL," +
                         TABLE_FORMULAS.MATH_OBJECT + " BLOB NOT NULL" +
@@ -156,9 +145,19 @@ public class FormulaDatabase extends SQLiteOpenHelper
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int currVersion, int newVersion)
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        // Not yet needed, since all databases will be version 1
+        if(oldVersion == 1 && newVersion == 2)
+            upgradeV1toV2(db);
+    }
+    
+    /** Upgrades the database from version 1 to version 2
+     * @param db The database to upgrade */
+    private void upgradeV1toV2(SQLiteDatabase db)
+    {
+        // Add the name column
+        db.execSQL("ALTER TABLE " + TABLE_FORMULAS.NAME + " " +
+                   "ADD COLUMN " + TABLE_FORMULAS.FORMULA_NAME + " TEXT NOT NULL AFTER " + TABLE_FORMULAS.ID);
     }
 
     /** Returns a list of all formulas in the database.
@@ -174,10 +173,10 @@ public class FormulaDatabase extends SQLiteOpenHelper
         
         // Get a cursor for all formulas in the database and add all of them to our list
         Cursor cursor = db.query(TABLE_FORMULAS.NAME,
-                new String[]{ TABLE_FORMULAS.ID, TABLE_FORMULAS.LAST_CHANGE, TABLE_FORMULAS.IMAGE },
+                new String[]{ TABLE_FORMULAS.ID, TABLE_FORMULAS.FORMULA_NAME, TABLE_FORMULAS.LAST_CHANGE, TABLE_FORMULAS.IMAGE },
                 null, null, null, null, TABLE_FORMULAS.LAST_CHANGE + " DESC");
         while(cursor.moveToNext())
-            out.add(new Formula(cursor.getInt(0), cursor.getString(1), cursor.getBlob(2), null));
+            out.add(new Formula(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlob(3), null));
 
         // Close the database connection
         db.close();
@@ -198,7 +197,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
         
         // Get a cursor for the requested formula and check if it exists
         Cursor cursor = db.query(TABLE_FORMULAS.NAME,
-                new String[]{ TABLE_FORMULAS.ID, TABLE_FORMULAS.LAST_CHANGE, TABLE_FORMULAS.MATH_OBJECT },
+                new String[]{ TABLE_FORMULAS.ID, TABLE_FORMULAS.FORMULA_NAME, TABLE_FORMULAS.LAST_CHANGE, TABLE_FORMULAS.MATH_OBJECT },
                 TABLE_FORMULAS.ID + " = " + Integer.toString(id), null, null, null, null);
         if(cursor.getCount() == 0)
             return null;
@@ -208,7 +207,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
         db.close();
         
         // Create a formula from the retrieved data and return it
-        return new Formula(cursor.getInt(0), cursor.getString(1), null, cursor.getBlob(2));
+        return new Formula(cursor.getInt(0), cursor.getString(1), cursor.getString(2), null, cursor.getBlob(3));
     }
     
     /** The ID that's used for inserting a formula into the database */
@@ -216,13 +215,17 @@ public class FormulaDatabase extends SQLiteOpenHelper
     
     /** Save the {@link MathObject} as a formula with the given ID.
      * @param id The ID of the formula to overwrite, or {@link FormulaDatabase#INSERT_ID INSERT_ID} to create a new entry
+     * @param name The name of the formula to save
      * @param mathObject The {@link MathObject} that is to be stored
      * @return Whether the formula was saved successfully or not
      */
-    public boolean saveFormula(int id, MathObject mathObject)
+    public boolean saveFormula(int id, String name, MathObject mathObject)
     {
         // Create a ContentValues instance we're going to pass to the database
-        ContentValues values = new ContentValues(3);
+        ContentValues values = new ContentValues(4);
+        
+        // Add the name to the ContentValues instance
+        values.put(TABLE_FORMULAS.FORMULA_NAME, name);
         
         // Remember the default height of the MathObject and change its default height
         final int defHeight = mathObject.getDefaultHeight();

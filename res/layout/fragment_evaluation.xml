@@ -2,11 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightgray" >
+    android:background="@color/white"
+    android:orientation="vertical" >
     
-        <org.teaminfty.math_dragon.view.MathView
-        android:id="@+id/mathView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <RelativeLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+        
+	    <ImageButton
+	        android:id="@+id/btn_close"
+	        style="@style/CircleButton"
+	        android:layout_alignParentRight="true"
+	        android:layout_alignParentTop="true"
+	        android:layout_margin="@dimen/main_screen_button_margin"
+	        android:contentDescription="@string/close"
+	        android:src="@drawable/close" />
+
+	    <TextView
+	        android:id="@+id/textViewEvalType"
+			android:layout_width="0dp"
+	        android:layout_height="@dimen/circle_button_size"
+	        android:layout_marginLeft="@dimen/main_screen_button_margin"
+	        android:layout_marginTop="@dimen/main_screen_button_margin"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:layout_toLeftOf="@id/btn_close"
+	        android:gravity="center"
+	        android:textStyle="bold"
+	        android:textSize="@dimen/dialog_title_font_size"
+	        android:text="@string/evaluate_exact" />
+	    
+    </RelativeLayout>
+    	
+    <org.teaminfty.math_dragon.view.MathView
+		android:id="@+id/mathView"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
 
 </LinearLayout>

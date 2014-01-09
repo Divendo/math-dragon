@@ -11,6 +11,9 @@ import android.graphics.Region;
 
 public class MathParentheses extends MathObject
 {
+    /** The name of the XML element for this class */
+    public static final String NAME = "parentheses";
+    
     /** The ratio (width : height) of a bracket (i.e. half the golden ratio) */
     final float RATIO = 0.5f / 1.61803398874989f;
     
@@ -33,6 +36,15 @@ public class MathParentheses extends MathObject
         // Initialise the paint
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
+    }
+    
+    @Override
+    public String toString()
+    {
+        final String str = getChild(0).toString();
+        if(str.startsWith("(") && str.endsWith(")"))
+            return str;
+        return "(" + str + ")";
     }
     
     @Override
@@ -116,7 +128,7 @@ public class MathParentheses extends MathObject
     @Override
     public void writeToXML(Document doc, Element el)
     {
-        Element e = doc.createElement("parentheses");
+        Element e = doc.createElement(NAME);
         children.get(0).writeToXML(doc, e);
         el.appendChild(e);
     }

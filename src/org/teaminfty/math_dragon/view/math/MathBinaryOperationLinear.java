@@ -78,7 +78,14 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
     @Override
     public Point getCenter()
     {
-    	return new Point(getBoundingBox().centerX(), Math.max(getOperatorSize().height() / 2, Math.max(getChild(0).getCenter().y, getChild(1).getCenter().y)));
+    	  // Get the sizes
+        Rect operatorSize = getOperatorSize();
+        Rect leftChild = getChild(0).getBoundingBox();
+        Rect rightChild = getChild(1).getBoundingBox();
+        
+        // Return a bounding box, containing the bounding boxes of the children and the operator
+        Rect betaRect = new Rect(0, 0, leftChild.width() + operatorSize.width() + rightChild.width(), Math.max(Math.max(leftChild.height(), rightChild.height()), operatorSize.height()));
+    	return new Point(betaRect.centerX(), Math.max(getOperatorSize().height() / 2, Math.max(getChild(0).getCenter().y, getChild(1).getCenter().y)));
     }
     
     @Override
@@ -86,10 +93,10 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
     {
         // Get the sizes
         Rect operatorSize = getOperatorSize();
-        Rect leftChild = getChild(0).getBoundingBox();
-        Rect rightChild = getChild(1).getBoundingBox();
+        Rect leftChild = getChildBoundingBox(0);
+        Rect rightChild = getChildBoundingBox(1);
         
         // Return a bounding box, containing the bounding boxes of the children and the operator
-        return new Rect(0, 0, leftChild.width() + operatorSize.width() + rightChild.width(), Math.max(Math.max(leftChild.height(), rightChild.height()), operatorSize.height()));
+        return new Rect(0, 0, leftChild.width() + operatorSize.width() + rightChild.width(), Math.max(leftChild.bottom, rightChild.bottom));
     }
 }

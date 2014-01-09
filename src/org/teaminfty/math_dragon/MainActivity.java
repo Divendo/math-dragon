@@ -12,7 +12,6 @@ import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
-import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
@@ -64,31 +63,34 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Load Symja
         new SymjaLoader().execute();
 
-        // Get the DrawerLayout object
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-
-        // Remove the grey overlay
-        drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
-
-        // Set the shadow
-        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
-
-        try
+        // DrawLayout specific code
+        if(findViewById(R.id.drawerLayout) != null)
         {
-            drawerLayout.closeDrawer(Gravity.LEFT);
-
-            // Set the toggle for the action bar
-            actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-
-            // Listen when to close the operations drawer
-            // TODO only register this event when needed
-            ((FragmentOperationsSource) getFragmentManager().findFragmentById(R.id.fragmentOperationDrawer)).setOnCloseMeListener(this);
-        }
-        catch(IllegalArgumentException e)
-        {
-            // there was no drawer to open
-            // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
+            // Get the DrawerLayout object
+            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+    
+            // Remove the grey overlay
+            drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
+    
+            // Set the shadow
+            drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+    
+            try
+            {
+                // Make sure the source drawer is closed
+                drawerLayout.closeDrawer(Gravity.LEFT);
+    
+                // Set the toggle for the action bar
+                actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.operation_drawer_open, R.string.operation_drawer_close);
+                getActionBar().setDisplayHomeAsUpEnabled(true);
+    
+                // Listen when to close the operations drawer
+                ((FragmentOperationsSource) getFragmentManager().findFragmentById(R.id.fragmentOperationDrawer)).setOnCloseMeListener(this);
+            }
+            catch(IllegalArgumentException e)
+            {
+                // There was no drawer to close
+            }
         }
     }
 
@@ -116,7 +118,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     public boolean onOptionsItemSelected(MenuItem item)
     {
         // Pass the event to ActionBarDrawerToggle, if it returns true, then it has handled the app icon touch event
-        if(actionBarDrawerToggle.onOptionsItemSelected(item))
+        if(actionBarDrawerToggle != null && actionBarDrawerToggle.onOptionsItemSelected(item))
             return true;
 
         // Handle other action bar items...
@@ -141,7 +143,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             
             // Strip the query of unnecessary outer parentheses
             if(query.startsWith("(") && query.endsWith(")"))
-                    query = query.substring(1, query.length() - 1);
+                query = query.substring(1, query.length() - 1);
 
             // Start an intent to send the user to Wolfram|Alpha
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -158,13 +160,11 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
             IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
 
-            // Get the evaluation fragment and show the result
-            FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager().findFragmentById(R.id.fragmentEvaluation);
+            // Create an evaluation fragment and show the result
+            FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
             fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result)));
-
-            // Get the DrawerLayout object and open the drawer
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-            drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
+            fragmentEvaluation.setEvalType(true);
+            fragmentEvaluation.show(getFragmentManager(), "evaluation");
         }
         catch(EmptyChildException e)
         {
@@ -180,22 +180,33 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
     public void approximate(View view)
     {
-        // Get the DrawerLayout object
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        try
+        {
+            // Calculate the answer
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+            IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
+            // TODO Approximate the result
 
-        drawerLayout.openDrawer(Gravity.RIGHT | Gravity.BOTTOM);
-        // TODO: Approximate the MathObject in the drawing space, and display the resulting constant
-
-        FragmentEvaluation fragmentEvaluation = (FragmentEvaluation) getFragmentManager()
-                .findFragmentById(R.id.fragmentEvaluation);
-
-        MathSymbol mathConstant = new MathSymbol(42,0,0,0,null);
-        fragmentEvaluation.showMathObject(mathConstant);
+            // Create an evaluation fragment and show the result
+            FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result)));
+            fragmentEvaluation.setEvalType(false);
+            fragmentEvaluation.show(getFragmentManager(), "evaluation");
+        }
+        catch(EmptyChildException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch(MathException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void clear(View view)
     {
-
         // Simply clear the current formula
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();

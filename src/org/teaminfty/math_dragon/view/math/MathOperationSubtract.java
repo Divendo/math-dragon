@@ -20,6 +20,10 @@ public class MathOperationSubtract extends MathBinaryOperationLinear
     { return MathObjectPrecedence.ADD; }
     
     @Override
+    public String toString()
+    { return "(" + getLeft().toString() + "-" + getRight().toString() + ")"; }
+    
+    @Override
     public void draw(Canvas canvas)
     {
         // Draw the bounding boxes

@@ -14,4 +14,7 @@ public abstract class MathObjectPrecedence
 
     /** The precedence add operations have */
     public static final int ADD = 3;
+    
+    /** The precedence functions have */
+    public static final int FUNCTION = 4;
 }

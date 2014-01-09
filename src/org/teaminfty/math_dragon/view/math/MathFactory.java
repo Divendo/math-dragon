@@ -1,9 +1,18 @@
 package org.teaminfty.math_dragon.view.math;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Factory for creating {@link MathObject}s from XML documents.
@@ -89,11 +98,32 @@ public final class MathFactory
                 // Create and return the symbol
                 return new MathSymbol(factor, ePow, piPow, iPow, varPows);
             }
-            else if(tag.equals(MathBinaryOperation.NAME))
+            else if(tag.equals(MathOperation.NAME))
             {
-                if(Integer.parseInt(e.getAttribute(MathBinaryOperation.ATTR_OPERANDS)) == 2)
-                    return toOpBin(e);
+                switch(Integer.parseInt(e.getAttribute(MathOperation.ATTR_OPERANDS)))
+                {
+                    case 2: return toOpBin(e);
+                    case 4:
+                        if(e.getAttribute("type").equals(MathOperationIntegral.TYPE))
+                        {
+                            MathOperationIntegral integral = new MathOperationIntegral();
+                            NodeList childNodes = e.getChildNodes();
+                            for(int i = 0; i < childNodes.getLength(); ++i)
+                                integral.setChild(i, toMath((Element) childNodes.item(i)));
+                            return integral;
+                        }
+                    break;
+                }
             }
+            else if(tag.equals(MathOperationFunction.NAME))
+            {
+                MathOperationFunction.FunctionType type = MathOperationFunction.FunctionType.getByXmlName(e.getAttribute(MathOperationFunction.ATTR_TYPE));
+                MathOperationFunction f = new MathOperationFunction(type);
+                f.setChild(0, toMath((Element) e.getFirstChild()));
+                return f;
+            }
+            else if(tag.equals(MathParentheses.NAME))
+                return new MathParentheses(toMath((Element) e.getFirstChild()));
             else if(tag.equals(MathObjectEmpty.NAME))
                 return new MathObjectEmpty();
         }
@@ -117,4 +147,41 @@ public final class MathFactory
         Element root = doc.getDocumentElement();
         return toMath((Element) root.getFirstChild());
     }
+    
+    /**
+     * Construct {@link MathObject} from an XML string (as a byte array). If anything fails
+     * while parsing the document, a {@link ParseException} is thrown.
+     * 
+     * @param xml The XML byte array
+     * @return The constructed mathematical object. Never returns <tt>null</tt>
+     * @throws ParseException
+     *         Thrown if anything couldn't be parsed.
+     */
+    public static MathObject fromXML(byte[] xml) throws ParseException
+    {
+        try
+        {
+            InputStream in = new ByteArrayInputStream(xml);
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
+            return fromXML(doc);
+        }
+        catch(SAXException e)
+        { throw new ParseException(e); }
+        catch(IOException e)
+        { throw new ParseException(e); }
+        catch(ParserConfigurationException e)
+        { throw new ParseException(e); }
+    }
+
+    /**
+     * Construct {@link MathObject} from an XML string. If anything fails
+     * while parsing the document, a {@link ParseException} is thrown.
+     * 
+     * @param xml The XML string
+     * @return The constructed mathematical object. Never returns <tt>null</tt>
+     * @throws ParseException
+     *         Thrown if anything couldn't be parsed.
+     */
+    public static MathObject fromXML(String xml) throws ParseException
+    { return fromXML(xml.getBytes()); }
 }
