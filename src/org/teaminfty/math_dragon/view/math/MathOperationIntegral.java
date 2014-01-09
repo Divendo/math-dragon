@@ -315,4 +315,12 @@ public class MathOperationIntegral extends MathOperation
 	    for(MathObject child : children)
 	        child.writeToXML(doc, el);
 	}
+
+	@Override
+    public boolean isCompleted()
+    {
+	    if(getIntegratePart() instanceof MathObjectEmpty || getIntegrateOver() instanceof MathObjectEmpty)
+	        return false;
+        return !(getIntegrateFrom() instanceof MathObjectEmpty ^ getIntegrateTo() instanceof MathObjectEmpty);
+    }
 }
