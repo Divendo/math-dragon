@@ -116,7 +116,6 @@ public final class ModelHelper
                     imag.setIPow(1);
                     imag.setFactor(((MathSymbol) toOpDiv(frac.getNumerator(), frac.getDenominator())).getFactor());
                     return imag;
-                    //return toOpDiv(frac.getNumerator(), frac.getDenominator());
                 } else {
                     imag.setIPow(1);
                     return new MathOperationPower(imag, toMathObject(pow));
@@ -133,7 +132,6 @@ public final class ModelHelper
             IFraction frac = (IFraction) expr;
             return toOpDiv(frac.getNumerator(), frac.getDenominator());
         }
-//        return toOpFunction(expr);
         throw new ParseException(expr);
     }
 
@@ -280,6 +278,19 @@ public final class ModelHelper
         return new MathOperationPower(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
     }
     
+    /**
+     * Convert a mathematical function (currently that only applies for
+     * trigonometric functions) from symja to a graphical viewer contains the
+     * mathematical expression. Unknown mathematical expressions result in a
+     * {@link ParseException}.
+     * 
+     * @param ast
+     *        The abstract syntax tree from Symja. Usually obtained from
+     *        <tt>EvalHelper.eval(MathObject)</tt>.
+     * @return A viewer that contains <tt>expr</tt>.
+     * @throws ParseException
+     *         Thrown when conversion is impossible.
+     */
     static MathObject toOpFunction(IAST ast) throws ParseException
     {
         if (ast.isSin())
