@@ -192,6 +192,11 @@ public class FragmentKeyboard extends DialogFragment
      * @param listener The new {@link OnConfirmListener} */
     public void setOnConfirmListener(OnConfirmListener listener)
     { onConfirmListener = listener; }
+
+    /** Returns the {@link OnConfirmListener}
+     * @return The {@link OnConfirmListener} */
+    public OnConfirmListener getOnConfirmListener()
+    { return onConfirmListener; }
     
     /** Calls the {@link OnConfirmListener}
      * @param mathSymbol The input */

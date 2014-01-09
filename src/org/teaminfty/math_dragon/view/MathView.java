@@ -1,6 +1,8 @@
 package org.teaminfty.math_dragon.view;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
@@ -14,6 +16,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -629,6 +632,39 @@ public class MathView extends View
         }
     }
     
+    /** Converts the given {@link FragmentKeyboard.OnConfirmListener} to a bundle, given that it was created by this class */
+    public Bundle keyboardListenerToBundle(FragmentKeyboard.OnConfirmListener listener)
+    {
+        if(!(listener instanceof MathObjectReplacer))
+            return null;
+        
+        return ((MathObjectReplacer) listener).toBundle(mathObject);
+    }
+    
+    /** Creates a {@link MathObjectReplacer} from the given bundle
+     * @param bundle The bundle to create the {@link MathObjectReplacer} from */
+    public FragmentKeyboard.OnConfirmListener keyboardListenerFromBundle(Bundle bundle)
+    {
+        // Get the path to the clicked part
+        ArrayList<Integer> path = bundle.getIntegerArrayList(MathObjectReplacer.BUNDLE_MATH_OBJECT_INFO);
+        
+        // If the path is empty, it was the root
+        if(path.isEmpty())
+            return new MathObjectReplacer(new HoverInformation(mathObject, null, null, 0));
+        // If it wasn't we follow the path to create an instance of HoverInformation
+        else
+        {
+            HoverInformation hoverInformation = new HoverInformation(mathObject.getChild(path.get(0)), null, mathObject, path.get(0));
+            for(int i = 1; i < path.size(); ++i)
+            {
+                hoverInformation.childIndex = path.get(i);
+                hoverInformation.parent = hoverInformation.mathObject;
+                hoverInformation.mathObject = hoverInformation.mathObject.getChild(path.get(i));
+            }
+            return new MathObjectReplacer(hoverInformation);
+        }
+    }
+    
     /** Replaces an {@link MathObject} with the {@link MathSymbol} that the keyboard returns */
     private class MathObjectReplacer implements FragmentKeyboard.OnConfirmListener
     {
@@ -659,6 +695,50 @@ public class MathView extends View
             
             // Notify the listener of the change
             mathObjectChanged();
+        }
+        
+        /** An integer ArrayList in the state bundle that contains the path (in child numbers) to the child in mathObjectInfo */
+        public static final String BUNDLE_MATH_OBJECT_INFO = "math_object_info";
+        
+        /** Returns the information about this {@link MathObjectReplacer} as a bundle
+         * @param root The root {@link MathObject} */
+        public Bundle toBundle(MathObject root)
+        {
+            // The path to the clicked part
+            ArrayList<Integer> path = new ArrayList<Integer>();
+            
+            // Only create a path if the clicked part wasn't the root
+            if(mathObjectInfo.parent != null)
+            {
+                if(find(root, mathObjectInfo.mathObject, path))
+                    Collections.reverse(path);
+            }
+            
+            // Create the bundle and return the result
+            Bundle out = new Bundle();
+            out.putIntegerArrayList(BUNDLE_MATH_OBJECT_INFO, path);
+            return out;
+        }
+        
+        /** Appends the index of the child that contains (or is) the given {@link MathObject} to the given list
+         * @param parent The parent to search in
+         * @param findMe The {@link MathObject} to search for
+         * @param list The list to append the index to
+         * @return <tt>true</tt> if <tt>findMe</tt> was found, <tt>false</tt> otherwise */
+        private boolean find(MathObject parent, MathObject findMe, ArrayList<Integer> list)
+        {
+            // Loop through all children
+            for(int i = 0; i < parent.getChildCount(); ++i)
+            {
+                if(parent.getChild(i) == findMe || find(parent.getChild(i), findMe, list))
+                {
+                    list.add(i);
+                    return true;
+                }
+            }
+            
+            // If we've come here, we haven't found the child
+            return false;
         }
     }
 
