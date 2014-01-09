@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.view.math.MathSymbol;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,7 +113,7 @@ public class FragmentKeyboard extends DialogFragment
         varButtons = new ArrayList<ToggleButton>();
         for(int i = 0; i < varNames.length; )
         {
-            inflater.inflate(R.layout.keyboad_variable_button_row, varTable, true);
+            inflater.inflate(R.layout.keyboard_variable_button_row, varTable, true);
             LinearLayout row = (LinearLayout) varTable.getChildAt(varTable.getChildCount() - 1);
             for(int j = 0; j < row.getChildCount(); ++j)
             {
@@ -143,10 +144,22 @@ public class FragmentKeyboard extends DialogFragment
     {
         super.onResume();
 
-        // Make sure the dialog takes up all width it can take up
+        // Set the right size for the keyboard dialog
+        Configuration resConfig = getResources().getConfiguration();
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        if((resConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE ||
+           (resConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
+        {
+            // Set the size of the dialog
+            params.width = getResources().getDimensionPixelSize(R.dimen.keyboard_dlg_width);
+            params.height = getResources().getDimensionPixelSize(R.dimen.keyboard_dlg_height);
+        }
+        else
+        {
+            // Make sure the dialog takes up all width and height it can take up
+            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        }
         getDialog().getWindow().setAttributes(params);
     }
     

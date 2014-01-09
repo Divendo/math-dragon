@@ -37,14 +37,14 @@
 
         <ToggleButton
             android:id="@+id/btn_tab_numpad"
-            style="@style/KeyboardTabButton"
+            style="@style/TabButton"
             android:text="@string/numpad"
             android:textOff="@string/numpad"
             android:textOn="@string/numpad" />
 
         <ToggleButton
             android:id="@+id/btn_tab_variables"
-            style="@style/KeyboardTabButton"
+            style="@style/TabButton"
             android:text="@string/variables"
             android:textOn="@string/variables"
             android:textOff="@string/variables" />

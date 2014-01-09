@@ -12,9 +12,14 @@ import android.graphics.Rect;
 
 public class MathSourceOperationIntegral extends MathSourceObject 
 {
-	
 	/** The paint we use to draw the operator */
     private Paint paintOperator = new Paint();
+    
+    /** Constructor */
+    public MathSourceOperationIntegral()
+    {
+        paintOperator.setTypeface(TypefaceHolder.dejavuSans);
+    }
     
     @Override
     public MathObject createMathObject()
@@ -23,25 +28,30 @@ public class MathSourceOperationIntegral extends MathSourceObject
     @Override
     public void draw(Canvas canvas, int w, int h)
     {
-    	Rect emptyBox = getRectBoundingBox((int) (0.6 * w / 2),(int) (0.6 * h), MathObjectEmpty.RATIO);
+        // Determine the size of the empty boxes
+    	Rect emptyBox = getRectBoundingBox(w / 4, 2 * h / 3, MathObjectEmpty.RATIO);
+    	
+    	// Determine the padding size
+    	final int padding = w / 30;
     	
     	// Draw the integral sign
-    	Rect bounds = new Rect();
+    	Rect integralSignBounds = new Rect();
     	paintOperator.setStyle(Paint.Style.FILL);
-        paintOperator.setTextSize( (int) (h * 0.8));
-        paintOperator.getTextBounds( "\u222B", 0, "\u222B".length(), bounds);
-        canvas.drawText( "\u222B", 0, (int) (h * 0.7), paintOperator);
+        paintOperator.setTextSize(0.7f * h);
+        paintOperator.getTextBounds( "\u222B", 0, "\u222B".length(), integralSignBounds);
+        canvas.drawText("\u222B", -integralSignBounds.left, (h - integralSignBounds.height()) / 2 - integralSignBounds.top, paintOperator);
         
         // Draw the d
-        paintOperator.setTextSize( (int) (h * 0.65));
-        paintOperator.getTextBounds( "d", 0, "d".length(), bounds);
-        canvas.drawText( "d", (int) emptyBox.width() + bounds.width(), (int) ((h - bounds.height()) / 2) + bounds.height(), paintOperator);
+        Rect dBounds = new Rect();
+        paintOperator.setTextSize(0.5f * h);
+        paintOperator.getTextBounds("d", 0, "d".length(), dBounds);
+        canvas.drawText("d", integralSignBounds.width() + emptyBox.width() + 2 * padding - dBounds.left, (h - dBounds.height()) / 2 - dBounds.top, paintOperator);
         
         // Draw the empty boxes
-        emptyBox.offsetTo((int) bounds.width(), (h - emptyBox.height()) / 2);
+        emptyBox.offsetTo(integralSignBounds.width() + padding, (h - emptyBox.height()) / 2);
         drawEmptyBox(canvas, emptyBox);
         
-        emptyBox.offsetTo((int) bounds.width() + 2 * emptyBox.width(), (h - emptyBox.height()) / 2);
+        emptyBox.offsetTo(integralSignBounds.width() + emptyBox.width() + dBounds.width() + 3 * padding, (h - emptyBox.height()) / 2);
         drawEmptyBox(canvas, emptyBox);
     }
 }

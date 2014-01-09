@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.view;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 import org.teaminfty.math_dragon.view.math.MathOperationFunction;
+import org.teaminfty.math_dragon.view.math.MathOperationFunction.FunctionType;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -18,66 +19,41 @@ public class MathSourceOperationFunction extends MathSourceObject
     
     /** Constructor
      * @param t The type this source object holds */
-	public MathSourceOperationFunction(MathOperationFunction.FunctionType t) 
-	{ type = t;	}
+    public MathSourceOperationFunction(MathOperationFunction.FunctionType t) 
+    {
+        type = t;
+        paintOperator.setTypeface(TypefaceHolder.dejavuSans);
+        paintOperator.setAntiAlias(true);
+    }
 
     @Override
     public MathObject createMathObject()
     {
         return new MathOperationFunction(type);
     }
-	
+    
     public void draw(Canvas canvas, int w, int h)
     {
-        // Get a box that fits the given width and height (we'll use it to draw the empty boxes)
-        Rect emptyBox = getRectBoundingBox(w / 3, h, MathObjectEmpty.RATIO);
+        // Set the text size
+        paintOperator.setTextSize(h / 2.0f);
+        if(type == FunctionType.ARCCOS || type == FunctionType.ARCSIN  || type == FunctionType.ARCTAN)
+            paintOperator.setTextSize(h / 3.0f);
         
-        // Draw the the empty box
-        emptyBox.offsetTo(0, (h - emptyBox.height()) / 2);
-        drawEmptyBox(canvas, emptyBox);
-        emptyBox.offsetTo(w - emptyBox.width(), (h - emptyBox.height()) / 2);
+        // Determine the padding size
+        final int padding = w / 15;
+        
+        // Determine the size of an empty box
+        Rect emptyBox = getRectBoundingBox(3 * w / 5, 3 * h / 4, MathObjectEmpty.RATIO);
+        
+        // Determine the size of the string we're going to draw
+        Rect textBox = new Rect();
+        paintOperator.getTextBounds(type.getName(), 0, type.getName().length(), textBox);
+        
+        // Place the empty box at the right position and draw it
+        emptyBox.offsetTo((w - textBox.width() - padding - emptyBox.width()) / 2 + textBox.width() + padding, (h - emptyBox.height()) / 2);
         drawEmptyBox(canvas, emptyBox);
         
-        // Draw the operator 
-        final int centerX = w / 2;
-        final int centerY = h / 2;
-        paintOperator.setStrokeWidth(MathObject.lineWidth);
-        switch(type)
-        {
-            case SIN:
-            case COS:
-            case TAN:
-            {
-                final int segmentSize = w / 9;
-                paintOperator.setAntiAlias(false);
-                canvas.drawLine(centerX - segmentSize, centerY, centerX + segmentSize, centerY, paintOperator);
-                if(type == MathOperationFunction.FunctionType.COS)
-                    canvas.drawLine(centerX, centerY - segmentSize, centerX, centerY + segmentSize, paintOperator);
-                if(type == MathOperationFunction.FunctionType.TAN)
-                    canvas.drawLine(centerX, centerY - segmentSize, centerX, centerY + segmentSize, paintOperator);
-            }
-            break;
-                
-            case SINH:
-            case COSH:
-            case LN:
-            {
-                paintOperator.setAntiAlias(true);
-                canvas.drawCircle(centerX, centerY, MathObject.lineWidth * 2, paintOperator);
-                if(type == MathOperationFunction.FunctionType.COSH)
-                	canvas.drawCircle(centerX, centerY, MathObject.lineWidth * 2, paintOperator);
-            }
-            break;
-            
-            case ARCSIN:
-            case ARCCOS:
-            case ARCTAN:
-            {
-            	
-            	
-            }
-            break;
-        }
+        // Draw the text
+        canvas.drawText(type.getName(), (w - textBox.width() - padding - emptyBox.width()) / 2 - textBox.left, (h - textBox.height()) / 2 - textBox.top, paintOperator);
     }
-	
 }

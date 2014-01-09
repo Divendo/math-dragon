@@ -1,5 +1,6 @@
 package org.teaminfty.math_dragon.view.math;
 
+import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,6 +27,8 @@ public class MathOperationIntegral extends MathOperation
 		children.add(new MathObjectEmpty());
 		children.add(new MathObjectEmpty());
 		children.add(new MathObjectEmpty());
+		
+        initPaint();
 	}
 	
 	public MathOperationIntegral( MathObject integrate, MathObject over)
@@ -35,7 +38,8 @@ public class MathOperationIntegral extends MathOperation
         children.add(new MathObjectEmpty());
 		children.add(new MathObjectEmpty());
 		
-		set( integrate, over);
+		set(integrate, over);
+        initPaint();
 	}
 	
 	public MathOperationIntegral( MathObject integrate, MathObject over, MathObject from, MathObject to)
@@ -45,16 +49,22 @@ public class MathOperationIntegral extends MathOperation
         children.add(new MathObjectEmpty());
         children.add(new MathObjectEmpty());
         
-		set( integrate, over, from, to);
+		set(integrate, over, from, to);
+		initPaint();
+	}
+	
+	private void initPaint()
+	{
+	    operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
+	    operatorPaint.setAntiAlias(true);
 	}
 	
 	public String toString()
 	{
-		//TODO: Add the correct if statement
-		// Check if the children 2 and 3 are empty
-			return "Integrate(" + getChild(0).toString() + "," + getChild(1).toString() + ")";
-		//else
-			//return "Integrate(" + getChild(0).toString() + ",{" + getChild(1).toString() + "," + getChild(2).toString() + "," + getChild(3).toString() "})";
+		if(getIntegrateFrom() instanceof MathObjectEmpty && getIntegrateTo() instanceof MathObjectEmpty)
+			return "Integrate(" + getIntegratePart().toString() + "," + getIntegrateOver().toString() + ")";
+		else
+			return "Integrate(" + getIntegratePart().toString() + ",{" + getIntegrateOver().toString() + "," + getIntegrateFrom().toString() + "," + getIntegrateTo().toString() + "})";
 	}
 	
 	public Rect[] getSizes()
@@ -66,8 +76,8 @@ public class MathOperationIntegral extends MathOperation
 		 * 3: bb of the left bracket
 		 * 4: bb of the right bracket
 		 * 5: bb of the "d"
-		 * 6: bb of the from integral
-		 * 7: bb of the to integral
+		 * 6: bb of the to integral
+		 * 7: bb of the from integral
 		 */
 		
 		// Get the bounding boxes of the children
@@ -110,8 +120,8 @@ public class MathOperationIntegral extends MathOperation
 								leftBracket,
 								rightBracket,
 								bounds,
-								from,
-								to							
+								to,
+								from
 							};
 	}
 	
@@ -164,10 +174,10 @@ public class MathOperationIntegral extends MathOperation
 			return sizes[2];
 
 		case 2:
-			return sizes[6];
+			return sizes[7];
 			
 		case 3:
-			return sizes[7];
+			return sizes[6];
 		}
 		
 		return null;
@@ -195,7 +205,7 @@ public class MathOperationIntegral extends MathOperation
 		drawBoundingBoxes( canvas);
 		
 		operatorPaint.setColor(getColor());
-		operatorPaint.setStrokeWidth( lineWidth);
+		operatorPaint.setStrokeWidth(lineWidth);
 		
 		// Get the sizes
 		Rect[] sizes = getSizes();
@@ -205,7 +215,6 @@ public class MathOperationIntegral extends MathOperation
 		
 		// Draw the brackets
         operatorPaint.setStyle(Paint.Style.STROKE);
-        operatorPaint.setAntiAlias(true);
 		
 		// Draw the left bracket
         canvas.save();
@@ -258,10 +267,26 @@ public class MathOperationIntegral extends MathOperation
 	public void set(MathObject integrate, MathObject over, MathObject from, MathObject to)
     {
 		// Set all the children
-        set( integrate, over);
+        set(integrate, over);
         setChild(2, from);
         setChild(3, to);
     }
+	
+	/** Returns the child that should be integrated */
+	public MathObject getIntegratePart()
+	{ return getChild(0); }
+
+    /** Returns the child over which should be integrated */
+    public MathObject getIntegrateOver()
+    { return getChild(1); }
+    
+    /** Returns the child from whose value should be integrated */
+    public MathObject getIntegrateFrom()
+    { return getChild(2); }
+
+    /** Returns the child to whose value should be integrated */
+    public MathObject getIntegrateTo()
+    { return getChild(3); }
 	
 	@Override
   	public void setLevel(int l)
@@ -276,13 +301,15 @@ public class MathOperationIntegral extends MathOperation
   	}
 	
 	@Override
-	protected String getType() {
+	protected String getType()
+	{
 		return TYPE;
 	}
 
 	@Override
-	protected void writeChildrenToXML(Document doc, Element el) {
-		// TODO Auto-generated method stub
-		
+	protected void writeChildrenToXML(Document doc, Element el)
+	{
+	    for(MathObject child : children)
+	        child.writeToXML(doc, el);
 	}
 }

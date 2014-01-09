@@ -40,64 +40,70 @@
 	    <LinearLayout
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        android:weightSum="4" >
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceAdd"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceSubtract"
-	        	style="@style/MathSourceView" />
-	
-	    </LinearLayout>
-	
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceMultiply"
-	        	style="@style/MathSourceView"/>
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceDivide"
-	        	style="@style/MathSourceView"/>
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	    </LinearLayout>
 	
 	    <LinearLayout
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        android:weightSum="4" >
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourcePower"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceRoot"
-	        	style="@style/MathSourceView" />
-	
-	    </LinearLayout>
-	
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceDerivative"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceIntegral"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	    </LinearLayout>
 	    
@@ -116,80 +122,91 @@
 	    <LinearLayout
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        android:weightSum="4" >
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceSin"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceArcSin"
-	        	style="@style/MathSourceView" />
-	
-	    </LinearLayout>
-	
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceCos"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceArcCos"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	    </LinearLayout>
 	    
 	    <LinearLayout
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        android:weightSum="4" >
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceTan"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceArcTan"
-	        	style="@style/MathSourceView" />
-	
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceSinh"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceCosh"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	    </LinearLayout>
 	    
 	    <LinearLayout
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:weightSum="2" >
+	        android:weightSum="4" >
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceLog"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	        
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceLn"
-	        	style="@style/MathSourceView" />
+	        	style="@style/MathSourceView"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="@dimen/math_source_height" />
 	
 	    </LinearLayout>
 	    

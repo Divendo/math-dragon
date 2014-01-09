@@ -14,7 +14,11 @@ import org.teaminfty.math_dragon.view.math.MathOperationAdd;
 import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
 import org.teaminfty.math_dragon.view.math.MathOperationDivide;
 import org.teaminfty.math_dragon.view.math.MathOperationFunction;
+<<<<<<< HEAD
 import org.teaminfty.math_dragon.view.math.MathOperationLimit;
+=======
+import org.teaminfty.math_dragon.view.math.MathOperationIntegral;
+>>>>>>> 7ddf2bef4bc6b0c0809ff0314f81821418065c4c
 import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
 import org.teaminfty.math_dragon.view.math.MathOperationPower;
 import org.teaminfty.math_dragon.view.math.MathOperationRoot;
@@ -69,6 +73,8 @@ public class EvalHelper
             return limit((MathOperationLimit) o);
         else if(o instanceof MathOperationFunction)
             return function((MathOperationFunction) o);
+        else if(o instanceof MathOperationIntegral)
+            return integral((MathOperationIntegral) o);
         else if(o instanceof MathSymbol)
             return symbol((MathSymbol) o);
         else if(o instanceof MathParentheses)
@@ -95,29 +101,11 @@ public class EvalHelper
         if(op.getRight() == null || op.getRight() instanceof MathObjectEmpty)
             throw new EmptyChildException(1);
     }
-    
-    /**
-     * Ensure all children are valid. An {@link EmptyChildException} is thrown
-     * when at least one child equals <tt>null</tt>.
-     * 
-     * @param op
-     *        The mathematical operation.
-     * @throws EmptyChildException
-     *         Thrown when one or more children are invalid.
-     */
-    static void checkChildren(MathOperation op) throws EmptyChildException
-    {
-        for(int i = 0; i < op.getChildCount(); ++i)
-        {
-            if(op.getChild(i) == null || op.getChild(i) instanceof MathObjectEmpty)
-                throw new EmptyChildException(i);
-        }
-    }
 
     /** Variable lookup table */
     private final static ISymbol[] SYMBOLS = new ISymbol[] {F.a, F.b, F.c, F.d,
-        F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
-        F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
+            F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
+            F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
     public static IExpr symbol(MathSymbol symbol)
     {

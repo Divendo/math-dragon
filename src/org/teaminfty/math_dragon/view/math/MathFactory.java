@@ -4,6 +4,7 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 /**
  * Factory for creating {@link MathObject}s from XML documents.
@@ -91,8 +92,20 @@ public final class MathFactory
             }
             else if(tag.equals(MathOperation.NAME))
             {
-                if(Integer.parseInt(e.getAttribute(MathOperation.ATTR_OPERANDS)) == 2)
-                    return toOpBin(e);
+                switch(Integer.parseInt(e.getAttribute(MathOperation.ATTR_OPERANDS)))
+                {
+                    case 2: return toOpBin(e);
+                    case 4:
+                        if(e.getAttribute("type").equals(MathOperationIntegral.TYPE))
+                        {
+                            MathOperationIntegral integral = new MathOperationIntegral();
+                            NodeList childNodes = e.getChildNodes();
+                            for(int i = 0; i < childNodes.getLength(); ++i)
+                                integral.setChild(i, toMath((Element) childNodes.item(i)));
+                            return integral;
+                        }
+                    break;
+                }
             }
             else if(tag.equals(MathOperationFunction.NAME))
             {
