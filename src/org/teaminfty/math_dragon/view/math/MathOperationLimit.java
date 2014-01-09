@@ -29,19 +29,60 @@ public class MathOperationLimit extends MathOperation
         return "lim(" + getStart() + "->" + getEnd() + "," + getExpression() + ")";
     }
 
+    /**
+     * Retrieve the mathematical start state of this limit. E.g. <tt>x</tt>.
+     * @return A mathematical expression indicating the start state.
+     * @see #getEnd()
+     */
     public MathObject getStart()
     {
         return getChild(0);
     }
 
+    /**
+     * Retrieve the mathematical end state of this limit. E.g. <tt>34</tt>.
+     * @return A mathematical expression indicating the end state.
+     * @see #getStart()
+     */
     public MathObject getEnd()
     {
         return getChild(1);
     }
 
+    /**
+     * Retrieve the mathematical expression the limit manipulates upon.
+     * @return A mathematical expression.
+     */
     public MathObject getExpression()
     {
         return getChild(2);
+    }
+    
+    /**
+     * Assign a mathematical expression indicating the start state of this limit.
+     * @param start The start state.
+     */
+    public void setStart(MathObject start)
+    {
+        setChild(0, start);
+    }
+    
+    /**
+     * Assign a mathematical expression indicating the end state of this limit.
+     * @param end The end state.
+     */
+    public void setEnd(MathObject end)
+    {
+        setChild(1, end);
+    }
+    
+    /**
+     * Assign a mathematical expression that this limit manipulates.
+     * @param expr A mathematical expression.
+     */
+    public void setExpression(MathObject expr)
+    {
+        setChild(2, expr);
     }
 
     @Override
