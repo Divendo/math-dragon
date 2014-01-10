@@ -34,4 +34,8 @@
     <dimen name="evaluation_dlg_width">576dp</dimen>
     <dimen name="evaluation_dlg_height">384dp</dimen>
     
+    <dimen name="delete_confirmer_text_size">32sp</dimen>
+    <dimen name="delete_shadow_text_size">16sp</dimen>
+    <dimen name="delete_shadow_padding">8dp</dimen>
+    
 </resources>

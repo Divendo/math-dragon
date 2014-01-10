@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/org.teaminfty.math_dragon"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <org.teaminfty.math_dragon.view.MathView
         android:id="@+id/mathView"
@@ -100,5 +101,26 @@
         android:layout_margin="@dimen/main_screen_button_margin"
         android:contentDescription="@string/help"
         android:src="@drawable/help" />
+    
+    <!-- Delete confirmers -->
+    <LinearLayout
+        android:id="@+id/layout_delete_confirmers"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+        
+        <org.teaminfty.math_dragon.view.MathExpressionDeleteConfirmer
+			style="@style/DeleteConfirmer"
+            custom:delete="true"
+            android:text="@string/yes" />
+        
+        <org.teaminfty.math_dragon.view.MathExpressionDeleteConfirmer
+			style="@style/DeleteConfirmer"
+            custom:delete="false"
+            android:text="@string/no" />
+        
+    </LinearLayout>
 
 </RelativeLayout>

@@ -8,12 +8,16 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard;
 import org.teaminfty.math_dragon.view.math.MathBinaryOperationLinear;
+import org.teaminfty.math_dragon.view.math.MathObjectDuplicator;
 import org.teaminfty.math_dragon.view.math.MathSymbol;
 import org.teaminfty.math_dragon.view.math.MathObject;
 import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 
+import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -41,6 +45,18 @@ public class MathView extends View
     
     /** Whether or not this {@link MathView} is enabled (i.e. it can be edited) */
     private boolean enabled = true;
+    
+    /** Whether or not caching is currently enabled */
+    private boolean cacheEnabled = true;
+    
+    /** Cache for the {@link MathObject} */
+    private Bitmap cache = null;
+    
+    /** For which size the {@link MathObject} has been cached */
+    private int cachedForSize = -1;
+    
+    /** The paint that's used to draw the cache */
+    private Paint cachePaint = new Paint();
     
     public MathView(Context context)
     {
@@ -109,9 +125,13 @@ public class MathView extends View
         // Remember the new MathObject, if it is null we create a MathObjectEmpty
         if((mathObject = newMathObject) == null)
             mathObject = new MathObjectEmpty();
+        
         // Set the default size and the level for the MathObject
         mathObject.setDefaultHeight((int) mathObjectDefaultHeight);
         mathObject.setLevel(0);
+        
+        // Invalidate the cache
+        cache = null;
         
         // Redraw
         invalidate();
@@ -197,21 +217,38 @@ public class MathView extends View
         // Loop through the children and set their states
         for(int i = 0; i < mo.getChildCount(); ++i)
             setHoverState(mo.getChild(i), state);
+        
+        // Invalidate the cache
+        cache = null;
     }
     
     @Override
     protected void onDraw(Canvas canvas)
     {
+        // If the expression isn't in the cache yet, cache it
+        if(cacheEnabled && (cache == null || cachedForSize != mathObject.getDefaultHeight()))
+        {
+            Rect boundingBox = mathObject.getBoundingBox();
+            cache = Bitmap.createBitmap(boundingBox.width(), boundingBox.height(), Bitmap.Config.ARGB_8888);
+            mathObject.draw(new Canvas(cache));
+            cachedForSize = mathObject.getDefaultHeight();
+        }
+        
         // Save the canvas
         canvas.save();
         
         // Translate the canvas
         canvas.translate(scrollTranslate.x, scrollTranslate.y);
         
-        // Simply draw the math object
-        Rect boundingBox = mathObject.getBoundingBox();
-        canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
-        mathObject.draw(canvas);
+        // Draw the expression from the cache (if cache is enabled), otherwise draw it directly
+        if(cacheEnabled)
+            canvas.drawBitmap(cache, (canvas.getWidth() - cache.getWidth()) / 2, (canvas.getHeight() - cache.getHeight()) / 2, cachePaint);
+        else
+        {
+            Rect boundingBox = mathObject.getBoundingBox();
+            canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
+            mathObject.draw(canvas);
+        }
         
         // Restore the canvas
         canvas.restore();
@@ -310,6 +347,90 @@ public class MathView extends View
             // Always return true
             return true;
         }
+        
+        @Override
+        public void onLongPress(MotionEvent me)
+        {
+            // If we're disabled, ignore
+            if(!enabled) return;
+            
+            // The point we're the user is pressing
+            Point aimPoint = new Point((int) me.getX(), (int) me.getY());
+            
+            // Determine how the canvas will be translated when drawing the current MathObject
+            Rect boundingBox = mathObject.getBoundingBox();
+            boundingBox.offset(scrollTranslate.x, scrollTranslate.y);
+            boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
+            
+            // If we don't intersect with the bounding box at all, we can stop here
+            if(!boundingBox.contains(aimPoint.x, aimPoint.y))
+                return;
+            
+            // The hover information of the expression we're clicking
+            HoverInformation info = new HoverInformation(mathObject, boundingBox, null, 0);
+            
+            // Keep going until we break
+            while(true)
+            {
+                // Check if we're clicking inside one of the children
+                boolean continueAfterLoop = false;
+                for(int i = 0; i < info.mathObject.getChildCount(); ++i)
+                {
+                    // Get the bounding box for the child
+                    Rect childBoundingBox = info.mathObject.getChildBoundingBox(i);
+                    childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
+
+                    // If we clicked inside the child, we'll check that child
+                    if(childBoundingBox.contains(aimPoint.x, aimPoint.y))
+                    {
+                        info = new HoverInformation(info.mathObject.getChild(i), childBoundingBox, info.mathObject, i);
+                        continueAfterLoop = true;
+                        break;
+                    }
+                }
+                if(continueAfterLoop) continue;
+                
+                // Check if we're clicking on the operator
+                Rect[] operatorBoundingBoxes = info.mathObject.getOperatorBoundingBoxes();
+                boolean breakAfterLoop = false;
+                for(int i = 0; i < operatorBoundingBoxes.length; ++i)
+                {
+                    // Offset the operator bounding box
+                    operatorBoundingBoxes[i].offset(info.boundingBox.left, info.boundingBox.top);
+
+                    // Check if we clicked the operator bounding box
+                    if(operatorBoundingBoxes[i].contains(aimPoint.x, aimPoint.y))
+                    {
+                        breakAfterLoop = true;
+                        break;
+                    }
+                }
+                if(breakAfterLoop) break;
+                
+                // If we've come here we didn't click inside a child nor did we click on a part of the operator
+                // That means we clicked in a void area
+                info = null;
+                break;
+            }
+            
+            // If we've found a part we're clicking
+            // Also, we can't delete an empty box
+            if(info != null && !(info.mathObject instanceof MathObjectEmpty))
+            {
+                // In case the target is a linear binary operation, we only want the operands directly next to it
+                // So we rearrange the MathObject tree to make that happen
+                freeMathObject(info);
+                
+                // Create a deep copy of the expression we're about to drag
+                MathObject copy = MathObjectDuplicator.deepCopy(info.mathObject);
+                copy.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_drag_default_size));
+
+                // Start dragging the deletion object
+                MathDeleteShadow mathDeleteShadow = new MathDeleteShadow(copy, getResources());
+                mathDeleteShadow.setOnDeleteConfirmListener(new ExpressionRemover(info));
+                startDrag(ClipData.newPlainText("", ""), mathDeleteShadow, mathDeleteShadow, 0);
+            }
+        }
     }
     
     /** The default height of the MathObjects as a float */
@@ -326,6 +447,19 @@ public class MathView extends View
             invalidate();
             return true;
         }
+        
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector)
+        {
+            cacheEnabled = false;
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector)
+        {
+            cacheEnabled = true;
+        }
     }
     
     @Override
@@ -334,12 +468,18 @@ public class MathView extends View
         // If we're disabled, ignore
         if(!enabled) return false;
         
+        // If we're not dragging a MathShadow, we're not interested
+        if(!(event.getLocalState() instanceof MathShadow))
+            return false;
+        
         // Retrieve the shadow
         MathShadow mathShadow = (MathShadow) event.getLocalState();
         
         switch(event.getAction())
         {
             case DragEvent.ACTION_DRAG_STARTED:
+                cacheEnabled = false;
+                cache = null;
             return true;
             
             case DragEvent.ACTION_DRAG_ENTERED:
@@ -374,6 +514,7 @@ public class MathView extends View
 
             case DragEvent.ACTION_DRAG_ENDED:
                 setHoverState(mathObject, HoverState.NONE);
+                cacheEnabled = true;
                 invalidate();
             return true;
         }
@@ -418,6 +559,67 @@ public class MathView extends View
     private int getDst(Point p, Rect r)
     {
         return (r.centerX() - p.x) * (r.centerX() - p.x) + (r.centerY() - p.y) * (r.centerY() - p.y);
+    }
+    
+    /** Reorders the expression tree so that the {@link MathObject} in <tt>info.mathObject</tt> becomes free.
+     * That means that if it's a binary linear operation, only the operands displayed directly next to it will be its children.
+     * @param info The information about the {@link MathObject} to free (note that values in this object may be changed as well) */
+    private void freeMathObject(HoverInformation info)
+    {
+        if(!(info.mathObject instanceof MathBinaryOperationLinear)) return;
+
+        // The linear binary operation we're going to modify
+        MathBinaryOperationLinear binOp = (MathBinaryOperationLinear) info.mathObject;
+        
+        // Get the right operand
+        MathObject operand = binOp.getRight();
+        MathObject newParent = null;
+        while(operand instanceof MathBinaryOperationLinear)
+        {
+            newParent = operand;
+            operand = operand.getChild(0);
+        }
+        
+        // Change the structure of the expression tree (if necessary)
+        if(newParent != null)
+        {
+            MathObject newSuperParent = binOp.getRight();
+            binOp.setRight(operand);
+            newParent.setChild(0, binOp);
+            
+            if(info.parent == null)
+                setMathObjectHelper(newSuperParent);
+            else
+                ParenthesesHelper.makeChild(info.parent, newSuperParent, info.childIndex);
+            
+            info.parent = newParent;
+            info.childIndex = 0;
+        }
+        
+        // Now we do the same thing for the left operand
+        operand = binOp.getLeft();
+        newParent = null;
+        while(operand instanceof MathBinaryOperationLinear)
+        {
+            newParent = operand;
+            operand = operand.getChild(1);
+        }
+        
+        // Change the structure of the expression tree (if necessary)
+        if(newParent != null)
+        {
+            MathObject newSuperParent = binOp.getLeft();
+            binOp.setLeft(operand);
+            newParent.setChild(1, binOp);
+            
+            if(info.parent == null)
+                setMathObjectHelper(newSuperParent);
+            else
+                ParenthesesHelper.makeChild(info.parent, newSuperParent, info.childIndex);
+            
+            info.parent = newParent;
+            info.childIndex = 1;
+        }
     }
 
     /** Responds to a {@link MathObject} that is being dragged over this view.
@@ -541,7 +743,12 @@ public class MathView extends View
             // If we're not dropping, just light up the part we're hovering over
             // Otherwise we insert the MathObject that's being dragged at the right point in current MathObject
             if(!dropped)
+            {
                 currHover.mathObject.setState(HoverState.HOVER);
+                
+                // Invalidate the cache
+                cache = null;
+            }
             else
             {
                 // Determine whether or not we're dropping the whole thing in an empty box
@@ -556,61 +763,7 @@ public class MathView extends View
                 {
                     // In case the target is a linear binary operation, we only want the operands directly next to it
                     // So we rearrange the MathObject tree to make that happen
-                    if(currHover.mathObject instanceof MathBinaryOperationLinear)
-                    {
-                        // The linear binary operation we're going to modify
-                        MathBinaryOperationLinear binOp = (MathBinaryOperationLinear) currHover.mathObject;
-                        
-                        // Get the right operand
-                        MathObject operand = binOp.getRight();
-                        MathObject newParent = null;
-                        while(operand instanceof MathBinaryOperationLinear)
-                        {
-                            newParent = operand;
-                            operand = operand.getChild(0);
-                        }
-                        
-                        // Change the structure of the MathObject tree (if necessary)
-                        if(newParent != null)
-                        {
-                            MathObject newSuperParent = binOp.getRight();
-                            binOp.setRight(operand);
-                            newParent.setChild(0, binOp);
-                            
-                            if(currHover.parent == null)
-                                setMathObjectHelper(newSuperParent);
-                            else
-                                ParenthesesHelper.makeChild(currHover.parent, newSuperParent, currHover.childIndex);
-                            
-                            currHover.parent = newParent;
-                            currHover.childIndex = 0;
-                        }
-                        
-                        // Now we do the same thing for the left operand
-                        operand = binOp.getLeft();
-                        newParent = null;
-                        while(operand instanceof MathBinaryOperationLinear)
-                        {
-                            newParent = operand;
-                            operand = operand.getChild(1);
-                        }
-                        
-                        // Change the structure of the MathObject tree (if necessary)
-                        if(newParent != null)
-                        {
-                            MathObject newSuperParent = binOp.getLeft();
-                            binOp.setLeft(operand);
-                            newParent.setChild(1, binOp);
-                            
-                            if(currHover.parent == null)
-                                setMathObjectHelper(newSuperParent);
-                            else
-                                ParenthesesHelper.makeChild(currHover.parent, newSuperParent, currHover.childIndex);
-                            
-                            currHover.parent = newParent;
-                            currHover.childIndex = 1;
-                        }
-                    }
+                    freeMathObject(currHover);
                     
                     // Insert the MathObject into to MathObject tree
                     ParenthesesHelper.makeChild(dragMathObject, currHover.mathObject, sourceChild);
@@ -690,7 +843,8 @@ public class MathView extends View
                 ParenthesesHelper.setParentheses(mathObject);
             }
             
-            // Redraw
+            // Invalidate cache and redraw
+            cache = null;
             invalidate();
             
             // Notify the listener of the change
@@ -739,6 +893,38 @@ public class MathView extends View
             
             // If we've come here, we haven't found the child
             return false;
+        }
+    }
+    
+    /** Removes the {@link MathObject} that's described in a {@link HoverInformation} */
+    private class ExpressionRemover implements MathDeleteShadow.OnDeleteConfirmListener
+    {
+        /** The info about the {@link MathObject} that is to removed */
+        private HoverInformation info = null;
+        
+        /** Constructs the remover with the given info
+         * @param i The info about the {@link MathObject} that is to be removed */
+        public ExpressionRemover(HoverInformation i)
+        { info = i; }
+
+        @Override
+        public void confirmed()
+        {
+            // Remove the expression
+            if(info.parent == null)
+                setMathObjectHelper(null);
+            else
+            {
+                info.parent.setChild(info.childIndex, null);
+                ParenthesesHelper.setParentheses(mathObject);
+            }
+
+            // Invalidate cache and redraw
+            cache = null;
+            invalidate();
+            
+            // Notify the listener of the change
+            mathObjectChanged();
         }
     }
 
