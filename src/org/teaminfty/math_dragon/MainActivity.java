@@ -12,6 +12,7 @@ import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
+import org.teaminfty.math_dragon.view.fragments.FragmentSubstitute;
 import org.teaminfty.math_dragon.view.math.MathObject;
 
 import android.app.Activity;
@@ -210,6 +211,20 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Simply clear the current formula
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
         fragmentMainScreen.clear();
+    }
+    
+    /** The tag for the substitute dialog */
+    private static final String SUBSTITUTE_TAG = "substitute";
+    
+    public void substitute(View view)
+    {
+        // If a substitute dialog is already shown, stop here
+        if(getFragmentManager().findFragmentByTag(SUBSTITUTE_TAG) != null)
+            return;
+        
+        // Create and show the substitute dialog
+        FragmentSubstitute fragmentSubstitute = new FragmentSubstitute();
+        fragmentSubstitute.show(getFragmentManager(), SUBSTITUTE_TAG);
     }
 
     @Override

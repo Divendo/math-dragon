@@ -2,15 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical" >
-    
+
     <RelativeLayout
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content" >
 
 	    <TextView
-	        android:id="@+id/textViewEvalType"
 			android:layout_width="match_parent"
 	        android:layout_height="@dimen/circle_button_size"
 	        android:layout_marginLeft="@dimen/main_screen_button_margin"
@@ -20,7 +18,7 @@
 	        android:gravity="center"
 	        android:textStyle="bold"
 	        android:textSize="@dimen/dialog_title_font_size"
-	        android:text="@string/evaluate_exact" />
+	        android:text="@string/substitute" />
         
 	    <ImageButton
 	        android:id="@+id/btn_close"
@@ -32,10 +30,23 @@
 	        android:src="@drawable/close" />
 	    
     </RelativeLayout>
-    	
-    <org.teaminfty.math_dragon.view.MathView
-		android:id="@+id/mathView"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:requiresFadingEdge="vertical"
+        android:fillViewport="true" >
+
+        <LinearLayout
+            android:id="@+id/layout_substitute_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+        
+    </ScrollView>
 
 </LinearLayout>

@@ -90,7 +90,8 @@
         android:layout_alignParentLeft="true"
         android:layout_margin="@dimen/main_screen_button_margin"
         android:contentDescription="@string/substitute"
-        android:src="@drawable/substitute" />
+        android:src="@drawable/substitute"
+        android:onClick="substitute" />
 
     <!-- Buttons in the top left corner -->
     <ImageButton
