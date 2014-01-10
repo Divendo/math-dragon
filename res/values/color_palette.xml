@@ -5,5 +5,7 @@
     <color name="blue">#44f</color>
     <color name="gray">#888</color>
     <color name="lightgray">#ddd</color>
+    <color name="lightgray_transparent">#ccdddddd</color>
+    <color name="blue_transparent">#cc4444ff</color>
     
 </resources>
