@@ -1,9 +1,9 @@
 package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Empty;
 //import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-import org.teaminfty.math_dragon.view.math.MathOperationIntegral;
+import org.teaminfty.math_dragon.view.math.operation.Integral;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -22,14 +22,14 @@ public class MathSourceOperationIntegral extends MathSourceObject
     }
     
     @Override
-    public MathObject createMathObject()
-    { return new MathOperationIntegral(); }
+    public Expression createMathObject()
+    { return new Integral(); }
 
     @Override
     public void draw(Canvas canvas, int w, int h)
     {
         // Determine the size of the empty boxes
-    	Rect emptyBox = getRectBoundingBox(w / 4, 2 * h / 3, MathObjectEmpty.RATIO);
+    	Rect emptyBox = getRectBoundingBox(w / 4, 2 * h / 3, Empty.RATIO);
     	
     	// Determine the padding size
     	final int padding = w / 30;

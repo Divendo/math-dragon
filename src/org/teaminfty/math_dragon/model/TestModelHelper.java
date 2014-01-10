@@ -5,152 +5,152 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.matheclipse.core.eval.EvalEngine;
 import org.teaminfty.math_dragon.exceptions.MathException;
-import org.teaminfty.math_dragon.view.math.MathSymbol;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathOperationAdd;
-import org.teaminfty.math_dragon.view.math.MathOperationDivide;
-import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
-import org.teaminfty.math_dragon.view.math.MathOperationPower;
+import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.operation.binary.Add;
+import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
+import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 
 public class TestModelHelper
 {
 	@Test
 	public void moAddLong6Longm34() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(6);
-		MathSymbol rc = new MathSymbol();
+		Symbol rc = new Symbol();
 		rc.setFactor(-34);
-		MathOperationAdd a = new MathOperationAdd(lc, rc);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
-		assertTrue(result instanceof MathOperationAdd);
-		MathOperationAdd add = (MathOperationAdd) a;
-		MathObject tmp = add.getLeft();
-		assertTrue(tmp instanceof MathSymbol);
-		MathSymbol left = (MathSymbol) tmp;
+		Add a = new Add(lc, rc);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+		assertTrue(result instanceof Add);
+		Add add = (Add) a;
+		Expression tmp = add.getLeft();
+		assertTrue(tmp instanceof Symbol);
+		Symbol left = (Symbol) tmp;
 		tmp = add.getRight();
-		assertTrue(tmp instanceof MathSymbol);
-		MathSymbol right = (MathSymbol) tmp;
+		assertTrue(tmp instanceof Symbol);
+		Symbol right = (Symbol) tmp;
 		assertTrue(lc.equals(left));
 		assertTrue(rc.equals(right));
 		result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
-		assertTrue(result instanceof MathSymbol);
-		MathSymbol c = new MathSymbol(-28, 0, 0, 0, null);
-		assertTrue(c.equals((MathSymbol) result));
+		assertTrue(result instanceof Symbol);
+		Symbol c = new Symbol(-28, 0, 0, 0, null);
+		assertTrue(c.equals((Symbol) result));
 	}
 	
 	@Test
 	public void moMulLong8Longm4() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(8);
-		MathSymbol rc = new MathSymbol();
+		Symbol rc = new Symbol();
 		rc.setFactor(-4);
-		MathOperationMultiply m = new MathOperationMultiply(lc, rc);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(m));
-		assertTrue(result instanceof MathOperationMultiply);
+		Multiply m = new Multiply(lc, rc);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(m));
+		assertTrue(result instanceof Multiply);
 	}
 	
 	@Test
 	public void moDivLongm256Long8() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(-256);
-		MathSymbol rc = new MathSymbol();
+		Symbol rc = new Symbol();
 		rc.setFactor(8);
-		MathOperationDivide d = new MathOperationDivide();
+		Divide d = new Divide();
 		d.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(d));
-		assertTrue(result instanceof MathOperationDivide);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(d));
+		assertTrue(result instanceof Divide);
 	}
 	
 	@Test
 	public void moPowLongm2Long12() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(-2);
-		MathSymbol rc = new MathSymbol();
+		Symbol rc = new Symbol();
 		rc.setFactor(12);
-		MathOperationPower p = new MathOperationPower();
+		Power p = new Power();
 		p.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(p));
-		assertTrue(result instanceof MathOperationPower);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(p));
+		assertTrue(result instanceof Power);
 	}
 	
 	@Test
 	public void moAddPiLong21() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(1);
 		lc.setPiPow(1);
-		MathSymbol rc = new MathSymbol();
+		Symbol rc = new Symbol();
 		rc.setFactor(21);
-		MathOperationAdd a = new MathOperationAdd();
+		Add a = new Add();
 		a.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
-		assertTrue(result instanceof MathOperationAdd);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+		assertTrue(result instanceof Add);
 	}
 	
 	@Test
 	public void moMulLong3E() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(3);
-		MathSymbol rc = new MathSymbol();
+		Symbol rc = new Symbol();
 		rc.setFactor(1);
 		rc.setEPow(1);
-		MathOperationMultiply m = new MathOperationMultiply();
+		Multiply m = new Multiply();
 		m.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(m));
-		assertTrue(result instanceof MathOperationMultiply);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(m));
+		assertTrue(result instanceof Multiply);
 	}
 	
 	@Test
 	public void moMulLong4I2() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(4);
-		MathSymbol rc = new MathSymbol();
+		Symbol rc = new Symbol();
 		rc.setFactor(2);
 		rc.setIPow(1);
-		MathOperationMultiply m = new MathOperationMultiply();
+		Multiply m = new Multiply();
 		m.set(lc, rc);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(m));
-		assertTrue(result instanceof MathOperationMultiply);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(m));
+		assertTrue(result instanceof Multiply);
 	}
 	
 	@Test
 	public void moAddLong5AddEPi1() throws MathException
 	{
-		MathSymbol lc = new MathSymbol();
+		Symbol lc = new Symbol();
 		lc.setFactor(5);
-		MathSymbol mc = new MathSymbol(1, 1, 0, 0, null);
-		MathSymbol rc = new MathSymbol(1, 0, 1, 0, null);
-		MathOperationAdd ra = new MathOperationAdd(mc, rc);
-		MathOperationAdd a = new MathOperationAdd(lc, ra);
-		MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
-		assertTrue(result instanceof MathOperationAdd);
-		MathOperationAdd add = (MathOperationAdd) result;
-		MathOperationAdd radd = (MathOperationAdd) add.getRight();
-		MathSymbol left = (MathSymbol) add.getLeft();
-		MathSymbol middle = (MathSymbol) radd.getLeft();
-		MathSymbol right = (MathSymbol) radd.getRight();
+		Symbol mc = new Symbol(1, 1, 0, 0, null);
+		Symbol rc = new Symbol(1, 0, 1, 0, null);
+		Add ra = new Add(mc, rc);
+		Add a = new Add(lc, ra);
+		Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+		assertTrue(result instanceof Add);
+		Add add = (Add) result;
+		Add radd = (Add) add.getRight();
+		Symbol left = (Symbol) add.getLeft();
+		Symbol middle = (Symbol) radd.getLeft();
+		Symbol right = (Symbol) radd.getRight();
 		assertTrue(lc.equals(left));
 		assertTrue(mc.equals(middle));
 		assertTrue(rc.equals(right));
 		result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
-		assertTrue(result instanceof MathOperationAdd);
-		add = (MathOperationAdd) result;
-		radd = (MathOperationAdd) add.getRight();
-		MathObject tmp = add.getLeft();
-		assertTrue(tmp instanceof MathSymbol);
-		left = (MathSymbol) tmp;
+		assertTrue(result instanceof Add);
+		add = (Add) result;
+		radd = (Add) add.getRight();
+		Expression tmp = add.getLeft();
+		assertTrue(tmp instanceof Symbol);
+		left = (Symbol) tmp;
 		tmp = radd.getLeft();
-		assertTrue(tmp instanceof MathSymbol);
-		middle = (MathSymbol) tmp;
+		assertTrue(tmp instanceof Symbol);
+		middle = (Symbol) tmp;
 		tmp = radd.getRight();
-		assertTrue(tmp instanceof MathSymbol);
-		right = (MathSymbol) tmp;
+		assertTrue(tmp instanceof Symbol);
+		right = (Symbol) tmp;
 		assertTrue(lc.equals(left));
 		assertTrue(mc.equals(middle));
 		assertTrue(rc.equals(right));
@@ -159,25 +159,25 @@ public class TestModelHelper
 	@Test
 	public void moAddPi1DivLong2Pi1() throws MathException {
 	    // pi + 2/pi
-	    MathSymbol cpi = new MathSymbol(1, 0, 1, 0, null);
-	    MathSymbol rc = new MathSymbol(2, 0, 0, 0, null);
-	    MathOperationDivide d = new MathOperationDivide(rc, cpi);
-	    MathOperationAdd a = new MathOperationAdd(cpi, d);
-	    MathObject result = ModelHelper.toMathObject(EvalHelper.eval(a));
-	    assertTrue(result instanceof MathOperationAdd);
-	    MathOperationAdd add = (MathOperationAdd) result;
-	    MathObject tmp = add.getRight();
-	    assertTrue(tmp instanceof MathOperationDivide);
-	    MathOperationDivide div = (MathOperationDivide) tmp;
+	    Symbol cpi = new Symbol(1, 0, 1, 0, null);
+	    Symbol rc = new Symbol(2, 0, 0, 0, null);
+	    Divide d = new Divide(rc, cpi);
+	    Add a = new Add(cpi, d);
+	    Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+	    assertTrue(result instanceof Add);
+	    Add add = (Add) result;
+	    Expression tmp = add.getRight();
+	    assertTrue(tmp instanceof Divide);
+	    Divide div = (Divide) tmp;
 	    tmp = add.getLeft();
-	    assertTrue(tmp instanceof MathSymbol);
-	    MathSymbol c1 = (MathSymbol) tmp;
+	    assertTrue(tmp instanceof Symbol);
+	    Symbol c1 = (Symbol) tmp;
 	    tmp = div.getLeft();
-	    assertTrue(tmp instanceof MathSymbol);
-	    MathSymbol c2 = (MathSymbol) tmp;
+	    assertTrue(tmp instanceof Symbol);
+	    Symbol c2 = (Symbol) tmp;
 	    tmp = div.getRight();
-	    assertTrue(tmp instanceof MathSymbol);
-	    MathSymbol c3 = (MathSymbol) tmp;
+	    assertTrue(tmp instanceof Symbol);
+	    Symbol c3 = (Symbol) tmp;
 	    assertTrue(cpi.equals(c1));
 	    assertTrue(rc.equals(c2));
 	    assertTrue(cpi.equals(c3));

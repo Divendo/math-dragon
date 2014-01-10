@@ -20,10 +20,10 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
-import org.teaminfty.math_dragon.view.math.MathFactory;
-import org.teaminfty.math_dragon.view.math.MathSymbol;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
+import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Empty;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -80,7 +80,7 @@ public class FragmentMainScreen extends Fragment
             try
             {
                 historyPos = Math.min(history.size() - 1, savedInstanceState.getInt(BUNDLE_HISTORY_POS));
-                mathView.setMathObjectSilent(MathFactory.fromXML(history.get(historyPos)));
+                mathView.setMathObjectSilent(ExpressionXMLReader.fromXML(history.get(historyPos)));
             }
             catch(ParseException e)
             {
@@ -100,7 +100,7 @@ public class FragmentMainScreen extends Fragment
             // Set the first history entry (i.e. an empty element)
             try
             {
-                Document doc = MathObject.createXMLDocument();
+                Document doc = Expression.createXMLDocument();
                 mathView.getMathObject().writeToXML(doc, doc.getDocumentElement());
                 history.add(doc);
                 historyPos = history.size() - 1; 
@@ -168,7 +168,7 @@ public class FragmentMainScreen extends Fragment
     /** Clears the current formula */
     public void clear()
     {
-        if(mathView.getMathObject() instanceof MathObjectEmpty)
+        if(mathView.getMathObject() instanceof Empty)
             mathView.resetScroll();
         else
         {
@@ -177,9 +177,9 @@ public class FragmentMainScreen extends Fragment
         }
     }
     
-    /** Returns the current {@link MathObject}
-     * @return The current {@link MathObject} */
-    public MathObject getMathObject()
+    /** Returns the current {@link Expression}
+     * @return The current {@link Expression} */
+    public Expression getMathObject()
     {
         return mathView.getMathObject();
     }
@@ -202,7 +202,7 @@ public class FragmentMainScreen extends Fragment
         // Get the MathObject at the given history position
         try
         {
-            mathView.setMathObjectSilent(MathFactory.fromXML(history.get(pos)));
+            mathView.setMathObjectSilent(ExpressionXMLReader.fromXML(history.get(pos)));
             historyPos = pos;
         }
         catch(ParseException e)
@@ -230,7 +230,7 @@ public class FragmentMainScreen extends Fragment
     private class ShowKeyboardListener implements MathView.OnShowKeyboardListener
     {
         @Override
-        public void showKeyboard(MathSymbol mathConstant, OnConfirmListener listener)
+        public void showKeyboard(Symbol mathConstant, OnConfirmListener listener)
         {
             // If a keyboard is already shown, stop here
             if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
@@ -252,7 +252,7 @@ public class FragmentMainScreen extends Fragment
     private class MathObjectChangeListener implements MathView.OnMathObjectChangeListener
     {
         @Override
-        public void changed(MathObject mathObject)
+        public void changed(Expression mathObject)
         {
             // Remove the history from the current position
             if(historyPos + 1 < history.size())
@@ -261,7 +261,7 @@ public class FragmentMainScreen extends Fragment
             // Add the current MathObject to the history
             try
             {
-                Document doc = MathObject.createXMLDocument();
+                Document doc = Expression.createXMLDocument();
                 mathObject.writeToXML(doc, doc.getDocumentElement());
                 history.add(doc);
                 historyPos = history.size() - 1; 

@@ -10,7 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public class MathParentheses extends MathObject
+public class Parentheses extends Expression
 {
     /** The name of the XML element for this class */
     public static final String NAME = "parentheses";
@@ -22,17 +22,17 @@ public class MathParentheses extends MathObject
     private Paint paint = new Paint();
     
     /** Default constructor */
-    public MathParentheses(int defWidth, int defHeight)
+    public Parentheses(int defWidth, int defHeight)
     { this(null); }
 
     /** Constructor
      * 
      * @param child The child to wrap the parentheses around
      */
-    public MathParentheses(MathObject child)
+    public Parentheses(Expression child)
     {
         // We have one child
-        children.add(child == null ? new MathObjectEmpty() : child);
+        children.add(child == null ? new Empty() : child);
         
         // Initialise the paint
         paint.setStyle(Paint.Style.STROKE);
@@ -65,12 +65,12 @@ public class MathParentheses extends MathObject
     	return new Rect(0, 0, 2 * (int)(childRect.height() * RATIO) + childRect.width(), childRect.height());
     }
     
-    public MathObject getChild()
+    public Expression getChild()
     {
         return getChild(0);
     }
     
-    public void setChild(MathObject child)
+    public void setChild(Expression child)
     {
         setChild(0, child);
     }

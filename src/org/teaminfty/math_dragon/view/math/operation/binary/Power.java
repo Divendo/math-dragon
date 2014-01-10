@@ -1,23 +1,26 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation.binary;
 
 import org.teaminfty.math_dragon.view.HoverState;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.operation.Binary;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
-public class MathOperationPower extends MathBinaryOperation
+public class Power extends Binary
 {
     public static final String TYPE = "power";
     
     /** A paint that's used to draw the operator when the user is hovering over this object */
     private Paint operatorPaint = new Paint();
     
-    public MathOperationPower()
+    public Power()
     { this(null, null); }
     
-    public MathOperationPower(MathObject base, MathObject power)
+    public Power(Expression base, Expression power)
     {
         super(base, power);
         
@@ -32,7 +35,7 @@ public class MathOperationPower extends MathBinaryOperation
     
     @Override
     public int getPrecedence()
-    { return MathObjectPrecedence.POWER; }
+    { return Precedence.POWER; }
     
     /**
      * Assign <tt>o</tt> to mathematical expression to base expression.
@@ -40,7 +43,7 @@ public class MathOperationPower extends MathBinaryOperation
      * @param o
      *        The mathematical expression.
      */
-    public void setBase(MathObject o)
+    public void setBase(Expression o)
     {
         setLeft(o);
     }
@@ -51,7 +54,7 @@ public class MathOperationPower extends MathBinaryOperation
      * 
      * @return The base mathematical expression.
      */
-    public MathObject getBase()
+    public Expression getBase()
     {
         return getLeft();
     }
@@ -62,7 +65,7 @@ public class MathOperationPower extends MathBinaryOperation
      * @param o
      *        The mathematical expression.
      */
-    public void setExponent(MathObject o)
+    public void setExponent(Expression o)
     {
         setRight(o);
     }
@@ -73,7 +76,7 @@ public class MathOperationPower extends MathBinaryOperation
      * 
      * @return The exponent mathematical expression.
      */
-    public MathObject getExponent()
+    public Expression getExponent()
     {
         return getRight();
     }
@@ -96,9 +99,9 @@ public class MathOperationPower extends MathBinaryOperation
      * Returns the sizes of the bounding of the children.
      * 
      * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     *        The maximum width the {@link Expression} can have (can be {@link Expression#NO_MAXIMUM})
      * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     *        The maximum height the {@link Expression} can have (can be {@link Expression#NO_MAXIMUM})
      * @return The size of the child bounding boxes
      */
     public Rect[] getChildrenSize()

@@ -1,7 +1,10 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation;
 
 
 import org.teaminfty.math_dragon.view.TypefaceHolder;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Precedence;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -20,7 +23,7 @@ import android.graphics.Region;
  * @author Divendo
  * @author FolkertVanVerseveld
  */
-public class MathOperationFunction extends MathObject
+public class Function extends Expression
 {
     /** An enumeration that describes the types of functions this function can be */
     public static enum FunctionType
@@ -107,7 +110,7 @@ public class MathOperationFunction extends MathObject
     public FunctionType type = null;
     
     /** Default constructor */
-    public MathOperationFunction()
+    public Function()
     {
         this(FunctionType.SIN);
     }
@@ -118,7 +121,7 @@ public class MathOperationFunction extends MathObject
      * @param t
      *        The kind of function that we're constructing
      */
-    public MathOperationFunction(FunctionType t)
+    public Function(FunctionType t)
     {
         this(t, null);
     }
@@ -131,12 +134,12 @@ public class MathOperationFunction extends MathObject
      * @param value
      *        The mathematical expression
      */
-    public MathOperationFunction(FunctionType t, MathObject value)
+    public Function(FunctionType t, Expression value)
     {
         type = t;
-        children.add(value != null ? value : new MathObjectEmpty());
+        children.add(value != null ? value : new Empty());
         operatorPaint.setAntiAlias(true);
-        operatorPaint.setStrokeWidth(MathObject.lineWidth);
+        operatorPaint.setStrokeWidth(Expression.lineWidth);
         operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
     }
     
@@ -154,7 +157,7 @@ public class MathOperationFunction extends MathObject
     }
     
     public int getPrecedence()
-    { return MathObjectPrecedence.FUNCTION; }
+    { return Precedence.FUNCTION; }
 
     /** Calculates the right text size for the given level
      * @return The right text size for the given level */
@@ -173,7 +176,7 @@ public class MathOperationFunction extends MathObject
         Rect out = new Rect(size);
         
         // Add the padding
-        out.inset(-(int)(MathObject.lineWidth  * 2.5), -(int)(MathObject.lineWidth * 2.5));
+        out.inset(-(int)(Expression.lineWidth  * 2.5), -(int)(Expression.lineWidth * 2.5));
         out.offsetTo(0, 0);
         
         // Return the result

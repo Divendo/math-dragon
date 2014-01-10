@@ -1,4 +1,8 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation.binary;
+
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.operation.Binary;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,17 +13,17 @@ import android.graphics.Rect;
  * That is, operations which are written like '&lt;left operand&gt; &lt;operator&gt; &lt;right operand&gt;'.
  * For example: the add or subtract operation.
  */
-public class MathOperationDivide extends MathBinaryOperation
+public class Divide extends Binary
 {
 	public static final String TYPE = "divide";
 	
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
 
-    public MathOperationDivide()
+    public Divide()
     {}
     
-    public MathOperationDivide(MathObject left, MathObject right)
+    public Divide(Expression left, Expression right)
     {
     	super(left, right);
     }
@@ -31,16 +35,16 @@ public class MathOperationDivide extends MathBinaryOperation
 
     @Override
     public int getPrecedence()
-    { return MathObjectPrecedence.MULTIPLY; }
+    { return Precedence.MULTIPLY; }
     
     /**
      * Returns the sizes of the bounding boxes.
      * The first rectangle is the size of the operator, the second and third rectangle are the sizes of the children.
      * 
      * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     *        The maximum width the {@link Expression} can have (can be {@link Expression#NO_MAXIMUM})
      * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     *        The maximum height the {@link Expression} can have (can be {@link Expression#NO_MAXIMUM})
      * @return The size of the child bounding boxes
      */
     protected Rect[] getSizes()

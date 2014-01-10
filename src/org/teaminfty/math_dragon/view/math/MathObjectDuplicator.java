@@ -7,19 +7,19 @@ import org.w3c.dom.Document;
 
 public final class MathObjectDuplicator
 {
-    /** Creates a deep copy of the given {@link MathObject}
-     * @param src The {@link MathObject} to copy
-     * @return The copy of the given {@link MathObject} (returns <tt>null</tt> if the function somehow fails) */
-    public static MathObject deepCopy(MathObject src)
+    /** Creates a deep copy of the given {@link Expression}
+     * @param src The {@link Expression} to copy
+     * @return The copy of the given {@link Expression} (returns <tt>null</tt> if the function somehow fails) */
+    public static Expression deepCopy(Expression src)
     {
         try
         {
             // Create a XML document of the source object
-            Document doc = MathObject.createXMLDocument();
+            Document doc = Expression.createXMLDocument();
             src.writeToXML(doc, doc.getDocumentElement());
             
             // Create a new object from the XML and return that object
-            return MathFactory.fromXML(doc);
+            return ExpressionXMLReader.fromXML(doc);
         }
         catch(ParserConfigurationException e)
         {

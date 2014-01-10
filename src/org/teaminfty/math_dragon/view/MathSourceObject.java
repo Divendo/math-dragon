@@ -1,13 +1,13 @@
 package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.Expression;
 
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-/** A class that represents a source for new {@link MathObject}s in the drag-and-drop interface */
+/** A class that represents a source for new {@link Expression}s in the drag-and-drop interface */
 public abstract class MathSourceObject
 {
     /** A paint that's used to draw an empty box */
@@ -21,9 +21,9 @@ public abstract class MathSourceObject
         paintEmptyBox.setPathEffect(new DashPathEffect(new float[] {16.0f, 16.0f}, 0));
     }
     
-    /** Creates a new {@link MathObject} that can be dragged
-     * @return The new {@link MathObject} */
-    public abstract MathObject createMathObject();
+    /** Creates a new {@link Expression} that can be dragged
+     * @return The new {@link Expression} */
+    public abstract Expression createMathObject();
     
     /** Draws the {@link MathSourceObject}
      * @param canvas The canvas to draw on
@@ -38,10 +38,10 @@ public abstract class MathSourceObject
     {
         // Copy the rectangle and then make it just a bit smaller
         Rect copy = new Rect(rect);
-        copy.inset((int) Math.ceil(MathObject.lineWidth / 2), (int) Math.ceil(MathObject.lineWidth / 2));
+        copy.inset((int) Math.ceil(Expression.lineWidth / 2), (int) Math.ceil(Expression.lineWidth / 2));
         
         // Draw the dashed rectangle
-        paintEmptyBox.setStrokeWidth(MathObject.lineWidth);
+        paintEmptyBox.setStrokeWidth(Expression.lineWidth);
         canvas.drawRect(copy, paintEmptyBox);
     }
 
