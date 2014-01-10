@@ -15,7 +15,9 @@ import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -43,6 +45,18 @@ public class MathView extends View
     
     /** Whether or not this {@link MathView} is enabled (i.e. it can be edited) */
     private boolean enabled = true;
+    
+    /** Whether or not caching is currently enabled */
+    private boolean cacheEnabled = true;
+    
+    /** Cache for the {@link MathObject} */
+    private Bitmap cache = null;
+    
+    /** For which size the {@link MathObject} has been cached */
+    private int cachedForSize = -1;
+    
+    /** The paint that's used to draw the cache */
+    private Paint cachePaint = new Paint();
     
     public MathView(Context context)
     {
@@ -111,9 +125,13 @@ public class MathView extends View
         // Remember the new MathObject, if it is null we create a MathObjectEmpty
         if((mathObject = newMathObject) == null)
             mathObject = new MathObjectEmpty();
+        
         // Set the default size and the level for the MathObject
         mathObject.setDefaultHeight((int) mathObjectDefaultHeight);
         mathObject.setLevel(0);
+        
+        // Invalidate the cache
+        cache = null;
         
         // Redraw
         invalidate();
@@ -199,21 +217,38 @@ public class MathView extends View
         // Loop through the children and set their states
         for(int i = 0; i < mo.getChildCount(); ++i)
             setHoverState(mo.getChild(i), state);
+        
+        // Invalidate the cache
+        cache = null;
     }
     
     @Override
     protected void onDraw(Canvas canvas)
     {
+        // If the expression isn't in the cache yet, cache it
+        if(cacheEnabled && (cache == null || cachedForSize != mathObject.getDefaultHeight()))
+        {
+            Rect boundingBox = mathObject.getBoundingBox();
+            cache = Bitmap.createBitmap(boundingBox.width(), boundingBox.height(), Bitmap.Config.ARGB_8888);
+            mathObject.draw(new Canvas(cache));
+            cachedForSize = mathObject.getDefaultHeight();
+        }
+        
         // Save the canvas
         canvas.save();
         
         // Translate the canvas
         canvas.translate(scrollTranslate.x, scrollTranslate.y);
         
-        // Simply draw the math object
-        Rect boundingBox = mathObject.getBoundingBox();
-        canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
-        mathObject.draw(canvas);
+        // Draw the expression from the cache (if cache is enabled), otherwise draw it directly
+        if(cacheEnabled)
+            canvas.drawBitmap(cache, (canvas.getWidth() - cache.getWidth()) / 2, (canvas.getHeight() - cache.getHeight()) / 2, cachePaint);
+        else
+        {
+            Rect boundingBox = mathObject.getBoundingBox();
+            canvas.translate((canvas.getWidth() - boundingBox.width()) / 2, (canvas.getHeight() - boundingBox.height()) / 2);
+            mathObject.draw(canvas);
+        }
         
         // Restore the canvas
         canvas.restore();
@@ -412,6 +447,19 @@ public class MathView extends View
             invalidate();
             return true;
         }
+        
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector)
+        {
+            cacheEnabled = false;
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector)
+        {
+            cacheEnabled = true;
+        }
     }
     
     @Override
@@ -430,6 +478,8 @@ public class MathView extends View
         switch(event.getAction())
         {
             case DragEvent.ACTION_DRAG_STARTED:
+                cacheEnabled = false;
+                cache = null;
             return true;
             
             case DragEvent.ACTION_DRAG_ENTERED:
@@ -464,6 +514,7 @@ public class MathView extends View
 
             case DragEvent.ACTION_DRAG_ENDED:
                 setHoverState(mathObject, HoverState.NONE);
+                cacheEnabled = true;
                 invalidate();
             return true;
         }
@@ -692,7 +743,12 @@ public class MathView extends View
             // If we're not dropping, just light up the part we're hovering over
             // Otherwise we insert the MathObject that's being dragged at the right point in current MathObject
             if(!dropped)
+            {
                 currHover.mathObject.setState(HoverState.HOVER);
+                
+                // Invalidate the cache
+                cache = null;
+            }
             else
             {
                 // Determine whether or not we're dropping the whole thing in an empty box
@@ -787,7 +843,8 @@ public class MathView extends View
                 ParenthesesHelper.setParentheses(mathObject);
             }
             
-            // Redraw
+            // Invalidate cache and redraw
+            cache = null;
             invalidate();
             
             // Notify the listener of the change
@@ -861,8 +918,9 @@ public class MathView extends View
                 info.parent.setChild(info.childIndex, null);
                 ParenthesesHelper.setParentheses(mathObject);
             }
-            
-            // Redraw
+
+            // Invalidate cache and redraw
+            cache = null;
             invalidate();
             
             // Notify the listener of the change
