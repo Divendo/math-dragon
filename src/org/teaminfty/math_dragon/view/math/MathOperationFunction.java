@@ -250,7 +250,7 @@ public class MathOperationFunction extends MathObject
     @Override
     public Point getCenter()
     {        
-        return new Point(getBoundingBox().centerX(), getBoundingBox().centerY());
+        return new Point(this.getBoundingBox().centerX(), getChild(0).getCenter().y);
     }
     
     @Override
@@ -273,6 +273,7 @@ public class MathOperationFunction extends MathObject
         canvas.translate((operatorBounding[0].width() - textBounding.width()) / 2, (operatorBounding[0].height() - textBounding.height()) / 2);
         canvas.drawText(type.getName(), operatorBounding[0].left - textBounding.left, operatorBounding[0].top - textBounding.top, operatorPaint);
         canvas.restore();
+        
 
         // Use stroke style for the parentheses
         operatorPaint.setStyle(Paint.Style.STROKE);
