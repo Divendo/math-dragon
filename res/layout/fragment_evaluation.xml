@@ -8,19 +8,6 @@
     <RelativeLayout
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content" >
-
-	    <TextView
-	        android:id="@+id/textViewEvalType"
-			android:layout_width="match_parent"
-	        android:layout_height="@dimen/circle_button_size"
-	        android:layout_marginLeft="@dimen/main_screen_button_margin"
-	        android:layout_marginTop="@dimen/main_screen_button_margin"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentTop="true"
-	        android:gravity="center"
-	        android:textStyle="bold"
-	        android:textSize="@dimen/dialog_title_font_size"
-	        android:text="@string/evaluate_exact" />
         
 	    <ImageButton
 	        android:id="@+id/btn_close"
@@ -30,6 +17,20 @@
 	        android:layout_margin="@dimen/main_screen_button_margin"
 	        android:contentDescription="@string/close"
 	        android:src="@drawable/close" />
+
+	    <TextView
+	        android:id="@+id/textViewEvalType"
+			android:layout_width="0dp"
+	        android:layout_height="@dimen/circle_button_size"
+	        android:layout_marginLeft="@dimen/main_screen_button_margin"
+	        android:layout_marginTop="@dimen/main_screen_button_margin"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/btn_close"
+	        android:gravity="center"
+	        android:textStyle="bold"
+	        android:textSize="@dimen/dialog_title_font_size"
+	        android:text="@string/evaluate_exact" />
 	    
     </RelativeLayout>
     	

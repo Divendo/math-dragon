@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.MathSymbol;
 
@@ -29,6 +30,11 @@ public class FragmentSubstitute extends DialogFragment
         View view = inflater.inflate(R.layout.fragment_substitute, container, false);
         
         // Load the substitutions
+        ViewGroup subsLayout = (ViewGroup) view.findViewById(R.id.layout_substitute_list);
+        Database db = new Database(getActivity());
+        Database.Substitution[] substitutions = db.getAllSubstitutions();
+        for(Database.Substitution sub : substitutions)
+            setSubstitution(sub.name, sub.value, subsLayout);
         
         // The close button
         ((ImageButton) view.findViewById(R.id.btn_close)).setOnClickListener(new OnCloseBtnClickListener());
