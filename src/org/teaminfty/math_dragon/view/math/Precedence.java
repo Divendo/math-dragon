@@ -1,7 +1,7 @@
 package org.teaminfty.math_dragon.view.math;
 
-/** A class that holds constants for the precedence levels of the {@link MathObject}s */
-public abstract class MathObjectPrecedence
+/** A class that holds constants for the precedence levels of the {@link Expression}s */
+public abstract class Precedence
 {
     /** The highest precedence */
     public static final int HIGHEST = 0;

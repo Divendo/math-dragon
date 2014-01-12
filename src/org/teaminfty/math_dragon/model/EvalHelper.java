@@ -6,25 +6,25 @@ import org.matheclipse.core.interfaces.ISymbol;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
-import org.teaminfty.math_dragon.view.math.MathBinaryOperation;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-import org.teaminfty.math_dragon.view.math.MathOperation;
-import org.teaminfty.math_dragon.view.math.MathOperationAdd;
-import org.teaminfty.math_dragon.view.math.MathOperationDerivative;
-import org.teaminfty.math_dragon.view.math.MathOperationDivide;
-import org.teaminfty.math_dragon.view.math.MathOperationFunction;
-import org.teaminfty.math_dragon.view.math.MathOperationLimit;
-import org.teaminfty.math_dragon.view.math.MathOperationIntegral;
-import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
-import org.teaminfty.math_dragon.view.math.MathOperationPower;
-import org.teaminfty.math_dragon.view.math.MathOperationRoot;
-import org.teaminfty.math_dragon.view.math.MathOperationSubtract;
-import org.teaminfty.math_dragon.view.math.MathParentheses;
-import org.teaminfty.math_dragon.view.math.MathSymbol;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Operation;
+import org.teaminfty.math_dragon.view.math.Parentheses;
+import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.operation.Derivative;
+import org.teaminfty.math_dragon.view.math.operation.Function;
+import org.teaminfty.math_dragon.view.math.operation.Integral;
+import org.teaminfty.math_dragon.view.math.operation.Limit;
+import org.teaminfty.math_dragon.view.math.operation.Binary;
+import org.teaminfty.math_dragon.view.math.operation.binary.Add;
+import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
+import org.teaminfty.math_dragon.view.math.operation.binary.Power;
+import org.teaminfty.math_dragon.view.math.operation.binary.Root;
+import org.teaminfty.math_dragon.view.math.operation.binary.Subtract;
 
 /**
- * Mathematical evaluator for {@link MathObject}s into expressions returned by the Symja library.
+ * Mathematical evaluator for {@link Expression}s into expressions returned by the Symja library.
  * 
  * @author Folkert van Verseveld
  */
@@ -44,39 +44,39 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when it could not be converted.
      */
-    public static IExpr eval(MathObject o) throws MathException
+    public static IExpr eval(Expression o) throws MathException
     {
         if(o == null)
             throw new NullPointerException("o");
-        if(o instanceof MathBinaryOperation)
+        if(o instanceof Binary)
         {
-            MathBinaryOperation op = (MathBinaryOperation) o;
-            if(op instanceof MathOperationAdd)
-                return add((MathOperationAdd) op);
-            if(op instanceof MathOperationSubtract)
-                return sub((MathOperationSubtract) op);
-            if(op instanceof MathOperationMultiply)
-                return mul((MathOperationMultiply) op);
-            if(op instanceof MathOperationDivide)
-                return div((MathOperationDivide) op);
-            if(op instanceof MathOperationPower)
-                return pow((MathOperationPower) op);
-            if(op instanceof MathOperationRoot)
-                return root((MathOperationRoot) op);
-            if(op instanceof MathOperationDerivative)
-                return derivative((MathOperationDerivative) op);
+            Binary op = (Binary) o;
+            if(op instanceof Add)
+                return add((Add) op);
+            if(op instanceof Subtract)
+                return sub((Subtract) op);
+            if(op instanceof Multiply)
+                return mul((Multiply) op);
+            if(op instanceof Divide)
+                return div((Divide) op);
+            if(op instanceof Power)
+                return pow((Power) op);
+            if(op instanceof Root)
+                return root((Root) op);
+            if(op instanceof Derivative)
+                return derivative((Derivative) op);
         }
-        else if(o instanceof MathOperationLimit)
-            return limit((MathOperationLimit) o);
-        else if(o instanceof MathOperationFunction)
-            return function((MathOperationFunction) o);
-        else if(o instanceof MathOperationIntegral)
-            return integral((MathOperationIntegral) o);
-        else if(o instanceof MathSymbol)
-            return symbol((MathSymbol) o);
-        else if(o instanceof MathParentheses)
+        else if(o instanceof Limit)
+            return limit((Limit) o);
+        else if(o instanceof Function)
+            return function((Function) o);
+        else if(o instanceof Integral)
+            return integral((Integral) o);
+        else if(o instanceof Symbol)
+            return symbol((Symbol) o);
+        else if(o instanceof Parentheses)
             return eval(o.getChild(0));
-        else if(o instanceof MathObjectEmpty)
+        else if(o instanceof Empty)
             throw new EmptyChildException();
 
         throw new ParseException(o.toString());
@@ -91,11 +91,11 @@ public class EvalHelper
      * @throws EmptyChildException
      *         Thrown when one or more children are invalid.
      */
-    static void checkChildren(MathBinaryOperation op) throws EmptyChildException
+    static void checkChildren(Binary op) throws EmptyChildException
     {
-        if(op.getLeft() == null || op.getLeft() instanceof MathObjectEmpty)
+        if(op.getLeft() == null || op.getLeft() instanceof Empty)
             throw new EmptyChildException(0);
-        if(op.getRight() == null || op.getRight() instanceof MathObjectEmpty)
+        if(op.getRight() == null || op.getRight() instanceof Empty)
             throw new EmptyChildException(1);
     }
     
@@ -108,11 +108,11 @@ public class EvalHelper
      * @throws EmptyChildException
      *         Thrown when one or more children are invalid.
      */
-    static void checkChildren(MathOperation op) throws EmptyChildException
+    static void checkChildren(Operation op) throws EmptyChildException
     {
         for(int i = 0; i < op.getChildCount(); ++i)
         {
-            if(op.getChild(i) == null || op.getChild(i) instanceof MathObjectEmpty)
+            if(op.getChild(i) == null || op.getChild(i) instanceof Empty)
                 throw new EmptyChildException(i);
         }
     }
@@ -122,7 +122,7 @@ public class EvalHelper
             F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
             F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
-    public static IExpr symbol(MathSymbol symbol)
+    public static IExpr symbol(Symbol symbol)
     {
         if(symbol == null)
             throw new NullPointerException("symbol");
@@ -167,7 +167,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>add</tt> contains invalid children.
      */
-    public static IExpr add(MathOperationAdd add) throws MathException
+    public static IExpr add(Add add) throws MathException
     {
         checkChildren(add);
         return F.Plus(eval(add.getLeft()), eval(add.getRight()));
@@ -182,7 +182,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>div</tt> contains invalid children.
      */
-    public static IExpr div(MathOperationDivide div) throws MathException
+    public static IExpr div(Divide div) throws MathException
     {
         checkChildren(div);
         return F.Divide(eval(div.getLeft()), eval(div.getRight()));
@@ -197,7 +197,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>mul</tt> contains invalid children.
      */
-    public static IExpr mul(MathOperationMultiply mul) throws MathException
+    public static IExpr mul(Multiply mul) throws MathException
     {
         checkChildren(mul);
         return F.Times(eval(mul.getLeft()), eval(mul.getRight()));
@@ -212,7 +212,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>pow</tt> contains invalid children.
      */
-    public static IExpr pow(MathOperationPower pow) throws MathException
+    public static IExpr pow(Power pow) throws MathException
     {
         checkChildren(pow);
         return F.Power(eval(pow.getBase()), eval(pow.getExponent()));
@@ -227,7 +227,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>root</tt> contains invalid children.
      */
-    public static IExpr root(MathOperationRoot root) throws MathException
+    public static IExpr root(Root root) throws MathException
     {
         checkChildren(root);
         return F.Power(eval(root.getBase()), F.Divide(F.ZZ(1), eval(root.getExponent())));
@@ -242,7 +242,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>sub</tt> contains invalid children.
      */
-    public static IExpr sub(MathOperationSubtract sub) throws MathException
+    public static IExpr sub(Subtract sub) throws MathException
     {
         checkChildren(sub);
         return F.Subtract(eval(sub.getLeft()), eval(sub.getRight()));
@@ -257,7 +257,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>ddx</tt> contains invalid children.
      */
-    public static IExpr derivative(MathOperationDerivative ddx) throws MathException
+    public static IExpr derivative(Derivative ddx) throws MathException
     {
         checkChildren(ddx);
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
@@ -271,7 +271,7 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>f</tt> contains invalid children
      */
-    public static IExpr function(MathOperationFunction f) throws MathException
+    public static IExpr function(Function f) throws MathException
     {
         switch(f.getType())
         {
@@ -289,7 +289,7 @@ public class EvalHelper
         throw new ParseException(f.toString());
     }
     
-    public static IExpr limit(MathOperationLimit lim) throws MathException
+    public static IExpr limit(Limit lim) throws MathException
     {
         checkChildren(lim);
         // try {
@@ -337,22 +337,22 @@ public class EvalHelper
      * @throws MathException
      *         Thrown when <tt>i</tt> contains invalid children
      */
-    public static IExpr integral(MathOperationIntegral i) throws MathException
+    public static IExpr integral(Integral i) throws MathException
     {
         // Check for empty children that are never allowed to be empty
-        if(i.getIntegratePart() instanceof MathObjectEmpty)
+        if(i.getIntegratePart() instanceof Empty)
             throw new EmptyChildException(0);
-        else if(i.getIntegrateOver() instanceof MathObjectEmpty)
+        else if(i.getIntegrateOver() instanceof Empty)
             throw new EmptyChildException(1);
         
         // Evaluate depending on whether or not a 'from' and 'to' value are given
-        if(i.getIntegrateFrom() instanceof MathObjectEmpty && i.getIntegrateTo() instanceof MathObjectEmpty)
+        if(i.getIntegrateFrom() instanceof Empty && i.getIntegrateTo() instanceof Empty)
             return F.Integrate(eval(i.getIntegratePart()), eval(i.getIntegrateOver()));
         else
         {
-            if(i.getIntegrateFrom() instanceof MathObjectEmpty)
+            if(i.getIntegrateFrom() instanceof Empty)
                 throw new EmptyChildException(2);
-            else if(i.getIntegrateTo() instanceof MathObjectEmpty)
+            else if(i.getIntegrateTo() instanceof Empty)
                 throw new EmptyChildException(3);
             
             return F.Integrate( eval(i.getIntegratePart()), F.List(eval(i.getIntegrateOver()), eval(i.getIntegrateFrom()), eval(i.getIntegrateTo())) );

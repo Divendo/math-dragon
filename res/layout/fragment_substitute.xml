@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        <ImageButton
+            android:id="@+id/btn_close"
+            style="@style/CircleButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/main_screen_button_margin"
+            android:contentDescription="@string/close"
+            android:src="@drawable/close" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/circle_button_size"
+            android:layout_marginLeft="@dimen/main_screen_button_margin"
+            android:layout_marginTop="@dimen/main_screen_button_margin"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/btn_close"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/dialog_title_font_size"
+            android:text="@string/substitute" />
+        
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:requiresFadingEdge="vertical"
+        android:fillViewport="true" >
+
+        <LinearLayout
+            android:id="@+id/layout_substitute_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+        
+    </ScrollView>
+
+</LinearLayout>

@@ -1,4 +1,7 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation.binary;
+
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.operation.Binary;
 
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -9,16 +12,16 @@ import android.graphics.Rect;
  * operations which are written like '&lt;left operand&gt; &lt;operator&gt;
  * &lt;right operand&gt;'. For example: the add or subtract operation.
  */
-public abstract class MathBinaryOperationLinear extends MathBinaryOperation
+public abstract class Linear extends Binary
 {
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
 
     /** Default constructor */
-    public MathBinaryOperationLinear()
+    public Linear()
     { }
     
-    public MathBinaryOperationLinear(MathObject left, MathObject right)
+    public Linear(Expression left, Expression right)
     {
     	super(left, right);
     }

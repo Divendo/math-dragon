@@ -10,7 +10,7 @@ import org.teaminfty.math_dragon.view.MathSourceOperationPower;
 import org.teaminfty.math_dragon.view.MathSourceOperationRoot;
 import org.teaminfty.math_dragon.view.MathSourceOperationFunction;
 import org.teaminfty.math_dragon.view.MathSourceView;
-import org.teaminfty.math_dragon.view.math.MathOperationFunction;
+import org.teaminfty.math_dragon.view.math.operation.Function;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -38,16 +38,16 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         setMathSourceObjectFor(layout, R.id.mathSourceDerivative, new MathSourceOperationDerivative());
         setMathSourceObjectFor(layout, R.id.mathSourceIntegral, new MathSourceOperationIntegral());
         // Functions
-        setMathSourceObjectFor(layout, R.id.mathSourceSin, new MathSourceOperationFunction(MathOperationFunction.FunctionType.SIN));
-        setMathSourceObjectFor(layout, R.id.mathSourceArcSin, new MathSourceOperationFunction(MathOperationFunction.FunctionType.ARCSIN));
-        setMathSourceObjectFor(layout, R.id.mathSourceCos, new MathSourceOperationFunction(MathOperationFunction.FunctionType.COS));
-        setMathSourceObjectFor(layout, R.id.mathSourceArcCos, new MathSourceOperationFunction(MathOperationFunction.FunctionType.ARCCOS));
-        setMathSourceObjectFor(layout, R.id.mathSourceTan, new MathSourceOperationFunction(MathOperationFunction.FunctionType.TAN));
-        setMathSourceObjectFor(layout, R.id.mathSourceArcTan, new MathSourceOperationFunction(MathOperationFunction.FunctionType.ARCTAN));
-        setMathSourceObjectFor(layout, R.id.mathSourceSinh, new MathSourceOperationFunction(MathOperationFunction.FunctionType.SINH));
-        setMathSourceObjectFor(layout, R.id.mathSourceCosh, new MathSourceOperationFunction(MathOperationFunction.FunctionType.COSH));
+        setMathSourceObjectFor(layout, R.id.mathSourceSin, new MathSourceOperationFunction(Function.FunctionType.SIN));
+        setMathSourceObjectFor(layout, R.id.mathSourceArcSin, new MathSourceOperationFunction(Function.FunctionType.ARCSIN));
+        setMathSourceObjectFor(layout, R.id.mathSourceCos, new MathSourceOperationFunction(Function.FunctionType.COS));
+        setMathSourceObjectFor(layout, R.id.mathSourceArcCos, new MathSourceOperationFunction(Function.FunctionType.ARCCOS));
+        setMathSourceObjectFor(layout, R.id.mathSourceTan, new MathSourceOperationFunction(Function.FunctionType.TAN));
+        setMathSourceObjectFor(layout, R.id.mathSourceArcTan, new MathSourceOperationFunction(Function.FunctionType.ARCTAN));
+        setMathSourceObjectFor(layout, R.id.mathSourceSinh, new MathSourceOperationFunction(Function.FunctionType.SINH));
+        setMathSourceObjectFor(layout, R.id.mathSourceCosh, new MathSourceOperationFunction(Function.FunctionType.COSH));
         /* setMathSourceObjectFor(layout, R.id.mathSourceLog, ); */
-        setMathSourceObjectFor(layout, R.id.mathSourceLn, new MathSourceOperationFunction(MathOperationFunction.FunctionType.LN));
+        setMathSourceObjectFor(layout, R.id.mathSourceLn, new MathSourceOperationFunction(Function.FunctionType.LN));
         
         // Get the tabs and set their OnClickListener and activate the right one
         ToggleButton tabOperators = (ToggleButton) layout.findViewById(R.id.btn_tab_operators);

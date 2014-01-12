@@ -11,7 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 /** This class represents a math constant */
-public class MathSymbol extends MathObject
+public class Symbol extends Expression
 {
     /** The factor of this constant */
     private long factor = 0;
@@ -31,7 +31,7 @@ public class MathSymbol extends MathObject
     private final static char[] SUPERSCRIPT = new char[] {'\u2070', '\u00b9', '\u00b2', '\u00b3','\u2074','\u2075','\u2076','\u2077', '\u2078', '\u2079'};
 
     /** Default constructor */
-    public MathSymbol()
+    public Symbol()
     { 
         this(0);
     }
@@ -40,7 +40,7 @@ public class MathSymbol extends MathObject
      * Simple constructor with a factor just for simplicity.
      * @param factor The base number
      */
-    public MathSymbol(long factor)
+    public Symbol(long factor)
     {
         this(factor, 0, 0, 0);
     }
@@ -51,7 +51,7 @@ public class MathSymbol extends MathObject
      * @param piPow The pi power
      * @param iPow The imaginary power
      */
-    public MathSymbol(long factor, long ePow, long piPow, long iPow)
+    public Symbol(long factor, long ePow, long piPow, long iPow)
     {
         this(factor, ePow, piPow, iPow, new long[0]);
     }
@@ -63,7 +63,7 @@ public class MathSymbol extends MathObject
      * @param iPow The imaginary power
      * @param varPows The first <tt>varPows.length</tt> powers for the variables (may be <tt>null</tt>)
      */
-    public MathSymbol(long factor, long ePow, long piPow, long iPow, long[] varPows)
+    public Symbol(long factor, long ePow, long piPow, long iPow, long[] varPows)
     {
     	initPaints();
     	this.factor = factor;
@@ -109,9 +109,9 @@ public class MathSymbol extends MathObject
         }
     }
     
-    /** Calculates the size of this {@link MathSymbol} when using the given font size
+    /** Calculates the size of this {@link Symbol} when using the given font size
      * @param fontSize The font size
-     * @return The size of this {@link MathSymbol}
+     * @return The size of this {@link Symbol}
      */
     protected Rect getSize(float fontSize)
     {
@@ -139,7 +139,7 @@ public class MathSymbol extends MathObject
         Rect out = new Rect(size);
         
         // Add the padding
-        out.inset(-(int)(MathObject.lineWidth  * 2.5), -(int)(MathObject.lineWidth * 2.5));
+        out.inset(-(int)(Expression.lineWidth  * 2.5), -(int)(Expression.lineWidth * 2.5));
         out.offsetTo(0, 0);
         
         // Return the result
@@ -205,9 +205,9 @@ public class MathSymbol extends MathObject
      */
     public boolean equals(Object o)
     {
-        if(!(o instanceof MathSymbol))
+        if(!(o instanceof Symbol))
             return false;
-        MathSymbol c = (MathSymbol) o;
+        Symbol c = (Symbol) o;
 
         return c.factor == factor && c.ePow == ePow && c.piPow == piPow && c.iPow == iPow && Arrays.equals(c.varPows, varPows);
     }

@@ -1,6 +1,6 @@
 package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.Expression;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -9,21 +9,21 @@ import android.view.View.DragShadowBuilder;
 
 public class MathShadow extends DragShadowBuilder
 {
-    /** The {@link MathObject} that is being dragged */
-    private MathObject mathObject = null;
+    /** The {@link Expression} that is being dragged */
+    private Expression mathObject = null;
 
     /** Constructor
-     * @param mo The {@link MathObject} that is to be dragged
+     * @param mo The {@link Expression} that is to be dragged
      */
-    public MathShadow(MathObject mo)
+    public MathShadow(Expression mo)
     {
         setDragState(mathObject = mo);
         mathObject.setLevel(0);
     }
     
-    /** Recursively sets the DRAG state for the given {@link MathObject} and all of its children
-     * @param mo The {@link MathObject} to set the DRAG state for */
-    private void setDragState(MathObject mo)
+    /** Recursively sets the DRAG state for the given {@link Expression} and all of its children
+     * @param mo The {@link Expression} to set the DRAG state for */
+    private void setDragState(Expression mo)
     {
         // Set the state
         mo.setState(HoverState.DRAG);
@@ -33,12 +33,12 @@ public class MathShadow extends DragShadowBuilder
             setDragState(mo.getChild(i));
     }
     
-    /** Returns the {@link MathObject} in this shadow
-     * @return The {@link MathObject} in this shadow */
-    public MathObject getMathObject()
+    /** Returns the {@link Expression} in this shadow
+     * @return The {@link Expression} in this shadow */
+    public Expression getMathObject()
     { return mathObject; }
     
-    /** Returns the bounding box of the current {@link MathObject} relative to the touch point
+    /** Returns the bounding box of the current {@link Expression} relative to the touch point
      * @return The requested bounding box
      */
     public Rect getMathObjectBounding()

@@ -10,14 +10,13 @@ import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.IRational;
 import org.teaminfty.math_dragon.exceptions.ParseException;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathOperationAdd;
-import org.teaminfty.math_dragon.view.math.MathOperationDivide;
-import org.teaminfty.math_dragon.view.math.MathOperationFunction;
-import org.teaminfty.math_dragon.view.math.MathOperationFunction.FunctionType;
-import org.teaminfty.math_dragon.view.math.MathOperationMultiply;
-import org.teaminfty.math_dragon.view.math.MathOperationPower;
-import org.teaminfty.math_dragon.view.math.MathSymbol;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.operation.Function;
+import org.teaminfty.math_dragon.view.math.operation.Function.FunctionType;
+import org.teaminfty.math_dragon.view.math.operation.binary.Add;
+import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
+import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 
 import android.annotation.SuppressLint;
 
@@ -45,7 +44,7 @@ public final class ModelHelper
      *         Thrown when conversion is impossible.
      */
     @SuppressLint("DefaultLocale")
-    public static MathObject toMathObject(IExpr expr) throws ParseException
+    public static Expression toMathObject(IExpr expr) throws ParseException
     {
         if(expr.isAST())
         {
@@ -62,7 +61,7 @@ public final class ModelHelper
         }
         else if(expr.isInteger())
         {
-            MathSymbol c = new MathSymbol();
+        	org.teaminfty.math_dragon.view.math.Symbol c = new org.teaminfty.math_dragon.view.math.Symbol();
             c.setFactor(((IInteger) expr).longValue());
             return c;
         }
@@ -73,17 +72,17 @@ public final class ModelHelper
             long denominator = rational.getDenominator().longValue();
             // avoid equations like (x)/(1)
             if (denominator == 1) {
-                MathSymbol c = new MathSymbol();
+            	org.teaminfty.math_dragon.view.math.Symbol c = new org.teaminfty.math_dragon.view.math.Symbol();
                 c.setFactor(numerator.longValue());
                 return c;
             }
-            return new MathOperationDivide(new MathSymbol(numerator.longValue()), new MathSymbol(denominator));
+            return new Divide(new org.teaminfty.math_dragon.view.math.Symbol(numerator.longValue()), new org.teaminfty.math_dragon.view.math.Symbol(denominator));
         }
-        else if(expr instanceof Symbol)
+        else if(expr instanceof org.teaminfty.math_dragon.view.math.Symbol)
         {
             // We'll return a symbol
             Symbol s = (Symbol) expr;
-            MathSymbol symbol = new MathSymbol(1, 0, 0, 0, null);
+            org.teaminfty.math_dragon.view.math.Symbol symbol = new org.teaminfty.math_dragon.view.math.Symbol(1, 0, 0, 0, null);
 
             // Figure out which symbol it is
             String str = s.toString().toLowerCase();
@@ -101,31 +100,31 @@ public final class ModelHelper
         }
         else if (expr instanceof IComplex) {
             IComplex c = (IComplex) expr;
-            MathSymbol imag = new MathSymbol();
+            org.teaminfty.math_dragon.view.math.Symbol imag = new org.teaminfty.math_dragon.view.math.Symbol();
             imag.setFactor(1);
-            MathSymbol zero = new MathSymbol();
-            MathObject real = toMathObject(c.getRe());
+            org.teaminfty.math_dragon.view.math.Symbol zero = new org.teaminfty.math_dragon.view.math.Symbol();
+            Expression real = toMathObject(c.getRe());
             IExpr pow = c.getIm();
             // remove real part if zero
-            if (real instanceof MathSymbol && ((MathSymbol) real).equals(zero)) {
+            if (real instanceof org.teaminfty.math_dragon.view.math.Symbol && ((org.teaminfty.math_dragon.view.math.Symbol) real).equals(zero)) {
                 if (pow.isInteger()) {
                     imag.setIPow(((IInteger) pow).longValue());
                     return imag;
                 } else if (pow.isFraction()) {
                     IFraction frac = (IFraction) pow;
                     imag.setIPow(1);
-                    imag.setFactor(((MathSymbol) toOpDiv(frac.getNumerator(), frac.getDenominator())).getFactor());
+                    imag.setFactor(((org.teaminfty.math_dragon.view.math.Symbol) toOpDiv(frac.getNumerator(), frac.getDenominator())).getFactor());
                     return imag;
                 } else {
                     imag.setIPow(1);
-                    return new MathOperationPower(imag, toMathObject(pow));
+                    return new Power(imag, toMathObject(pow));
                 }
             } else if (pow.isInteger()) {
                 imag.setIPow(((IInteger) pow).longValue());
-                return new MathOperationAdd(real, imag);
+                return new Add(real, imag);
             } else {
                 imag.setIPow(1);
-                return new MathOperationAdd(real, new MathOperationPower(imag, toMathObject(pow)));
+                return new Add(real, new Power(imag, toMathObject(pow)));
             }
         }
         else if (expr.isFraction()) {
@@ -147,20 +146,20 @@ public final class ModelHelper
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
-    static MathObject toOpAdd(AST ast) throws ParseException
+    static Expression toOpAdd(AST ast) throws ParseException
     {
         if(ast.size() > 3)
         {
             int n = ast.size() - 1;
-            MathOperationAdd child = new MathOperationAdd(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
+            Add child = new Add(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
             for(n -= 2; n > 0; --n)
             {
-                MathOperationAdd parent = new MathOperationAdd(toMathObject(ast.get(n)), child);
+                Add parent = new Add(toMathObject(ast.get(n)), child);
                 child = parent;
             }
             return child;
         }
-        return new MathOperationAdd(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
+        return new Add(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
     }
 
     /**
@@ -175,13 +174,13 @@ public final class ModelHelper
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
-    static MathObject toOpMul(AST ast) throws ParseException
+    static Expression toOpMul(AST ast) throws ParseException
     {
         if (ast.size() > 3) {
             int n = ast.size() - 1;
-            MathOperationMultiply child = new MathOperationMultiply(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
+            Multiply child = new Multiply(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
             for (n -= 2; n > 0; --n) {
-                MathOperationMultiply parent = new MathOperationMultiply(toMathObject(ast.get(n)), child);
+                Multiply parent = new Multiply(toMathObject(ast.get(n)), child);
                 child = parent;
             }
             return child;
@@ -198,7 +197,7 @@ public final class ModelHelper
                 if ((b = a.get(1)) instanceof Symbol)
                 {
                     Symbol s = (Symbol) b;
-                    MathSymbol c = new MathSymbol();
+                    org.teaminfty.math_dragon.view.math.Symbol c = new org.teaminfty.math_dragon.view.math.Symbol();
                     c.setFactor(1);
                     if(s.equals(F.Pi))
                     {
@@ -219,24 +218,24 @@ public final class ModelHelper
                         }
                         else
                         {
-                            return new MathOperationMultiply(toMathObject(b), c);
+                            return new Multiply(toMathObject(b), c);
                         }
                     }
                 }
             }
         }
-        return new MathOperationMultiply(toMathObject(ast.get(1)), toMathObject(r));
+        return new Multiply(toMathObject(ast.get(1)), toMathObject(r));
     }
 
     // XXX implement more than 2 children for operation divide?
-    static MathObject toOpDiv(IExpr l, IExpr r) throws ParseException
+    static Expression toOpDiv(IExpr l, IExpr r) throws ParseException
     {
         if (r.isInteger() && ((IInteger) r).longValue() == 1)
             return toMathObject(l);
-        return new MathOperationDivide(toMathObject(l), toMathObject(r));
+        return new Divide(toMathObject(l), toMathObject(r));
     }
 
-    static MathObject toOpDiv(IExpr l, AST r) throws ParseException
+    static Expression toOpDiv(IExpr l, AST r) throws ParseException
     {
         if (r.size() > 3) {
             throw new ParseException("no more than 2 children supported for division");
@@ -247,7 +246,7 @@ public final class ModelHelper
         {
             return toOpDiv(l, r.get(1));
         }
-        return new MathOperationDivide(toMathObject(l), toMathObject(r));
+        return new Divide(toMathObject(l), toMathObject(r));
     }
 
     /**
@@ -262,20 +261,20 @@ public final class ModelHelper
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
-    static MathObject toOpPow(AST ast) throws ParseException
+    static Expression toOpPow(AST ast) throws ParseException
     {
         if(ast.size() > 3)
         {
             int n = ast.size() - 1;
-            MathOperationPower child = new MathOperationPower(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
+            Power child = new Power(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
             for(n -= 2; n > 0; --n)
             {
-                MathOperationPower parent = new MathOperationPower(toMathObject(ast.get(n)), child);
+                Power parent = new Power(toMathObject(ast.get(n)), child);
                 child = parent;
             }
             return child;
         }
-        return new MathOperationPower(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
+        return new Power(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
     }
     
     /**
@@ -291,24 +290,24 @@ public final class ModelHelper
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
-    static MathObject toOpFunction(IAST ast) throws ParseException
+    static Expression toOpFunction(IAST ast) throws ParseException
     {
         if (ast.isSin())
-            return new MathOperationFunction(FunctionType.SIN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.SIN, toMathObject(ast.get(1)));
         if (ast.isCos())
-            return new MathOperationFunction(FunctionType.COS, toMathObject(ast.get(1)));
+            return new Function(FunctionType.COS, toMathObject(ast.get(1)));
         if (ast.isTan())
-            return new MathOperationFunction(FunctionType.TAN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.TAN, toMathObject(ast.get(1)));
         if (ast.isSinh())
-            return new MathOperationFunction(FunctionType.SINH, toMathObject(ast.get(1)));
+            return new Function(FunctionType.SINH, toMathObject(ast.get(1)));
         if (ast.isCosh())
-            return new MathOperationFunction(FunctionType.COSH, toMathObject(ast.get(1)));
+            return new Function(FunctionType.COSH, toMathObject(ast.get(1)));
         if (ast.isArcSin())
-            return new MathOperationFunction(FunctionType.ARCSIN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.ARCSIN, toMathObject(ast.get(1)));
         if (ast.isArcCos())
-            return new MathOperationFunction(FunctionType.ARCCOS, toMathObject(ast.get(1)));
+            return new Function(FunctionType.ARCCOS, toMathObject(ast.get(1)));
         if (ast.isLog())
-            return new MathOperationFunction(FunctionType.LN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.LN, toMathObject(ast.get(1)));
         throw new ParseException(ast);
     }
 }

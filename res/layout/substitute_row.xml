@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/substitute_row_height"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/text_var_name"
+        android:layout_width="@dimen/substitute_var_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/substitute_margin"
+        android:layout_marginRight="@dimen/substitute_margin"
+       	android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:textSize="@dimen/substitute_text_size" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/substitute_arrow"
+        android:contentDescription="@string/substitute" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/substitute_row_height"
+        android:layout_marginLeft="@dimen/substitute_margin"
+        android:layout_marginRight="@dimen/substitute_margin"
+        android:gravity="center_vertical"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:requiresFadingEdge="horizontal"
+        android:fillViewport="true" >
+
+        <TextView
+            android:id="@+id/text_var_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        	android:layout_gravity="center_vertical"
+        	android:gravity="left|center_vertical"
+        	android:textSize="@dimen/substitute_text_size" />
+        
+    </HorizontalScrollView>
+
+</LinearLayout>

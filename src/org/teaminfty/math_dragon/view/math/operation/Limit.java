@@ -1,7 +1,9 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation;
 
 import java.util.Arrays;
 
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Operation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -14,7 +16,7 @@ import android.graphics.Rect;
  * 
  * @author Folkert van Verseveld
  */
-public class MathOperationLimit extends MathOperation
+public class Limit extends Operation
 {
     public static final String TYPE = "limit";
     
@@ -23,13 +25,13 @@ public class MathOperationLimit extends MathOperation
      * @param end The value that <tt>start</tt> should approach
      * @param expression The expression to calculate the limit of
      */
-    public MathOperationLimit(MathObject start, MathObject end, MathObject expression)
+    public Limit(Expression start, Expression end, Expression expression)
     {
         super(Arrays.asList(start, end, expression));
     }
     
     /** Default constructor */
-    public MathOperationLimit()
+    public Limit()
     { this(null, null, null); }
     
     public String toString()
@@ -42,7 +44,7 @@ public class MathOperationLimit extends MathOperation
      * @return A mathematical expression indicating the start state.
      * @see #getEnd()
      */
-    public MathObject getStart()
+    public Expression getStart()
     {
         return getChild(0);
     }
@@ -52,7 +54,7 @@ public class MathOperationLimit extends MathOperation
      * @return A mathematical expression indicating the end state.
      * @see #getStart()
      */
-    public MathObject getEnd()
+    public Expression getEnd()
     {
         return getChild(1);
     }
@@ -61,7 +63,7 @@ public class MathOperationLimit extends MathOperation
      * Retrieve the mathematical expression the limit manipulates upon.
      * @return A mathematical expression.
      */
-    public MathObject getExpression()
+    public Expression getExpression()
     {
         return getChild(2);
     }
@@ -70,7 +72,7 @@ public class MathOperationLimit extends MathOperation
      * Assign a mathematical expression indicating the start state of this limit.
      * @param start The start state.
      */
-    public void setStart(MathObject start)
+    public void setStart(Expression start)
     {
         setChild(0, start);
     }
@@ -79,7 +81,7 @@ public class MathOperationLimit extends MathOperation
      * Assign a mathematical expression indicating the end state of this limit.
      * @param end The end state.
      */
-    public void setEnd(MathObject end)
+    public void setEnd(Expression end)
     {
         setChild(1, end);
     }
@@ -88,7 +90,7 @@ public class MathOperationLimit extends MathOperation
      * Assign a mathematical expression that this limit manipulates.
      * @param expr A mathematical expression.
      */
-    public void setExpression(MathObject expr)
+    public void setExpression(Expression expr)
     {
         setChild(2, expr);
     }

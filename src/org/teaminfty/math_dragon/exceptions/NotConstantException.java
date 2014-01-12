@@ -1,9 +1,9 @@
 package org.teaminfty.math_dragon.exceptions;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.Expression;
 
 /**
- * An exception that is thrown when a {@link MathObject} is expected to be
+ * An exception that is thrown when a {@link Expression} is expected to be
  * constant but it is not
  */
 public class NotConstantException extends MathException

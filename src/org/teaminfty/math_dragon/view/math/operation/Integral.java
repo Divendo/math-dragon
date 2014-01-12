@@ -1,6 +1,10 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation;
 
 import org.teaminfty.math_dragon.view.TypefaceHolder;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.Operation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -10,7 +14,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public class MathOperationIntegral extends MathOperation
+public class Integral extends Operation
 {
 
 	protected Paint operatorPaint = new Paint();
@@ -21,33 +25,33 @@ public class MathOperationIntegral extends MathOperation
 	final int maxFontSize = 500;
 	final String integralSign = "\u222B"; // Unicode for the integral sign
 	
-	public MathOperationIntegral()
+	public Integral()
 	{
-		children.add(new MathObjectEmpty());
-		children.add(new MathObjectEmpty());
-		children.add(new MathObjectEmpty());
-		children.add(new MathObjectEmpty());
+		children.add(new Empty());
+		children.add(new Empty());
+		children.add(new Empty());
+		children.add(new Empty());
 		
         initPaint();
 	}
 	
-	public MathOperationIntegral( MathObject integrate, MathObject over)
+	public Integral( Expression integrate, Expression over)
 	{
-		children.add(new MathObjectEmpty());
-        children.add(new MathObjectEmpty());
-        children.add(new MathObjectEmpty());
-		children.add(new MathObjectEmpty());
+		children.add(new Empty());
+        children.add(new Empty());
+        children.add(new Empty());
+		children.add(new Empty());
 		
 		set(integrate, over);
         initPaint();
 	}
 	
-	public MathOperationIntegral( MathObject integrate, MathObject over, MathObject from, MathObject to)
+	public Integral( Expression integrate, Expression over, Expression from, Expression to)
 	{
-		children.add(new MathObjectEmpty());
-        children.add(new MathObjectEmpty());
-        children.add(new MathObjectEmpty());
-        children.add(new MathObjectEmpty());
+		children.add(new Empty());
+        children.add(new Empty());
+        children.add(new Empty());
+        children.add(new Empty());
         
 		set(integrate, over, from, to);
 		initPaint();
@@ -61,14 +65,14 @@ public class MathOperationIntegral extends MathOperation
 	
 	public String toString()
 	{
-		if(getIntegrateFrom() instanceof MathObjectEmpty && getIntegrateTo() instanceof MathObjectEmpty)
+		if(getIntegrateFrom() instanceof Empty && getIntegrateTo() instanceof Empty)
 			return "Integrate(" + getIntegratePart().toString() + "," + getIntegrateOver().toString() + ")";
 		else
 			return "Integrate(" + getIntegratePart().toString() + ",{" + getIntegrateOver().toString() + "," + getIntegrateFrom().toString() + "," + getIntegrateTo().toString() + "})";
 	}
 
     public int getPrecedence()
-    { return MathObjectPrecedence.FUNCTION; }
+    { return Precedence.FUNCTION; }
 	
 	public Rect[] getSizes()
 	{
@@ -260,14 +264,14 @@ public class MathOperationIntegral extends MathOperation
 		return Math.max( 0, Math.max( sizes[6].width(), sizes[7].width()) - sizes[0].width()) / 2;
 	}
 	
-	public void set(MathObject integrate, MathObject over)
+	public void set(Expression integrate, Expression over)
     {
 		// Only set the integrate child and the child to integrate over
         setChild(0, integrate);
         setChild(1, over);
     }
 	
-	public void set(MathObject integrate, MathObject over, MathObject from, MathObject to)
+	public void set(Expression integrate, Expression over, Expression from, Expression to)
     {
 		// Set all the children
         set(integrate, over);
@@ -276,19 +280,19 @@ public class MathOperationIntegral extends MathOperation
     }
 	
 	/** Returns the child that should be integrated */
-	public MathObject getIntegratePart()
+	public Expression getIntegratePart()
 	{ return getChild(0); }
 
     /** Returns the child over which should be integrated */
-    public MathObject getIntegrateOver()
+    public Expression getIntegrateOver()
     { return getChild(1); }
     
     /** Returns the child from whose value should be integrated */
-    public MathObject getIntegrateFrom()
+    public Expression getIntegrateFrom()
     { return getChild(2); }
 
     /** Returns the child to whose value should be integrated */
-    public MathObject getIntegrateTo()
+    public Expression getIntegrateTo()
     { return getChild(3); }
 	
 	@Override
@@ -312,15 +316,15 @@ public class MathOperationIntegral extends MathOperation
 	@Override
 	protected void writeChildrenToXML(Document doc, Element el)
 	{
-	    for(MathObject child : children)
+	    for(Expression child : children)
 	        child.writeToXML(doc, el);
 	}
 
 	@Override
     public boolean isCompleted()
     {
-	    if(getIntegratePart() instanceof MathObjectEmpty || getIntegrateOver() instanceof MathObjectEmpty)
+	    if(getIntegratePart() instanceof Empty || getIntegrateOver() instanceof Empty)
 	        return false;
-        return !(getIntegrateFrom() instanceof MathObjectEmpty ^ getIntegrateTo() instanceof MathObjectEmpty);
+        return !(getIntegrateFrom() instanceof Empty ^ getIntegrateTo() instanceof Empty);
     }
 }

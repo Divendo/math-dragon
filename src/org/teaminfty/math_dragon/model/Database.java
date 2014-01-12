@@ -16,8 +16,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.teaminfty.math_dragon.exceptions.ParseException;
-import org.teaminfty.math_dragon.view.math.MathFactory;
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 
 import android.content.ContentValues;
@@ -30,12 +31,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-public class FormulaDatabase extends SQLiteOpenHelper
+public class Database extends SQLiteOpenHelper
 {
     /** The database name */
     private static final String DATABASE_NAME = "formula_database";
     /** The database version */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     
     /** The information about the formulas table */
     public static final class TABLE_FORMULAS
@@ -43,7 +44,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
         /** The name of the table */
         public static final String NAME = "formulas";
         
-        /** The ID of a formula */
+        /** The ID of the formula */
         public static final String ID = "id";
         /** The name of the formula */
         public static final String FORMULA_NAME = "name";
@@ -51,7 +52,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
         public static final String LAST_CHANGE = "last_change";
         /** An image of the formula (PNG format) */
         public static final String IMAGE = "img";
-        /** The actual {@link MathObject} stored as a XML string */
+        /** The actual {@link Expression} stored as a XML string */
         public static final String MATH_OBJECT = "math_object";
         
         /** The size of the formula image (in pixels) */
@@ -62,7 +63,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
     public static class Formula
     {
         /** Constructor */
-        public Formula(int id, String name, long lastChange, Bitmap bmp, MathObject mathObject)
+        public Formula(int id, String name, long lastChange, Bitmap bmp, Expression mathObject)
         {
             this.id = id;
             this.name = name;
@@ -76,7 +77,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
          * @param name The name of the formula
          * @param datetime The last time the formula was changed as a string (format: yyyy-mm-dd hh:mm:ss)
          * @param bmp The bitmap as a byte array (PNG format)
-         * @param xml The {@link MathObject} as a XML string */
+         * @param xml The {@link Expression} as a XML string */
         public Formula(int id, String name, String datetime, byte[] bmp, byte[] xml)
         {
             // Set the ID and name
@@ -103,7 +104,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
             {
                 try
                 {
-                    mathObject = MathFactory.fromXML(xml);
+                    mathObject = ExpressionXMLReader.fromXML(xml);
                 }
                 catch(ParseException e)
                 {
@@ -122,11 +123,64 @@ public class FormulaDatabase extends SQLiteOpenHelper
         /** The image of the formula (can be <tt>null</tt>) */
         public Bitmap bmp = null;
         /** The math object of the formula (can be <tt>null</tt>) */
-        public MathObject mathObject = null;
+        public Expression mathObject = null;
+    }
+    
+    /** The information about the substitutions table */
+    public static final class TABLE_SUBSTITUTIONS
+    {
+        /** The name of the table */
+        public static final String NAME = "substitutions";
+
+        /** The name of the variable that is to be substituted (saved as an integer in the format <tt>name - 'a'</tt>) */
+        public static final String VAR_NAME = "var_name";
+        /** A {@link MathSymbol} stored as a XML string that represents the value of the substitution */
+        public static final String VALUE = "value";
+    }
+    
+    /** Represents substitution */
+    public static final class Substitution
+    {
+        /** Constructor */
+        public Substitution(char name, Symbol value)
+        {
+            this.name = name;
+            this.value = value;
+        }
+        
+        /** Constructor for construction from raw data
+         * @param name The name of the variable
+         * @param xml The {@link MathSymbol} as a XML string */
+        public Substitution(int name, byte[] xml)
+        {
+            // Set the name
+            this.name = (char) (name + 'a');
+
+            // Read the XML
+            if(xml != null)
+            {
+                try
+                {
+                    Expression tmp = ExpressionXMLReader.fromXML(xml);
+                    if(tmp instanceof Symbol)
+                        value = (Symbol) tmp;
+                }
+                catch(ParseException e)
+                {
+                    // TODO Auto-generated catch block (when an error occurs during the conversion from the XML document to a MathObject)
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        /** The name of the variable to substitute */
+        public char name = 'a';
+        /** The value to substitute for the variable (<tt>null</tt> means no substitution) */
+        public Symbol value = null;
     }
     
     /** Constructor */
-    public FormulaDatabase(Context ctx)
+    public Database(Context ctx)
     {
         super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -142,13 +196,21 @@ public class FormulaDatabase extends SQLiteOpenHelper
                         TABLE_FORMULAS.IMAGE + " BLOB NOT NULL," +
                         TABLE_FORMULAS.MATH_OBJECT + " BLOB NOT NULL" +
                    ")");
+        
+        // Create a table for the substitutions
+        db.execSQL("CREATE TABLE " + TABLE_SUBSTITUTIONS.NAME + " (" +
+                        TABLE_SUBSTITUTIONS.VAR_NAME + " INTEGER NOT NULL PRIMARY KEY," +
+                        TABLE_SUBSTITUTIONS.VALUE+ " BLOB NOT NULL" +
+                   ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        if(oldVersion == 1 && newVersion == 2)
+        if(oldVersion == 1 && newVersion >= 2)
             upgradeV1toV2(db);
+        if(oldVersion <= 2 && newVersion >= 3)
+            upgradeV2toV3(db);
     }
     
     /** Upgrades the database from version 1 to version 2
@@ -157,11 +219,22 @@ public class FormulaDatabase extends SQLiteOpenHelper
     {
         // Add the name column
         db.execSQL("ALTER TABLE " + TABLE_FORMULAS.NAME + " " +
-                   "ADD COLUMN " + TABLE_FORMULAS.FORMULA_NAME + " TEXT NOT NULL AFTER " + TABLE_FORMULAS.ID);
+                   "ADD COLUMN " + TABLE_FORMULAS.FORMULA_NAME + " TEXT NOT NULL DEFAULT ''");
+    }
+
+    /** Upgrades the database from version 2 to version 3
+     * @param db The database to upgrade */
+    private void upgradeV2toV3(SQLiteDatabase db)
+    {
+        // Create a table for the substitutions
+        db.execSQL("CREATE TABLE " + TABLE_SUBSTITUTIONS.NAME + " (" +
+                        TABLE_SUBSTITUTIONS.VAR_NAME + " INTEGER NOT NULL PRIMARY KEY," +
+                        TABLE_SUBSTITUTIONS.VALUE+ " BLOB NOT NULL" +
+                   ")");
     }
 
     /** Returns a list of all formulas in the database.
-     * Each of the formulas have their {@link MathObject} set to <tt>null</tt>.
+     * Each of the formulas have their {@link Expression} set to <tt>null</tt>.
      * @return The list of formulas */
     public ArrayList<Formula> getAllFormulas()
     {
@@ -213,13 +286,13 @@ public class FormulaDatabase extends SQLiteOpenHelper
     /** The ID that's used for inserting a formula into the database */
     public static final int INSERT_ID = 0;
     
-    /** Save the {@link MathObject} as a formula with the given ID.
-     * @param id The ID of the formula to overwrite, or {@link FormulaDatabase#INSERT_ID INSERT_ID} to create a new entry
+    /** Save the {@link Expression} as a formula with the given ID.
+     * @param id The ID of the formula to overwrite, or {@link Database#INSERT_ID INSERT_ID} to create a new entry
      * @param name The name of the formula to save
-     * @param mathObject The {@link MathObject} that is to be stored
+     * @param mathObject The {@link Expression} that is to be stored
      * @return Whether the formula was saved successfully or not
      */
-    public boolean saveFormula(int id, String name, MathObject mathObject)
+    public boolean saveFormula(int id, String name, Expression mathObject)
     {
         // Create a ContentValues instance we're going to pass to the database
         ContentValues values = new ContentValues(4);
@@ -254,7 +327,7 @@ public class FormulaDatabase extends SQLiteOpenHelper
         try
         {
             // Convert the MathObject to a XML document
-            Document doc = MathObject.createXMLDocument();
+            Document doc = Expression.createXMLDocument();
             mathObject.writeToXML(doc, doc.getDocumentElement());
             
             // Convert the XML document to a byte array and add it to the ContentValues instance
@@ -296,7 +369,149 @@ public class FormulaDatabase extends SQLiteOpenHelper
 
             // Close the database connection and return whether we've inserted the formula successfully
             db.close();
-            return result != 1;
+            return result == 1;
+        }
+    }
+    
+    /** Returns an array containing all substitutions */
+    public Substitution[] getAllSubstitutions()
+    {
+        // Open a connection to the database
+        SQLiteDatabase db = getReadableDatabase();
+        
+        // Get a cursor for all substitutions in the database
+        Cursor cursor = db.query(TABLE_SUBSTITUTIONS.NAME,
+                new String[]{ TABLE_SUBSTITUTIONS.VAR_NAME, TABLE_SUBSTITUTIONS.VALUE },
+                null, null, null, null, TABLE_SUBSTITUTIONS.VAR_NAME + " ASC");
+        
+        // Create an array large enough to contain all substitutions
+        Substitution out[] = new Substitution[cursor.getCount()];
+        
+        // Add all substitutions to the array
+        for(int i = 0; cursor.moveToNext(); ++i)
+            out[i] = new Substitution(cursor.getInt(0), cursor.getBlob(1));
+
+        // Close the database connection
+        db.close();
+        
+        // Return the created list
+        return out;
+    }
+    
+    /** Returns the substitution for the given variable
+     * @param varName The variable to check for
+     * @return The substitution if it exists, <tt>null</tt> otherwise */
+    public Substitution getSubstitution(char varName)
+    {
+        // Open a connection to the database
+        SQLiteDatabase db = getReadableDatabase();
+        
+        // Get a cursor to check whether the requested substitution exists
+        final int varNameInt = varName - 'a';
+        Cursor cursor = db.query(TABLE_SUBSTITUTIONS.NAME, new String[]{ TABLE_SUBSTITUTIONS.VAR_NAME, TABLE_SUBSTITUTIONS.VALUE },
+                TABLE_SUBSTITUTIONS.VAR_NAME + " = " + Integer.toString(varNameInt), null, null, null, null);
+        
+        // Check if the substitution exists
+        if(!cursor.moveToFirst()) return null;
+        
+        // Construct and return the substitution
+        return new Substitution(cursor.getInt(0), cursor.getBlob(1));
+    }
+    
+    /** Returns whether a substitution for the given variable exists
+     * @param varName The variable to check for
+     * @return <tt>true</tt> if a substitution exists, <tt>false</tt> otherwise */
+    public boolean substitutionExists(char varName)
+    {
+        // Open a connection to the database
+        SQLiteDatabase db = getReadableDatabase();
+        
+        // Get a cursor to check whether the requested substitution exists
+        final int varNameInt = varName - 'a';
+        Cursor cursor = db.query(TABLE_SUBSTITUTIONS.NAME, new String[]{ TABLE_SUBSTITUTIONS.VAR_NAME },
+                TABLE_SUBSTITUTIONS.VAR_NAME + " = " + Integer.toString(varNameInt), null, null, null, null);
+        
+        // Determine whether or not the substitution exists
+        final boolean exists = cursor.getCount() != 0;
+        
+        // Close the database connection and return the result
+        db.close();
+        return exists;
+    }
+    
+    /** Saves the given substitution
+     * @param sub The substitution to save
+     * @return <tt>true</tt> if the substitution was saved succesful, <tt>false</tt> otherwise */
+    public boolean saveSubstitution(Substitution sub)
+    {
+        // Get the variable name as an integer
+        final int varName = sub.name - 'a';
+        
+        // Determine whether or not the substitution already exists
+        final boolean subExists = substitutionExists(sub.name);
+        
+        // Check if we're deleting the substitution
+        if(sub.value == null)
+        {
+            // If the substitution doesn't exist, we don't have anything to do
+            if(subExists) return true;
+            
+            // Open a connection to the database
+            SQLiteDatabase db = getWritableDatabase();
+            final int count = db.delete(TABLE_SUBSTITUTIONS.NAME, TABLE_SUBSTITUTIONS.VAR_NAME + " = " + Integer.toString(varName), null);
+            db.close();
+            return count != 0;
+        }
+        
+        // Create a ContentValues instance we're going to pass to the database
+        ContentValues values = new ContentValues(2);
+        
+        // Add the name to the ContentValues instance
+        values.put(TABLE_SUBSTITUTIONS.VAR_NAME, varName);
+        
+        // Write the value to a XML document
+        try
+        {
+            // Convert the MathObject to a XML document
+            Document doc = Expression.createXMLDocument();
+            sub.value.writeToXML(doc, doc.getDocumentElement());
+            
+            // Convert the XML document to a byte array and add it to the ContentValues instance
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            transformer.transform(new DOMSource(doc), new StreamResult(byteStream));
+            values.put(TABLE_SUBSTITUTIONS.VALUE, byteStream.toByteArray());
+        }
+        catch(ParserConfigurationException e)
+        { return false; }
+        catch(TransformerConfigurationException e)
+        { /* Never thrown, ignore */ }
+        catch(TransformerFactoryConfigurationError e)
+        { return false; }
+        catch(TransformerException e)
+        { return false; }
+        
+        // Open a connection to the database
+        SQLiteDatabase db = getWritableDatabase();
+        
+        // Determine if we've to insert or update a formula
+        if(subExists)
+        {
+            // Update the substitution
+            final long result = db.update(TABLE_SUBSTITUTIONS.NAME, values, TABLE_SUBSTITUTIONS.VAR_NAME + " = " + Integer.toString(varName), null);
+
+            // Close the database connection and return whether we've inserted the formula successfully
+            db.close();
+            return result == 1;
+        }
+        else
+        {
+            // Insert the substitution
+            final long result = db.insert(TABLE_SUBSTITUTIONS.NAME, null, values);
+
+            // Close the database connection and return whether we've inserted the formula successfully
+            db.close();
+            return result != -1;
         }
     }
 }
