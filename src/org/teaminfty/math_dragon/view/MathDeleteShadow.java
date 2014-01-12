@@ -1,7 +1,7 @@
 package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.Expression;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -13,8 +13,8 @@ import android.view.View.DragShadowBuilder;
 
 public class MathDeleteShadow extends DragShadowBuilder
 {
-    /** The {@link MathObject} that is being dragged */
-    private MathObject expression = null;
+    /** The {@link Expression} that is being dragged */
+    private Expression expression = null;
     
     /** The paint that's used to draw the question */
     private Paint paint = new Paint();
@@ -26,9 +26,9 @@ public class MathDeleteShadow extends DragShadowBuilder
     private int padding = 0;
 
     /** Constructor
-     * @param mo The {@link MathObject} that is to be dragged
+     * @param mo The {@link Expression} that is to be dragged
      * @param res A {@link Resources} object to load resources */
-    public MathDeleteShadow(MathObject mo, Resources res)
+    public MathDeleteShadow(Expression mo, Resources res)
     {
         expression = mo;
         expression.setLevel(0);
@@ -38,9 +38,9 @@ public class MathDeleteShadow extends DragShadowBuilder
         padding = res.getDimensionPixelSize(R.dimen.delete_shadow_padding);
     }
     
-    /** Returns the {@link MathObject} in this shadow
-     * @return The {@link MathObject} in this shadow */
-    public MathObject getMathObject()
+    /** Returns the {@link Expression} in this shadow
+     * @return The {@link Expression} in this shadow */
+    public Expression getMathObject()
     { return expression; }
     
     @Override

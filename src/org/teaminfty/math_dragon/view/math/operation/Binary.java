@@ -1,6 +1,10 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation;
 
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Operation;
+import org.teaminfty.math_dragon.view.math.operation.binary.Linear;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -10,21 +14,21 @@ import android.graphics.Rect;
  * This class draws binary operations and provides simply functions to modify
  * both mathematical expressions.
  * @author Folkert van Verseveld
- * @see MathBinaryOperationLinear
+ * @see Linear
  */
 
-public abstract class MathBinaryOperation extends MathOperation
+public abstract class Binary extends Operation
 {	
-    public MathBinaryOperation()
+    public Binary()
     {
         this(null, null);
     }
 
-    public MathBinaryOperation(MathObject left, MathObject right)
+    public Binary(Expression left, Expression right)
     {
         // We have two children
-        children.add(new MathObjectEmpty());
-        children.add(new MathObjectEmpty());
+        children.add(new Empty());
+        children.add(new Empty());
         
         // Set the left and right child
         set(left, right);
@@ -57,7 +61,7 @@ public abstract class MathBinaryOperation extends MathOperation
      * @param right
      *        The mathematical expression to the right.
      */
-    public void set(MathObject left, MathObject right)
+    public void set(Expression left, Expression right)
     {
         setChild(0, left);
         setChild(1, right);
@@ -69,7 +73,7 @@ public abstract class MathBinaryOperation extends MathOperation
      * @param o
      *        The mathematical expression.
      */
-    public void setLeft(MathObject o)
+    public void setLeft(Expression o)
     {
         setChild(0, o);
     }
@@ -80,7 +84,7 @@ public abstract class MathBinaryOperation extends MathOperation
      * 
      * @return The mathematical expression to the left.
      */
-    public MathObject getLeft()
+    public Expression getLeft()
     {
         return getChild(0);
     }
@@ -91,7 +95,7 @@ public abstract class MathBinaryOperation extends MathOperation
      * @param o
      *        The mathematical expression.
      */
-    public void setRight(MathObject o)
+    public void setRight(Expression o)
     {
         setChild(1, o);
     }
@@ -102,7 +106,7 @@ public abstract class MathBinaryOperation extends MathOperation
      * 
      * @return The mathematical expression to the right.
      */
-    public MathObject getRight()
+    public Expression getRight()
     {
         return getChild(1);
     }

@@ -18,13 +18,13 @@ import android.graphics.Rect;
 import android.util.Log;
 
 /** This class represents a mathematical object that can be drawn */
-public abstract class MathObject
+public abstract class Expression
 {
     /** The line width that is to be used to draw operators */
     public static float lineWidth = 2.0f;
     
-    /** The children of this {@link MathObject} */
-    protected ArrayList<MathObject> children = new ArrayList<MathObject>();
+    /** The children of this {@link Expression} */
+    protected ArrayList<Expression> children = new ArrayList<Expression>();
 
     /** The default height of an object */
     protected int defaultHeight = 100;
@@ -43,12 +43,12 @@ public abstract class MathObject
      * @return The precedence
      */
     public int getPrecedence()
-    { return MathObjectPrecedence.HIGHEST; }
+    { return Precedence.HIGHEST; }
 
     /**
-     * Returns the number of children this {@link MathObject} has
+     * Returns the number of children this {@link Expression} has
      * 
-     * @return The number of children this {@link MathObject} has
+     * @return The number of children this {@link Expression} has
      */
     public int getChildCount()
     { return children.size(); }
@@ -62,7 +62,7 @@ public abstract class MathObject
      * @throws IndexOutOfBoundsException
      *         thrown when the index number is invalid (i.e. out of range).
      */
-    public MathObject getChild(int index) throws IndexOutOfBoundsException
+    public Expression getChild(int index) throws IndexOutOfBoundsException
     { return children.get(index); }
 
     /**
@@ -71,18 +71,18 @@ public abstract class MathObject
      * @param index
      *        The index of the child that is to be changed
      * @param child
-     *        The {@link MathObject} that should become the child at the given index
+     *        The {@link Expression} that should become the child at the given index
      * @throws IndexOutOfBoundsException
      *         thrown when the index number is invalid (i.e. out of range).
      */
-    public void setChild(int index, MathObject child) throws IndexOutOfBoundsException
+    public void setChild(int index, Expression child) throws IndexOutOfBoundsException
     {
         // Check the child index
         checkChildIndex(index);
         
         // Create an MathObjectEmpty if null is given
         if(child == null)
-            child = new MathObjectEmpty();
+            child = new Empty();
         
         // Set the child
         children.set(index, child);
@@ -92,12 +92,12 @@ public abstract class MathObject
         setDefaultHeight(defaultHeight);
     }
     
-    /** Returns the default height for this {@link MathObject}
-     * @return The default height for this {@link MathObject} */
+    /** Returns the default height for this {@link Expression}
+     * @return The default height for this {@link Expression} */
     public int getDefaultHeight()
     { return defaultHeight; }
     
-    /** Sets the default height for this {@link MathObject} and all of its children
+    /** Sets the default height for this {@link Expression} and all of its children
      * @param height The default height */
     public void setDefaultHeight(int height)
     {
@@ -105,20 +105,20 @@ public abstract class MathObject
         defaultHeight = height;
         
         // Pass the new default height to all children
-        for(MathObject child : children)
+        for(Expression child : children)
             child.setDefaultHeight(defaultHeight);
     }
 
     /**
-     * Returns the bounding boxes of the operator of this {@link MathObject}.
+     * Returns the bounding boxes of the operator of this {@link Expression}.
      * The aspect ratio of the bounding boxes should always be the same.
      * 
      * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
+     *        The maximum width the {@link Expression} can have (can be
+     *        {@link Expression#NO_MAXIMUM})
      * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be
-     *        {@link MathObject#NO_MAXIMUM})
+     *        The maximum height the {@link Expression} can have (can be
+     *        {@link Expression#NO_MAXIMUM})
      * @return An array containing the requested bounding boxes
      */
     public abstract Rect[] getOperatorBoundingBoxes();
@@ -136,10 +136,10 @@ public abstract class MathObject
     public abstract Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException;
 
     /**
-     * Returns the bounding box for the entire {@link MathObject}.
+     * Returns the bounding box for the entire {@link Expression}.
      * The aspect ratio of the box should always be the same.
      * 
-     * @return The bounding box for the entire {@link MathObject}
+     * @return The bounding box for the entire {@link Expression}
      */
     public Rect getBoundingBox()
     {
@@ -189,10 +189,10 @@ public abstract class MathObject
     }
 
     /**
-     * Draws the {@link MathObject}
+     * Draws the {@link Expression}
      * 
      * @param canvas
-     *        The canvas to draw the {@link MathObject} on
+     *        The canvas to draw the {@link Expression} on
      */
     public abstract void draw(Canvas canvas);
     
@@ -261,8 +261,8 @@ public abstract class MathObject
     	return Color.BLACK;
     }
     
-    /** Returns the centre of the {@link MathObject}
-     * @return The centre of the {@link MathObject}
+    /** Returns the centre of the {@link Expression}
+     * @return The centre of the {@link Expression}
      */
     public Point getCenter()
     {
@@ -270,12 +270,12 @@ public abstract class MathObject
     	return new Point(bounding.centerX(), bounding.centerY());
     }
     
-	/** Sets the new level for this {@link MathObject} and all of its children
+	/** Sets the new level for this {@link Expression} and all of its children
 	 * @param l The new level */
 	public void setLevel(int l)
 	{
 		level = l;
-		for(MathObject child : children)
+		for(Expression child : children)
 			child.setLevel(l);
 	}
     
@@ -283,7 +283,7 @@ public abstract class MathObject
     private final static boolean DRAW_BOUNDING = true;
     
     /** Draws the bounding box and the bounding boxes of the children (for debug purposes).
-     * The boxes will only be drawn if {@link MathObject#DRAW_BOUNDING DRAW_BOUNDING} is set to true.
+     * The boxes will only be drawn if {@link Expression#DRAW_BOUNDING DRAW_BOUNDING} is set to true.
      * @param canvas The canvas to draw on
      */
     protected void drawBoundingBoxes(Canvas canvas)
@@ -306,7 +306,7 @@ public abstract class MathObject
     /** The current version of the XML structure */
     public static final int XML_VERSION = 1;
     
-    /** Creates an empty XML document that can be used for the {@link MathObject#writeToXML(Document, Element) writeToXML()} method
+    /** Creates an empty XML document that can be used for the {@link Expression#writeToXML(Document, Element) writeToXML()} method
      * @return The created document 
      * @throws ParserConfigurationException If something goes wrong while creating the document */
     public static Document createXMLDocument() throws ParserConfigurationException
@@ -332,7 +332,7 @@ public abstract class MathObject
     public void writeToXML(Document doc, Element parent)
     {
     	Log.w("XML", "not a writable element yet");
-    	parent.appendChild(doc.createElement(MathObjectEmpty.NAME));
+    	parent.appendChild(doc.createElement(Empty.NAME));
     }
     
     /**
@@ -341,12 +341,12 @@ public abstract class MathObject
      */
     public boolean isCompleted()
     {
-        if(this instanceof MathObjectEmpty)
+        if(this instanceof Empty)
             return false;
         
-        for(MathObject child : children)
+        for(Expression child : children)
         {
-            if(child instanceof MathObjectEmpty || !child.isCompleted())
+            if(child instanceof Empty || !child.isCompleted())
                 return false;
         }
         

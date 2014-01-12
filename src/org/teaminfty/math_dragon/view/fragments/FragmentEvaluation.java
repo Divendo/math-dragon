@@ -14,8 +14,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.MathView;
-import org.teaminfty.math_dragon.view.math.MathFactory;
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.w3c.dom.Document;
 
 import android.app.DialogFragment;
@@ -35,8 +35,8 @@ public class FragmentEvaluation extends DialogFragment
     /** The {@link MathView} in this fragment */
     private MathView mathView = null;
     
-    /** The {@link MathObject} to show when the {@link MathView} is created */
-    private MathObject showMathObject = null;
+    /** The {@link Expression} to show when the {@link MathView} is created */
+    private Expression showMathObject = null;
     
     /** The evaluation type, <tt>true</tt> if an exact evaluation is shown, <tt>false</tt> for an approximation */
     private boolean exactEvaluation = true;
@@ -60,7 +60,7 @@ public class FragmentEvaluation extends DialogFragment
         {
             try
             {
-                mathView.setMathObject(MathFactory.fromXML(savedInstanceState.getString(BUNDLE_MATH_EXPRESSION)));
+                mathView.setMathObject(ExpressionXMLReader.fromXML(savedInstanceState.getString(BUNDLE_MATH_EXPRESSION)));
             }
             catch(ParseException e)
             {
@@ -99,7 +99,7 @@ public class FragmentEvaluation extends DialogFragment
             try
             {
                 // Convert the MathObject to a XML document
-                Document doc = MathObject.createXMLDocument();
+                Document doc = Expression.createXMLDocument();
                 mathView.getMathObject().writeToXML(doc, doc.getDocumentElement());
                 
                 // Convert the XML document to a string and add it to the list
@@ -119,9 +119,9 @@ public class FragmentEvaluation extends DialogFragment
         }
     }
     
-    /** Sets the {@link MathObject} that is to be shown
-     * @param mathObject The {@link MathObject} that is to be shown */
-    public void showMathObject(MathObject mathObject)
+    /** Sets the {@link Expression} that is to be shown
+     * @param mathObject The {@link Expression} that is to be shown */
+    public void showMathObject(Expression mathObject)
     {
     	if(mathView == null)
     	    showMathObject = mathObject;

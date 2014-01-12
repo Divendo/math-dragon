@@ -1,26 +1,26 @@
 package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-import org.teaminfty.math_dragon.view.math.MathOperationPower;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-/** A class that represents a source for new {@link MathOperationPower}s in the drag-and-drop interface */
+/** A class that represents a source for new {@link Power}s in the drag-and-drop interface */
 public class MathSourceOperationPower extends MathSourceObject
 {
     @Override
-    public MathObject createMathObject()
-    { return new MathOperationPower(); }
+    public Expression createMathObject()
+    { return new Power(); }
 
     @Override
     public void draw(Canvas canvas, int w, int h)
     {
         // Get a boxes that fit the given width and height (we'll use it to draw the empty boxes)
         // We'll want one big and one small (2/3 times the big one) box
-        Rect bigBox = getRectBoundingBox(3 * w / 5, 3 * h / 5, MathObjectEmpty.RATIO);
-        Rect smallBox = getRectBoundingBox(2 * w / 5, 2 * h / 5, MathObjectEmpty.RATIO);
+        Rect bigBox = getRectBoundingBox(3 * w / 5, 3 * h / 5, Empty.RATIO);
+        Rect smallBox = getRectBoundingBox(2 * w / 5, 2 * h / 5, Empty.RATIO);
         
         // Position the boxes
         bigBox.offsetTo((w - bigBox.width() - smallBox.width()) / 2, (h - bigBox.height() - smallBox.height()) / 2 + smallBox.height());

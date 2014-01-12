@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import org.teaminfty.math_dragon.view.math.operation.Binary;
+import org.teaminfty.math_dragon.view.math.operation.binary.Linear;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -12,10 +14,10 @@ import org.w3c.dom.Element;
  * mathematical expressions.
  * 
  * @author Folkert van Verseveld
- * @see MathBinaryOperation
- * @see MathBinaryOperationLinear
+ * @see Binary
+ * @see Linear
  */
-public abstract class MathOperation extends MathObject
+public abstract class Operation extends Expression
 {
     public static final String NAME = "operation";
     public static final String ATTR_OPERANDS = "operands";
@@ -26,7 +28,7 @@ public abstract class MathOperation extends MathObject
      * 
      * @see #MathOperation(int)
      */
-    protected MathOperation()
+    protected Operation()
     {
         this(1);
     }
@@ -40,7 +42,7 @@ public abstract class MathOperation extends MathObject
      * @param operands
      *        The number of operands.
      */
-    protected MathOperation(int operands)
+    protected Operation(int operands)
     {
         if(operands < 1)
         {
@@ -50,7 +52,7 @@ public abstract class MathOperation extends MathObject
         this.children.ensureCapacity(operands);
     }
     
-    protected MathOperation(List<MathObject> list)
+    protected Operation(List<Expression> list)
     {
         if (list == null)
             throw new NullPointerException("list");
@@ -63,16 +65,16 @@ public abstract class MathOperation extends MathObject
      * @param list
      *        The source collection.
      */
-    protected void set(List<MathObject> list)
+    protected void set(List<Expression> list)
     {
         if(list == null)
             throw new NullPointerException("list");
         
-        children = new ArrayList<MathObject>(list);
+        children = new ArrayList<Expression>(list);
         for(int i = 0; i < list.size(); ++i)
         {
             if(children.get(i) == null)
-                children.set(i, new MathObjectEmpty());
+                children.set(i, new Empty());
         }
     }
     

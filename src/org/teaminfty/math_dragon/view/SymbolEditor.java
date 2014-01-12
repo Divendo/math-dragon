@@ -8,37 +8,15 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class MathSymbolEditor extends View
+public class SymbolEditor extends View
 {
     /** An enum that represents the symbol we're currently editing */
     public enum EditingSymbol
     {
-        FACTOR((byte) 0), PI((byte) 1), E((byte) 2), I((byte) 3), VAR((byte) 4);
-        
-        private byte b;
-        
-        private EditingSymbol(byte b)
-        { this.b = b; }
-        
-        public byte toByte()
-        { return b; }
-        
-        public static EditingSymbol fromByte(byte b)
-        {
-            switch(b)
-            {
-                case 0: return FACTOR;
-                case 1: return PI;
-                case 2: return E;
-                case 3: return I;
-                case 4: return VAR;
-            }
-            return FACTOR;
-        }
+        FACTOR, PI, E, I, VAR
     }
     
     /** The factor of this symbol */
@@ -67,11 +45,14 @@ public class MathSymbolEditor extends View
     
     /** The paint that is used to draw the factor and the symbols */
     protected Paint paint = new Paint();
+
+    /** The paint that is used to draw the exponents */
+    protected Paint exponentPaint = new Paint();
     
     /** The text size factor for exponents */
     protected static final float EXPONENT_FACTOR = 1.0f / 2;
 
-    public MathSymbolEditor(Context context)
+    public SymbolEditor(Context context)
     {
         super(context);
         initPaints();
@@ -79,7 +60,7 @@ public class MathSymbolEditor extends View
             varPowers[i] = "";
     }
 
-    public MathSymbolEditor(Context context, AttributeSet attrs)
+    public SymbolEditor(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         initPaints();
@@ -87,7 +68,7 @@ public class MathSymbolEditor extends View
             varPowers[i] = "";
     }
 
-    public MathSymbolEditor(Context context, AttributeSet attrs, int defStyleAttr)
+    public SymbolEditor(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
         initPaints();
@@ -101,80 +82,6 @@ public class MathSymbolEditor extends View
         paint.setTypeface(TypefaceHolder.dejavuSans);
         paint.setAntiAlias(true);
         paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_font_size));
-    }
-    
-    /** The factor as a string */
-    private static final String BUNDLE_FACTOR = "factor";
-    /** The PI power as a string */
-    private static final String BUNDLE_PI_POW = "pi_pow";
-    /** Whether or not to show PI, as a boolean */
-    private static final String BUNDLE_PI_SHOW = "pi_show";
-    /** The E power as a string */
-    private static final String BUNDLE_E_POW = "e_pow";
-    /** Whether or not to show E, as a boolean */
-    private static final String BUNDLE_E_SHOW = "e_show";
-    /** The i power as a string */
-    private static final String BUNDLE_I_POW = "i_pow";
-    /** Whether or not to show i, as a boolean */
-    private static final String BUNDLE_I_SHOW = "i_show";
-    /** The powers of the variables as a string array */
-    private static final String BUNDLE_VAR_POWS = "var_pows";
-    /** Whether or not to show the variables as an boolean array */
-    private static final String BUNDLE_VAR_SHOW = "var_show";
-    
-    /** A byte containing which symbol we were editing */
-    private static final String BUNDLE_CURR_SYMBOL = "curr_symbol";
-    /** A char containing which variable we were editing */
-    private static final String BUNDLE_CURR_VAR = "curr_var";
-    
-    /** Saves the current state to a bundle
-     * @return The bundle containing the current state */
-    public Bundle toBundle()
-    {
-        // The bundle we're going to return
-        Bundle out = new Bundle();
-        
-        // Store all values
-        out.putString(BUNDLE_FACTOR, factor);
-        out.putString(BUNDLE_PI_POW, piPow);
-        out.putBoolean(BUNDLE_PI_SHOW, showPi);
-        out.putString(BUNDLE_E_POW, ePow);
-        out.putBoolean(BUNDLE_E_SHOW, showE);
-        out.putString(BUNDLE_I_POW, iPow);
-        out.putBoolean(BUNDLE_I_SHOW, showI);
-        out.putStringArray(BUNDLE_VAR_POWS, varPowers);
-        out.putBooleanArray(BUNDLE_VAR_SHOW, showVars);
-        
-        // Store the state
-        out.putByte(BUNDLE_CURR_SYMBOL, editingSymbol.toByte());
-        out.putChar(BUNDLE_CURR_VAR, currVar);
-        
-        // Return the result
-        return out;
-    }
-    
-    /** Loads the state from the given bundle
-     * @param bundle The bundle to load the state from */
-    public void fromBundle(Bundle bundle)
-    {
-        // Load the values
-        factor = bundle.getString(BUNDLE_FACTOR);
-        piPow = bundle.getString(BUNDLE_PI_POW);
-        showPi = bundle.getBoolean(BUNDLE_PI_SHOW);
-        ePow = bundle.getString(BUNDLE_E_POW);
-        showE = bundle.getBoolean(BUNDLE_E_SHOW);
-        iPow = bundle.getString(BUNDLE_I_POW);
-        showI = bundle.getBoolean(BUNDLE_I_SHOW);
-        varPowers = bundle.getStringArray(BUNDLE_VAR_POWS);
-        showVars = bundle.getBooleanArray(BUNDLE_VAR_SHOW);
-        
-        // Restore the state
-        editingSymbol = EditingSymbol.fromByte(bundle.getByte(BUNDLE_CURR_SYMBOL));
-        currVar = bundle.getChar(BUNDLE_CURR_VAR);
-        
-        // Redraw and recalculate the size
-        invalidate();
-        requestLayout();
     }
     
     /** Sets the variable we're currently editing.
@@ -346,7 +253,7 @@ public class MathSymbolEditor extends View
     
     /** Copies the values from the given {@link Symbol}
      * @param mathSymbol The {@link Symbol} to copy the values from */
-    public void fromMathSymbol(Symbol mathSymbol)
+    public void fromSymbol(Symbol mathSymbol)
     {
         // Reset all values
         reset();
@@ -404,9 +311,9 @@ public class MathSymbolEditor extends View
     
     /** Constructs a {@link Symbol} from the current values
      * @return The constructed {@link Symbol} */
-    public Symbol getMathSymbol()
+    public Symbol getSymbol()
     {
-        // The MathSymbol we're going to return
+        // The Symbol we're going to return
         Symbol out = new Symbol();
         
         // Set the factor
@@ -587,8 +494,8 @@ public class MathSymbolEditor extends View
         canvas.restore();
     }
 
-    /** Calculates the bounds of the text in this {@link MathSymbolEditor}
-     * @return The bounds of the text in this {@link MathSymbolEditor}
+    /** Calculates the bounds of the text in this {@link SymbolEditor}
+     * @return The bounds of the text in this {@link SymbolEditor}
      */
     protected Rect getTextBounds()
     {
