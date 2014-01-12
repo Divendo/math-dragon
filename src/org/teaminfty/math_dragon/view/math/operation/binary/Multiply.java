@@ -1,16 +1,19 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation.binary;
+
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Precedence;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-public class MathOperationMultiply extends MathBinaryOperationLinear
+public class Multiply extends Linear
 {
 	public static final String TYPE = "multiply";
 	
-    public MathOperationMultiply()
+    public Multiply()
     {}
     
-    public MathOperationMultiply(MathObject left, MathObject right)
+    public Multiply(Expression left, Expression right)
     { 
         super(left, right);
     }
@@ -29,7 +32,7 @@ public class MathOperationMultiply extends MathBinaryOperationLinear
     
     @Override
     public int getPrecedence()
-    { return MathObjectPrecedence.MULTIPLY; }
+    { return Precedence.MULTIPLY; }
     
     @Override
     public void draw(Canvas canvas)

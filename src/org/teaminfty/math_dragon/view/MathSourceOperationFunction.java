@@ -1,9 +1,9 @@
 package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-import org.teaminfty.math_dragon.view.math.MathOperationFunction;
-import org.teaminfty.math_dragon.view.math.MathOperationFunction.FunctionType;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.operation.Function;
+import org.teaminfty.math_dragon.view.math.operation.Function.FunctionType;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -12,14 +12,14 @@ import android.graphics.Rect;
 public class MathSourceOperationFunction extends MathSourceObject
 {
     /** The type this source object holds */
-    private MathOperationFunction.FunctionType type;
+    private Function.FunctionType type;
     
     /** The paint we use to draw the operator */
     private Paint paintOperator = new Paint();
     
     /** Constructor
      * @param t The type this source object holds */
-    public MathSourceOperationFunction(MathOperationFunction.FunctionType t) 
+    public MathSourceOperationFunction(Function.FunctionType t) 
     {
         type = t;
         paintOperator.setTypeface(TypefaceHolder.dejavuSans);
@@ -27,9 +27,9 @@ public class MathSourceOperationFunction extends MathSourceObject
     }
 
     @Override
-    public MathObject createMathObject()
+    public Expression createMathObject()
     {
-        return new MathOperationFunction(type);
+        return new Function(type);
     }
     
     public void draw(Canvas canvas, int w, int h)
@@ -43,7 +43,7 @@ public class MathSourceOperationFunction extends MathSourceObject
         final int padding = w / 15;
         
         // Determine the size of an empty box
-        Rect emptyBox = getRectBoundingBox(3 * w / 5, 3 * h / 4, MathObjectEmpty.RATIO);
+        Rect emptyBox = getRectBoundingBox(3 * w / 5, 3 * h / 4, Empty.RATIO);
         
         // Determine the size of the string we're going to draw
         Rect textBox = new Rect();

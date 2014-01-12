@@ -11,7 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 /** Represents an empty child */
-public class MathObjectEmpty extends MathObject
+public class Empty extends Expression
 {
 	public static final String NAME = "empty";
 	
@@ -22,7 +22,7 @@ public class MathObjectEmpty extends MathObject
     private Paint paint = new Paint();
     
     /** Constructor */
-    public MathObjectEmpty()
+    public Empty()
     {
         // Initialise the paint
         paint.setColor(Color.rgb(0x88, 0x88, 0x88));

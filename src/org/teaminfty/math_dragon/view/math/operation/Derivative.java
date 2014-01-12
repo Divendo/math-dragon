@@ -1,4 +1,7 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation;
+
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Precedence;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -7,7 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-public class MathOperationDerivative extends MathBinaryOperation
+public class Derivative extends Binary
 {
 	/** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
@@ -15,10 +18,10 @@ public class MathOperationDerivative extends MathBinaryOperation
     final float RATIO = 0.5f / 1.61803398874989f;
     public static final String TYPE = "derivative";
     
-    public MathOperationDerivative()
+    public Derivative()
     { }
     
-    public MathOperationDerivative(MathObject left, MathObject right)
+    public Derivative(Expression left, Expression right)
     {
     	super(left, right);
     }
@@ -30,16 +33,16 @@ public class MathOperationDerivative extends MathBinaryOperation
 
     @Override
     public int getPrecedence()
-    { return MathObjectPrecedence.ADD; }
+    { return Precedence.ADD; }
     
     /**
      * Returns the sizes of the bounding boxes.
      * The first rectangle is the size of the operator, the second and third rectangle are the sizes of the children.
      * 
      * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     *        The maximum width the {@link Expression} can have (can be {@link Expression#NO_MAXIMUM})
      * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     *        The maximum height the {@link Expression} can have (can be {@link Expression#NO_MAXIMUM})
      * @return The size of the child bounding boxes
      */
     protected Rect[] getSizes()

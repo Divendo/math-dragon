@@ -1,4 +1,7 @@
-package org.teaminfty.math_dragon.view.math;
+package org.teaminfty.math_dragon.view.math.operation.binary;
+
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.operation.Binary;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -6,15 +9,15 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 
-public class MathOperationRoot extends MathBinaryOperation
+public class Root extends Binary
 {
 	public static final String TYPE = "root";
     protected Paint operatorPaint = new Paint();
     
-    public MathOperationRoot()
+    public Root()
     { this(null, null); }
 
-    public MathOperationRoot(MathObject base, MathObject exponent)
+    public Root(Expression base, Expression exponent)
     {
         super(exponent, base);
 
@@ -29,7 +32,7 @@ public class MathOperationRoot extends MathBinaryOperation
      * @param o
      *        The mathematical expression.
      */
-    public void setBase(MathObject o)
+    public void setBase(Expression o)
     {
         setChild(1, o);
     }
@@ -40,7 +43,7 @@ public class MathOperationRoot extends MathBinaryOperation
      * 
      * @return The base mathematical expression.
      */
-    public MathObject getBase()
+    public Expression getBase()
     { return getChild(1); }
 
     @Override
@@ -55,7 +58,7 @@ public class MathOperationRoot extends MathBinaryOperation
      * @param o
      *        The mathematical expression.
      */
-    public void setExponent(MathObject o)
+    public void setExponent(Expression o)
     {
         setChild(0, o);
     }
@@ -66,7 +69,7 @@ public class MathOperationRoot extends MathBinaryOperation
      * 
      * @return The exponent mathematical expression.
      */
-    public MathObject getExponent()
+    public Expression getExponent()
     {
         return getChild(0);
     }
@@ -79,7 +82,7 @@ public class MathOperationRoot extends MathBinaryOperation
         Rect baseBounding = getChildBoundingBox(1);
         
         // The size of the gap
-        final int gapSize = (int) (3 * MathObject.lineWidth);
+        final int gapSize = (int) (3 * Expression.lineWidth);
         
         // We'll need 3 bounding boxes to contain the operator
         return new Rect[] {
@@ -106,7 +109,7 @@ public class MathOperationRoot extends MathBinaryOperation
         checkChildIndex(index);
         
         // The size of the gap
-        final int gapSize = (int) (3 * MathObject.lineWidth);
+        final int gapSize = (int) (3 * Expression.lineWidth);
         
         // We'll always need the y-coordinate of the centre of the base
         final int centerY = getChild(1).getCenter().y;
@@ -142,7 +145,7 @@ public class MathOperationRoot extends MathBinaryOperation
     public Point getCenter()
     {
         // The size of the gap
-        final int gapSize = (int) (3 * MathObject.lineWidth);
+        final int gapSize = (int) (3 * Expression.lineWidth);
         
         // The bounding box of the exponent
         Rect exponentBounding = getChildBoundingBox(0);
@@ -163,14 +166,14 @@ public class MathOperationRoot extends MathBinaryOperation
         Rect baseBounding = getChildBoundingBox(1);
 
         // The size of the gap and the centre y-coordinate
-        final int gapSize = (int) (3 * MathObject.lineWidth);
+        final int gapSize = (int) (3 * Expression.lineWidth);
         final int centerY = getCenter().y;
         
         // Create a path to draw the operator
         Path path = new Path();
         path.moveTo(exponentBounding.left, centerY);
         path.lineTo(baseBounding.left - 2 * gapSize, centerY);
-        path.lineTo(baseBounding.left - gapSize / 2, baseBounding.bottom - MathObject.lineWidth / 2);
+        path.lineTo(baseBounding.left - gapSize / 2, baseBounding.bottom - Expression.lineWidth / 2);
         path.lineTo(baseBounding.left - gapSize / 2, baseBounding.top - gapSize / 2);
         path.lineTo(baseBounding.right, baseBounding.top - gapSize / 2);
         

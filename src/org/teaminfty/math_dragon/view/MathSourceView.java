@@ -1,7 +1,7 @@
 package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.Expression;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -14,7 +14,7 @@ import android.view.View;
 
 public class MathSourceView extends View
 {
-    /** The {@link MathSourceObject} that will be used as a source for {@link MathObject}s */
+    /** The {@link MathSourceObject} that will be used as a source for {@link Expression}s */
     private MathSourceObject mathSourceObject = null;
 
     public MathSourceView(Context context)
@@ -32,8 +32,8 @@ public class MathSourceView extends View
         super(context, attrs, defStyleAttr);
     }
     
-    /** Sets the {@link MathSourceObject} that should be used as a source for {@link MathObject}s
-     * @param mso The source for {@link MathObject}s
+    /** Sets the {@link MathSourceObject} that should be used as a source for {@link Expression}s
+     * @param mso The source for {@link Expression}s
      */
     public void setSource(MathSourceObject mso)
     {
@@ -77,7 +77,7 @@ public class MathSourceView extends View
             return false;
         
         // Prepare a MathObject for dragging
-        MathObject mathObject = mathSourceObject.createMathObject();
+        Expression mathObject = mathSourceObject.createMathObject();
         mathObject.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_drag_default_size));
         
         // Start the dragging

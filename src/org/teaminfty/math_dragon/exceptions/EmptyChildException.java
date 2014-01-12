@@ -1,8 +1,8 @@
 package org.teaminfty.math_dragon.exceptions;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.Expression;
 
-/** An exception that is thrown when a {@link MathObject} is being evaluated but
+/** An exception that is thrown when a {@link Expression} is being evaluated but
  * an empty child where no empty child is allowed
  * @author Mark Kamsma
  * @author Folkert van Verseveld

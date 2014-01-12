@@ -1,10 +1,10 @@
 package org.teaminfty.math_dragon.view;
 
-import org.teaminfty.math_dragon.view.math.MathObject;
+import org.teaminfty.math_dragon.view.math.Expression;
 
 
 /**
- * Container of different states when e.g. a {@link MathObject} is being dragged
+ * Container of different states when e.g. a {@link Expression} is being dragged
  * or hovered by the cursor pointer.
  * 
  * @author Folkert van Verseveld

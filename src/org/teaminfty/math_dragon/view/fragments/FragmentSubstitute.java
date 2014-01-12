@@ -3,7 +3,7 @@ package org.teaminfty.math_dragon.view.fragments;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
-import org.teaminfty.math_dragon.view.math.MathSymbol;
+import org.teaminfty.math_dragon.view.math.Symbol;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -74,7 +74,7 @@ public class FragmentSubstitute extends DialogFragment
      * @param var The variable name to set the substitution for
      * @param symbol The new value of the variable (or <tt>null</tt> to remove the variable
      * @param root The View containing all substitution views */
-    private void setSubstitution(char var, MathSymbol symbol, ViewGroup root)
+    private void setSubstitution(char var, Symbol symbol, ViewGroup root)
     {
         // Check whether or not we're deleting the substitution view
         if(symbol == null)

@@ -16,9 +16,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.teaminfty.math_dragon.exceptions.ParseException;
-import org.teaminfty.math_dragon.view.math.MathFactory;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathSymbol;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 
 import android.content.ContentValues;
@@ -52,7 +52,7 @@ public class Database extends SQLiteOpenHelper
         public static final String LAST_CHANGE = "last_change";
         /** An image of the formula (PNG format) */
         public static final String IMAGE = "img";
-        /** The actual {@link MathObject} stored as a XML string */
+        /** The actual {@link Expression} stored as a XML string */
         public static final String MATH_OBJECT = "math_object";
         
         /** The size of the formula image (in pixels) */
@@ -63,7 +63,7 @@ public class Database extends SQLiteOpenHelper
     public static class Formula
     {
         /** Constructor */
-        public Formula(int id, String name, long lastChange, Bitmap bmp, MathObject mathObject)
+        public Formula(int id, String name, long lastChange, Bitmap bmp, Expression mathObject)
         {
             this.id = id;
             this.name = name;
@@ -77,7 +77,7 @@ public class Database extends SQLiteOpenHelper
          * @param name The name of the formula
          * @param datetime The last time the formula was changed as a string (format: yyyy-mm-dd hh:mm:ss)
          * @param bmp The bitmap as a byte array (PNG format)
-         * @param xml The {@link MathObject} as a XML string */
+         * @param xml The {@link Expression} as a XML string */
         public Formula(int id, String name, String datetime, byte[] bmp, byte[] xml)
         {
             // Set the ID and name
@@ -104,7 +104,7 @@ public class Database extends SQLiteOpenHelper
             {
                 try
                 {
-                    mathObject = MathFactory.fromXML(xml);
+                    mathObject = ExpressionXMLReader.fromXML(xml);
                 }
                 catch(ParseException e)
                 {
@@ -123,7 +123,7 @@ public class Database extends SQLiteOpenHelper
         /** The image of the formula (can be <tt>null</tt>) */
         public Bitmap bmp = null;
         /** The math object of the formula (can be <tt>null</tt>) */
-        public MathObject mathObject = null;
+        public Expression mathObject = null;
     }
     
     /** The information about the substitutions table */
@@ -142,7 +142,7 @@ public class Database extends SQLiteOpenHelper
     public static final class Substitution
     {
         /** Constructor */
-        public Substitution(char name, MathSymbol value)
+        public Substitution(char name, Symbol value)
         {
             this.name = name;
             this.value = value;
@@ -161,9 +161,9 @@ public class Database extends SQLiteOpenHelper
             {
                 try
                 {
-                    MathObject tmp = MathFactory.fromXML(xml);
-                    if(tmp instanceof MathSymbol)
-                        value = (MathSymbol) tmp;
+                    Expression tmp = ExpressionXMLReader.fromXML(xml);
+                    if(tmp instanceof Symbol)
+                        value = (Symbol) tmp;
                 }
                 catch(ParseException e)
                 {
@@ -176,7 +176,7 @@ public class Database extends SQLiteOpenHelper
         /** The name of the variable to substitute */
         public char name = 'a';
         /** The value to substitute for the variable (<tt>null</tt> means no substitution) */
-        public MathSymbol value = null;
+        public Symbol value = null;
     }
     
     /** Constructor */
@@ -234,7 +234,7 @@ public class Database extends SQLiteOpenHelper
     }
 
     /** Returns a list of all formulas in the database.
-     * Each of the formulas have their {@link MathObject} set to <tt>null</tt>.
+     * Each of the formulas have their {@link Expression} set to <tt>null</tt>.
      * @return The list of formulas */
     public ArrayList<Formula> getAllFormulas()
     {
@@ -286,13 +286,13 @@ public class Database extends SQLiteOpenHelper
     /** The ID that's used for inserting a formula into the database */
     public static final int INSERT_ID = 0;
     
-    /** Save the {@link MathObject} as a formula with the given ID.
+    /** Save the {@link Expression} as a formula with the given ID.
      * @param id The ID of the formula to overwrite, or {@link Database#INSERT_ID INSERT_ID} to create a new entry
      * @param name The name of the formula to save
-     * @param mathObject The {@link MathObject} that is to be stored
+     * @param mathObject The {@link Expression} that is to be stored
      * @return Whether the formula was saved successfully or not
      */
-    public boolean saveFormula(int id, String name, MathObject mathObject)
+    public boolean saveFormula(int id, String name, Expression mathObject)
     {
         // Create a ContentValues instance we're going to pass to the database
         ContentValues values = new ContentValues(4);
@@ -327,7 +327,7 @@ public class Database extends SQLiteOpenHelper
         try
         {
             // Convert the MathObject to a XML document
-            Document doc = MathObject.createXMLDocument();
+            Document doc = Expression.createXMLDocument();
             mathObject.writeToXML(doc, doc.getDocumentElement());
             
             // Convert the XML document to a byte array and add it to the ContentValues instance
@@ -453,7 +453,7 @@ public class Database extends SQLiteOpenHelper
         try
         {
             // Convert the MathObject to a XML document
-            Document doc = MathObject.createXMLDocument();
+            Document doc = Expression.createXMLDocument();
             sub.value.writeToXML(doc, doc.getDocumentElement());
             
             // Convert the XML document to a byte array and add it to the ContentValues instance
