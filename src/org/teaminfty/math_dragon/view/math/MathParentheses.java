@@ -137,6 +137,6 @@ public class MathParentheses extends MathObject
     @Override
     public Point getCenter()
     {
-    	return(this.getChild(0).getCenter());
+    	return(new Point(this.getBoundingBox().centerX(), this.getChild(0).getCenter().y));
     }
 }

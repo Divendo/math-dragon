@@ -1,129 +1,74 @@
 package org.teaminfty.math_dragon.view.math;
 
-import java.util.Arrays;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 
 /**
- * Ternary mathematical operation that implements a mathematical limit using a
- * starting expression into an ending expression upon a mathematical expression.
+ * Mathematical function that takes only one argument. Currently, only
+ * trigonometric functions and the natural logarithm are implemented.
  * 
- * @author Folkert van Verseveld
+ * @author denu12
+ * @author Divendo
+ * @author FolkertVanVerseveld
  */
-public class MathOperationLimit extends MathObject
+public class Log extends MathBinaryOperation
 {
-	/**the name of the type of the operation*/
-    public static final String TYPE = "limit";
-    
-    /**the name of the operation as it will be put on the screen*/
-    public final String name = "log";
-    
-    /** The ratio (width : height) of a bracket (i.e. half the golden ratio) */
-    private final float PARENTHESES_RATIO = 0.5f / 1.61803398874989f;
+        /** the Type of the operation */
+		final String TYPE = "log";
+        /** The name of the function type */
+        private String name;
+        
+        /** The xml-safe name of the function type */
+        private String xmlName;
+
+        
+        /** Returns the name of the function type
+         * @return The name of the function type as a string (may contain high unicode characters) */
+        public String getName()
+        { return name; }
+
+        /** Returns the XML safe name of the function type
+         * @return The XML safe name of the function type as a string */
+        public String getXmlName()
+        { return xmlName; }
+        
+        /** Returns the {@link FunctionType} that belongs to the given XML safe name
+         * @param xmlName The XML safe name
+         * @return The {@link FunctionType}, or <tt>null</tt> if none belong to the given XML safe name */
     
     /** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
     
-    /** sorry */
-    /*
-    /** Constructor
-     * @param start What variable should be approach the value of <tt>end</tt>
-     * @param end The value that <tt>start</tt> should approach
-     * @param expression The expression to calculate the limit of
-     
-    public MathOperationLimit(MathObject start, MathObject end, MathObject expression)
-    {
-        super(Arrays.asList(start, end, expression));
-    }*/
+    /** The ratio (width : height) of a bracket (i.e. half the golden ratio) */
+    private final float PARENTHESES_RATIO = 0.5f / 1.61803398874989f;
+
     
     /** Default constructor */
-    public MathOperationLimit()
-    { 
-    		
+    public Log()
+    {
+        this.name = "log";
     }
     
+    //TODO
+    /*
+    @Override
     public String toString()
     {
-        return "lim" + getStart() + "->" + getEnd() + "," + getExpression() + ")";
-    }
-
-    /**
-     * Retrieve the mathematical start state of this limit. E.g. <tt>x</tt>.
-     * @return A mathematical expression indicating the start state.
-     * @see #getEnd()
-     */
-    public MathObject getStart()
-    {
-        return getChild(0);
-    }
-
-    /**
-     * Retrieve the mathematical end state of this limit. E.g. <tt>34</tt>.
-     * @return A mathematical expression indicating the end state.
-     * @see #getStart()
-     */
-    public MathObject getEnd()
-    {
-        return getChild(1);
-    }
-
-    /**
-     * Retrieve the mathematical expression the limit manipulates upon.
-     * @return A mathematical expression.
-     */
-    public MathObject getExpression()
-    {
-        return getChild(2);
-    }
+        String childString = getChild(0).toString();
+        if(childString.startsWith("(") && childString.endsWith(")"))
+            childString = childString.substring(1, childString.length() - 1);
+        return type.getXmlName() + '(' + childString + ')';
+    }*/
     
-    /**
-     * Assign a mathematical expression indicating the start state of this limit.
-     * @param start The start state.
-     */
-    public void setStart(MathObject start)
-    {
-        setChild(0, start);
-    }
-    
-    /**
-     * Assign a mathematical expression indicating the end state of this limit.
-     * @param end The end state.
-     */
-    public void setEnd(MathObject end)
-    {
-        setChild(1, end);
-    }
-    
-    /**
-     * Assign a mathematical expression that this limit manipulates.
-     * @param expr A mathematical expression.
-     */
-    public void setExpression(MathObject expr)
-    {
-        setChild(2, expr);
-    }
+    public int getPrecedence()
+    { return MathObjectPrecedence.FUNCTION; }
 
-    @Override
-    protected String getType()
-    {
-        return TYPE;
-    }
-/*
-    @Override
-    protected void writeChildrenToXML(Document doc, Element el)
-    {
-        getStart().writeToXML(doc, el);
-        getEnd().writeToXML(doc, el);
-        getExpression().writeToXML(doc, el);
-    } */
-    
     /** Calculates the right text size for the given level
      * @return The right text size for the given level */
     protected float findTextSize()
@@ -150,8 +95,9 @@ public class MathOperationLimit extends MathObject
         return out;
     }
 
+    
     @Override
-    public Rect[] getOperatorBoundingBoxes()
+    public Rect[] getOperatorBoundingBoxes() 
     {
         // Get the sizes
         final Rect[] child = getChildrenSize();
@@ -165,15 +111,14 @@ public class MathOperationLimit extends MathObject
         
         // Return the bounding boxes
         return new Rect[]{ textBounding,
-        		 new Rect(textBounding.left, textBounding.top, textBounding.right - child[0].width(), textBounding.height()/3),
                  new Rect(textBounding.width() + child[0].width(), childTop, textBounding.width() + child[0].width() + parentheseWidth, childTop + child[1].height()), 
                  new Rect(textBounding.width() + parentheseWidth + child[0].width() + child[1].width(), childTop, textBounding.width() + child[0].width() + child[1].width() + 2 * parentheseWidth, childTop + child[1].height())};
     }
     
-	@Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    @Override
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException 
     {
-		// Make sure the child index is valid
+    	// Make sure the child index is valid
         checkChildIndex(index);
 
         // Get the sizes
@@ -184,16 +129,16 @@ public class MathOperationLimit extends MathObject
         // Translate and return the operand's bounding box
         if(index == 0)
         {
-            leftChild.offsetTo(operatorSize[1].width(), operatorSize[0].height());
+            leftChild.offsetTo(operatorSize[0].width(), rightChild.height() - leftChild.height()/3);
             return leftChild;
         }
         else
         {
-            rightChild.offsetTo(operatorSize[0].width() + operatorSize[2].width(), 0);
+            rightChild.offsetTo(operatorSize[0].width() + operatorSize[1].width() + leftChild.width(), 0);
             return rightChild;
         }
     }
-	
+    
     //Complete bounding box
     @Override
     public Rect getBoundingBox()
@@ -201,10 +146,24 @@ public class MathOperationLimit extends MathObject
         Rect[] operatorSizes = getOperatorBoundingBoxes();
         Rect[] child = this.getChildrenSize();
         
-        return new Rect(0,Math.min(operatorSizes[0].top, child[1].top), operatorSizes[0].width() + operatorSizes[2].width() + operatorSizes[2].width() + child[1].width(), child[0].bottom + child[1].bottom);
+        return new Rect(0,Math.min(operatorSizes[0].top, child[1].top), operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + child[0].width() + child[1].width(), child[0].bottom + child[1].bottom- child[0].height()/3);
     }
 
-
+    
+    @Override
+    public Point getCenter()
+    {        
+        return new Point(this.getBoundingBox().centerX(), getChild(1).getCenter().y);
+    }
+    
+    @Override
+ 	public void setLevel(int l)
+ 	{
+ 		level = l;
+ 		getChild(0).setLevel(level + 2);
+ 		getChild(1).setLevel(level);
+ 	}
+    
     @Override
     public void draw(Canvas canvas)
     {
@@ -255,4 +214,26 @@ public class MathOperationLimit extends MathObject
         // Draw the children
         drawChildren(canvas);
     }
+    
+    /** The name of the XML node for this class */
+    public static final String NAME = "function";
+    
+    /** The XML attribute for which type of function this is */
+    public static final String ATTR_TYPE = "type";
+
+
+	@Override
+	protected String getType() {return TYPE;}
+
+    //TODO
+    /*
+    @Override
+    public final void writeToXML(Document doc, Element el)
+    {
+        Element e = doc.createElement(NAME);
+        e.setAttribute(ATTR_TYPE, type.getXmlName());
+        getChild(0).writeToXML(doc, e);
+        el.appendChild(e);
+    }
+    */
 }

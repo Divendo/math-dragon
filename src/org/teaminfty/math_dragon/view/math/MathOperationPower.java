@@ -9,6 +9,7 @@ import android.graphics.Rect;
 
 public class MathOperationPower extends MathBinaryOperation
 {
+	/** the type of the operation */
     public static final String TYPE = "power";
     
     /** A paint that's used to draw the operator when the user is hovering over this object */
@@ -92,24 +93,6 @@ public class MathOperationPower extends MathBinaryOperation
             };
     }
 
-    /**
-     * Returns the sizes of the bounding of the children.
-     * 
-     * @param maxWidth
-     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @param maxHeight
-     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
-     * @return The size of the child bounding boxes
-     */
-    public Rect[] getChildrenSize()
-    {
-        // Get the sizes both operands want to take
-        Rect leftSize = getChild(0).getBoundingBox();
-        Rect rightSize = getChild(1).getBoundingBox();
-        
-        // Return the Sizes
-        return new Rect[] {leftSize, rightSize};
-    }
 
     @Override
     public Rect getBoundingBox()

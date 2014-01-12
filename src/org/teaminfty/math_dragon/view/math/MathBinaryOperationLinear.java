@@ -45,35 +45,25 @@ public abstract class MathBinaryOperationLinear extends MathBinaryOperation
         operatorSize.offsetTo(leftChild.width(), centerY - operatorSize.height() / 2);
         return new Rect[] { operatorSize };
     }
-
+    
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException 
     {
-        // Make sure the child index is valid
-        checkChildIndex(index);
-
-        // Get the sizes
+        // Check if the child exists
+        this.checkChildIndex(index);
+        
+        // Get the Size of the children
+        Rect[] childrenSize = getChildrenSize();
         Rect operatorSize = getOperatorSize();
-        Rect leftChild = getChild(0).getBoundingBox();
-        Rect rightChild = getChild(1).getBoundingBox();
         
-        // Get the centers
-        Point leftChildCenter = getChild(0).getCenter();
-        Point rightChildCenter = getChild(1).getCenter();
-        final int centerY = Math.max(operatorSize.height() / 2, Math.max(leftChildCenter.y, rightChildCenter.y));
+        // Move the bounding boxes to the correct position
+        childrenSize[0].offsetTo(0, this.getCenter().y - getChild(0).getCenter().y);
+        childrenSize[1].offsetTo(childrenSize[0].width() + operatorSize.width() , this.getCenter().y - getChild(1).getCenter().y);
         
-        // Translate and return the operand's bounding box
-        if(index == 0)
-        {
-            leftChild.offsetTo(0, centerY - leftChildCenter.y);
-            return leftChild;
-        }
-        else
-        {
-            rightChild.offsetTo(leftChild.width() + operatorSize.width(), centerY - rightChildCenter.y);
-            return rightChild;
-        }
+        // Return the right bounding box
+        return childrenSize[index];
     }
+    
     
     @Override
     public Point getCenter()
