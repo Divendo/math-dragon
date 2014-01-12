@@ -209,7 +209,7 @@ public class Database extends SQLiteOpenHelper
     {
         if(oldVersion == 1 && newVersion >= 2)
             upgradeV1toV2(db);
-        if(oldVersion == 2 && newVersion == 3)
+        if(oldVersion <= 2 && newVersion >= 3)
             upgradeV2toV3(db);
     }
     
@@ -219,7 +219,7 @@ public class Database extends SQLiteOpenHelper
     {
         // Add the name column
         db.execSQL("ALTER TABLE " + TABLE_FORMULAS.NAME + " " +
-                   "ADD COLUMN " + TABLE_FORMULAS.FORMULA_NAME + " TEXT NOT NULL AFTER " + TABLE_FORMULAS.ID);
+                   "ADD COLUMN " + TABLE_FORMULAS.FORMULA_NAME + " TEXT NOT NULL DEFAULT ''");
     }
 
     /** Upgrades the database from version 2 to version 3
