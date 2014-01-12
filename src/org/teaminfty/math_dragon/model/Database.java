@@ -398,6 +398,26 @@ public class Database extends SQLiteOpenHelper
         return out;
     }
     
+    /** Returns the substitution for the given variable
+     * @param varName The variable to check for
+     * @return The substitution if it exists, <tt>null</tt> otherwise */
+    public Substitution getSubstitution(char varName)
+    {
+        // Open a connection to the database
+        SQLiteDatabase db = getReadableDatabase();
+        
+        // Get a cursor to check whether the requested substitution exists
+        final int varNameInt = varName - 'a';
+        Cursor cursor = db.query(TABLE_SUBSTITUTIONS.NAME, new String[]{ TABLE_SUBSTITUTIONS.VAR_NAME, TABLE_SUBSTITUTIONS.VALUE },
+                TABLE_SUBSTITUTIONS.VAR_NAME + " = " + Integer.toString(varNameInt), null, null, null, null);
+        
+        // Check if the substitution exists
+        if(!cursor.moveToFirst()) return null;
+        
+        // Construct and return the substitution
+        return new Substitution(cursor.getInt(0), cursor.getBlob(1));
+    }
+    
     /** Returns whether a substitution for the given variable exists
      * @param varName The variable to check for
      * @return <tt>true</tt> if a substitution exists, <tt>false</tt> otherwise */
