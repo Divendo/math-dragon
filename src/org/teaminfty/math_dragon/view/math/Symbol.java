@@ -290,6 +290,9 @@ public class Symbol extends Expression
 	public void setVarPow(int index, long pow)
 	{ varPows[index] = pow; }
 	
+	public void setVarPow(char index, long pow)
+	{ setVarPow(index - 'a', pow); }
+	
 	/** The amount of variables that this symbol supports */
 	public int varPowCount()
 	{ return varPows.length; }

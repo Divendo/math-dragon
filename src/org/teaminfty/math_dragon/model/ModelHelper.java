@@ -78,7 +78,7 @@ public final class ModelHelper
             }
             return new Divide(new org.teaminfty.math_dragon.view.math.Symbol(numerator.longValue()), new org.teaminfty.math_dragon.view.math.Symbol(denominator));
         }
-        else if(expr instanceof org.teaminfty.math_dragon.view.math.Symbol)
+        else if(expr instanceof Symbol)
         {
             // We'll return a symbol
             Symbol s = (Symbol) expr;
