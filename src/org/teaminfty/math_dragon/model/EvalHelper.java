@@ -229,8 +229,9 @@ public class EvalHelper
      */
     public static IExpr root(Root root) throws MathException
     {
-        checkChildren(root);
-        return F.Power(eval(root.getBase()), F.Divide(F.ZZ(1), eval(root.getExponent())));
+        if (!root.isCompleted())
+            throw new EmptyChildException(1);
+        return F.Power(eval(root.getBase()), F.Divide(F.ZZ(1), root.getExponent() instanceof Empty ? F.ZZ(2) : eval(root.getExponent())));
     }
 
     /**

@@ -185,6 +185,19 @@ public final class ModelHelper
             }
             return child;
         }
+        /*IExpr l = ast.get(1);
+        if (l.isFraction()) {
+            IRational rational = (IRational) l;
+            org.teaminfty.math_dragon.view.math.Symbol numerator = new org.teaminfty.math_dragon.view.math.Symbol(rational.getNumerator().longValue());
+            Expression denominator = toExpression(ast.get(2));
+            if (denominator instanceof org.teaminfty.math_dragon.view.math.Symbol) {
+                org.teaminfty.math_dragon.view.math.Symbol denomSym = (org.teaminfty.math_dragon.view.math.Symbol) denominator;
+                denomSym.setFactor(denomSym.getFactor() * rational.getDenominator().longValue());
+                return new Divide(numerator, denomSym);
+            }
+            // FIXME 
+            return new Divide(numerator, new Multiply(new org.teaminfty.math_dragon.view.math.Symbol(rational.getDenominator().longValue()), denominator));
+        }*/
         IExpr r = ast.get(2);
         if(r.isPower())
         {
