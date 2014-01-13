@@ -224,10 +224,29 @@ public final class ModelHelper
                 }
             }
         }
-        return new Multiply(toExpression(ast.get(1)), toExpression(r));
+        Expression left = toExpression(ast.get(1));
+        Expression right = toExpression(r);
+        if(left instanceof org.teaminfty.math_dragon.view.math.Symbol)
+        {
+            org.teaminfty.math_dragon.view.math.Symbol sl = (org.teaminfty.math_dragon.view.math.Symbol) left;
+            if(right instanceof org.teaminfty.math_dragon.view.math.Symbol)
+            {
+                org.teaminfty.math_dragon.view.math.Symbol sr = (org.teaminfty.math_dragon.view.math.Symbol) right;
+                if(sl.isFactorOnly())
+                {
+                    sr.setFactor(sr.getFactor() * sl.getFactor());
+                    return sr;
+                }
+                else if(sr.isFactorOnly())
+                {
+                    sl.setFactor(sl.getFactor() * sr.getFactor());
+                    return sl;
+                }
+            }
+        }
+        return new Multiply(left, right);
     }
 
-    // XXX implement more than 2 children for operation divide?
     static Expression toOpDiv(IExpr l, IExpr r) throws ParseException
     {
         if (r.isInteger() && ((IInteger) r).longValue() == 1)
@@ -274,7 +293,15 @@ public final class ModelHelper
             }
             return child;
         }
-        return new Power(toExpression(ast.get(1)), toExpression(ast.get(2)));
+        Expression power = toExpression(ast.get(2));
+        if (power instanceof org.teaminfty.math_dragon.view.math.Symbol) {
+        	org.teaminfty.math_dragon.view.math.Symbol s = (org.teaminfty.math_dragon.view.math.Symbol) power;
+        	if (s.getFactor() < 0) {
+        		s.setFactor(-s.getFactor());
+        		return new Divide(s, toExpression(ast.get(1)));
+        	}
+        }
+        return new Power(toExpression(ast.get(1)), power);
     }
     
     /**

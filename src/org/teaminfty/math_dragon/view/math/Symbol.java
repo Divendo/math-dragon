@@ -237,6 +237,24 @@ public class Symbol extends Expression
         return "(" + sb.toString() + ")";
     }
 
+    /**
+     * Checks whether only {@code {@link factor} != 0}.
+     * 
+     * @return <tt>true</tt> if all other variables equal <tt>0</tt>.
+     *         <tt>false</tt> otherwise.
+     */
+    public boolean isFactorOnly()
+    {
+        for(int i = 0; i < varPows.length; ++i)
+        {
+            if(varPows[i] != 0)
+            {
+                return false;
+            }
+        }
+        return ePow == 0 && piPow == 0 && iPow == 0;
+    }
+
     /** Retrieve the ground base number factor.
      * @return The base number.
      */
