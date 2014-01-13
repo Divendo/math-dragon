@@ -163,7 +163,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
             // Create an evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
-            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result)));
+            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toExpression(result)));
             fragmentEvaluation.setEvalType(true);
             fragmentEvaluation.show(getFragmentManager(), "evaluation");
         }
@@ -190,7 +190,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
             // Create an evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
-            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toMathObject(result)));
+            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toExpression(result)));
             fragmentEvaluation.setEvalType(false);
             fragmentEvaluation.show(getFragmentManager(), "evaluation");
         }

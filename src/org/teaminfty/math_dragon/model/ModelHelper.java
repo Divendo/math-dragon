@@ -44,7 +44,7 @@ public final class ModelHelper
      *         Thrown when conversion is impossible.
      */
     @SuppressLint("DefaultLocale")
-    public static Expression toMathObject(IExpr expr) throws ParseException
+    public static Expression toExpression(IExpr expr) throws ParseException
     {
         if(expr.isAST())
         {
@@ -103,7 +103,7 @@ public final class ModelHelper
             org.teaminfty.math_dragon.view.math.Symbol imag = new org.teaminfty.math_dragon.view.math.Symbol();
             imag.setFactor(1);
             org.teaminfty.math_dragon.view.math.Symbol zero = new org.teaminfty.math_dragon.view.math.Symbol();
-            Expression real = toMathObject(c.getRe());
+            Expression real = toExpression(c.getRe());
             IExpr pow = c.getIm();
             // remove real part if zero
             if (real instanceof org.teaminfty.math_dragon.view.math.Symbol && ((org.teaminfty.math_dragon.view.math.Symbol) real).equals(zero)) {
@@ -117,14 +117,14 @@ public final class ModelHelper
                     return imag;
                 } else {
                     imag.setIPow(1);
-                    return new Power(imag, toMathObject(pow));
+                    return new Power(imag, toExpression(pow));
                 }
             } else if (pow.isInteger()) {
                 imag.setIPow(((IInteger) pow).longValue());
                 return new Add(real, imag);
             } else {
                 imag.setIPow(1);
-                return new Add(real, new Power(imag, toMathObject(pow)));
+                return new Add(real, new Power(imag, toExpression(pow)));
             }
         }
         else if (expr.isFraction()) {
@@ -151,15 +151,15 @@ public final class ModelHelper
         if(ast.size() > 3)
         {
             int n = ast.size() - 1;
-            Add child = new Add(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
+            Add child = new Add(toExpression(ast.get(n - 1)), toExpression(ast.get(n)));
             for(n -= 2; n > 0; --n)
             {
-                Add parent = new Add(toMathObject(ast.get(n)), child);
+                Add parent = new Add(toExpression(ast.get(n)), child);
                 child = parent;
             }
             return child;
         }
-        return new Add(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
+        return new Add(toExpression(ast.get(1)), toExpression(ast.get(2)));
     }
 
     /**
@@ -178,9 +178,9 @@ public final class ModelHelper
     {
         if (ast.size() > 3) {
             int n = ast.size() - 1;
-            Multiply child = new Multiply(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
+            Multiply child = new Multiply(toExpression(ast.get(n - 1)), toExpression(ast.get(n)));
             for (n -= 2; n > 0; --n) {
-                Multiply parent = new Multiply(toMathObject(ast.get(n)), child);
+                Multiply parent = new Multiply(toExpression(ast.get(n)), child);
                 child = parent;
             }
             return child;
@@ -218,21 +218,21 @@ public final class ModelHelper
                         }
                         else
                         {
-                            return new Multiply(toMathObject(b), c);
+                            return new Multiply(toExpression(b), c);
                         }
                     }
                 }
             }
         }
-        return new Multiply(toMathObject(ast.get(1)), toMathObject(r));
+        return new Multiply(toExpression(ast.get(1)), toExpression(r));
     }
 
     // XXX implement more than 2 children for operation divide?
     static Expression toOpDiv(IExpr l, IExpr r) throws ParseException
     {
         if (r.isInteger() && ((IInteger) r).longValue() == 1)
-            return toMathObject(l);
-        return new Divide(toMathObject(l), toMathObject(r));
+            return toExpression(l);
+        return new Divide(toExpression(l), toExpression(r));
     }
 
     static Expression toOpDiv(IExpr l, AST r) throws ParseException
@@ -246,7 +246,7 @@ public final class ModelHelper
         {
             return toOpDiv(l, r.get(1));
         }
-        return new Divide(toMathObject(l), toMathObject(r));
+        return new Divide(toExpression(l), toExpression(r));
     }
 
     /**
@@ -266,15 +266,15 @@ public final class ModelHelper
         if(ast.size() > 3)
         {
             int n = ast.size() - 1;
-            Power child = new Power(toMathObject(ast.get(n - 1)), toMathObject(ast.get(n)));
+            Power child = new Power(toExpression(ast.get(n - 1)), toExpression(ast.get(n)));
             for(n -= 2; n > 0; --n)
             {
-                Power parent = new Power(toMathObject(ast.get(n)), child);
+                Power parent = new Power(toExpression(ast.get(n)), child);
                 child = parent;
             }
             return child;
         }
-        return new Power(toMathObject(ast.get(1)), toMathObject(ast.get(2)));
+        return new Power(toExpression(ast.get(1)), toExpression(ast.get(2)));
     }
     
     /**
@@ -293,21 +293,21 @@ public final class ModelHelper
     static Expression toOpFunction(IAST ast) throws ParseException
     {
         if (ast.isSin())
-            return new Function(FunctionType.SIN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.SIN, toExpression(ast.get(1)));
         if (ast.isCos())
-            return new Function(FunctionType.COS, toMathObject(ast.get(1)));
+            return new Function(FunctionType.COS, toExpression(ast.get(1)));
         if (ast.isTan())
-            return new Function(FunctionType.TAN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.TAN, toExpression(ast.get(1)));
         if (ast.isSinh())
-            return new Function(FunctionType.SINH, toMathObject(ast.get(1)));
+            return new Function(FunctionType.SINH, toExpression(ast.get(1)));
         if (ast.isCosh())
-            return new Function(FunctionType.COSH, toMathObject(ast.get(1)));
+            return new Function(FunctionType.COSH, toExpression(ast.get(1)));
         if (ast.isArcSin())
-            return new Function(FunctionType.ARCSIN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.ARCSIN, toExpression(ast.get(1)));
         if (ast.isArcCos())
-            return new Function(FunctionType.ARCCOS, toMathObject(ast.get(1)));
+            return new Function(FunctionType.ARCCOS, toExpression(ast.get(1)));
         if (ast.isLog())
-            return new Function(FunctionType.LN, toMathObject(ast.get(1)));
+            return new Function(FunctionType.LN, toExpression(ast.get(1)));
         throw new ParseException(ast);
     }
 }
