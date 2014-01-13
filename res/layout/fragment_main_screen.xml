@@ -35,6 +35,7 @@
         android:src="@drawable/approximate" />
 
     <ImageButton
+        android:id="@+id/btn_wolfram"
         style="@style/CircleButton"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/main_screen_button_margin"
