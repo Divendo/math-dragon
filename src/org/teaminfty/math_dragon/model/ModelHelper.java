@@ -135,8 +135,8 @@ public final class ModelHelper
     }
 
     /**
-     * Convert a mathematical unary addition from Symja to a graphical
-     * viewer that contains the mathematical expression. Unknown mathematical
+     * Convert a mathematical binary addition from Symja to a graphical viewer
+     * that contains the mathematical expression. Unknown mathematical
      * expressions result in a {@link ParseException}.
      * 
      * @param ast
@@ -163,7 +163,7 @@ public final class ModelHelper
     }
 
     /**
-     * Convert a mathematical unary multiplication from Symja to a graphical
+     * Convert a mathematical binary multiplication from Symja to a graphical
      * viewer that contains the mathematical expression. Unknown mathematical
      * expressions result in a {@link ParseException}.
      * 
@@ -282,7 +282,7 @@ public final class ModelHelper
     }
 
     /**
-     * Convert a mathematical unary power from Symja to a graphical viewer that
+     * Convert a mathematical binary power from Symja to a graphical viewer that
      * contains the mathematical expression. Unknown mathematical expressions
      * result in a {@link ParseException}.
      * 
