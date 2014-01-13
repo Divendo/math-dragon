@@ -27,6 +27,7 @@ public class Integral extends Operation
 	
 	public Integral()
 	{
+	    super(4);
 		children.add(new Empty());
 		children.add(new Empty());
 		children.add(new Empty());
@@ -37,6 +38,7 @@ public class Integral extends Operation
 	
 	public Integral( Expression integrate, Expression over)
 	{
+	    super(4);
 		children.add(new Empty());
         children.add(new Empty());
         children.add(new Empty());
@@ -48,6 +50,7 @@ public class Integral extends Operation
 	
 	public Integral( Expression integrate, Expression over, Expression from, Expression to)
 	{
+	    super(4);
 		children.add(new Empty());
         children.add(new Empty());
         children.add(new Empty());
