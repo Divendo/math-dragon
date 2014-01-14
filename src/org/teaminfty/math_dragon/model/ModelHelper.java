@@ -5,9 +5,11 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
+import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IFraction;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IRational;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.Expression;
@@ -133,6 +135,24 @@ public final class ModelHelper
         else if (expr.isFraction()) {
             IFraction frac = (IFraction) expr;
             return toOpDiv(frac.getNumerator(), frac.getDenominator());
+        }
+        else if(expr.isNumeric())
+        {
+            if(expr instanceof INum)
+            {
+                org.teaminfty.math_dragon.view.math.Symbol c = new org.teaminfty.math_dragon.view.math.Symbol();
+                c.setFactor(((INum) expr).getRealPart());
+                return c;
+            }
+            else if(expr instanceof IComplexNum)
+            {
+                org.teaminfty.math_dragon.view.math.Symbol re = new org.teaminfty.math_dragon.view.math.Symbol();
+                re.setFactor(((IComplexNum) expr).getRealPart());
+                org.teaminfty.math_dragon.view.math.Symbol im = new org.teaminfty.math_dragon.view.math.Symbol();
+                im.setFactor(((IComplexNum) expr).getImaginaryPart());
+                im.setIPow(1);
+                return new Add(re, im);
+            }
         }
         throw new ParseException(expr);
     }
