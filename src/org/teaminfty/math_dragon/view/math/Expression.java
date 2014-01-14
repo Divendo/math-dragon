@@ -341,12 +341,9 @@ public abstract class Expression
      */
     public boolean isCompleted()
     {
-        if(this instanceof Empty)
-            return false;
-        
         for(Expression child : children)
         {
-            if(child instanceof Empty || !child.isCompleted())
+            if(!child.isCompleted())
                 return false;
         }
         

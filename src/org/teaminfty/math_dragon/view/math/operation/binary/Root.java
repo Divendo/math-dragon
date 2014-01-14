@@ -1,6 +1,5 @@
 package org.teaminfty.math_dragon.view.math.operation.binary;
 
-import org.teaminfty.math_dragon.view.math.Empty;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
 
@@ -198,6 +197,6 @@ public class Root extends Binary
     @Override
     public boolean isCompleted()
     {
-        return !(getBase() instanceof Empty);
+        return getBase().isCompleted();
     }
 }

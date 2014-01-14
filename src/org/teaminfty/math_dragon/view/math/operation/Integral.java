@@ -326,8 +326,12 @@ public class Integral extends Operation
 	@Override
     public boolean isCompleted()
     {
-	    if(getIntegratePart() instanceof Empty || getIntegrateOver() instanceof Empty)
+	    if(!getIntegratePart().isCompleted() || !getIntegrateOver().isCompleted())
 	        return false;
-        return !(getIntegrateFrom() instanceof Empty ^ getIntegrateTo() instanceof Empty);
+        if(getIntegrateFrom() instanceof Empty && getIntegrateTo() instanceof Empty)
+            return true;
+        if(getIntegrateFrom().isCompleted() && getIntegrateTo().isCompleted())
+            return true;
+        return false;
     }
 }
