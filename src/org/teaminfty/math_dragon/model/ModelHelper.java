@@ -17,6 +17,7 @@ import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
+import org.teaminfty.math_dragon.view.math.operation.binary.Root;
 
 import android.annotation.SuppressLint;
 
@@ -195,7 +196,7 @@ public final class ModelHelper
                 denomSym.setFactor(denomSym.getFactor() * rational.getDenominator().longValue());
                 return new Divide(numerator, denomSym);
             }
-            // FIXME 
+            // FIXME #72 number 3 (inverted fraction)
             return new Divide(numerator, new Multiply(new org.teaminfty.math_dragon.view.math.Symbol(rational.getDenominator().longValue()), denominator));
         }*/
         IExpr r = ast.get(2);
@@ -313,6 +314,14 @@ public final class ModelHelper
         		s.setFactor(-s.getFactor());
         		return new Divide(s, toExpression(ast.get(1)));
         	}
+        } else if (power instanceof Divide) {
+            Divide div = (Divide) power;
+            if (div.getLeft() instanceof org.teaminfty.math_dragon.view.math.Symbol) {
+                org.teaminfty.math_dragon.view.math.Symbol numerator = (org.teaminfty.math_dragon.view.math.Symbol) div.getLeft();
+                if (numerator.isFactorOnly() && numerator.getFactor() == 1) {
+                    return new Root(toExpression(ast.get(1)), div.getRight());// x^(1/n) -> root(x,n)
+                }
+            }
         }
         return new Power(toExpression(ast.get(1)), power);
     }
