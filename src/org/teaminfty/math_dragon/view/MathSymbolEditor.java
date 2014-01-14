@@ -413,25 +413,25 @@ public class MathSymbolEditor extends View
         if(factor.isEmpty())
             out.setFactor(symbolVisible() ? 1 : 0);
         else
-            out.setFactor(Long.parseLong(factor));
+            out.setFactor(factor.equals("-") ? -1 : Long.parseLong(factor));
         
         // Set the PI power
         if(showPi)
-            out.setPiPow(piPow.isEmpty() ? 1 : Long.parseLong(piPow));
+            out.setPiPow(piPow.isEmpty() ? 1 : (piPow.equals("-") ? -1 : Long.parseLong(piPow)) );
 
         // Set the E power
         if(showE)
-            out.setEPow(ePow.isEmpty() ? 1 : Long.parseLong(ePow));
+            out.setEPow(ePow.isEmpty() ? 1 : (ePow.equals("-") ? -1 : Long.parseLong(ePow)) );
 
         // Set the I power
         if(showI)
-            out.setIPow(iPow.isEmpty() ? 1 : Long.parseLong(iPow));
+            out.setIPow(iPow.isEmpty() ? 1 : (iPow.equals("-") ? -1 : Long.parseLong(iPow)) );
         
         // Set the powers for the variables
         for(int i = 0; i < varPowers.length && i < out.varPowCount(); ++i)
         {
             if(showVars[i])
-                out.setVarPow(i, varPowers[i].isEmpty() ? 1 : Long.parseLong(varPowers[i]));
+                out.setVarPow(i, varPowers[i].isEmpty() ? 1 : (varPowers[i].equals("-") ? -1 : Long.parseLong(varPowers[i])) );
         }
         
         // Return the result
@@ -612,6 +612,56 @@ public class MathSymbolEditor extends View
         return bounds;
     }
     
+    /** Negates the factor or the power of the symbol we're currently editing */
+    public void negate()
+    {
+        // Negate the right string
+        switch(editingSymbol)
+        {
+            case FACTOR:
+                if(factor.startsWith("-"))
+                    factor = factor.substring(1);
+                else
+                    factor = '-' + factor;
+            break;
+            
+            case PI:
+                if(piPow.startsWith("-"))
+                    piPow = piPow.substring(1);
+                else
+                    piPow = '-' + piPow;
+            break;
+            
+            case E:
+                if(ePow.startsWith("-"))
+                    ePow = ePow.substring(1);
+                else
+                    ePow = '-' + ePow;
+            break;
+            
+            case I:
+                if(iPow.startsWith("-"))
+                    iPow = iPow.substring(1);
+                else
+                    iPow = '-' + iPow;
+            break;
+            
+            case VAR:
+            {
+                final int currVarIndex = currVar - 'a';
+                if(varPowers[currVarIndex].startsWith("-"))
+                    varPowers[currVarIndex] = varPowers[currVarIndex].substring(1);
+                else
+                    varPowers[currVarIndex] = '-' + varPowers[currVarIndex];
+            }
+            break;
+        }
+        
+        // Redraw and recalculate the size
+        invalidate();
+        requestLayout();
+    }
+    
     /** Adds the given number to the symbol we're currently editing
      * @param number The number to add */
     public void addNumber(int number)
@@ -625,6 +675,8 @@ public class MathSymbolEditor extends View
             case FACTOR:
                 if(factor.equals("0"))
                     factor = nStr;
+                else if(factor.equals("-0"))
+                    factor = '-' + nStr;
                 else if(!factor.isEmpty() || !nStr.equals("0"))
                     factor += nStr;
             break;
@@ -632,6 +684,8 @@ public class MathSymbolEditor extends View
             case PI:
                 if(piPow.equals("0"))
                     piPow = nStr;
+                else if(piPow.equals("-0"))
+                    piPow = '-' + nStr;
                 else if(!piPow.isEmpty() || !nStr.equals("0"))
                     piPow += nStr;
             break;
@@ -639,6 +693,8 @@ public class MathSymbolEditor extends View
             case E:
                 if(ePow.equals("0"))
                     ePow = nStr;
+                else if(ePow.equals("-0"))
+                    ePow = '-' + nStr;
                 else if(!ePow.isEmpty() || !nStr.equals("0"))
                     ePow += nStr;
             break;
@@ -646,6 +702,8 @@ public class MathSymbolEditor extends View
             case I:
                 if(iPow.equals("0"))
                     iPow = nStr;
+                else if(iPow.equals("-0"))
+                    iPow = '-' + nStr;
                 else if(!iPow.isEmpty() || !nStr.equals("0"))
                     iPow += nStr;
             break;
@@ -655,6 +713,8 @@ public class MathSymbolEditor extends View
                 final int currVarIndex = currVar - 'a';
                 if(varPowers[currVarIndex].equals("0"))
                     varPowers[currVarIndex] = nStr;
+                else if(varPowers[currVarIndex].equals("-0"))
+                    varPowers[currVarIndex] = '-' + nStr;
                 else if(!varPowers[currVarIndex].isEmpty() || !nStr.equals("0"))
                     varPowers[currVarIndex] += nStr;
             }

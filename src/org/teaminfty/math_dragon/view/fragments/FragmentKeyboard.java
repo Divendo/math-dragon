@@ -63,6 +63,7 @@ public class FragmentKeyboard extends DialogFragment
     	final ImageButton buttonDel = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonDelete);
         final ImageButton buttonCancel = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonCancel);
     	final ImageButton buttonOK  = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonConfirm);
+    	final Button buttonNegate = (Button) myFragmentView.findViewById(R.id.keyboardButtonNegate);
         final ToggleButton buttonPi = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonE);
         final ToggleButton buttonI  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonI);
@@ -96,6 +97,7 @@ public class FragmentKeyboard extends DialogFragment
     	buttonClr.setOnClickListener(new ButtonClearOnClickListener());
         buttonCancel.setOnClickListener(new ButtonCancelOnClickListener());
     	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
+    	buttonNegate.setOnClickListener(new ButtonNegateOnClickListener());
     	buttonTabNumpad.setOnClickListener(buttonTabOnClickListener);
     	buttonTabVariables.setOnClickListener(buttonTabOnClickListener);
     	buttonX.setOnClickListener(buttonVarOnClickListener);
@@ -381,6 +383,16 @@ public class FragmentKeyboard extends DialogFragment
         {
             callOnConfirmListener(mathSymbolEditor.getMathSymbol());
             dismiss();
+        }
+    }
+
+    /** The OnClickListener for the negate button */
+    private class ButtonNegateOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View v)
+        {
+            mathSymbolEditor.negate();
         }
     }
     

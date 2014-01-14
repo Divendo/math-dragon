@@ -226,6 +226,21 @@
                 android:textOn="@string/iota" />
 			
         </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center" >
+            
+			<Button
+			    android:id="@+id/keyboardButtonNegate"
+        		android:layout_gravity="center"
+			    style="@style/KeyboardButtonSmall"
+			    android:layout_margin="@dimen/keyboard_button_small_margin"
+			    android:text="@string/plusminus" />
+	
+        </LinearLayout>
     </LinearLayout>
     
     <!-- Variables keyboard -->

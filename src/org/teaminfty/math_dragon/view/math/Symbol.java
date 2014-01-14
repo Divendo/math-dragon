@@ -86,17 +86,22 @@ public class Symbol extends Expression
 
     /**
      * Helper method for appending literals.
-     * @param sb
-     * @param c
-     * @param pow
+     * @param sb The {@link StringBuilder} to append the string to
+     * @param c The character of the symbol
+     * @param pow The power of the symbol
      */
     private static void appendLit(StringBuilder sb, char c, long pow)
     {
-        if (pow != 0)
+        if(pow != 0)
         {
             sb.append(c);
-            if (pow != 1)
+            if(pow != 1)
             {
+                if(pow < 0)
+                {
+                    sb.append('\u207b');
+                    pow *= -1;
+                }
                 long num = pow;
                 StringBuilder sb2 = new StringBuilder();
                 while (num > 0)

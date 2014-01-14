@@ -4,13 +4,22 @@
     android:layout_height="match_parent"
     android:padding="@dimen/keyboard_padding"
     android:background="@color/white" >
+    
+    <!-- The negate button -->
+	<Button
+	    android:id="@+id/keyboardButtonNegate"
+	    style="@style/KeyboardButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+	    android:text="@string/plusminus" />
 
     <!-- The MathSymbolEditor -->
     <HorizontalScrollView
         android:id="@+id/mathSymbolEditorScroller"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
+		android:layout_toLeftOf="@id/keyboardButtonNegate"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/keyboard_button_margin"
         android:minHeight="@dimen/math_symbol_editor_min_height"
