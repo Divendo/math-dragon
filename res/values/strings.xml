@@ -30,4 +30,6 @@
 	<string name="no">No</string>
 	<string name="remove">Remove?</string>
 	<string name="plusminus">±</string>
+	<string name="dot">.</string>
+	
 </resources>

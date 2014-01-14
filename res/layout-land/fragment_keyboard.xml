@@ -5,11 +5,18 @@
     android:padding="@dimen/keyboard_padding"
     android:background="@color/white" >
     
-    <!-- The negate button -->
+    <!-- The negate and dot button -->
+	<Button
+	    android:id="@+id/keyboardButtonDot"
+	    style="@style/KeyboardButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+	    android:text="@string/dot" />
+	
 	<Button
 	    android:id="@+id/keyboardButtonNegate"
 	    style="@style/KeyboardButton"
-        android:layout_alignParentRight="true"
+		android:layout_toLeftOf="@id/keyboardButtonDot"
         android:layout_alignParentTop="true"
 	    android:text="@string/plusminus" />
 

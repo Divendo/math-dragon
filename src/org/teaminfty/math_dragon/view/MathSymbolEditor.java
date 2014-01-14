@@ -410,6 +410,8 @@ public class MathSymbolEditor extends View
         Symbol out = new Symbol();
         
         // Set the factor
+        if(factor.contains("."))
+            factor = factor.substring(0, factor.indexOf('.')); // TODO Remove this code when math.Symbol supports real values
         if(factor.isEmpty())
             out.setFactor(symbolVisible() ? 1 : 0);
         else
@@ -656,6 +658,31 @@ public class MathSymbolEditor extends View
             }
             break;
         }
+        
+        // Redraw and recalculate the size
+        invalidate();
+        requestLayout();
+    }
+    
+    /** Whether or not the factor currently contains a dot
+     * @return <tt>true</tt> if the factor contains a dot, <tt>false</tt> otherwise */
+    public boolean containsDot()
+    { return factor.contains("."); }
+
+    /** Adds a dot to the factor */
+    public void dot()
+    {
+        // We only add a dot to the factor
+        if(editingSymbol != EditingSymbol.FACTOR) return;
+        
+        // If the factor already contains a dot, we do nothing
+        if(factor.contains(".")) return;
+        
+        // Add the dot
+        if(factor.equals("-") || factor.isEmpty())
+            factor += "0.";
+        else
+            factor += '.';
         
         // Redraw and recalculate the size
         invalidate();

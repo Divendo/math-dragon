@@ -64,6 +64,7 @@ public class FragmentKeyboard extends DialogFragment
         final ImageButton buttonCancel = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonCancel);
     	final ImageButton buttonOK  = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonConfirm);
     	final Button buttonNegate = (Button) myFragmentView.findViewById(R.id.keyboardButtonNegate);
+        final Button buttonDot = (Button) myFragmentView.findViewById(R.id.keyboardButtonDot);
         final ToggleButton buttonPi = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonE);
         final ToggleButton buttonI  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonI);
@@ -98,6 +99,7 @@ public class FragmentKeyboard extends DialogFragment
         buttonCancel.setOnClickListener(new ButtonCancelOnClickListener());
     	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
     	buttonNegate.setOnClickListener(new ButtonNegateOnClickListener());
+    	buttonDot.setOnClickListener(new ButtonDotOnClickListener());
     	buttonTabNumpad.setOnClickListener(buttonTabOnClickListener);
     	buttonTabVariables.setOnClickListener(buttonTabOnClickListener);
     	buttonX.setOnClickListener(buttonVarOnClickListener);
@@ -258,6 +260,7 @@ public class FragmentKeyboard extends DialogFragment
         final ToggleButton buttonX  = (ToggleButton) view.findViewById(R.id.keyboardButtonX);
         final ToggleButton buttonY  = (ToggleButton) view.findViewById(R.id.keyboardButtonY);
         final ToggleButton buttonZ  = (ToggleButton) view.findViewById(R.id.keyboardButtonZ);
+        final Button buttonDot = (Button) view.findViewById(R.id.keyboardButtonDot);
         
         // Uncheck all buttons
         buttonPi.setChecked(false);
@@ -294,6 +297,9 @@ public class FragmentKeyboard extends DialogFragment
             break;
             default:  /* Just to suppress warnings */   break;
         }
+        
+        // Enable / disable the dot button
+        buttonDot.setEnabled(mathSymbolEditor.getEditingSymbol() == MathSymbolEditor.EditingSymbol.FACTOR && !mathSymbolEditor.containsDot());
     }
     
     /** Activates the given tab
@@ -393,6 +399,17 @@ public class FragmentKeyboard extends DialogFragment
         public void onClick(final View v)
         {
             mathSymbolEditor.negate();
+        }
+    }
+
+    /** The OnClickListener for the dot button */
+    private class ButtonDotOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View v)
+        {
+            mathSymbolEditor.dot();
+            refreshButtonState();
         }
     }
     
