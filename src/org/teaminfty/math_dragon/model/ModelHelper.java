@@ -88,7 +88,9 @@ public final class ModelHelper
             // Figure out which symbol it is
             String str = s.toString().toLowerCase();
             if(str.matches("[a-df-hj-z]"))
-                symbol.setVarPow(str.charAt(0) - 'a', 1);
+                symbol.setVarPow(str.charAt(0), 1);
+            else if(str.equals("nv"))       // The 'n' has a different name for some reason
+                symbol.setVarPow('n', 1);
             else if(s.equals(F.Pi))
                 symbol.setPiPow(1);
             else if(s.equals(F.E))
@@ -314,7 +316,8 @@ public final class ModelHelper
         	if (s.getFactor() < 0)
         	{
         		s.setFactor(-s.getFactor());
-        		return new Divide(s, toExpression(ast.get(1)));
+        		return new Divide(new org.teaminfty.math_dragon.view.math.Symbol(1),
+        		                  new Power(toExpression(ast.get(1)), s));
         	}
         } else if (power instanceof Divide)
         {
