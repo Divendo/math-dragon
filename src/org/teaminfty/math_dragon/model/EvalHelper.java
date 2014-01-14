@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon.model;
 
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.expression.FractionSym;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
@@ -126,7 +127,7 @@ public class EvalHelper
     {
         if(symbol == null)
             throw new NullPointerException("symbol");
-        IExpr result = F.ZZ(symbol.getFactor());
+        IExpr result = FractionSym.valueOf(symbol.getFactor());
         if(symbol.getFactor() == 0)
             return result;
         

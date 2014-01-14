@@ -320,6 +320,70 @@ public class MathSymbolEditor extends View
     public EditingSymbol getEditingSymbol()
     { return editingSymbol; }
 
+    /** Converts a <tt>double</tt> to a string, dropping <tt>".0"</tt> if necessary.
+     * Also returns, for example, <tt>"0.002"</tt> instead of <tt>"2.0E-3"</tt>.
+     * @param x The <tt>double</tt> to convert
+     * @return The <tt>double</tt> as a string */
+    private String doubleToString(double x)
+    {
+        // Convert the double to a string
+        String str = Double.toString(x);
+        
+        // Search for an 'E'
+        final int ePos = str.indexOf('E');
+        if(ePos != -1)
+        {
+            // Determine the amount of zeros and whether they need to be appended or prepended
+            long zeros = Long.parseLong(str.substring(ePos + 1));
+            final boolean append = zeros >= 0;
+            if(!append)
+                zeros = (-zeros) - 1;
+            
+            // Remember the part before the 'E'
+            String before = str.substring(0, ePos);
+            final int dotPos = before.indexOf('.');
+            if(dotPos != -1)
+            {
+                String tmp = before.substring(dotPos + 1);
+                while(tmp.endsWith("0"))
+                    tmp = tmp.substring(0, tmp.length() - 1);
+                before = before.substring(0, dotPos) + tmp;
+                
+                if(append)
+                    zeros -= tmp.length();
+            }
+            boolean negative = before.startsWith("-");
+            if(negative)
+                before = before.substring(1);
+            
+            // Prepend/append the zeros
+            while(zeros > 0)
+            {
+                if(append)
+                    before += '0';
+                else
+                    before = '0' + before;
+                --zeros;
+            }
+            if(!append)
+                before = "0." + before;
+            
+            // Put back the minus sign
+            if(negative)
+                before = '-' + before;
+            
+            // Remember the result
+            str = before;
+        }
+        
+        // Chop off unnecessary '.' and '0'
+        while(str.contains(".") && (str.endsWith(".") || str.endsWith("0")))
+            str = str.substring(0, str.length() - 1);
+        
+        // Return the string
+        return str;
+    }
+
     /** Resets the symbol in this editor */
     public void reset()
     {
@@ -352,7 +416,7 @@ public class MathSymbolEditor extends View
         reset();
         
         // Set the factor
-        factor = Long.toString(mathSymbol.getFactor());
+        factor = doubleToString(mathSymbol.getFactor());
         
         // If the factor is not 0, we need to set the powers (and their visibility)
         if(mathSymbol.getFactor() != 0)
@@ -410,12 +474,10 @@ public class MathSymbolEditor extends View
         Symbol out = new Symbol();
         
         // Set the factor
-        if(factor.contains("."))
-            factor = factor.substring(0, factor.indexOf('.')); // TODO Remove this code when math.Symbol supports real values
         if(factor.isEmpty())
             out.setFactor(symbolVisible() ? 1 : 0);
         else
-            out.setFactor(factor.equals("-") ? -1 : Long.parseLong(factor));
+            out.setFactor(factor.equals("-") ? -1 : Double.parseDouble(factor));
         
         // Set the PI power
         if(showPi)
