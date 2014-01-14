@@ -308,18 +308,25 @@ public final class ModelHelper
             return child;
         }
         Expression power = toExpression(ast.get(2));
-        if (power instanceof org.teaminfty.math_dragon.view.math.Symbol) {
+        if (power instanceof org.teaminfty.math_dragon.view.math.Symbol)
+        {
         	org.teaminfty.math_dragon.view.math.Symbol s = (org.teaminfty.math_dragon.view.math.Symbol) power;
-        	if (s.getFactor() < 0) {
+        	if (s.getFactor() < 0)
+        	{
         		s.setFactor(-s.getFactor());
         		return new Divide(s, toExpression(ast.get(1)));
         	}
-        } else if (power instanceof Divide) {
+        } else if (power instanceof Divide)
+        {
             Divide div = (Divide) power;
-            if (div.getLeft() instanceof org.teaminfty.math_dragon.view.math.Symbol) {
+            if (div.getLeft() instanceof org.teaminfty.math_dragon.view.math.Symbol)
+            {
                 org.teaminfty.math_dragon.view.math.Symbol numerator = (org.teaminfty.math_dragon.view.math.Symbol) div.getLeft();
-                if (numerator.isFactorOnly() && numerator.getFactor() == 1) {
-                    return new Root(toExpression(ast.get(1)), div.getRight());// x^(1/n) -> root(x,n)
+                if (numerator.isFactorOnly())
+                {
+                    if (numerator.getFactor() == 1)
+                        return new Root(toExpression(ast.get(1)), div.getRight());// x^(1/n) -> root(x,n)
+                    return new Root(toExpression(ast.get(1)), new Divide(div.getRight(), numerator));
                 }
             }
         }
