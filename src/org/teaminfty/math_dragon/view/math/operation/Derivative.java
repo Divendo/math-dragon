@@ -33,7 +33,7 @@ public class Derivative extends Binary
 
     @Override
     public int getPrecedence()
-    { return Precedence.ADD; }
+    { return Precedence.MULTIPLY; }
     
     /**
      * Returns the sizes of the bounding boxes.

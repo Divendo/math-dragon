@@ -75,7 +75,7 @@ public class Integral extends Operation
 	}
 
     public int getPrecedence()
-    { return Precedence.FUNCTION; }
+    { return Precedence.INTEGRAL; }
 	
 	public Rect[] getSizes()
 	{
