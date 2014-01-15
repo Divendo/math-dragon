@@ -730,6 +730,14 @@ public class MathSymbolEditor extends View
      * @return <tt>true</tt> if the factor contains a dot, <tt>false</tt> otherwise */
     public boolean containsDot()
     { return factor.contains("."); }
+    
+    /** The amount of decimals the current factor contains
+     * @return The amount of decimals as an integer */
+    public int decimalCount()
+    {
+        if(!containsDot()) return 0;
+        return factor.length() - factor.indexOf('.') - 1;
+    }
 
     /** Adds a dot to the factor */
     public void dot()

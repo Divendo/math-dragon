@@ -104,16 +104,19 @@
 
             <Button
                 android:id="@+id/keyboardButton1"
+                android:tag="keyboardButton1"
                 style="@style/KeyboardButton"
                 android:text="1" />
 
             <Button
                 android:id="@+id/keyboardButton2"
+                android:tag="keyboardButton2"
                 style="@style/KeyboardButton"
                 android:text="2" />
 
             <Button
                 android:id="@+id/keyboardButton3"
+                android:tag="keyboardButton3"
                 style="@style/KeyboardButton"
                 android:text="3" />
             
@@ -136,16 +139,19 @@
 
             <Button
                 android:id="@+id/keyboardButton4"
+                android:tag="keyboardButton4"
                 style="@style/KeyboardButton"
                 android:text="4" />
 
             <Button
                 android:id="@+id/keyboardButton5"
+                android:tag="keyboardButton5"
                 style="@style/KeyboardButton"
                 android:text="5" />
 
             <Button
                 android:id="@+id/keyboardButton6"
+                android:tag="keyboardButton6"
                 style="@style/KeyboardButton"
                 android:text="6" />
             
@@ -168,16 +174,19 @@
 
             <Button
                 android:id="@+id/keyboardButton7"
+                android:tag="keyboardButton7"
                 style="@style/KeyboardButton"
                 android:text="7" />
 
             <Button
                 android:id="@+id/keyboardButton8"
+                android:tag="keyboardButton8"
                 style="@style/KeyboardButton"
                 android:text="8" />
 
             <Button
                 android:id="@+id/keyboardButton9"
+                android:tag="keyboardButton9"
                 style="@style/KeyboardButton"
                 android:text="9" />
 			
@@ -200,6 +209,7 @@
 
             <Button
                 android:id="@+id/keyboardButton0"
+                android:tag="keyboardButton0"
                 style="@style/KeyboardButton"
                 android:text="0" />
             
