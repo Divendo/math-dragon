@@ -334,7 +334,7 @@ public class MathSymbolEditor extends View
         if(ePos != -1)
         {
             // Determine the amount of zeros and whether they need to be appended or prepended
-            long zeros = Long.parseLong(str.substring(ePos + 1));
+            int zeros = Integer.parseInt(str.substring(ePos + 1));
             final boolean append = zeros >= 0;
             if(!append)
                 zeros = (-zeros) - 1;
@@ -351,6 +351,8 @@ public class MathSymbolEditor extends View
                 
                 if(append)
                     zeros -= tmp.length();
+                if(zeros < 0)
+                    before = before.substring(0, before.length() + zeros) + '.' + before.substring(before.length() + zeros);
             }
             boolean negative = before.startsWith("-");
             if(negative)
