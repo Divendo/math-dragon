@@ -385,6 +385,8 @@ public final class ModelHelper
             return new Function(FunctionType.ARCSIN, toExpression(ast.get(1)));
         if (ast.isArcCos())
             return new Function(FunctionType.ARCCOS, toExpression(ast.get(1)));
+        if (ast.isArcTan())
+            return new Function(FunctionType.ARCTAN, toExpression(ast.get(1)));
         if (ast.isLog())
             return new Function(FunctionType.LN, toExpression(ast.get(1)));
         throw new ParseException(ast);
