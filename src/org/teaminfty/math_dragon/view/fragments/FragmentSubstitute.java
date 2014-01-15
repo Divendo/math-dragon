@@ -141,6 +141,9 @@ public class FragmentSubstitute extends DialogFragment
 
     /** The tag for the substitution editor fragment */
     private static final String EDITOR_TAG = "substitution_editor";
+
+    /** The tag for the warning dialog fragment */
+    private static final String WARNING_TAG = "warning_dlg";
     
     private class OnCloseBtnClickListener implements View.OnClickListener
     {
@@ -182,6 +185,30 @@ public class FragmentSubstitute extends DialogFragment
             // Update the interface
             setSubstitution(varName, mathSymbol, (ViewGroup) getView().findViewById(R.id.layout_substitute_list));
         }
+    }
+    
+    private class DeleteSubstituteLisntener implements FragmentWarningDialog.OnConfirmListener
+    {
+        /** The variable that is to be deleted */
+        private char varName = 'a';
+        
+        /** Constructor
+         * @param name The variable that is to be deleted */
+        public DeleteSubstituteLisntener(char name)
+        { varName = name; }
+
+        @Override
+        public void confirm()
+        {
+            // Delete the substitution from the database
+            Database db = new Database(getActivity());
+            db.saveSubstitution(new Database.Substitution(varName));
+            db.close();
+            
+            // Update the interface
+            setSubstitution(varName, null, (ViewGroup) getView().findViewById(R.id.layout_substitute_list));
+        }
+        
     }
     
     private class RowClickListener implements View.OnClickListener, View.OnLongClickListener
@@ -226,8 +253,16 @@ public class FragmentSubstitute extends DialogFragment
         @Override
         public boolean onLongClick(View v)
         {
-            // TODO Auto-generated method stub
-            return false;
+            // If a warning is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(WARNING_TAG) != null)
+                return true;
+            
+            // Create and show a warning dialog
+            FragmentWarningDialog dlg = new FragmentWarningDialog(R.string.delete_substitution, R.string.sure_to_delete_substitution, new DeleteSubstituteLisntener(varName));
+            dlg.show(getFragmentManager(), WARNING_TAG);
+            
+            // We've consumed the event
+            return true;
         }
     }
 }

@@ -142,6 +142,13 @@ public class Database extends SQLiteOpenHelper
     public static final class Substitution
     {
         /** Constructor */
+        public Substitution(char name)
+        {
+            this.name = name;
+            this.value = null;
+        }
+        
+        /** Constructor */
         public Substitution(char name, Symbol value)
         {
             this.name = name;
@@ -441,7 +448,7 @@ public class Database extends SQLiteOpenHelper
     
     /** Saves the given substitution
      * @param sub The substitution to save
-     * @return <tt>true</tt> if the substitution was saved succesful, <tt>false</tt> otherwise */
+     * @return <tt>true</tt> if the substitution was saved successful, <tt>false</tt> otherwise */
     public boolean saveSubstitution(Substitution sub)
     {
         // Get the variable name as an integer
@@ -454,7 +461,7 @@ public class Database extends SQLiteOpenHelper
         if(sub.value == null)
         {
             // If the substitution doesn't exist, we don't have anything to do
-            if(subExists) return true;
+            if(!subExists) return true;
             
             // Open a connection to the database
             SQLiteDatabase db = getWritableDatabase();

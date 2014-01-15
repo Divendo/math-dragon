@@ -20,11 +20,28 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/warning_dlg_padding" />
 
-    <Button
-        android:id="@+id/btn_ok"
-        style="@style/FlatButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ok" />
+        android:orientation="horizontal" >
+        
+	    <Button
+	        android:id="@+id/btn_ok"
+	        style="@style/FlatButton"
+	        android:layout_weight="0.5"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:text="@string/ok" />
+	    
+	    <Button
+	        android:id="@+id/btn_cancel"
+	        style="@style/FlatButton"
+	        android:visibility="gone"
+	        android:layout_weight="0.5"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:text="@string/no" />
+    
+    </LinearLayout>
 
 </LinearLayout>
