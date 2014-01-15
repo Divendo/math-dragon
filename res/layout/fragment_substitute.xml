@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="@color/white" >
 
     <RelativeLayout
+        android:id="@+id/titleRow"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
         
@@ -29,12 +32,23 @@
             android:textStyle="bold"
             android:textSize="@dimen/dialog_title_font_size"
             android:text="@string/substitute" />
-        
     </RelativeLayout>
+    
+    <Button
+        android:id="@+id/btn_add"
+        style="@style/FlatButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/add_substitution" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@id/btn_add"
+        android:layout_below="@id/titleRow"
         android:layout_margin="@dimen/keyboard_button_margin"
         android:overScrollMode="never"
         android:scrollbars="none"
@@ -50,4 +64,4 @@
         
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>

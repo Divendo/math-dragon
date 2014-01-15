@@ -39,6 +39,9 @@ public class FragmentSubstitute extends DialogFragment
         // The close button
         ((ImageButton) view.findViewById(R.id.btn_close)).setOnClickListener(new OnCloseBtnClickListener());
         
+        // The add button
+        view.findViewById(R.id.btn_add).setOnClickListener(new BtnAddClickListener());
+        
         // Return the content view
         return view;
     }
@@ -130,17 +133,49 @@ public class FragmentSubstitute extends DialogFragment
     @Override
     public void onCancel(DialogInterface dialog)
     { dismiss(); }
-    
-    @Override
-    public void onDismiss(DialogInterface dialog)
-    {
-        //mathView = null;
-    }
+
+    /** The tag for the substitution editor fragment */
+    private static final String EDITOR_TAG = "substitution_editor";
     
     private class OnCloseBtnClickListener implements View.OnClickListener
     {
         @Override
         public void onClick(View btn)
         { dismiss(); }
+    }
+    
+    private class BtnAddClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View btn)
+        {
+            // If an editor is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(EDITOR_TAG) != null)
+                return;
+            
+            // Create an editor
+            FragmentSubstitutionEditor editor = new FragmentSubstitutionEditor();
+            
+            // Set the listener
+            editor.setOnConfirmListener(new SetSubstitutionListener());
+            
+            // Show the editor
+            editor.show(getFragmentManager(), EDITOR_TAG);
+        }
+    }
+    
+    private class SetSubstitutionListener implements FragmentSubstitutionEditor.OnConfirmListener
+    {
+        @Override
+        public void confirmed(char varName, Symbol mathSymbol)
+        {
+            // Save the substitution to the database
+            Database db = new Database(getActivity());
+            db.saveSubstitution(new Database.Substitution(varName, mathSymbol));
+            db.close();
+            
+            // Update the interface
+            setSubstitution(varName, mathSymbol, (ViewGroup) getView().findViewById(R.id.layout_substitute_list));
+        }
     }
 }

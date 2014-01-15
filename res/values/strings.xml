@@ -17,7 +17,6 @@
 	<string name="favourite">Favourite</string>
 	<string name="undo">Undo</string>
 	<string name="redo">Redo</string>
-	<string name="substitute">Substitute</string>
 	<string name="help">Help</string>
 	<string name="numpad">Numpad</string>
 	<string name="variables">Variables</string>
@@ -33,5 +32,11 @@
 	<string name="dot">.</string>
 	<string name="invalid_input">Invalid input</string>
 	<string name="invalid_integrate_over">Only integrating over a single variable is supported.</string>
+	<string name="substitute">Substitute</string>
+	<string name="add_substitution">Add substitution</string>
+	<string name="edit_substitution">Edit substitution</string>
+	<string name="var_to_substitute">Variable to substitute:</string>
+	<string name="substitute_for">Substitute for:</string>
+	<string name="edit">Edit</string>
 	
 </resources>
