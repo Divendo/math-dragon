@@ -5,6 +5,7 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
+import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
@@ -160,6 +161,11 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         try
         {
+            // Load the substitutions
+            Database db = new Database(this);
+            EvalHelper.substitutions = db.getAllSubstitutions();
+            db.close();
+            
             // Calculate the answer
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
             IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
@@ -186,6 +192,11 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         try
         {
+            // Load the substitutions
+            Database db = new Database(this);
+            EvalHelper.substitutions = db.getAllSubstitutions();
+            db.close();
+            
             // Calculate the answer
             FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
             IExpr result = F.evaln( EvalHelper.eval(fragmentMainScreen.getMathObject()) );

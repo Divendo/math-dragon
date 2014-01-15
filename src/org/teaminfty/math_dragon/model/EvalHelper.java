@@ -33,6 +33,9 @@ public class EvalHelper
 {
     private EvalHelper()
     {}
+    
+    /** The list of substitutions */
+    public static Database.Substitution[] substitutions = null;
 
     /**
      * Convert the mathematical object to an expression returned by the symja
@@ -152,11 +155,29 @@ public class EvalHelper
         for(int i = 0; i < symbol.varPowCount(); i++)
         {
             if(symbol.getVarPow(i) != 0)
-                result = F.Times(result, F.Power(SYMBOLS[i], symbol.getVarPow(i)));
+                result = F.Times(result, F.Power(getVarSymbol((char) ('a' + i)), symbol.getVarPow(i)));
         }
 
         // Return the result
         return result;
+    }
+    
+    /** Returns the symbol for the given variable (this will substitute the variable when necessary)
+     * @param var The variable name */
+    private static IExpr getVarSymbol(char varName)
+    {
+        // Check if we have to substitute the variable
+        if(substitutions != null)
+        {
+            for(Database.Substitution sub : substitutions)
+            {
+                if(sub.name == varName && sub.value != null)
+                    return symbol(sub.value);
+            }
+        }
+        
+        // Return the Symja variable symbol
+        return SYMBOLS[varName - 'a'];
     }
 
     /**
