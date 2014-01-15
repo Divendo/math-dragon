@@ -1,9 +1,8 @@
 package org.teaminfty.math_dragon.view;
 
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Log;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -23,7 +22,7 @@ public class MathSourceOperationLog extends MathSourceObject
     }
 
     @Override
-    public MathObject createMathObject()
+    public Expression createMathObject()
     {
         return new Log();
     }
@@ -37,7 +36,7 @@ public class MathSourceOperationLog extends MathSourceObject
         final int padding = w / 15;
         
         // Determine the size of an empty box
-        Rect emptyBox = getRectBoundingBox(3 * w / 5, 3 * h / 4, MathObjectEmpty.RATIO);
+        Rect emptyBox = getRectBoundingBox(3 * w / 5, 3 * h / 4, Empty.RATIO);
         
         // Determine the size of the string we're going to draw
         Rect textBox = new Rect();

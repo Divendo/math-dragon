@@ -2,6 +2,8 @@ package org.teaminfty.math_dragon.view.math;
 
 
 
+import org.teaminfty.math_dragon.view.math.operation.Binary;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -17,7 +19,7 @@ import android.graphics.Region;
  * @author Divendo
  * @author FolkertVanVerseveld
  */
-public class Log extends MathBinaryOperation
+public class Log extends Binary
 {
         /** the Type of the operation */
 		final String TYPE = "log";
@@ -67,7 +69,7 @@ public class Log extends MathBinaryOperation
     }*/
     
     public int getPrecedence()
-    { return MathObjectPrecedence.FUNCTION; }
+    { return Precedence.FUNCTION; }
 
     /** Calculates the right text size for the given level
      * @return The right text size for the given level */

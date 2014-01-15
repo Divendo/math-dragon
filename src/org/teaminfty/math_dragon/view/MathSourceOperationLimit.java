@@ -1,8 +1,8 @@
 package org.teaminfty.math_dragon.view;
 
+import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Log;
-import org.teaminfty.math_dragon.view.math.MathObject;
-import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -23,7 +23,7 @@ public class MathSourceOperationLimit extends MathSourceObject
     }
 
     @Override
-    public MathObject createMathObject()
+    public Expression createMathObject()
     {
         return new Log();
     }
@@ -37,17 +37,17 @@ public class MathSourceOperationLimit extends MathSourceObject
         final int padding = w / 15;
         
         // Determine the size of an empty box
-        Rect emptyBox = getRectBoundingBox(3 * w / 5, 3 * h / 4, MathObjectEmpty.RATIO);
+        Rect emptyBox = getRectBoundingBox(3 * w / 5, 3 * h / 4, Empty.RATIO);
         
         // Determine the size of the string we're going to draw
         Rect textBox = new Rect();
-        paintOperator.getTextBounds("log", 0, 3, textBox);
+        paintOperator.getTextBounds("lim", 0, 3, textBox);
         
         // Place the empty box at the right position and draw it
         emptyBox.offsetTo((w - textBox.width() - padding - emptyBox.width()) / 2 + textBox.width() + padding, (h - emptyBox.height()) / 2);
         drawEmptyBox(canvas, emptyBox);
         
         // Draw the text
-        canvas.drawText("log" , (w - textBox.width() - padding - emptyBox.width()) / 2 - textBox.left, (h - textBox.height()) / 2 - textBox.top, paintOperator);
+        canvas.drawText("lim" , (w - textBox.width() - padding - emptyBox.width()) / 2 - textBox.left, (h - textBox.height()) / 2 - textBox.top, paintOperator);
     }
 }
