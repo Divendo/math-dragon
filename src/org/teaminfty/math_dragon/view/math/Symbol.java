@@ -332,7 +332,14 @@ public class Symbol extends Expression
     /** Assign the new factor to <tt>factor</tt>
      * @param factor the new <tt>factor</tt> */
     public void setFactor(double factor)
-    { this.factor = factor; }
+    {
+        // Round the factor to 6 decimals
+        double decimals = factor > 0 ? factor - Math.floor(factor) : factor - Math.ceil(factor);
+        decimals = Math.round(decimals * 1000000) / 1000000.0;
+        
+        // Set the factor
+        this.factor = (factor > 0 ? Math.floor(factor) : Math.ceil(factor)) + decimals;
+    }
 
     /** Get the current power for <tt>pi</tt>
      * @return The current power for <tt>pi</tt> */
