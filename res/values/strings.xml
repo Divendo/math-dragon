@@ -31,5 +31,7 @@
 	<string name="remove">Remove?</string>
 	<string name="plusminus">±</string>
 	<string name="dot">.</string>
+	<string name="invalid_input">Invalid input</string>
+	<string name="invalid_integrate_over">Only integrating over a single variable is supported.</string>
 	
 </resources>

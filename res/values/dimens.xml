@@ -43,4 +43,6 @@
     <dimen name="substitute_margin">8dp</dimen>
     <dimen name="substitute_text_size">32sp</dimen>
     
+    <dimen name="warning_dlg_padding">8dp</dimen>
+    
 </resources>

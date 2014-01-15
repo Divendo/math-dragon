@@ -11,6 +11,7 @@ import org.teaminfty.math_dragon.view.math.ExpressionDuplicator;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.operation.Integral;
 import org.teaminfty.math_dragon.view.math.operation.binary.Linear;
 
 import android.content.ClipData;
@@ -157,53 +158,55 @@ public class MathView extends View
         scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
     }
     
-    /** A listener that can be implemented by the parent fragment to listen when to show a keyboard */
-    public interface OnShowKeyboardListener
+    /** A listener that can be implemented by the parent fragment to listen for events of this {@link MathView} */
+    public interface OnEventListener
     {
+        /** Called when the {@link Expression} has changed
+         * @param expression The current {@link Expression} */
+        public void changed(Expression expression);
+        
         /** Called when a keyboard with the given confirm listener should be shown
          * @param mathSymbol The initial value for the input (can be <tt>null</tt>)
          * @param listener The confirm listener */
         public void showKeyboard(Symbol mathSymbol, FragmentKeyboard.OnConfirmListener listener);
+
+        /** Called when a warning with the given information should be shown
+     * @param title The ID of the string resource that should be the title
+     * @param msg The ID of the string resource that should be the message */
+        public void showWarning(int title, int msg);
     }
     
-    /** The current {@link OnShowKeyboardListener} */
-    private OnShowKeyboardListener onShowKeyboardListener = null;
+    /** The current {@link OnEventListener} */
+    private OnEventListener onEventListener = null;
     
-    /** Set the current {@link OnShowKeyboardListener}
-     * @param listener The new {@link OnShowKeyboardListener} */
-    public void setOnShowKeyboardListener(OnShowKeyboardListener listener)
-    { onShowKeyboardListener = listener; }
+    /** Set the current {@link OnEventListener}
+     * @param listener The new {@link OnEventListener} */
+    public void setEventListener(OnEventListener listener)
+    { onEventListener = listener; }
     
     /** Asks the parent fragment to show the keyboard with the given confirm listener
      * @param mathSymbol The initial value for the input (can be <tt>null</tt>)
      * @param listener The confirm listener */
     protected void showKeyboard(Symbol mathSymbol, FragmentKeyboard.OnConfirmListener listener)
     {
-        if(onShowKeyboardListener != null)
-            onShowKeyboardListener.showKeyboard(mathSymbol, listener);
+        if(onEventListener != null)
+            onEventListener.showKeyboard(mathSymbol, listener);
     }
     
-    /** A listener that can be implemented to be notified of when the {@link Expression} changes */
-    public interface OnExpressionChangeListener
-    {
-        /** Called when the {@link Expression} has changed
-         * @param expression The current {@link Expression} */
-        public void changed(Expression expression);
-    }
-    
-    /** The current {@link OnExpressionChangeListener} */
-    private OnExpressionChangeListener onExpressionChange = null;
-    
-    /** Set the current {@link OnExpressionChangeListener}
-     * @param listener The new {@link OnExpressionChangeListener} */
-    public void setOnExpressionChangeListener(OnExpressionChangeListener listener)
-    { onExpressionChange = listener; }
-    
-    /** Call {@link OnExpressionChangeListener#change() change()} on the current {@link OnExpressionChangeListener} */
+    /** Call {@link OnEventListener#change() change()} on the current {@link OnEventListener} */
     protected void expressionChanged()
     {
-        if(onExpressionChange != null)
-            onExpressionChange.changed(expression);
+        if(onEventListener != null)
+            onEventListener.changed(expression);
+    }
+    
+    /** Asks the parent fragment to show a warning with the given texts
+     * @param title The ID of the string resource that should be the title
+     * @param msg The ID of the string resource that should be the message */
+    protected void showWarning(int title, int msg)
+    {
+        if(onEventListener != null)
+            onEventListener.showWarning(title, msg);
     }
 
     /** Recursively sets the given state for the given {@link Expression} and all of its children
@@ -834,21 +837,69 @@ public class MathView extends View
         @Override
         public void confirmed(Symbol mathSymbol)
         {
+            // Keep track of whether a warning should be shown or not
+            int warningId = 0;
+            
             // Place the symbol
             if(expressionInfo.parent == null)
                 setExpressionHelper(mathSymbol);
             else
             {
-                expressionInfo.parent.setChild(expressionInfo.childIndex, mathSymbol);
-                ParenthesesHelper.setParentheses(expression);
+                // In the 'integrate over' child only a single variable is allowed
+                if(expressionInfo.parent instanceof Integral && expressionInfo.childIndex == 1)
+                {
+                    // No constants allowed
+                    if(mathSymbol.getFactor() != 1 || (mathSymbol.getPiPow() | mathSymbol.getEPow() | mathSymbol.getIPow()) != 0)
+                        warningId = R.string.invalid_integrate_over;
+                    else
+                    {
+                        // Check if exactly one variable is used
+                        boolean varVisible = false;
+                        for(int i = 0; i < mathSymbol.varPowCount(); ++i)
+                        {
+                            if(mathSymbol.getVarPow(i) == 0)
+                                continue;
+                            else if(mathSymbol.getVarPow(i) == 1)
+                            {
+                                if(varVisible)
+                                {
+                                    warningId = R.string.invalid_integrate_over;
+                                    break;
+                                }
+                                else
+                                    varVisible = true;
+                            }
+                            else
+                            {
+                                warningId = R.string.invalid_integrate_over;
+                                break;
+                            }
+                        }
+                        if(!varVisible)
+                            warningId = R.string.invalid_integrate_over;
+                    }
+                }
+                        
+                // Only insert the symbol if no problems have been found
+                if(warningId == 0)
+                {
+                    expressionInfo.parent.setChild(expressionInfo.childIndex, mathSymbol);
+                    ParenthesesHelper.setParentheses(expression);
+                }
             }
             
-            // Invalidate cache and redraw
-            cache = null;
-            invalidate();
-            
-            // Notify the listener of the change
-            expressionChanged();
+            // Show the warning (if necessary)
+            if(warningId != 0)
+                showWarning(R.string.invalid_input, warningId);
+            else
+            {
+                // Invalidate cache and redraw
+                cache = null;
+                invalidate();
+                
+                // Notify the listener of the change
+                expressionChanged();
+            }
         }
         
         /** An integer ArrayList in the state bundle that contains the path (in child numbers) to the child in expressionInfo */

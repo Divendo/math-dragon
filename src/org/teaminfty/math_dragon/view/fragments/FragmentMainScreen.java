@@ -53,8 +53,7 @@ public class FragmentMainScreen extends Fragment
         
         // Listen for events from the MathView
         mathView = (MathView) view.findViewById(R.id.mathView);
-        mathView.setOnShowKeyboardListener(new ShowKeyboardListener());
-        mathView.setOnExpressionChangeListener(new MathObjectChangeListener());
+        mathView.setEventListener(new MathViewEventListener());
         
         // Disable the evaluate buttons by default
         enableDisableEvalButtons(view, mathView.getExpression());
@@ -246,33 +245,14 @@ public class FragmentMainScreen extends Fragment
         view.findViewById(R.id.btn_evaluate).setEnabled(isCompleted);
     }
     
-    /** The tag of the keyboard fragment */
+    /** The tag for the keyboard fragment */
     private static final String KEYBOARD_TAG = "keyboard";
     
-    /** We'll want to listen for keyboard show requests from the {@link MathView} */
-    private class ShowKeyboardListener implements MathView.OnShowKeyboardListener
-    {
-        @Override
-        public void showKeyboard(Symbol mathConstant, OnConfirmListener listener)
-        {
-            // If a keyboard is already shown, stop here
-            if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
-                return;
-            
-            // Create a keyboard
-            FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
-            
-            // Set the listener and the math symbol
-            fragmentKeyboard.setOnConfirmListener(listener);
-            fragmentKeyboard.setMathSymbol(mathConstant);
-            
-            // Show the keyboard
-            fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);
-        }
-    }
+    /** The tag for the warning dialog fragment */
+    private static final String WARNING_DLG_TAG = "warning_dlg";
     
-    /** We'll want to listen for MathObject change events */
-    private class MathObjectChangeListener implements MathView.OnExpressionChangeListener
+    /** We'll want to listen for events from the {@link MathView} */
+    private class MathViewEventListener implements MathView.OnEventListener
     {
         @Override
         public void changed(Expression expression)
@@ -300,6 +280,31 @@ public class FragmentMainScreen extends Fragment
             
             // Refresh the state of the undo/redo buttons
             refreshUndoRedoButtons();
+        }
+        
+        @Override
+        public void showKeyboard(Symbol mathConstant, OnConfirmListener listener)
+        {
+            // If a keyboard is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
+                return;
+            
+            // Create a keyboard
+            FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
+            
+            // Set the listener and the math symbol
+            fragmentKeyboard.setOnConfirmListener(listener);
+            fragmentKeyboard.setMathSymbol(mathConstant);
+            
+            // Show the keyboard
+            fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);
+        }
+
+        @Override
+        public void showWarning(int title, int msg)
+        {
+            FragmentWarningDialog warningDlg = new FragmentWarningDialog(title, msg);
+            warningDlg.show(getFragmentManager(), WARNING_DLG_TAG);
         }
     }
     
