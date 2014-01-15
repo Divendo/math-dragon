@@ -98,6 +98,11 @@ public class FragmentSubstitute extends DialogFragment
             row = inflater.inflate(R.layout.substitute_row, null, false);
             row.setTag(SUBSTITUTION_TAG_PREFIX + var);
             
+            // Set the click listeners
+            RowClickListener rowClickListener = new RowClickListener(var, symbol);
+            row.setOnClickListener(rowClickListener);
+            row.setOnLongClickListener(rowClickListener);
+            
             // Insert the row into the layout
             boolean inserted = false;
             for(int i = 0; i < root.getChildCount(); ++i)
@@ -176,6 +181,53 @@ public class FragmentSubstitute extends DialogFragment
             
             // Update the interface
             setSubstitution(varName, mathSymbol, (ViewGroup) getView().findViewById(R.id.layout_substitute_list));
+        }
+    }
+    
+    private class RowClickListener implements View.OnClickListener, View.OnLongClickListener
+    {
+        /** The name of the variable that is to be substituted */
+        private char varName;
+        
+        /** The value of the substitution */
+        private Symbol value;
+        
+        /** Constructor
+         * @param name The name of the variable that is to be substituted
+         * @param symbol The value of the substitution
+         */
+        public RowClickListener(char name, Symbol symbol)
+        {
+            varName = name;
+            value = symbol;
+        }
+        
+        @Override
+        public void onClick(View v)
+        {
+            // If an editor is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(EDITOR_TAG) != null)
+                return;
+            
+            // Create an editor
+            FragmentSubstitutionEditor editor = new FragmentSubstitutionEditor();
+            
+            // Set the listener
+            editor.setOnConfirmListener(new SetSubstitutionListener());
+            
+            // Set the initial value
+            editor.initVarName(varName);
+            editor.initValue(value);
+            
+            // Show the editor
+            editor.show(getFragmentManager(), EDITOR_TAG);
+        }
+
+        @Override
+        public boolean onLongClick(View v)
+        {
+            // TODO Auto-generated method stub
+            return false;
         }
     }
 }
