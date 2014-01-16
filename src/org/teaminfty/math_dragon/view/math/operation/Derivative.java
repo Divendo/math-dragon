@@ -28,7 +28,7 @@ public class Derivative extends Binary
     
     public String toString()
     {
-        return "d(" + getLeft().toString() + "," + getRight().toString() + ")";
+        return "Derive(" + getLeft().toString() + "," + getRight().toString() + ")";
     }
 
     @Override
