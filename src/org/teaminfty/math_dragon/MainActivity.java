@@ -7,6 +7,7 @@ import org.teaminfty.math_dragon.exceptions.EmptyChildException;
 import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.EvalHelper;
+import org.teaminfty.math_dragon.model.ExpressionBeautifier;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
@@ -172,7 +173,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
             // Create an evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
-            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toExpression(result)));
+            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result))));
             fragmentEvaluation.setEvalType(true);
             fragmentEvaluation.show(getFragmentManager(), "evaluation");
         }

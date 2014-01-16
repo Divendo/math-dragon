@@ -13,6 +13,13 @@ import android.graphics.Rect;
 /** This class represents a math constant */
 public class Symbol extends Expression
 {
+    /**
+     * Cached mathematical symbolic constant for the mathematical <tt>1</tt> in
+     * order to speed up helpers and parsers so they don't need to make this
+     * symbolic constant themselves.
+     */
+    public static final Symbol ONE = new Symbol(1);
+    
     /** The factor of this constant */
     private double factor = 0;
     /** The power of the E constant */
@@ -386,7 +393,7 @@ public class Symbol extends Expression
     { varPows[index] = pow; }
     
     public void setVarPow(char index, long pow)
-    { setVarPow(index - 'a', pow); }
+    { setVarPow(index > 'Z' ? index - 'a' : index - 'A', pow); }
     
     /** The amount of variables that this symbol supports */
     public int varPowCount()
