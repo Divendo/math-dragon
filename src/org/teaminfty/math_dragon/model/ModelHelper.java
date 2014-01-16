@@ -16,8 +16,10 @@ import org.matheclipse.core.expression.F;
 import org.matheclipse.core.expression.Symbol;
 import org.matheclipse.core.interfaces.IAST;
 import org.matheclipse.core.interfaces.IComplex;
+import org.matheclipse.core.interfaces.IComplexNum;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.IInteger;
+import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IRational;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.Expression;
@@ -62,6 +64,13 @@ public final class ModelHelper
             return rational((IRational) expr);
         if(expr.isComplex())
             return complex((IComplex) expr);
+        else if(expr.isNumeric())
+        {
+            if(expr instanceof INum)
+                return num((INum) expr);
+            else if(expr instanceof IComplexNum)
+                return complexNum((IComplexNum) expr);
+        }
         if(expr.isAST())
             return toExpression((IAST) expr);
         throw new ParseException(expr);
@@ -157,6 +166,31 @@ public final class ModelHelper
         imag.setIPow(1);
         Expression multiplicand = toExpression(c.getIm());
         return new Add(real, new Multiply(multiplicand, imag));
+    }
+
+    /** Convert a numeric constant from Symja to {@link org.teaminfty.math_dragon.view.math.Symbol Symbol}
+     * 
+     * @param expr The numeric constant from Symja
+     * @return A {@link org.teaminfty.math_dragon.view.math.Symbol Symbol} with the value of <tt>expr</tt> */
+    private static Expression num(INum expr)
+    {
+        org.teaminfty.math_dragon.view.math.Symbol c = new org.teaminfty.math_dragon.view.math.Symbol();
+        c.setFactor(expr.getRealPart());
+        return c;
+    }
+
+    /** Convert a numeric complex constant from Symja to {@link org.teaminfty.math_dragon.view.math.Expression Expression}
+     * 
+     * @param expr The numeric complex constant from Symja
+     * @return A {@link org.teaminfty.math_dragon.view.math.Expression Expression} with the value of <tt>expr</tt> */
+    private static Expression complexNum(IComplexNum expr)
+    {
+        org.teaminfty.math_dragon.view.math.Symbol re = new org.teaminfty.math_dragon.view.math.Symbol();
+        re.setFactor(expr.getRealPart());
+        org.teaminfty.math_dragon.view.math.Symbol im = new org.teaminfty.math_dragon.view.math.Symbol();
+        im.setFactor(expr.getImaginaryPart());
+        im.setIPow(1);
+        return new Add(re, im);
     }
 
     /**

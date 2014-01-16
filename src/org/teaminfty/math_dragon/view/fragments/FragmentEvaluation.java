@@ -54,6 +54,7 @@ public class FragmentEvaluation extends DialogFragment
         // Disable the the MathView
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEnabled(false);
+        mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
         if(showMathObject != null)
             mathView.setExpression(showMathObject);
         else if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_MATH_EXPRESSION) != null)

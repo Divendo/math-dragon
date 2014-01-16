@@ -140,6 +140,20 @@ public class MathView extends View
         invalidate();
     }
     
+    /** Sets the default height of the expression
+     * @param height The new default height */
+    public void setDefaultHeight(int height)
+    {
+        // Set the default height
+        expression.setDefaultHeight((int) (expressionDefaultHeight = height));
+
+        // Invalidate the cache
+        cache = null;
+
+        // Redraw
+        invalidate();
+    }
+    
     /** Resets the scroll position */
     public void resetScroll()
     {

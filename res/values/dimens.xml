@@ -14,6 +14,7 @@
     <dimen name="math_source_margin">8dp</dimen>
     
     <dimen name="math_object_default_size">60dp</dimen>
+    <dimen name="math_object_eval_default_size">30dp</dimen>
     <dimen name="math_object_min_default_size">10dp</dimen>
     <dimen name="math_object_max_default_size">200dp</dimen>
     <dimen name="math_object_drag_default_size">48dp</dimen>
