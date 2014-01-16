@@ -12,9 +12,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class MathSymbolEditor extends View
@@ -210,6 +213,7 @@ public class MathSymbolEditor extends View
         super(context);
         initPaints();
         symbols.add(new SymbolRepresentation());
+        gestureDetector = new GestureDetector(getContext(), new GestureListener());
     }
 
     public MathSymbolEditor(Context context, AttributeSet attrs)
@@ -217,6 +221,7 @@ public class MathSymbolEditor extends View
         super(context, attrs);
         initPaints();
         symbols.add(new SymbolRepresentation());
+        gestureDetector = new GestureDetector(getContext(), new GestureListener());
     }
 
     public MathSymbolEditor(Context context, AttributeSet attrs, int defStyleAttr)
@@ -224,6 +229,7 @@ public class MathSymbolEditor extends View
         super(context, attrs, defStyleAttr);
         initPaints();
         symbols.add(new SymbolRepresentation());
+        gestureDetector = new GestureDetector(getContext(), new GestureListener());
     }
 
     /** Initialises the paints */
@@ -1126,5 +1132,180 @@ public class MathSymbolEditor extends View
         // Redraw and recalculate the size
         invalidate();
         requestLayout();
+    }
+    
+    /** A listener that can be implemented to listen for state change events.
+     * This events are only fired if the state change is initiated by this View itself. */
+    public interface OnStateChangeListener
+    {
+        /** Called when the state changes */
+        public void stateChanged();
+    }
+    
+    /** The current {@link OnStateChangeListener} */
+    private OnStateChangeListener onStateChangeListener = null;
+    
+    /** Set the current {@link OnStateChangeListener}
+     * @param listener The new {@link OnStateChangeListener} */
+    public void setStateChangeListener(OnStateChangeListener listener)
+    { onStateChangeListener = listener; }
+    
+    /** The {@link GestureDetector} */
+    private GestureDetector gestureDetector;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent me)
+    {
+        // Pass the touch event to the gesture detector
+        gestureDetector.onTouchEvent(me);
+        
+        // Never consume the event
+        return true;
+    }
+    
+    /** Listens for click events to switch the symbol we're editing */
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener
+    {
+        /** Represents a part of the string with information about what is displayed in that part */
+        private class StringPart
+        {
+            /** The starting position of the string part */
+            public int start;
+            /** The end position of the string part (exclusive) */
+            public int end;
+            
+            /** The index of the symbol representation of this part */
+            public int symbolIndex;
+            /** The symbol type of this part */
+            public EditingSymbol editingSymbol;
+            /** The variable name of this part (ignored if this part isn't a variable) */
+            public char varName = 'a';
+            
+            /** Constructor
+             * @param s The starting position of the string part
+             * @param e The end position of the string part (exclusive)
+             * @param index The index of the symbol representation of this part
+             * @param symbol The symbol type of this part */
+            public StringPart(int s, int e, int index, EditingSymbol symbol)
+            {
+                start = s;
+                end = e;
+                symbolIndex = index;
+                editingSymbol = symbol;
+            }
+
+            /** Constructor
+             * @param s The starting position of the string part
+             * @param e The end position of the string part (exclusive)
+             * @param index The index of the symbol representation of this part
+             * @param var The variable name of this part */
+            public StringPart(int s, int e, int index, char var)
+            {
+                this(s, e, index, EditingSymbol.VAR);
+                varName = var;
+            }
+        }
+        
+        @Override
+        public boolean onSingleTapUp(MotionEvent me)
+        {
+            // Determine the string we'd draw while keeping track of the positions of each part
+            ArrayList<StringPart> stringParts = new ArrayList<StringPart>(symbols.size() * 3);
+            String totalStr = "";
+            int oldLength = 0;
+            for(int index = 0; index < symbols.size(); ++index)
+            {
+                // Get the symbol
+                SymbolRepresentation symbol = symbols.get(index);
+                
+                // Factor
+                oldLength = totalStr.length();
+                if(!totalStr.isEmpty() && !symbol.factor.startsWith("-"))
+                    totalStr += '+';
+                totalStr += symbol.factor;
+                stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.FACTOR));
+                
+                // Pi
+                if(symbol.showPi)
+                {
+                    oldLength = totalStr.length();
+                    totalStr += '\u03c0' + toSuperScript(symbol.piPow);
+                    stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.PI));
+                }
+                
+                // Eulers number
+                if(symbol.showE)
+                {
+                    oldLength = totalStr.length();
+                    totalStr += 'e' + toSuperScript(symbol.ePow);
+                    stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.E));
+                }
+                
+                // Imaginary unit
+                if(symbol.showI)
+                {
+                    oldLength = totalStr.length();
+                    totalStr += '\u03b9' + toSuperScript(symbol.iPow);
+                    stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.I));
+                }
+                
+                // Variables
+                for(int i = 0; i < symbol.varPowers.length; ++i)
+                {
+                    if(symbol.showVars[i])
+                    {
+                        oldLength = totalStr.length();
+                        totalStr += (char) ('a' + i) + toSuperScript(symbol.varPowers[i]);
+                        stringParts.add(new StringPart(oldLength, totalStr.length(), index, (char) ('a' + i)));
+                    }
+                }
+            }
+
+            // Determine the point where the user clicks
+            Rect totalTextBounds = new Rect();
+            paint.getTextBounds(totalStr, 0, totalStr.length(), totalTextBounds);
+            Point pos = new Point((int) me.getX(), (int) me.getY());
+            pos.offset(-(getWidth() - totalTextBounds.width()) / 2, -(getHeight() - totalTextBounds.height()) / 2);
+            
+            // Check which part of the string the user clicked (if the user clicked one)
+            Rect bounds = new Rect();
+            int x = 0;
+            for(StringPart part : stringParts)
+            {
+                // Skip empty parts
+                if(part.start == part.end) continue;
+                
+                // Get the bounds of the current string part
+                paint.getTextBounds(totalStr, part.start, part.end, bounds);
+                bounds.offset(x - totalTextBounds.left, -totalTextBounds.top);
+                x += paint.measureText(totalStr, part.start, part.end);
+                
+                // Check if the user clicked inside the current string part
+                if(bounds.contains(pos.x, pos.y))
+                {
+                    // Change the state
+                    editingIndex = part.symbolIndex;
+                    editingSymbol = part.editingSymbol;
+                    currVar = part.varName;
+                    
+                    // Notify any listeners that the state has changed
+                    if(onStateChangeListener != null)
+                        onStateChangeListener.stateChanged();
+                    
+                    // Redraw
+                    invalidate();
+                    
+                    // Stop
+                    break;
+                }
+                
+                // We can stop if we're past all parts that can possibly contain the click position
+                if(pos.x < bounds.left)
+                    break;
+            }
+            
+            // Always return true
+            return true;
+        }
     }
 }

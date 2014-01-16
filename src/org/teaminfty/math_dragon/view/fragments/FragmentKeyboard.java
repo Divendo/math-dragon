@@ -21,7 +21,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
-public class FragmentKeyboard extends DialogFragment
+public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor.OnStateChangeListener
 {
     /** The {@link MathSymbolEditor} in this fragment */
     private MathSymbolEditor mathSymbolEditor = null;
@@ -44,6 +44,7 @@ public class FragmentKeyboard extends DialogFragment
     	
     	// Get the MathSymbolEditor
     	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
+    	mathSymbolEditor.setStateChangeListener(this);
         if(exprForLater != null)
             mathSymbolEditor.fromExpression(exprForLater);
         else if(savedInstanceState != null && savedInstanceState.getBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE) != null)
@@ -454,5 +455,9 @@ public class FragmentKeyboard extends DialogFragment
             refreshButtonState();
         }
     }
+
+    @Override
+    public void stateChanged()
+    { refreshButtonState(); }
 }
 

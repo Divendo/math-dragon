@@ -259,7 +259,8 @@ public class MathView extends View
         canvas.restore();
     }
     
-    /** Bounds the scrolling translation to make sure there is always a part of the current {@link Expression} visible */
+    /** Bounds the scrolling translation to make sure there is always a part of the current {@link Expression} visible
+     * Also listens for (long) click events */
     private void boundScrollTranslation()
     {
         // Get the bounding box of the Expression
