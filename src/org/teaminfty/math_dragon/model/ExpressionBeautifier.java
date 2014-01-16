@@ -8,6 +8,7 @@ import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
+import org.teaminfty.math_dragon.view.math.operation.binary.Root;
 
 /**
  * Ensures that complicated and hard-to-read mathematical expression are
@@ -119,21 +120,35 @@ public class ExpressionBeautifier
     static Expression pow(Power pow)
     {
         Expression exponent = parse(pow.getExponent());
-        if (exponent instanceof Symbol) {
+        if(exponent instanceof Symbol)
+        {
             Symbol symexp = (Symbol) exponent;
             // x^1 -> x
-            if (symexp.equals(Symbol.ONE))
+            if(symexp.equals(Symbol.ONE))
                 return pow.getBase();
-            if (symexp.isFactorOnly())
+            if(symexp.isFactorOnly())
             {
                 double value = symexp.getFactor();
                 // x^-n -> 1/(x^n)
-                if (value < 0)
+                if(value < 0)
                 {
                     symexp.setFactor(-value); // -n -> n
                     pow.setExponent(symexp);
                     return div(new Divide(new Symbol(1), pow(pow)));
                 }
+            }
+        }
+        else if(exponent instanceof Divide)
+        {
+            // x^(a/b) -> root(b,x^a): b > 0
+            Divide div = (Divide) exponent;
+            Expression dividend = parse(div.getNumerator());
+            Expression divisor = parse(div.getDenominator());
+            if (divisor instanceof Symbol)
+            {
+                Symbol symdenom = (Symbol) divisor;
+                if (symdenom.isFactorOnly() && symdenom.getFactor() > 0)
+                    return new Root(pow(new Power(pow.getBase(), dividend)), symdenom);
             }
         }
         return pow;
