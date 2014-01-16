@@ -2,6 +2,7 @@
 
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <item name="showcaseViewStyle">@style/ShowcaseView.Light</item>
     </style>
     
     <style name="ActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">

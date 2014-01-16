@@ -27,6 +27,11 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.ShowcaseViews;
+import com.espian.showcaseview.targets.ActionViewTarget;
+import com.espian.showcaseview.targets.PointTarget;
+
 public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
 
@@ -93,6 +98,13 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
                 // There was no drawer to close
             }
         }
+        
+        ShowcaseViews views= new ShowcaseViews(this);
+        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_approximate, R.string.showcase_approximate_title, R.string.showcase_approximate_message));
+        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_evaluate, R.string.showcase_evaluate_title, R.string.showcase_evaluate_message));
+//        ShowcaseView sv1 = ShowcaseView.insertShowcaseView(new PointTarget(10,200), this, "Access functions and operators", "Swipe from edge to right to open the sidebar");
+//        ShowcaseView sv2 = ShowcaseView.insertShowcaseView(new ActionViewTarget(this,ActionViewTarget.Type.HOME), this, "Hello0", "Wrod");
+        views.show();
     }
 
     @Override

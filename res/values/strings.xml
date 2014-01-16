@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Math DragOn</string>
     <string name="operation_drawer_open">Open the drawer with the operations</string>
     <string name="operation_drawer_close">Close the drawer with the operations</string>
@@ -29,4 +28,8 @@
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
 	<string name="remove">Remove?</string>
+	<string name="showcase_evaluate_message">Clicks here to evaluates</string>
+	<string name="showcase_evaluate_title">Evaluate</string>
+	<string name="showcase_approximate_title">Approximate</string>
+	<string name="showcase_approximate_message">Clicks here to approximates</string>
 </resources>
