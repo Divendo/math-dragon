@@ -386,7 +386,7 @@ public class Symbol extends Expression
     { varPows[index] = pow; }
     
     public void setVarPow(char index, long pow)
-    { setVarPow(index > 'z' ? index - 'A' : index - 'a', pow); }
+    { setVarPow(index > 'Z' ? index - 'a' : index - 'A', pow); }
     
     /** The amount of variables that this symbol supports */
     public int varPowCount()
