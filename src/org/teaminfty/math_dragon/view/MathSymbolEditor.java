@@ -1,7 +1,12 @@
 package org.teaminfty.math_dragon.view;
 
+import java.util.ArrayList;
+
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.operation.binary.Add;
+import org.teaminfty.math_dragon.view.math.operation.binary.Subtract;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -41,25 +46,154 @@ public class MathSymbolEditor extends View
         }
     }
     
-    /** The factor of this symbol */
-    private String factor = "0";
-    /** The power of the PI symbol */
-    private String piPow = "";
-    /** Whether the PI symbol is shown or not */
-    private boolean showPi = false;
-    /** The power of the E symbol */
-    private String ePow = "";
-    /** Whether the E symbol is shown or not */
-    private boolean showE = false;
-    /** The power of the imaginary unit */
-    private String iPow = "";
-    /** Whether the I symbol is shown or not */
-    private boolean showI = false;
-    /** The powers of the variables */
-    private String[] varPowers = new String[26];
-    /** The whether or not to show the variables */
-    private boolean[] showVars = new boolean[26];
+    /** A class that represents a single symbol */
+    private static class SymbolRepresentation
+    {
+        /** The factor of this symbol */
+        public String factor = "0";
+        /** The power of the PI symbol */
+        public String piPow = "";
+        /** Whether the PI symbol is shown or not */
+        public boolean showPi = false;
+        /** The power of the E symbol */
+        public String ePow = "";
+        /** Whether the E symbol is shown or not */
+        public boolean showE = false;
+        /** The power of the imaginary unit */
+        public String iPow = "";
+        /** Whether the I symbol is shown or not */
+        public boolean showI = false;
+        /** The powers of the variables */
+        public String[] varPowers = new String[26];
+        /** The whether or not to show the variables */
+        public boolean[] showVars = new boolean[26];
+        
+        /** Constructor */
+        public SymbolRepresentation()
+        {
+            for(int i = 0; i < varPowers.length; ++i)
+                varPowers[i] = "";
+        }
+        
+        /** The factor as a string */
+        private static final String BUNDLE_FACTOR = "factor";
+        /** The PI power as a string */
+        private static final String BUNDLE_PI_POW = "pi_pow";
+        /** Whether or not to show PI, as a boolean */
+        private static final String BUNDLE_PI_SHOW = "pi_show";
+        /** The E power as a string */
+        private static final String BUNDLE_E_POW = "e_pow";
+        /** Whether or not to show E, as a boolean */
+        private static final String BUNDLE_E_SHOW = "e_show";
+        /** The i power as a string */
+        private static final String BUNDLE_I_POW = "i_pow";
+        /** Whether or not to show i, as a boolean */
+        private static final String BUNDLE_I_SHOW = "i_show";
+        /** The powers of the variables as a string array */
+        private static final String BUNDLE_VAR_POWS = "var_pows";
+        /** Whether or not to show the variables as an boolean array */
+        private static final String BUNDLE_VAR_SHOW = "var_show";
+        
+        /** Stores the representation as a bundle */
+        public Bundle toBundle()
+        {
+            // The bundle we're going to return
+            Bundle out = new Bundle();
+            
+            // Store all values
+            out.putString(BUNDLE_FACTOR, factor);
+            out.putString(BUNDLE_PI_POW, piPow);
+            out.putBoolean(BUNDLE_PI_SHOW, showPi);
+            out.putString(BUNDLE_E_POW, ePow);
+            out.putBoolean(BUNDLE_E_SHOW, showE);
+            out.putString(BUNDLE_I_POW, iPow);
+            out.putBoolean(BUNDLE_I_SHOW, showI);
+            out.putStringArray(BUNDLE_VAR_POWS, varPowers);
+            out.putBooleanArray(BUNDLE_VAR_SHOW, showVars);
+            
+            // Return the result
+            return out;
+        }
+        
+        /** Constructs a {@link SymbolRepresentation} from the given {@link Bundle}
+         * @param bundle The bundle to construct from
+         * @return The created {@link SymbolRepresentation} */
+        public static SymbolRepresentation fromBundle(Bundle bundle)
+        {
+            // This will be our output
+            SymbolRepresentation out = new SymbolRepresentation();
+            
+            // Load the values
+            out.factor = bundle.getString(BUNDLE_FACTOR);
+            out.piPow = bundle.getString(BUNDLE_PI_POW);
+            out.showPi = bundle.getBoolean(BUNDLE_PI_SHOW);
+            out.ePow = bundle.getString(BUNDLE_E_POW);
+            out.showE = bundle.getBoolean(BUNDLE_E_SHOW);
+            out.iPow = bundle.getString(BUNDLE_I_POW);
+            out.showI = bundle.getBoolean(BUNDLE_I_SHOW);
+            out.varPowers = bundle.getStringArray(BUNDLE_VAR_POWS);
+            out.showVars = bundle.getBooleanArray(BUNDLE_VAR_SHOW);
+            
+            // Return the result
+            return out;
+        }
+        
+        /** Constructs a {@link Symbol} from the current values
+         * @return The constructed {@link Symbol} */
+        public Symbol getMathSymbol()
+        {
+            // The MathSymbol we're going to return
+            Symbol out = new Symbol();
+            
+            // Set the factor
+            if(factor.isEmpty())
+                out.setFactor(symbolVisible() ? 1 : 0);
+            else
+                out.setFactor(factor.equals("-") ? -1 : Double.parseDouble(factor));
+            
+            // Set the PI power
+            if(showPi)
+                out.setPiPow(piPow.isEmpty() ? 1 : (piPow.equals("-") ? -1 : Long.parseLong(piPow)) );
+
+            // Set the E power
+            if(showE)
+                out.setEPow(ePow.isEmpty() ? 1 : (ePow.equals("-") ? -1 : Long.parseLong(ePow)) );
+
+            // Set the I power
+            if(showI)
+                out.setIPow(iPow.isEmpty() ? 1 : (iPow.equals("-") ? -1 : Long.parseLong(iPow)) );
+            
+            // Set the powers for the variables
+            for(int i = 0; i < varPowers.length && i < out.varPowCount(); ++i)
+            {
+                if(showVars[i])
+                    out.setVarPow(i, varPowers[i].isEmpty() ? 1 : (varPowers[i].equals("-") ? -1 : Long.parseLong(varPowers[i])) );
+            }
+            
+            // Return the result
+            return out;
+        }
+        
+        /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible
+         * @return True if one or more symbols are visible, false otherwise */
+        public boolean symbolVisible()
+        {
+            if(showPi || showE || showI)
+                return true;
+            for(int i = 0; i < showVars.length; ++i)
+            {
+                if(showVars[i])
+                    return true;
+            }
+            return false;
+        }
+    }
     
+    /** The symbols in this editor */
+    private ArrayList<SymbolRepresentation> symbols = new ArrayList<SymbolRepresentation>();
+    
+    /** The symbol representation we're currently editing */
+    private int editingIndex = 0;
     /** The symbol we're currently editing */
     private EditingSymbol editingSymbol = EditingSymbol.FACTOR;
     /** The variable we're currently editing */
@@ -75,24 +209,21 @@ public class MathSymbolEditor extends View
     {
         super(context);
         initPaints();
-        for(int i = 0; i < varPowers.length; ++i)
-            varPowers[i] = "";
+        symbols.add(new SymbolRepresentation());
     }
 
     public MathSymbolEditor(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         initPaints();
-        for(int i = 0; i < varPowers.length; ++i)
-            varPowers[i] = "";
+        symbols.add(new SymbolRepresentation());
     }
 
     public MathSymbolEditor(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
         initPaints();
-        for(int i = 0; i < varPowers.length; ++i)
-            varPowers[i] = "";
+        symbols.add(new SymbolRepresentation());
     }
 
     /** Initialises the paints */
@@ -103,25 +234,10 @@ public class MathSymbolEditor extends View
         paint.setTextSize(getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_font_size));
     }
     
-    /** The factor as a string */
-    private static final String BUNDLE_FACTOR = "factor";
-    /** The PI power as a string */
-    private static final String BUNDLE_PI_POW = "pi_pow";
-    /** Whether or not to show PI, as a boolean */
-    private static final String BUNDLE_PI_SHOW = "pi_show";
-    /** The E power as a string */
-    private static final String BUNDLE_E_POW = "e_pow";
-    /** Whether or not to show E, as a boolean */
-    private static final String BUNDLE_E_SHOW = "e_show";
-    /** The i power as a string */
-    private static final String BUNDLE_I_POW = "i_pow";
-    /** Whether or not to show i, as a boolean */
-    private static final String BUNDLE_I_SHOW = "i_show";
-    /** The powers of the variables as a string array */
-    private static final String BUNDLE_VAR_POWS = "var_pows";
-    /** Whether or not to show the variables as an boolean array */
-    private static final String BUNDLE_VAR_SHOW = "var_show";
-    
+    /** The prefix for the bundles containing the symbol representations */
+    private static final String BUNDLE_SYMBOL_REP_PREFIX = "symbol_rep_";
+    /** An int containing the index of the symbol representation we were editing */
+    private static final String BUNDLE_EDITING_INDEX = "editing_index";
     /** A byte containing which symbol we were editing */
     private static final String BUNDLE_CURR_SYMBOL = "curr_symbol";
     /** A char containing which variable we were editing */
@@ -135,17 +251,11 @@ public class MathSymbolEditor extends View
         Bundle out = new Bundle();
         
         // Store all values
-        out.putString(BUNDLE_FACTOR, factor);
-        out.putString(BUNDLE_PI_POW, piPow);
-        out.putBoolean(BUNDLE_PI_SHOW, showPi);
-        out.putString(BUNDLE_E_POW, ePow);
-        out.putBoolean(BUNDLE_E_SHOW, showE);
-        out.putString(BUNDLE_I_POW, iPow);
-        out.putBoolean(BUNDLE_I_SHOW, showI);
-        out.putStringArray(BUNDLE_VAR_POWS, varPowers);
-        out.putBooleanArray(BUNDLE_VAR_SHOW, showVars);
+        for(int i = 0; i < symbols.size(); ++i)
+            out.putBundle(BUNDLE_SYMBOL_REP_PREFIX + Integer.toString(i), symbols.get(i).toBundle());
         
         // Store the state
+        out.putInt(BUNDLE_EDITING_INDEX, editingIndex);
         out.putByte(BUNDLE_CURR_SYMBOL, editingSymbol.toByte());
         out.putChar(BUNDLE_CURR_VAR, currVar);
         
@@ -157,18 +267,13 @@ public class MathSymbolEditor extends View
      * @param bundle The bundle to load the state from */
     public void fromBundle(Bundle bundle)
     {
-        // Load the values
-        factor = bundle.getString(BUNDLE_FACTOR);
-        piPow = bundle.getString(BUNDLE_PI_POW);
-        showPi = bundle.getBoolean(BUNDLE_PI_SHOW);
-        ePow = bundle.getString(BUNDLE_E_POW);
-        showE = bundle.getBoolean(BUNDLE_E_SHOW);
-        iPow = bundle.getString(BUNDLE_I_POW);
-        showI = bundle.getBoolean(BUNDLE_I_SHOW);
-        varPowers = bundle.getStringArray(BUNDLE_VAR_POWS);
-        showVars = bundle.getBooleanArray(BUNDLE_VAR_SHOW);
+        // Load all values
+        symbols = new ArrayList<MathSymbolEditor.SymbolRepresentation>();
+        for(int i = 0; bundle.containsKey(BUNDLE_SYMBOL_REP_PREFIX + Integer.toString(i)); ++i)
+            symbols.add(SymbolRepresentation.fromBundle(bundle.getBundle(BUNDLE_SYMBOL_REP_PREFIX + Integer.toString(i))));
         
         // Restore the state
+        editingIndex = bundle.getInt(BUNDLE_EDITING_INDEX);
         editingSymbol = EditingSymbol.fromByte(bundle.getByte(BUNDLE_CURR_SYMBOL));
         currVar = bundle.getChar(BUNDLE_CURR_VAR);
         
@@ -213,12 +318,14 @@ public class MathSymbolEditor extends View
                 
                 // Show the current variable (if it isn't visible already)
                 final int currVarIndex = currVar - 'a';
-                if(!showVars[currVarIndex])
+                if(!symbols.get(editingIndex).showVars[currVarIndex])
                 {
-                    varPowers[currVarIndex] = "";
-                    showVars[currVarIndex] = true;
-                    if(factor.equals("0"))
-                        factor = "";
+                    symbols.get(editingIndex).varPowers[currVarIndex] = "";
+                    symbols.get(editingIndex).showVars[currVarIndex] = true;
+                    if(symbols.get(editingIndex).factor.equals("0"))
+                        symbols.get(editingIndex).factor = "";
+                    else if(symbols.get(editingIndex).factor.equals("-0"))
+                        symbols.get(editingIndex).factor = "-";
                 }
 
                 // Redraw and recalculate the size
@@ -245,12 +352,14 @@ public class MathSymbolEditor extends View
                     setEditingSymbol(EditingSymbol.FACTOR);
                 else
                 {
-                    if(!showPi)
+                    if(!symbols.get(editingIndex).showPi)
                     {
-                        piPow = "";
-                        showPi = true;
-                        if(factor.equals("0"))
-                            factor = "";
+                        symbols.get(editingIndex).piPow = "";
+                        symbols.get(editingIndex).showPi = true;
+                        if(symbols.get(editingIndex).factor.equals("0"))
+                            symbols.get(editingIndex).factor = "";
+                        else if(symbols.get(editingIndex).factor.equals("-0"))
+                            symbols.get(editingIndex).factor = "-";
                     }
                     setEditingSymbol(EditingSymbol.PI);
                 }
@@ -261,12 +370,14 @@ public class MathSymbolEditor extends View
                     setEditingSymbol(EditingSymbol.FACTOR);
                 else
                 {
-                    if(!showE)
+                    if(!symbols.get(editingIndex).showE)
                     {
-                        ePow = "";
-                        showE = true;
-                        if(factor.equals("0"))
-                            factor = "";
+                        symbols.get(editingIndex).ePow = "";
+                        symbols.get(editingIndex).showE = true;
+                        if(symbols.get(editingIndex).factor.equals("0"))
+                            symbols.get(editingIndex).factor = "";
+                        else if(symbols.get(editingIndex).factor.equals("-0"))
+                            symbols.get(editingIndex).factor = "-";
                     }
                     setEditingSymbol(EditingSymbol.E);
                 }
@@ -277,12 +388,14 @@ public class MathSymbolEditor extends View
                     setEditingSymbol(EditingSymbol.FACTOR);
                 else
                 {
-                    if(!showI)
+                    if(!symbols.get(editingIndex).showI)
                     {
-                        iPow = "";
-                        showI = true;
-                        if(factor.equals("0"))
-                            factor = "";
+                        symbols.get(editingIndex).iPow = "";
+                        symbols.get(editingIndex).showI = true;
+                        if(symbols.get(editingIndex).factor.equals("0"))
+                            symbols.get(editingIndex).factor = "";
+                        else if(symbols.get(editingIndex).factor.equals("-0"))
+                            symbols.get(editingIndex).factor = "-";
                     }
                     setEditingSymbol(EditingSymbol.I);
                 }
@@ -294,12 +407,14 @@ public class MathSymbolEditor extends View
                 else
                 {
                     final int currVarIndex = currVar - 'a';
-                    if(!showVars[currVarIndex])
+                    if(!symbols.get(editingIndex).showVars[currVarIndex])
                     {
-                        varPowers[currVarIndex] = "";
-                        showVars[currVarIndex] = true;
-                        if(factor.equals("0"))
-                            factor = "";
+                        symbols.get(editingIndex).varPowers[currVarIndex] = "";
+                        symbols.get(editingIndex).showVars[currVarIndex] = true;
+                        if(symbols.get(editingIndex).factor.equals("0"))
+                            symbols.get(editingIndex).factor = "";
+                        else if(symbols.get(editingIndex).factor.equals("-0"))
+                            symbols.get(editingIndex).factor = "-";
                     }
                     setEditingSymbol(EditingSymbol.VAR);
                 }
@@ -389,18 +504,10 @@ public class MathSymbolEditor extends View
     /** Resets the symbol in this editor */
     public void reset()
     {
-        // Set all fields back to their initial values
-        factor = "0";
-        piPow = "";
-        showPi = false;
-        ePow = "";
-        showE = false;
-        iPow = "";
-        showI = false;
-        varPowers = new String[26];
-        for(int i = 0; i < varPowers.length; ++i)
-            varPowers[i] = "";
-        showVars = new boolean[26];
+        // Start with a single 0 again
+        symbols = new ArrayList<MathSymbolEditor.SymbolRepresentation>();
+        symbols.add(new SymbolRepresentation());
+        editingIndex = 0;
         
         // We'll be editing the factor again
         setEditingSymbol(EditingSymbol.FACTOR);
@@ -411,97 +518,135 @@ public class MathSymbolEditor extends View
     }
     
     /** Copies the values from the given {@link Symbol}
-     * @param mathSymbol The {@link Symbol} to copy the values from */
-    public void fromMathSymbol(Symbol mathSymbol)
+     * @param expr The {@link Expression} to copy the values from */
+    public void fromExpression(Expression expr)
     {
         // Reset all values
         reset();
         
-        // Set the factor
-        factor = doubleToString(mathSymbol.getFactor());
-        
-        // If the factor is not 0, we need to set the powers (and their visibility)
-        if(mathSymbol.getFactor() != 0)
-        {
-            // PI
-            if(mathSymbol.getPiPow() != 0)
-            {
-                if(mathSymbol.getPiPow() != 1)
-                    piPow = Long.toString(mathSymbol.getPiPow());
-                showPi = true;
-            }
-            
-            // E
-            if(mathSymbol.getEPow() != 0)
-            {
-                if(mathSymbol.getEPow() != 1)
-                    ePow = Long.toString(mathSymbol.getEPow());
-                showE = true;
-            }
-
-            // I
-            if(mathSymbol.getIPow() != 0)
-            {
-                if(mathSymbol.getIPow() != 1)
-                    iPow = Long.toString(mathSymbol.getIPow());
-                showI = true;
-            }
-            
-            // Variables
-            for(int i = 0; i < mathSymbol.varPowCount() && i < varPowers.length; ++i)
-            {
-                if(mathSymbol.getVarPow(i) != 0)
-                {
-                    if(mathSymbol.getVarPow(i) != 1)
-                        varPowers[i] = Long.toString(mathSymbol.getVarPow(i));
-                    showVars[i] = true;
-                }
-            }
-        }
-        
-        // Beautify the display
-        if(factor.equals("1") && symbolVisible())
-            factor = "";
+        // Set the expression
+        symbols.clear();
+        fromExprHelper(expr, false);
+        if(symbols.size() == 0)
+            symbols.add(new SymbolRepresentation());
 
         // Redraw and recalculate the size
         invalidate();
         requestLayout();
     }
     
-    /** Constructs a {@link Symbol} from the current values
-     * @return The constructed {@link Symbol} */
-    public Symbol getMathSymbol()
+    /** Helper for {@link MathSymbolEditor#fromExpression(Expression) fromExpression()}
+     * @param expr The expression to add
+     * @param negate Whether or not to negate the expression */
+    private void fromExprHelper(Expression expr, boolean negate)
     {
-        // The MathSymbol we're going to return
-        Symbol out = new Symbol();
-        
-        // Set the factor
-        if(factor.isEmpty())
-            out.setFactor(symbolVisible() ? 1 : 0);
-        else
-            out.setFactor(factor.equals("-") ? -1 : Double.parseDouble(factor));
-        
-        // Set the PI power
-        if(showPi)
-            out.setPiPow(piPow.isEmpty() ? 1 : (piPow.equals("-") ? -1 : Long.parseLong(piPow)) );
-
-        // Set the E power
-        if(showE)
-            out.setEPow(ePow.isEmpty() ? 1 : (ePow.equals("-") ? -1 : Long.parseLong(ePow)) );
-
-        // Set the I power
-        if(showI)
-            out.setIPow(iPow.isEmpty() ? 1 : (iPow.equals("-") ? -1 : Long.parseLong(iPow)) );
-        
-        // Set the powers for the variables
-        for(int i = 0; i < varPowers.length && i < out.varPowCount(); ++i)
+        if(expr instanceof Symbol)
         {
-            if(showVars[i])
-                out.setVarPow(i, varPowers[i].isEmpty() ? 1 : (varPowers[i].equals("-") ? -1 : Long.parseLong(varPowers[i])) );
+            Symbol mathSymbol = (Symbol) expr;
+            SymbolRepresentation symbol = new SymbolRepresentation();
+        
+            // Set the factor
+            symbol.factor = doubleToString(mathSymbol.getFactor());
+            
+            // If the factor is not 0, we need to set the powers (and their visibility)
+            if(mathSymbol.getFactor() != 0)
+            {
+                // PI
+                if(mathSymbol.getPiPow() != 0)
+                {
+                    if(mathSymbol.getPiPow() != 1)
+                        symbol.piPow = Long.toString(mathSymbol.getPiPow());
+                    symbol.showPi = true;
+                }
+                
+                // E
+                if(mathSymbol.getEPow() != 0)
+                {
+                    if(mathSymbol.getEPow() != 1)
+                        symbol.ePow = Long.toString(mathSymbol.getEPow());
+                    symbol.showE = true;
+                }
+    
+                // I
+                if(mathSymbol.getIPow() != 0)
+                {
+                    if(mathSymbol.getIPow() != 1)
+                        symbol.iPow = Long.toString(mathSymbol.getIPow());
+                    symbol.showI = true;
+                }
+                
+                // Variables
+                for(int i = 0; i < mathSymbol.varPowCount() && i < symbol.varPowers.length; ++i)
+                {
+                    if(mathSymbol.getVarPow(i) != 0)
+                    {
+                        if(mathSymbol.getVarPow(i) != 1)
+                            symbol.varPowers[i] = Long.toString(mathSymbol.getVarPow(i));
+                        symbol.showVars[i] = true;
+                    }
+                }
+            }
+            
+            // Negate (if necessary)
+            if(negate)
+            {
+                if(symbol.factor.startsWith("-"))
+                    symbol.factor = symbol.factor.substring(1);
+                else
+                    symbol.factor = '-' + symbol.factor;
+            }
+            
+            // Beautify the display
+            if(symbol.symbolVisible())
+            {
+                if(symbol.factor.equals("1"))
+                    symbol.factor = "";
+                else if(symbol.factor.equals("-1"))
+                    symbol.factor = "-";
+            }
+            
+            // Add the symbol to the list
+            symbols.add(symbol);
+        }
+        else if(expr instanceof Add)
+        {
+            fromExprHelper(expr.getChild(0), false);
+            fromExprHelper(expr.getChild(1), false);
+        }
+        else if(expr instanceof Subtract)
+        {
+            fromExprHelper(expr.getChild(0), false);
+            fromExprHelper(expr.getChild(1), true);
+        }
+    }
+    
+    /** Constructs a {@link Expression} from the current values
+     * @return The constructed {@link Expression} */
+    public Expression getExpression()
+    {
+        // If we contain only one symbol, we simply return that symbol
+        if(symbols.size() == 1)
+            return symbols.get(0).getMathSymbol();
+        
+        // This will be the left operand of the next add or subtract operation
+        Expression nextLeft = symbols.get(0).getMathSymbol();
+        
+        // Loop through all symbols
+        for(int i = 1; i < symbols.size(); ++i)
+        {
+            // Determine whether we'll create a add or a subtract operation
+            if(symbols.get(i).factor.startsWith("-"))
+            {
+                symbols.get(i).factor = symbols.get(i).factor.substring(1);
+                nextLeft = new Subtract(nextLeft, symbols.get(i).getMathSymbol());
+                symbols.get(i).factor = '-' + symbols.get(i).factor;
+            }
+            else
+                nextLeft = new Add(nextLeft, symbols.get(i).getMathSymbol());
         }
         
         // Return the result
-        return out;
+        return nextLeft;
     }
 
     @Override
@@ -584,43 +729,51 @@ public class MathSymbolEditor extends View
         String[] parts = {"", "", ""};
         int currentPart = 0;
         
-        if(editingSymbol == EditingSymbol.FACTOR)
-            ++currentPart;
-        parts[currentPart] = factor;
-        if(editingSymbol == EditingSymbol.FACTOR)
-            ++currentPart;
-            
-        if(editingSymbol == EditingSymbol.PI)
-            ++currentPart;
-        if(showPi)
-            parts[currentPart] += '\u03c0' + toSuperScript(piPow);
-        if(editingSymbol == EditingSymbol.PI)
-            ++currentPart;
-        
-        if(editingSymbol == EditingSymbol.E)
-            ++currentPart;
-        if(showE)
-            parts[currentPart] += 'e' + toSuperScript(ePow);
-        if(editingSymbol == EditingSymbol.E)
-            ++currentPart;
-        
-        if(editingSymbol == EditingSymbol.I)
-            ++currentPart;
-        if(showI)
-            parts[currentPart] += '\u03b9' + toSuperScript(iPow);
-        if(editingSymbol == EditingSymbol.I)
-            ++currentPart;
-        
-        for(int i = 0; i < varPowers.length; ++i)
+        // Loop through all symbols
+        for(int i = 0; i < symbols.size(); ++i)
         {
-            final char chr = (char) ('a' + i);
+            SymbolRepresentation symbol = symbols.get(i);
             
-            if(editingSymbol == EditingSymbol.VAR && currVar == chr)
+            if(editingIndex == i && editingSymbol == EditingSymbol.FACTOR)
                 ++currentPart;
-            if(showVars[i])
-                parts[currentPart] += chr + toSuperScript(varPowers[i]);
-            if(editingSymbol == EditingSymbol.VAR && currVar == chr)
+            if(i != 0 && !symbol.factor.startsWith("-"))
+                parts[currentPart] += '+';
+            parts[currentPart] += symbol.factor;
+            if(editingIndex == i && editingSymbol == EditingSymbol.FACTOR)
                 ++currentPart;
+                
+            if(editingIndex == i && editingSymbol == EditingSymbol.PI)
+                ++currentPart;
+            if(symbol.showPi)
+                parts[currentPart] += '\u03c0' + toSuperScript(symbol.piPow);
+            if(editingIndex == i && editingSymbol == EditingSymbol.PI)
+                ++currentPart;
+            
+            if(editingIndex == i && editingSymbol == EditingSymbol.E)
+                ++currentPart;
+            if(symbol.showE)
+                parts[currentPart] += 'e' + toSuperScript(symbol.ePow);
+            if(editingIndex == i && editingSymbol == EditingSymbol.E)
+                ++currentPart;
+            
+            if(editingIndex == i && editingSymbol == EditingSymbol.I)
+                ++currentPart;
+            if(symbol.showI)
+                parts[currentPart] += '\u03b9' + toSuperScript(symbol.iPow);
+            if(editingIndex == i && editingSymbol == EditingSymbol.I)
+                ++currentPart;
+            
+            for(int j = 0; j < symbol.varPowers.length; ++j)
+            {
+                final char chr = (char) ('a' + j);
+                
+                if(editingIndex == i && editingSymbol == EditingSymbol.VAR && currVar == chr)
+                    ++currentPart;
+                if(symbol.showVars[j])
+                    parts[currentPart] += chr + toSuperScript(symbol.varPowers[j]);
+                if(editingIndex == i && editingSymbol == EditingSymbol.VAR && currVar == chr)
+                    ++currentPart;
+            }
         }
         
         // Keep track of the current x position
@@ -659,17 +812,23 @@ public class MathSymbolEditor extends View
     protected Rect getTextBounds()
     {
         // Determine the string we're going to draw
-        String drawMe = factor;
-        if(showPi)
-            drawMe += '\u03c0' + toSuperScript(piPow);
-        if(showE)
-            drawMe += 'e' + toSuperScript(ePow);
-        if(showI)
-            drawMe += '\u03b9' + toSuperScript(iPow);
-        for(int i = 0; i < varPowers.length; ++i)
+        String drawMe = "";
+        for(SymbolRepresentation symbol : symbols)
         {
-            if(showVars[i])
-                drawMe += (char) ('a' + i) + toSuperScript(varPowers[i]);
+            if(!drawMe.isEmpty() && !symbol.factor.startsWith("-"))
+                drawMe += '+';
+            drawMe += symbol.factor;
+            if(symbol.showPi)
+                drawMe += '\u03c0' + toSuperScript(symbol.piPow);
+            if(symbol.showE)
+                drawMe += 'e' + toSuperScript(symbol.ePow);
+            if(symbol.showI)
+                drawMe += '\u03b9' + toSuperScript(symbol.iPow);
+            for(int i = 0; i < symbol.varPowers.length; ++i)
+            {
+                if(symbol.showVars[i])
+                    drawMe += (char) ('a' + i) + toSuperScript(symbol.varPowers[i]);
+            }
         }
         
         // Determine and return the text bounds
@@ -685,40 +844,40 @@ public class MathSymbolEditor extends View
         switch(editingSymbol)
         {
             case FACTOR:
-                if(factor.startsWith("-"))
-                    factor = factor.substring(1);
+                if(symbols.get(editingIndex).factor.startsWith("-"))
+                    symbols.get(editingIndex).factor = symbols.get(editingIndex).factor.substring(1);
                 else
-                    factor = '-' + factor;
+                    symbols.get(editingIndex).factor = '-' + symbols.get(editingIndex).factor;
             break;
             
             case PI:
-                if(piPow.startsWith("-"))
-                    piPow = piPow.substring(1);
+                if(symbols.get(editingIndex).piPow.startsWith("-"))
+                    symbols.get(editingIndex).piPow = symbols.get(editingIndex).piPow.substring(1);
                 else
-                    piPow = '-' + piPow;
+                    symbols.get(editingIndex).piPow = '-' + symbols.get(editingIndex).piPow;
             break;
             
             case E:
-                if(ePow.startsWith("-"))
-                    ePow = ePow.substring(1);
+                if(symbols.get(editingIndex).ePow.startsWith("-"))
+                    symbols.get(editingIndex).ePow = symbols.get(editingIndex).ePow.substring(1);
                 else
-                    ePow = '-' + ePow;
+                    symbols.get(editingIndex).ePow = '-' + symbols.get(editingIndex).ePow;
             break;
             
             case I:
-                if(iPow.startsWith("-"))
-                    iPow = iPow.substring(1);
+                if(symbols.get(editingIndex).iPow.startsWith("-"))
+                    symbols.get(editingIndex).iPow = symbols.get(editingIndex).iPow.substring(1);
                 else
-                    iPow = '-' + iPow;
+                    symbols.get(editingIndex).iPow = '-' + symbols.get(editingIndex).iPow;
             break;
             
             case VAR:
             {
                 final int currVarIndex = currVar - 'a';
-                if(varPowers[currVarIndex].startsWith("-"))
-                    varPowers[currVarIndex] = varPowers[currVarIndex].substring(1);
+                if(symbols.get(editingIndex).varPowers[currVarIndex].startsWith("-"))
+                    symbols.get(editingIndex).varPowers[currVarIndex] = symbols.get(editingIndex).varPowers[currVarIndex].substring(1);
                 else
-                    varPowers[currVarIndex] = '-' + varPowers[currVarIndex];
+                    symbols.get(editingIndex).varPowers[currVarIndex] = '-' + symbols.get(editingIndex).varPowers[currVarIndex];
             }
             break;
         }
@@ -731,14 +890,14 @@ public class MathSymbolEditor extends View
     /** Whether or not the factor currently contains a dot
      * @return <tt>true</tt> if the factor contains a dot, <tt>false</tt> otherwise */
     public boolean containsDot()
-    { return factor.contains("."); }
+    { return symbols.get(editingIndex).factor.contains("."); }
     
     /** The amount of decimals the current factor contains
      * @return The amount of decimals as an integer */
     public int decimalCount()
     {
         if(!containsDot()) return 0;
-        return factor.length() - factor.indexOf('.') - 1;
+        return symbols.get(editingIndex).factor.length() - symbols.get(editingIndex).factor.indexOf('.') - 1;
     }
 
     /** Adds a dot to the factor */
@@ -748,13 +907,84 @@ public class MathSymbolEditor extends View
         if(editingSymbol != EditingSymbol.FACTOR) return;
         
         // If the factor already contains a dot, we do nothing
-        if(factor.contains(".")) return;
+        if(symbols.get(editingIndex).factor.contains(".")) return;
         
         // Add the dot
-        if(factor.equals("-") || factor.isEmpty())
-            factor += "0.";
+        if(symbols.get(editingIndex).factor.equals("-") || symbols.get(editingIndex).factor.isEmpty())
+            symbols.get(editingIndex).factor += "0.";
         else
-            factor += '.';
+            symbols.get(editingIndex).factor += '.';
+        
+        // Redraw and recalculate the size
+        invalidate();
+        requestLayout();
+    }
+    
+    /** Adds a new symbol */
+    public void plus()
+    {
+        // Whether or not we still have to add a new symbol
+        boolean addSym = true;
+        
+        // If the last symbol is nothing but a 0, we make that our new symbol
+        SymbolRepresentation lastSym = symbols.get(symbols.size() - 1);
+        if(!lastSym.symbolVisible())
+        {
+            if(lastSym.factor.equals("0"))
+                addSym = false;
+            if(lastSym.factor.equals("-0"))
+            {
+                lastSym.factor = "0";
+                addSym = false;
+            }
+        }
+        
+        // Add a 0
+        if(addSym)
+            symbols.add(new SymbolRepresentation());
+        
+        // Set the editing index
+        editingIndex = symbols.size() - 1;
+        
+        // We'll be editing the factor
+        setEditingSymbol(EditingSymbol.FACTOR);
+        
+        // Redraw and recalculate the size
+        invalidate();
+        requestLayout();
+    }
+    
+    /** Subtracts a new symbol */
+    public void subtract()
+    {
+        // Whether or not we still have to add a new symbol
+        boolean addSym = true;
+        
+        // If the last symbol is nothing but a 0, we make that our new symbol
+        SymbolRepresentation lastSym = symbols.get(symbols.size() - 1);
+        if(!lastSym.symbolVisible())
+        {
+            if(lastSym.factor.equals("0"))
+            {
+                lastSym.factor = "-0";
+                addSym = false;
+            }
+            if(lastSym.factor.equals("-0"))
+                addSym = false;
+        }
+        
+        // Subtract a 0
+        if(addSym)
+        {
+            symbols.add(new SymbolRepresentation());
+            symbols.get(symbols.size() - 1).factor = "-0";
+        }
+        
+        // Set the editing index
+        editingIndex = symbols.size() - 1;
+        
+        // We'll be editing the factor
+        setEditingSymbol(EditingSymbol.FACTOR);
         
         // Redraw and recalculate the size
         invalidate();
@@ -772,50 +1002,50 @@ public class MathSymbolEditor extends View
         switch(editingSymbol)
         {
             case FACTOR:
-                if(factor.equals("0"))
-                    factor = nStr;
-                else if(factor.equals("-0"))
-                    factor = '-' + nStr;
-                else if(!factor.isEmpty() || !nStr.equals("0"))
-                    factor += nStr;
+                if(symbols.get(editingIndex).factor.equals("0"))
+                    symbols.get(editingIndex).factor = nStr;
+                else if(symbols.get(editingIndex).factor.equals("-0"))
+                    symbols.get(editingIndex).factor = '-' + nStr;
+                else if(!symbols.get(editingIndex).factor.isEmpty() || !nStr.equals("0"))
+                    symbols.get(editingIndex).factor += nStr;
             break;
             
             case PI:
-                if(piPow.equals("0"))
-                    piPow = nStr;
-                else if(piPow.equals("-0"))
-                    piPow = '-' + nStr;
-                else if(!piPow.isEmpty() || !nStr.equals("0"))
-                    piPow += nStr;
+                if(symbols.get(editingIndex).piPow.equals("0"))
+                    symbols.get(editingIndex).piPow = nStr;
+                else if(symbols.get(editingIndex).piPow.equals("-0"))
+                    symbols.get(editingIndex).piPow = '-' + nStr;
+                else if(!symbols.get(editingIndex).piPow.isEmpty() || !nStr.equals("0"))
+                    symbols.get(editingIndex).piPow += nStr;
             break;
             
             case E:
-                if(ePow.equals("0"))
-                    ePow = nStr;
-                else if(ePow.equals("-0"))
-                    ePow = '-' + nStr;
-                else if(!ePow.isEmpty() || !nStr.equals("0"))
-                    ePow += nStr;
+                if(symbols.get(editingIndex).ePow.equals("0"))
+                    symbols.get(editingIndex).ePow = nStr;
+                else if(symbols.get(editingIndex).ePow.equals("-0"))
+                    symbols.get(editingIndex).ePow = '-' + nStr;
+                else if(!symbols.get(editingIndex).ePow.isEmpty() || !nStr.equals("0"))
+                    symbols.get(editingIndex).ePow += nStr;
             break;
             
             case I:
-                if(iPow.equals("0"))
-                    iPow = nStr;
-                else if(iPow.equals("-0"))
-                    iPow = '-' + nStr;
-                else if(!iPow.isEmpty() || !nStr.equals("0"))
-                    iPow += nStr;
+                if(symbols.get(editingIndex).iPow.equals("0"))
+                    symbols.get(editingIndex).iPow = nStr;
+                else if(symbols.get(editingIndex).iPow.equals("-0"))
+                    symbols.get(editingIndex).iPow = '-' + nStr;
+                else if(!symbols.get(editingIndex).iPow.isEmpty() || !nStr.equals("0"))
+                    symbols.get(editingIndex).iPow += nStr;
             break;
             
             case VAR:
             {
                 final int currVarIndex = currVar - 'a';
-                if(varPowers[currVarIndex].equals("0"))
-                    varPowers[currVarIndex] = nStr;
-                else if(varPowers[currVarIndex].equals("-0"))
-                    varPowers[currVarIndex] = '-' + nStr;
-                else if(!varPowers[currVarIndex].isEmpty() || !nStr.equals("0"))
-                    varPowers[currVarIndex] += nStr;
+                if(symbols.get(editingIndex).varPowers[currVarIndex].equals("0"))
+                    symbols.get(editingIndex).varPowers[currVarIndex] = nStr;
+                else if(symbols.get(editingIndex).varPowers[currVarIndex].equals("-0"))
+                    symbols.get(editingIndex).varPowers[currVarIndex] = '-' + nStr;
+                else if(!symbols.get(editingIndex).varPowers[currVarIndex].isEmpty() || !nStr.equals("0"))
+                    symbols.get(editingIndex).varPowers[currVarIndex] += nStr;
             }
             break;
         }
@@ -833,36 +1063,36 @@ public class MathSymbolEditor extends View
         switch(editingSymbol)
         {
             case FACTOR:
-                if(factor.length() != 0)
-                    factor = factor.substring(0, factor.length() - 1);
+                if(symbols.get(editingIndex).factor.length() != 0)
+                    symbols.get(editingIndex).factor = symbols.get(editingIndex).factor.substring(0, symbols.get(editingIndex).factor.length() - 1);
             break;
             
             case PI:
-                if(piPow.length() != 0)
-                    piPow = piPow.substring(0, piPow.length() - 1);
+                if(symbols.get(editingIndex).piPow.length() != 0)
+                    symbols.get(editingIndex).piPow = symbols.get(editingIndex).piPow.substring(0, symbols.get(editingIndex).piPow.length() - 1);
                 else
                 {
-                    showPi = false;
+                    symbols.get(editingIndex).showPi = false;
                     setEditingSymbol(EditingSymbol.FACTOR);
                 }
             break;
             
             case E:
-                if(ePow.length() != 0)
-                    ePow = ePow.substring(0, ePow.length() - 1);
+                if(symbols.get(editingIndex).ePow.length() != 0)
+                    symbols.get(editingIndex).ePow = symbols.get(editingIndex).ePow.substring(0, symbols.get(editingIndex).ePow.length() - 1);
                 else
                 {
-                    showE = false;
+                    symbols.get(editingIndex).showE = false;
                     setEditingSymbol(EditingSymbol.FACTOR);
                 }
             break;
 
             case I:
-                if(iPow.length() != 0)
-                    iPow = iPow.substring(0, iPow.length() - 1);
+                if(symbols.get(editingIndex).iPow.length() != 0)
+                    symbols.get(editingIndex).iPow = symbols.get(editingIndex).iPow.substring(0, symbols.get(editingIndex).iPow.length() - 1);
                 else
                 {
-                    showI = false;
+                    symbols.get(editingIndex).showI = false;
                     setEditingSymbol(EditingSymbol.FACTOR);
                 }
             break;
@@ -870,11 +1100,11 @@ public class MathSymbolEditor extends View
             case VAR:
             {
                 final int currVarIndex = currVar - 'a';
-                if(varPowers[currVarIndex].length() != 0)
-                    varPowers[currVarIndex] = varPowers[currVarIndex].substring(0, varPowers[currVarIndex].length() - 1);
+                if(symbols.get(editingIndex).varPowers[currVarIndex].length() != 0)
+                    symbols.get(editingIndex).varPowers[currVarIndex] = symbols.get(editingIndex).varPowers[currVarIndex].substring(0, symbols.get(editingIndex).varPowers[currVarIndex].length() - 1);
                 else
                 {
-                    showVars[currVarIndex] = false;
+                    symbols.get(editingIndex).showVars[currVarIndex] = false;
                     setEditingSymbol(EditingSymbol.FACTOR);
                 }
             }
@@ -882,25 +1112,19 @@ public class MathSymbolEditor extends View
         }
         
         // If nothing is shown, we show a 0
-        if(factor.length() == 0 && !symbolVisible())
-            factor = "0";
+        if(symbols.get(editingIndex).factor.length() == 0 && !symbols.get(editingIndex).symbolVisible())
+            symbols.get(editingIndex).factor = "0";
+        
+        // If we're only showing a 0 and we're not the only symbol, delete the entire symbol and start editing the previous one
+        if(symbols.get(editingIndex).factor.equals("0") && symbols.size() > 1)
+        {
+            symbols.remove(editingIndex);
+            setEditingSymbol(EditingSymbol.FACTOR);
+            if(editingIndex != 0) --editingIndex;
+        }
         
         // Redraw and recalculate the size
         invalidate();
         requestLayout();
-    }
-    
-    /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible
-     * @return True if one or more symbols are visible, false otherwise */
-    private boolean symbolVisible()
-    {
-        if(showPi || showE || showI)
-            return true;
-        for(int i = 0; i < showVars.length; ++i)
-        {
-            if(showVars[i])
-                return true;
-        }
-        return false;
     }
 }

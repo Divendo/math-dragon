@@ -18,7 +18,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Expression;
-import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 
 import android.content.ContentValues;
@@ -149,7 +148,7 @@ public class Database extends SQLiteOpenHelper
         }
         
         /** Constructor */
-        public Substitution(char name, Symbol value)
+        public Substitution(char name, Expression value)
         {
             this.name = name;
             this.value = value;
@@ -168,9 +167,7 @@ public class Database extends SQLiteOpenHelper
             {
                 try
                 {
-                    Expression tmp = ExpressionXMLReader.fromXML(xml);
-                    if(tmp instanceof Symbol)
-                        value = (Symbol) tmp;
+                    value = ExpressionXMLReader.fromXML(xml);
                 }
                 catch(ParseException e)
                 {
@@ -183,7 +180,7 @@ public class Database extends SQLiteOpenHelper
         /** The name of the variable to substitute */
         public char name = 'a';
         /** The value to substitute for the variable (<tt>null</tt> means no substitution) */
-        public Symbol value = null;
+        public Expression value = null;
     }
     
     /** Constructor */

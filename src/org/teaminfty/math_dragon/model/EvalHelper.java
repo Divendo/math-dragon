@@ -126,7 +126,7 @@ public class EvalHelper
             F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
             F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
-    public static IExpr symbol(Symbol symbol)
+    public static IExpr symbol(Symbol symbol) throws MathException
     {
         if(symbol == null)
             throw new NullPointerException("symbol");
@@ -163,8 +163,9 @@ public class EvalHelper
     }
     
     /** Returns the symbol for the given variable (this will substitute the variable when necessary)
-     * @param var The variable name */
-    private static IExpr getVarSymbol(char varName)
+     * @param var The variable name 
+     * @throws MathException Thrown when the conversion fails */
+    private static IExpr getVarSymbol(char varName) throws MathException
     {
         // Check if we have to substitute the variable
         if(substitutions != null)
@@ -172,7 +173,7 @@ public class EvalHelper
             for(Database.Substitution sub : substitutions)
             {
                 if(sub.name == varName && sub.value != null)
-                    return symbol(sub.value);
+                    return eval(sub.value);
             }
         }
         

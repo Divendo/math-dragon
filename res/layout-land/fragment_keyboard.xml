@@ -140,6 +140,16 @@
                 style="@style/KeyboardButton"
                 android:text="5" />
             
+			<Button
+			    android:id="@+id/keyboardButtonPlus"
+			    style="@style/KeyboardButton"
+			    android:text="+" />
+			
+			<Button
+			    android:id="@+id/keyboardButtonMinus"
+			    style="@style/KeyboardButton"
+			    android:text="-" />
+            
 			<ToggleButton
 			    android:id="@+id/keyboardButtonX"
         		android:layout_gravity="center"
@@ -148,24 +158,6 @@
 			    android:text="x"
 			    android:textOff="x"
 			    android:textOn="x" />
-            
-			<ToggleButton
-			    android:id="@+id/keyboardButtonY"
-        		android:layout_gravity="center"
-			    style="@style/KeyboardButtonSmall"
-			    android:layout_margin="@dimen/keyboard_button_small_margin"
-			    android:text="y"
-			    android:textOff="y"
-			    android:textOn="y" />
-			
-			<ToggleButton
-			    android:id="@+id/keyboardButtonZ"
-        		android:layout_gravity="center"
-			    style="@style/KeyboardButtonSmall"
-			    android:layout_margin="@dimen/keyboard_button_small_margin"
-			    android:text="z"
-			    android:textOff="z"
-			    android:textOn="z" />
 
         </LinearLayout>
 

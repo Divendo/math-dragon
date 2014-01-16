@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.view.fragments;
 import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
 
 import android.app.DialogFragment;
@@ -27,7 +28,7 @@ public class FragmentSubstitutionEditor extends DialogFragment
     private char varName = 'a';
     
     /** The value that is to be substituted for the variable */
-    private Symbol mathSymbol = new Symbol(0);
+    private Expression value = new Symbol(0);
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -77,7 +78,7 @@ public class FragmentSubstitutionEditor extends DialogFragment
         refreshButtonState();
         
         // Set the text of the substitution value
-        final String symbolStr = mathSymbol.toString();
+        final String symbolStr = valueToString();
         ((TextView) view.findViewById(R.id.text_substitute_for)).setText(symbolStr.substring(1, symbolStr.length() - 1));
         
         // Return the content view
@@ -108,6 +109,16 @@ public class FragmentSubstitutionEditor extends DialogFragment
         getDialog().getWindow().setAttributes(params);
     }
     
+    /** Gets the value as a string */
+    private String valueToString()
+    {
+        String str = value.toString();
+        str.replace("(", "");
+        str.replace(")", "");
+        str.replace(" ", "");
+        return str;
+    }
+    
     /** Sets the initial variable name (should be called before this dialog is shown
      * @param name The initial variable name */
     public void initVarName(char name)
@@ -115,16 +126,16 @@ public class FragmentSubstitutionEditor extends DialogFragment
     
     /** Sets the initial substitution value (should be called before this dialog is shown
      * @param val The initial substitution value */
-    public void initValue(Symbol val)
-    { mathSymbol = val; }
+    public void initValue(Expression val)
+    { value = val; }
     
     /** A listener that's called when the substitution has been confirmed */
     public interface OnConfirmListener
     {
         /** Called when the substitution has been confirmed
          * @param varName The variable that should be substituted
-         * @param mathSymbol The value that has to substituted for the variable */
-        public void confirmed(char varName, Symbol mathSymbol);
+         * @param val The value that has to substituted for the variable */
+        public void confirmed(char varName, Expression val);
     }
     
     /** The current {@link OnConfirmListener} */
@@ -141,11 +152,11 @@ public class FragmentSubstitutionEditor extends DialogFragment
     { return onConfirmListener; }
     
     /** Calls the {@link OnConfirmListener}
-     * @param mathSymbol The input */
+     * @param value The input */
     private void callOnConfirmListener()
     {
         if(onConfirmListener != null)
-            onConfirmListener.confirmed(varName, mathSymbol);
+            onConfirmListener.confirmed(varName, value);
     }
     
     @Override
@@ -213,7 +224,7 @@ public class FragmentSubstitutionEditor extends DialogFragment
             
             // Set the listener
             fragmentKeyboard.setOnConfirmListener(new SetSubstitutionValueListener());
-            fragmentKeyboard.setMathSymbol(mathSymbol);
+            fragmentKeyboard.setExpression(value);
             
             // Show the keyboard
             fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);
@@ -224,13 +235,13 @@ public class FragmentSubstitutionEditor extends DialogFragment
     private class SetSubstitutionValueListener implements FragmentKeyboard.OnConfirmListener
     {
         @Override
-        public void confirmed(Symbol newMathSymbol)
+        public void confirmed(Expression input)
         {
             // Store the new value
-            mathSymbol = newMathSymbol;
+            value = input;
             
             // Show the new value
-            final String symbolStr = mathSymbol.toString();
+            final String symbolStr = valueToString();
             ((TextView) getView().findViewById(R.id.text_substitute_for)).setText(symbolStr.substring(1, symbolStr.length() - 1));
         }
     }

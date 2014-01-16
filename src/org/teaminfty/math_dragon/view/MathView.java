@@ -849,55 +849,63 @@ public class MathView extends View
         }
 
         @Override
-        public void confirmed(Symbol mathSymbol)
+        public void confirmed(Expression input)
         {
             // Keep track of whether a warning should be shown or not
             int warningId = 0;
             
             // Place the symbol
             if(expressionInfo.parent == null)
-                setExpressionHelper(mathSymbol);
+                setExpressionHelper(input);
             else
             {
                 // In the 'integrate over' child only a single variable is allowed
                 if(expressionInfo.parent instanceof Integral && expressionInfo.childIndex == 1)
                 {
-                    // No constants allowed
-                    if(mathSymbol.getFactor() != 1 || (mathSymbol.getPiPow() | mathSymbol.getEPow() | mathSymbol.getIPow()) != 0)
-                        warningId = R.string.invalid_integrate_over;
-                    else
+                    // Only allow a Symbol
+                    if(input instanceof Symbol)
                     {
-                        // Check if exactly one variable is used
-                        boolean varVisible = false;
-                        for(int i = 0; i < mathSymbol.varPowCount(); ++i)
+                        Symbol mathSymbol = (Symbol) input;
+                        
+                        // No constants allowed
+                        if(mathSymbol.getFactor() != 1 || (mathSymbol.getPiPow() | mathSymbol.getEPow() | mathSymbol.getIPow()) != 0)
+                            warningId = R.string.invalid_integrate_over;
+                        else
                         {
-                            if(mathSymbol.getVarPow(i) == 0)
-                                continue;
-                            else if(mathSymbol.getVarPow(i) == 1)
+                            // Check if exactly one variable is used
+                            boolean varVisible = false;
+                            for(int i = 0; i < mathSymbol.varPowCount(); ++i)
                             {
-                                if(varVisible)
+                                if(mathSymbol.getVarPow(i) == 0)
+                                    continue;
+                                else if(mathSymbol.getVarPow(i) == 1)
+                                {
+                                    if(varVisible)
+                                    {
+                                        warningId = R.string.invalid_integrate_over;
+                                        break;
+                                    }
+                                    else
+                                        varVisible = true;
+                                }
+                                else
                                 {
                                     warningId = R.string.invalid_integrate_over;
                                     break;
                                 }
-                                else
-                                    varVisible = true;
                             }
-                            else
-                            {
+                            if(!varVisible)
                                 warningId = R.string.invalid_integrate_over;
-                                break;
-                            }
                         }
-                        if(!varVisible)
-                            warningId = R.string.invalid_integrate_over;
                     }
+                    else
+                        warningId = R.string.invalid_integrate_over;
                 }
                         
                 // Only insert the symbol if no problems have been found
                 if(warningId == 0)
                 {
-                    expressionInfo.parent.setChild(expressionInfo.childIndex, mathSymbol);
+                    expressionInfo.parent.setChild(expressionInfo.childIndex, input);
                     ParenthesesHelper.setParentheses(expression);
                 }
             }

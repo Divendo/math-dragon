@@ -294,7 +294,7 @@ public class FragmentMainScreen extends Fragment
             
             // Set the listener and the math symbol
             fragmentKeyboard.setOnConfirmListener(listener);
-            fragmentKeyboard.setMathSymbol(mathConstant);
+            fragmentKeyboard.setExpression(mathConstant);
             
             // Show the keyboard
             fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);
