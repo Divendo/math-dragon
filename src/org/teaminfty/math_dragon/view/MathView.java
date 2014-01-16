@@ -316,7 +316,7 @@ public class MathView extends View
             queue.addLast(new HoverInformation(expression, boundingBox, null, 0));
             
             // The parents we've gone through
-            ArrayList<Expression> parents = new ArrayList<Expression>();
+            ArrayList<HoverInformation> parents = new ArrayList<HoverInformation>();
             
             // Keep going until the queue is empty
             while(!queue.isEmpty())
@@ -324,33 +324,48 @@ public class MathView extends View
                 // Pop off an element of the queue
                 HoverInformation info = queue.pollFirst();
                 
-                // If the Expression is Empty or Symbol, we check if we clicked on it
-                if(info.expression instanceof Empty || info.expression instanceof Symbol)
+                // If the Expression is a term, we check if we clicked on it
+                if(info.expression instanceof Empty || info.expression instanceof Symbol || ((info.expression instanceof Add || info.expression instanceof Subtract) && isTerm(info.expression)))
                 {
-                    // If we click inside the object, we're done looking
-                    if(info.boundingBox.contains(clickPos.x, clickPos.y))
+                    // Whether or not a hit was found
+                    boolean hit = false;
+                    
+                    // Check if we clicked the object's operator
+                    final Rect[] boundingBoxes = info.expression.getOperatorBoundingBoxes();
+                    for(Rect box : boundingBoxes)
                     {
-                        // Determine the parent that we should pass as default value to the keyboard
-                        Expression defVal = info.expression;
-                        for(int i = parents.size() - 1; i >= 0; --i)
+                        box.offset(info.boundingBox.left, info.boundingBox.top);
+                        if(box.contains(clickPos.x, clickPos.y))
                         {
-                            if(isTerm(parents.get(i)))
-                                defVal = parents.get(i);
+                            // Determine the parent that we should pass as default value to the keyboard
+                            for(int i = parents.size() - 1; i >= 0; --i)
+                            {
+                                if(isTerm(parents.get(i).expression))
+                                    info = parents.get(i);
+                                else
+                                    break;
+                            }
+                            
+                            // Show the keyboard with the given confirm listener
+                            if(info.expression instanceof Empty)
+                                showKeyboard(null, new ExpressionReplacer(info));
                             else
-                                break;
+                                showKeyboard(info.expression, new ExpressionReplacer(info));
+                            
+                            // We found a hit
+                            hit = true;
                         }
-                        
-                        // Show the keyboard with the given confirm listener
-                        if(defVal instanceof Empty)
-                            showKeyboard(null, new ExpressionReplacer(info));
-                        else
-                            showKeyboard(defVal, new ExpressionReplacer(info));
                     }
+                    
+                    // Stop if we found a hit
+                    if(hit)
+                        break;
                 }
-                else
+                
+                if(info.expression.getChildCount() != 0)
                 {
                     // Add this expression as a parent
-                    parents.add(info.expression);
+                    parents.add(info);
                     
                     // Add the children we click on to the queue
                     for(int i = 0; i < info.expression.getChildCount(); ++i)

@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.view;
 import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.math.Empty;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
@@ -613,6 +614,11 @@ public class MathSymbolEditor extends View
             
             // Add the symbol to the list
             symbols.add(symbol);
+        }
+        else if(expr instanceof Empty)
+        {
+            // Simply add a 0
+            symbols.add(new SymbolRepresentation());
         }
         else if(expr instanceof Add)
         {
