@@ -74,9 +74,9 @@ public class FragmentSubstitute extends DialogFragment
     private String valueToString(Expression value)
     {
         String str = value.toString();
-        str.replace("(", "");
-        str.replace(")", "");
-        str.replace(" ", "");
+        str = str.replace("(", "");
+        str = str.replace(")", "");
+        str = str.replace(" ", "");
         return str;
     }
     
@@ -109,7 +109,7 @@ public class FragmentSubstitute extends DialogFragment
             row.setTag(SUBSTITUTION_TAG_PREFIX + var);
             
             // Set the click listeners
-            RowClickListener rowClickListener = new RowClickListener(var, expr);
+            RowClickListener rowClickListener = new RowClickListener(var);
             row.setOnClickListener(rowClickListener);
             row.setOnLongClickListener(rowClickListener);
             
@@ -134,6 +134,10 @@ public class FragmentSubstitute extends DialogFragment
         // Get the TextViews
         TextView varName = (TextView) row.findViewById(R.id.text_var_name);
         TextView varVal = (TextView) row.findViewById(R.id.text_var_val);
+        
+        // Set the typeface for the TextViews
+        varName.setTypeface(TypefaceHolder.dejavuSans);
+        varVal.setTypeface(TypefaceHolder.dejavuSans);
         
         // Set the typeface for the TextViews
         varName.setTypeface(TypefaceHolder.dejavuSans);
@@ -225,18 +229,10 @@ public class FragmentSubstitute extends DialogFragment
         /** The name of the variable that is to be substituted */
         private char varName;
         
-        /** The value of the substitution */
-        private Expression value;
-        
         /** Constructor
-         * @param name The name of the variable that is to be substituted
-         * @param expr The value of the substitution
-         */
-        public RowClickListener(char name, Expression expr)
-        {
-            varName = name;
-            value = expr;
-        }
+         * @param name The name of the variable that is to be substituted */
+        public RowClickListener(char name)
+        { varName = name; }
         
         @Override
         public void onClick(View v)
@@ -252,8 +248,11 @@ public class FragmentSubstitute extends DialogFragment
             editor.setOnConfirmListener(new SetSubstitutionListener());
             
             // Set the initial value
+            Database db = new Database(getActivity());
             editor.initVarName(varName);
-            editor.initValue(value);
+            if(db.substitutionExists(varName))
+                editor.initValue(db.getSubstitution(varName).value);
+            db.close();
             
             // Show the editor
             editor.show(getFragmentManager(), EDITOR_TAG);

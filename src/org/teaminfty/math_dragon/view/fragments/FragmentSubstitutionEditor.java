@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.view.fragments;
 import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
 
@@ -78,8 +79,8 @@ public class FragmentSubstitutionEditor extends DialogFragment
         refreshButtonState();
         
         // Set the text of the substitution value
-        final String symbolStr = valueToString();
-        ((TextView) view.findViewById(R.id.text_substitute_for)).setText(symbolStr.substring(1, symbolStr.length() - 1));
+        ((TextView) view.findViewById(R.id.text_substitute_for)).setTypeface(TypefaceHolder.dejavuSans);
+        ((TextView) view.findViewById(R.id.text_substitute_for)).setText(valueToString());
         
         // Return the content view
         return view;
@@ -113,9 +114,9 @@ public class FragmentSubstitutionEditor extends DialogFragment
     private String valueToString()
     {
         String str = value.toString();
-        str.replace("(", "");
-        str.replace(")", "");
-        str.replace(" ", "");
+        str = str.replace("(", "");
+        str = str.replace(")", "");
+        str = str.replace(" ", "");
         return str;
     }
     
@@ -241,8 +242,7 @@ public class FragmentSubstitutionEditor extends DialogFragment
             value = input;
             
             // Show the new value
-            final String symbolStr = valueToString();
-            ((TextView) getView().findViewById(R.id.text_substitute_for)).setText(symbolStr.substring(1, symbolStr.length() - 1));
+            ((TextView) getView().findViewById(R.id.text_substitute_for)).setText(valueToString());
         }
     }
 }
