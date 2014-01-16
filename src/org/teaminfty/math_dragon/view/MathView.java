@@ -732,6 +732,10 @@ public class MathView extends View
                 // Add the children we intersect with to the queue
                 for(int i = 0; i < info.expression.getChildCount(); ++i)
                 {
+                    // Ignore the 'integrate over' child of the integral
+                    if(info.expression instanceof Integral && i == 1)
+                        continue;
+                    
                     // Get the bounding box for the child
                     Rect childBoundingBox = info.expression.getChildBoundingBox(i);
                     childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
