@@ -14,7 +14,7 @@ public class Derivative extends Binary
 {
 	/** The paint that is used for drawing the operator */
     protected Paint operatorPaint = new Paint();
-    final int maxFontSize = 500;
+    final int maxFontSize = 100;
     final float RATIO = 0.5f / 1.61803398874989f;
     public static final String TYPE = "derivative";
     
@@ -63,15 +63,17 @@ public class Derivative extends Binary
         
         // Calculate the bounding box of the "D" letters
         Rect boundstop = new Rect();
-        operatorPaint.setTextSize( Math.min( maxFontSize, topSize.height()) );
+        operatorPaint.setTextSize((float) (maxFontSize * Math.pow(2.0f/3, level)));//Math.min( maxFontSize, topSize.height()) );
         operatorPaint.getTextBounds("d", 0, "d".length(), boundstop);
         
         Rect boundsbottom = new Rect();
-        operatorPaint.setTextSize( Math.min( maxFontSize, bottomSize.height()) );
+        operatorPaint.setTextSize( (float) (maxFontSize * Math.pow(2.0f/3, level)) );
         operatorPaint.getTextBounds("d", 0, "d".length(), boundsbottom);
+        
     	// Add a small amount to get a gap between "d" and the variable
         boundstop.right += boundstop.width() * 0.2;
         boundsbottom.right += boundsbottom.width() * 0.2;
+        
         // Calculate the height the operator wants to take
         int operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
 
@@ -101,13 +103,13 @@ public class Derivative extends Binary
     @Override
     public Rect[] getOperatorBoundingBoxes()
     {
-        // Get the sizes
+    	// Get the sizes
         Rect[] sizes = getSizes();
 
         // Position the bounding box and return it
         sizes[0].offsetTo( 0, sizes[1].height());
-        sizes[3].offsetTo( Math.max(0, sizes[0].width() - sizes[1].width() - sizes[3].width() - sizes[5].width() - sizes[6].width()) / 2, sizes[1].height() - sizes[3].height());
-        sizes[4].offsetTo( Math.max(0, sizes[0].width() - sizes[2].width() - sizes[4].width()) / 2, sizes[1].height() + sizes[0].height() + (sizes[2].height() - sizes[4].height()));
+        sizes[3].offsetTo( Math.max(0, sizes[0].width() - sizes[1].width() - sizes[3].width() - sizes[5].width() - sizes[6].width()) / 2, (sizes[1].height() - sizes[3].height()) / 2);
+        sizes[4].offsetTo( Math.max(0, sizes[0].width() - sizes[2].width() - sizes[4].width()) / 2, sizes[1].height() + sizes[0].height() + (sizes[2].height() - sizes[4].height()) / 2);
         
         // Make a rectangle the size of the brackets
         Rect leftBracket = new Rect( 0, 0, sizes[5].width(), sizes[5].height());
@@ -195,10 +197,10 @@ public class Derivative extends Binary
         Rect[] sizes = getSizes();
         
         // Draw the text at the correct position
-        operatorPaint.setTextSize( Math.min( maxFontSize, sizes[2].height()) );
-        canvas.drawText( "d", Math.max(0, operator.width() - sizes[2].width() - sizes[4].width()) / 2, sizes[1].height() + sizes[2].height() + operator.height(), operatorPaint);
-        operatorPaint.setTextSize( Math.min( maxFontSize, sizes[1].height()) );
-        canvas.drawText( "d", Math.max(0, operator.width() - sizes[1].width() - sizes[3].width() - sizes[5].width() - sizes[6].width()) / 2, sizes[1].height(), operatorPaint);
+        operatorPaint.setTextSize( (float) (maxFontSize * Math.pow(2.0f/3, level)) );
+        canvas.drawText( "d", Math.max(0, operator.width() - sizes[2].width() - sizes[4].width()) / 2, sizes[1].height() + operator.height() + sizes[4].height() + (sizes[2].height() - sizes[4].height()) / 2, operatorPaint);
+        operatorPaint.setTextSize( (float) (maxFontSize * Math.pow(2.0f/3, level)) );
+        canvas.drawText( "d", Math.max(0, operator.width() - sizes[1].width() - sizes[3].width() - sizes[5].width() - sizes[6].width()) / 2, sizes[3].height() + (sizes[1].height() - sizes[3].height()) / 2, operatorPaint);
         canvas.restore();
 
         
