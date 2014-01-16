@@ -593,7 +593,10 @@ public class MathView extends View
             if(info.parent == null)
                 setExpressionHelper(newSuperParent);
             else
-                ParenthesesHelper.makeChild(info.parent, newSuperParent, info.childIndex);
+            {
+                info.parent.setChild(info.childIndex, newSuperParent);
+                ParenthesesHelper.setParentheses(expression);
+            }
             
             info.parent = newParent;
             info.childIndex = 0;
@@ -618,7 +621,10 @@ public class MathView extends View
             if(info.parent == null)
                 setExpressionHelper(newSuperParent);
             else
-                ParenthesesHelper.makeChild(info.parent, newSuperParent, info.childIndex);
+            {
+                info.parent.setChild(info.childIndex, newSuperParent);
+                ParenthesesHelper.setParentheses(expression);
+            }
             
             info.parent = newParent;
             info.childIndex = 1;
@@ -760,7 +766,10 @@ public class MathView extends View
                     if(currHover.parent == null)
                         setExpressionHelper(dragExpr);
                     else
-                        ParenthesesHelper.makeChild(currHover.parent, dragExpr, currHover.childIndex);
+                    {
+                        currHover.parent.setChild(currHover.childIndex, dragExpr);
+                        ParenthesesHelper.setParentheses(expression);
+                    }
                 }
                 else
                 {
@@ -769,11 +778,12 @@ public class MathView extends View
                     freeExpression(currHover);
                     
                     // Insert the Expression into to Expression tree
-                    ParenthesesHelper.makeChild(dragExpr, currHover.expression, sourceChild);
+                    dragExpr.setChild(sourceChild, currHover.expression);
                     if(currHover.parent == null)
                         setExpressionHelper(dragExpr);
                     else
-                        ParenthesesHelper.makeChild(currHover.parent, dragExpr, currHover.childIndex);
+                        currHover.parent.setChild(currHover.childIndex, dragExpr);
+                    ParenthesesHelper.setParentheses(expression);
                 }
                 
                 // Make sure the Expression and all of its descendants have the right state
