@@ -113,6 +113,48 @@ public class Divide extends Binary
         return new Rect(0, 0, width, height);
     }
     
+    /**
+     * Retrieve the dividend (i.e. the numerator)
+     * 
+     * @return The numerator
+     */
+    public Expression getNumerator()
+    {
+        return getLeft();
+    }
+
+    /**
+     * Assign a new mathematical expression to the numerator.
+     * 
+     * @param num
+     *        The new numerator
+     */
+    public void setNumerator(Expression num)
+    {
+        setLeft(num);
+    }
+
+    /**
+     * Retrieve the divisor (i.e. the denominator)
+     * 
+     * @return The denominator
+     */
+    public Expression getDenominator()
+    {
+        return getRight();
+    }
+
+    /**
+     * Assign a new mathematical expression to the denominator.
+     * 
+     * @param denom
+     *        The new denominator
+     */
+    public void setDenominator(Expression denom)
+    {
+        setRight(denom);
+    }
+    
     @Override
     public Point getCenter()
     {
