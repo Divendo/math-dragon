@@ -21,7 +21,6 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
-import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
 import org.w3c.dom.Document;
@@ -283,7 +282,7 @@ public class FragmentMainScreen extends Fragment
         }
         
         @Override
-        public void showKeyboard(Symbol mathConstant, OnConfirmListener listener)
+        public void showKeyboard(Expression expr, OnConfirmListener listener)
         {
             // If a keyboard is already shown, stop here
             if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
@@ -294,7 +293,7 @@ public class FragmentMainScreen extends Fragment
             
             // Set the listener and the math symbol
             fragmentKeyboard.setOnConfirmListener(listener);
-            fragmentKeyboard.setExpression(mathConstant);
+            fragmentKeyboard.setExpression(expr);
             
             // Show the keyboard
             fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);

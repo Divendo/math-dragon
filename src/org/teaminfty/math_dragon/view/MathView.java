@@ -12,7 +12,9 @@ import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
+import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Linear;
+import org.teaminfty.math_dragon.view.math.operation.binary.Subtract;
 
 import android.content.ClipData;
 import android.content.Context;
@@ -166,9 +168,9 @@ public class MathView extends View
         public void changed(Expression expression);
         
         /** Called when a keyboard with the given confirm listener should be shown
-         * @param mathSymbol The initial value for the input (can be <tt>null</tt>)
+         * @param expr The initial value for the input (can be <tt>null</tt>)
          * @param listener The confirm listener */
-        public void showKeyboard(Symbol mathSymbol, FragmentKeyboard.OnConfirmListener listener);
+        public void showKeyboard(Expression expr, FragmentKeyboard.OnConfirmListener listener);
 
         /** Called when a warning with the given information should be shown
      * @param title The ID of the string resource that should be the title
@@ -185,12 +187,12 @@ public class MathView extends View
     { onEventListener = listener; }
     
     /** Asks the parent fragment to show the keyboard with the given confirm listener
-     * @param mathSymbol The initial value for the input (can be <tt>null</tt>)
+     * @param expr The initial value for the input (can be <tt>null</tt>)
      * @param listener The confirm listener */
-    protected void showKeyboard(Symbol mathSymbol, FragmentKeyboard.OnConfirmListener listener)
+    protected void showKeyboard(Expression expr, FragmentKeyboard.OnConfirmListener listener)
     {
         if(onEventListener != null)
-            onEventListener.showKeyboard(mathSymbol, listener);
+            onEventListener.showKeyboard(expr, listener);
     }
     
     /** Call {@link OnEventListener#change() change()} on the current {@link OnEventListener} */
@@ -312,6 +314,9 @@ public class MathView extends View
             ArrayDeque<HoverInformation> queue = new ArrayDeque<HoverInformation>();
             queue.addLast(new HoverInformation(expression, boundingBox, null, 0));
             
+            // The parents we've gone through
+            ArrayList<Expression> parents = new ArrayList<Expression>();
+            
             // Keep going until the queue is empty
             while(!queue.isEmpty())
             {
@@ -324,15 +329,28 @@ public class MathView extends View
                     // If we click inside the object, we're done looking
                     if(info.boundingBox.contains(clickPos.x, clickPos.y))
                     {
+                        // Determine the parent that we should pass as default value to the keyboard
+                        Expression defVal = info.expression;
+                        for(int i = parents.size() - 1; i >= 0; --i)
+                        {
+                            if(isTerm(parents.get(i)))
+                                defVal = parents.get(i);
+                            else
+                                break;
+                        }
+                        
                         // Show the keyboard with the given confirm listener
-                        if(info.expression instanceof Symbol)
-                            showKeyboard((Symbol) info.expression, new ExpressionReplacer(info));
-                        else
+                        if(defVal instanceof Empty)
                             showKeyboard(null, new ExpressionReplacer(info));
+                        else
+                            showKeyboard(defVal, new ExpressionReplacer(info));
                     }
                 }
                 else
                 {
+                    // Add this expression as a parent
+                    parents.add(info.expression);
+                    
                     // Add the children we click on to the queue
                     for(int i = 0; i < info.expression.getChildCount(); ++i)
                     {
@@ -348,6 +366,28 @@ public class MathView extends View
             }
             
             // Always return true
+            return true;
+        }
+        
+        /** Returns true if the given {@link Expression} only contains children that are an instance of
+         * {@link Add}, {@link Subtract}, {@link Empty} or {@link Symbol}.
+         * The {@link Expression} itself has to be of one of these types as well.
+         * @param expr The {@link Expression} to check
+         * @return <tt>true</tt> if the children are only of the described types, <tt>false</tt> otherwise. */
+        private boolean isTerm(Expression expr)
+        {
+            // Check the type of the expression itself
+            if(!(expr instanceof Symbol || expr instanceof Empty || expr instanceof Add || expr instanceof Subtract))
+                return false;
+            
+            // Loop through all children and check their type
+            for(int i = 0; i < expr.getChildCount(); ++i)
+            {
+                if(!isTerm(expr.getChild(i)))
+                    return false;
+            }
+            
+            // If we've come here, the expression and all of its children must be of the right type
             return true;
         }
         
