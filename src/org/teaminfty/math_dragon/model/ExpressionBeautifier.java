@@ -151,6 +151,7 @@ public class ExpressionBeautifier
                     return new Root(pow(new Power(pow.getBase(), dividend)), symdenom);
             }
         }
+        pow.setExponent(exponent);
         return pow;
     }
     
