@@ -220,8 +220,8 @@ public class ExpressionBeautifier
                     Expression base = parse(pow.getBase());
                     if (base instanceof Symbol)
                     {
-                        ((Symbol) base).setPow(symexp);
-                        return base;
+                        if (((Symbol) base).setPow(symexp))
+                            return base;
                     }
                     pow.setExponent(symexp);
                     return pow;
