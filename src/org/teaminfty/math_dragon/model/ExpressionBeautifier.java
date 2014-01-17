@@ -134,14 +134,16 @@ public class ExpressionBeautifier
         {
             Symbol symleft = (Symbol) left;
             Symbol symright = (Symbol) right;
-            if (symleft.isFactorOnly())
-            {
-                symright.setFactor(symright.getFactor() * symleft.getFactor());
-                return symright;
-            }
-            else if (symright.isFactorOnly())
+            if (symleft.varPowCount() == symright.varPowCount())
             {
                 symleft.setFactor(symleft.getFactor() * symright.getFactor());
+                symleft.setPiPow(symleft.getPiPow() + symright.getPiPow());
+                symleft.setEPow(symleft.getEPow() + symright.getEPow());
+                symleft.setIPow(symleft.getIPow() + symright.getIPow());
+                for (int i = 0; i < Symbol.VAR_POWS_LENGTH; ++i)
+                {
+                    symleft.setVarPow(i, symleft.getVarPow(i) + symright.getVarPow(i));
+                }
                 return symleft;
             }
         }
