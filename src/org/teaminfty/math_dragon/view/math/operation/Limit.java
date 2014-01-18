@@ -110,14 +110,14 @@ public class Limit extends Operation
     }
 
     @Override
-    public Rect[] getOperatorBoundingBoxes()
+    public Rect[] calculateOperatorBoundingBoxes()
     {
         // TODO Auto-generated method stub
         throw new RuntimeException("stub");
     }
 
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // TODO Auto-generated method stub
         throw new RuntimeException("stub");

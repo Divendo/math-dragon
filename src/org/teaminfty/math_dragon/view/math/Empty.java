@@ -35,7 +35,7 @@ public class Empty extends Expression
     { return " "; }
     
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Will always throw an error since empty boxes do not have children
         checkChildIndex(index);
@@ -69,7 +69,7 @@ public class Empty extends Expression
     }
     
     @Override
-    public Rect getBoundingBox()
+    public Rect calculateBoundingBox()
     {
     	int width = (int)(defaultHeight*RATIO);
     	int height = defaultHeight;
@@ -84,7 +84,7 @@ public class Empty extends Expression
     }
     
     @Override
-    public Rect[] getOperatorBoundingBoxes()
+    public Rect[] calculateOperatorBoundingBoxes()
     {
     	//emptyObjects don't have an operator, but they do need one for the drag and drop
     	

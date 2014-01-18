@@ -26,6 +26,16 @@ public abstract class Expression
     /** The children of this {@link Expression} */
     protected ArrayList<Expression> children = new ArrayList<Expression>();
 
+    /** The bounding boxes of this object */
+    protected ArrayList<Rect> childrenBoundingBoxes = new ArrayList<Rect>();
+    protected ArrayList<Rect> operatorBoundingBoxes = new ArrayList<Rect>();    
+    protected Rect totalBoundingBox = null;
+    
+    /** The boolean to keep track if the bounding boxes are still valid */
+    protected boolean operatorBoundingBoxValid = false;
+    protected boolean childrenBoundingBoxValid = false;
+    protected boolean totalBoundingBoxValid = false;
+    
     /** The default height of an object */
     protected int defaultHeight = 100;
     
@@ -109,6 +119,74 @@ public abstract class Expression
             child.setDefaultHeight(defaultHeight);
     }
 
+    
+    /** 
+     * Set the state of the operator bounding box cache 
+     * 
+     * @param bool to validate or invalidate the bounding boxes */
+    public void validateOperatorBoundingBox(boolean bool)
+    {
+    	// Set the boolean
+    	operatorBoundingBoxValid = bool;
+    	
+    	// Set the boolean for all children if it is false
+    	if(!bool)
+    		for(Expression child : children)
+    			child.validateAllBoundingBox(false);
+    }
+    
+    /** 
+     * Set the state of the children bounding box cache 
+     * 
+     * @param bool to validate or invalidate the bounding boxes */
+    public void validateChildrenBoundingBox(boolean bool)
+    {
+    	// Set the boolean
+    	childrenBoundingBoxValid = bool;
+    	
+    	// Set the boolean for all children if it is false
+    	if(!bool)
+    		for(Expression child : children)
+    			child.validateAllBoundingBox(false);
+    }
+    
+    /** 
+     * Set the state of the total bounding box cache 
+     * 
+     * @param bool to validate or invalidate the bounding box */
+    public void validateTotalBoundingBox(boolean bool)
+    {
+    	// Set the boolean
+    	totalBoundingBoxValid = bool;
+    	
+    	// Set the boolean for all children if it is false
+    	if(!bool)
+    		for(Expression child : children)
+    			child.validateAllBoundingBox(false);
+    }
+    
+    /** Invalidate or validate all bounding boxes in the cache */
+    public void validateAllBoundingBox(boolean bool)
+    {
+    	validateOperatorBoundingBox(bool);
+    	validateChildrenBoundingBox(bool);
+    	validateTotalBoundingBox(bool);
+    }
+    
+    
+    /** Get the state of the bounding box cache */
+    public boolean getOperatorBoundingBoxValid()
+    { return operatorBoundingBoxValid; }
+    
+    /** Get the state of the children bounding box cache */
+    public boolean getChildrenBoundingBoxValid()
+    { return childrenBoundingBoxValid; }
+    
+    /** Get the state of the total bounding box cache */
+    public boolean getTotalBoundingBoxValid()
+    { return totalBoundingBoxValid; }
+    
+    
     /**
      * Returns the bounding boxes of the operator of this {@link Expression}.
      * The aspect ratio of the bounding boxes should always be the same.
@@ -121,8 +199,35 @@ public abstract class Expression
      *        {@link Expression#NO_MAXIMUM})
      * @return An array containing the requested bounding boxes
      */
-    public abstract Rect[] getOperatorBoundingBoxes();
+    public abstract Rect[] calculateOperatorBoundingBoxes();
 
+    public Rect[] getOperatorBoundingBoxes()
+    {
+    	// If the cache is invalid or there are no bounding boxes in the current cache, recalculate them
+    	if( !getOperatorBoundingBoxValid() || operatorBoundingBoxes.isEmpty())
+    	{
+    		// First clear the current list
+    		operatorBoundingBoxes.clear();
+    		
+    		// Recalculate the bounding boxes
+    		Rect[] operatorBB = calculateOperatorBoundingBoxes();
+    		
+    		for(int i = 0; i < operatorBB.length; i ++)
+    			operatorBoundingBoxes.add( operatorBB[i]);
+    		
+    		// Set the cache to valid
+    		validateOperatorBoundingBox(true);
+    	}
+    	
+    	// Create a new array and get a copy of all the bounding boxes
+    	Rect[] result = new Rect[ operatorBoundingBoxes.size()];
+    	
+    	for(int i = 0; i < result.length; i ++)
+    		result[i] = new Rect(operatorBoundingBoxes.get(i));
+    	
+    	// Return the array with the rectangles
+    	return result;
+    }
     /**
      * Returns the bounding box of the child at the given index.
      * The aspect ratio of the box should always be the same.
@@ -133,15 +238,33 @@ public abstract class Expression
      * @throws IndexOutOfBoundsException
      *         If an invalid child index is given
      */
-    public abstract Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException;
+    public abstract Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException;
 
+    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    {
+    	// If the cache is invalid or the amount of bounding boxes isn't the amount of children, recalculate them
+    	if( !getChildrenBoundingBoxValid() || (getChildCount() != childrenBoundingBoxes.size()))
+    	{
+    		childrenBoundingBoxes.clear();
+    		
+    		int size = getChildCount();
+    		
+    		for(int i = 0; i < size; i ++)
+    			childrenBoundingBoxes.add( calculateChildBoundingBox(i));
+    		 
+    		validateChildrenBoundingBox(true);
+    	}
+    	
+    	// Return a copy of the requested bounding box
+    	return new Rect(childrenBoundingBoxes.get(index));
+    }
     /**
      * Returns the bounding box for the entire {@link Expression}.
      * The aspect ratio of the box should always be the same.
      * 
      * @return The bounding box for the entire {@link Expression}
      */
-    public Rect getBoundingBox()
+    public Rect calculateBoundingBox()
     {
         // This will be our result
         Rect out = new Rect();
@@ -159,6 +282,19 @@ public abstract class Expression
 
         // Return the result
         return new Rect(0,0,width, height);
+    }
+    
+    public Rect getBoundingBox()
+    {
+    	// If the cache is invalid or there is no bounding box in the cache, recalculate
+    	if( !getTotalBoundingBoxValid() || totalBoundingBox == null)
+    	{
+    		totalBoundingBox = calculateBoundingBox();
+    		validateTotalBoundingBox(true);
+    	}
+    	
+    	// Return a copy of the bounding box
+    	return new Rect(totalBoundingBox);
     }
     
     /**
