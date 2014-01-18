@@ -57,7 +57,6 @@ public class Divide extends Binary
         int operatorHeight = Math.max((topSize.height() + bottomSize.height()) / 15 , 5);
 
         // If we have no maximum height or it isn't breached, we're done
-       // if(maxHeight == NO_MAXIMUM )//topSize.height()+ operatorHeight + bottomSize.height() < maxHeight )
             return new Rect[] 
             		{
         			new Rect(0, 0, Math.max(topSize.width(), bottomSize.width()), operatorHeight),
@@ -113,6 +112,48 @@ public class Divide extends Binary
         return new Rect(0, 0, width, height);
     }
     
+    /**
+     * Retrieve the dividend (i.e. the numerator)
+     * 
+     * @return The numerator
+     */
+    public Expression getNumerator()
+    {
+        return getLeft();
+    }
+
+    /**
+     * Assign a new mathematical expression to the numerator.
+     * 
+     * @param num
+     *        The new numerator
+     */
+    public void setNumerator(Expression num)
+    {
+        setLeft(num);
+    }
+
+    /**
+     * Retrieve the divisor (i.e. the denominator)
+     * 
+     * @return The denominator
+     */
+    public Expression getDenominator()
+    {
+        return getRight();
+    }
+
+    /**
+     * Assign a new mathematical expression to the denominator.
+     * 
+     * @param denom
+     *        The new denominator
+     */
+    public void setDenominator(Expression denom)
+    {
+        setRight(denom);
+    }
+    
     @Override
     public Point getCenter()
     {
@@ -141,12 +182,9 @@ public class Divide extends Binary
         final Rect operator = getOperatorBoundingBoxes()[0];
         
         // Draw the operator
-        canvas.save();
         operatorPaint.setColor(getColor());
         operatorPaint.setStrokeWidth(lineWidth);
         canvas.drawLine(operator.left, operator.centerY(), operator.right, operator.centerY(), operatorPaint);
-        //canvas.drawRect(operator.left, operator.top + operator.height() / 6, operator.right, operator.bottom - operator.height() / 3, operatorPaint);
-        canvas.restore();
 
         // Draw the children
         drawChildren(canvas);

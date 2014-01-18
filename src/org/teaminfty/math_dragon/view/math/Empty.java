@@ -96,4 +96,8 @@ public class Empty extends Expression
     {
         el.appendChild(doc.createElement(NAME));
     }
+
+    @Override
+    public boolean isCompleted()
+    { return false; }
 }

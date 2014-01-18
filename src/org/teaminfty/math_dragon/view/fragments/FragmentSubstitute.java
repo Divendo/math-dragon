@@ -3,7 +3,7 @@ package org.teaminfty.math_dragon.view.fragments;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
-import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.Expression;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -39,6 +39,9 @@ public class FragmentSubstitute extends DialogFragment
         // The close button
         ((ImageButton) view.findViewById(R.id.btn_close)).setOnClickListener(new OnCloseBtnClickListener());
         
+        // The add button
+        view.findViewById(R.id.btn_add).setOnClickListener(new BtnAddClickListener());
+        
         // Return the content view
         return view;
     }
@@ -67,17 +70,27 @@ public class FragmentSubstitute extends DialogFragment
         getDialog().getWindow().setAttributes(params);
     }
     
+    /** Gets the value as a string */
+    private String valueToString(Expression value)
+    {
+        String str = value.toString();
+        str = str.replace("(", "");
+        str = str.replace(")", "");
+        str = str.replace(" ", "");
+        return str;
+    }
+    
     /** The prefix of the tag for all substitution views */
     private static final String SUBSTITUTION_TAG_PREFIX = "substitution_";
     
     /** Sets (or adds/removes) a substitution for the given variable.
      * @param var The variable name to set the substitution for
-     * @param symbol The new value of the variable (or <tt>null</tt> to remove the variable
+     * @param expr The new value of the variable (or <tt>null</tt> to remove the variable
      * @param root The View containing all substitution views */
-    private void setSubstitution(char var, Symbol symbol, ViewGroup root)
+    private void setSubstitution(char var, Expression expr, ViewGroup root)
     {
         // Check whether or not we're deleting the substitution view
-        if(symbol == null)
+        if(expr == null)
         {
             if(root.findViewWithTag(SUBSTITUTION_TAG_PREFIX + var) != null)
                 root.removeView(root.findViewWithTag(SUBSTITUTION_TAG_PREFIX + var));
@@ -94,6 +107,11 @@ public class FragmentSubstitute extends DialogFragment
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             row = inflater.inflate(R.layout.substitute_row, null, false);
             row.setTag(SUBSTITUTION_TAG_PREFIX + var);
+            
+            // Set the click listeners
+            RowClickListener rowClickListener = new RowClickListener(var);
+            row.setOnClickListener(rowClickListener);
+            row.setOnLongClickListener(rowClickListener);
             
             // Insert the row into the layout
             boolean inserted = false;
@@ -121,26 +139,138 @@ public class FragmentSubstitute extends DialogFragment
         varName.setTypeface(TypefaceHolder.dejavuSans);
         varVal.setTypeface(TypefaceHolder.dejavuSans);
         
+        // Set the typeface for the TextViews
+        varName.setTypeface(TypefaceHolder.dejavuSans);
+        varVal.setTypeface(TypefaceHolder.dejavuSans);
+        
         // Set the text for the TextViews
-        final String symbolStr = symbol.toString();
         varName.setText(Character.toString(var));
-        varVal.setText(symbolStr.substring(1, symbolStr.length() - 1));
+        varVal.setText(valueToString(expr));
     }
     
     @Override
     public void onCancel(DialogInterface dialog)
     { dismiss(); }
-    
-    @Override
-    public void onDismiss(DialogInterface dialog)
-    {
-        //mathView = null;
-    }
+
+    /** The tag for the substitution editor fragment */
+    private static final String EDITOR_TAG = "substitution_editor";
+
+    /** The tag for the warning dialog fragment */
+    private static final String WARNING_TAG = "warning_dlg";
     
     private class OnCloseBtnClickListener implements View.OnClickListener
     {
         @Override
         public void onClick(View btn)
         { dismiss(); }
+    }
+    
+    private class BtnAddClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View btn)
+        {
+            // If an editor is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(EDITOR_TAG) != null)
+                return;
+            
+            // Create an editor
+            FragmentSubstitutionEditor editor = new FragmentSubstitutionEditor();
+            
+            // Set the listener
+            editor.setOnConfirmListener(new SetSubstitutionListener());
+            
+            // Show the editor
+            editor.show(getFragmentManager(), EDITOR_TAG);
+        }
+    }
+    
+    private class SetSubstitutionListener implements FragmentSubstitutionEditor.OnConfirmListener
+    {
+        @Override
+        public void confirmed(char varName, Expression expr)
+        {
+            // Save the substitution to the database
+            Database db = new Database(getActivity());
+            db.saveSubstitution(new Database.Substitution(varName, expr));
+            db.close();
+            
+            // Update the interface
+            setSubstitution(varName, expr, (ViewGroup) getView().findViewById(R.id.layout_substitute_list));
+        }
+    }
+    
+    private class DeleteSubstituteLisntener implements FragmentWarningDialog.OnConfirmListener
+    {
+        /** The variable that is to be deleted */
+        private char varName = 'a';
+        
+        /** Constructor
+         * @param name The variable that is to be deleted */
+        public DeleteSubstituteLisntener(char name)
+        { varName = name; }
+
+        @Override
+        public void confirm()
+        {
+            // Delete the substitution from the database
+            Database db = new Database(getActivity());
+            db.saveSubstitution(new Database.Substitution(varName));
+            db.close();
+            
+            // Update the interface
+            setSubstitution(varName, null, (ViewGroup) getView().findViewById(R.id.layout_substitute_list));
+        }
+        
+    }
+    
+    private class RowClickListener implements View.OnClickListener, View.OnLongClickListener
+    {
+        /** The name of the variable that is to be substituted */
+        private char varName;
+        
+        /** Constructor
+         * @param name The name of the variable that is to be substituted */
+        public RowClickListener(char name)
+        { varName = name; }
+        
+        @Override
+        public void onClick(View v)
+        {
+            // If an editor is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(EDITOR_TAG) != null)
+                return;
+            
+            // Create an editor
+            FragmentSubstitutionEditor editor = new FragmentSubstitutionEditor();
+            
+            // Set the listener
+            editor.setOnConfirmListener(new SetSubstitutionListener());
+            
+            // Set the initial value
+            Database db = new Database(getActivity());
+            editor.initVarName(varName);
+            if(db.substitutionExists(varName))
+                editor.initValue(db.getSubstitution(varName).value);
+            db.close();
+            
+            // Show the editor
+            editor.show(getFragmentManager(), EDITOR_TAG);
+        }
+
+        @Override
+        public boolean onLongClick(View v)
+        {
+            // If a warning is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(WARNING_TAG) != null)
+                return true;
+            
+            // Create and show a warning dialog
+            FragmentWarningDialog dlg = new FragmentWarningDialog(R.string.delete_substitution, R.string.sure_to_delete_substitution, new DeleteSubstituteLisntener(varName));
+            dlg.show(getFragmentManager(), WARNING_TAG);
+            
+            // We've consumed the event
+            return true;
+        }
     }
 }

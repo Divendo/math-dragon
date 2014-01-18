@@ -35,13 +35,13 @@ public class MathShadow extends DragShadowBuilder
     
     /** Returns the {@link Expression} in this shadow
      * @return The {@link Expression} in this shadow */
-    public Expression getMathObject()
+    public Expression getExpression()
     { return mathObject; }
     
     /** Returns the bounding box of the current {@link Expression} relative to the touch point
      * @return The requested bounding box
      */
-    public Rect getMathObjectBounding()
+    public Rect getExpressionBounding()
     {
         // Calculate the bounding box
         Rect boundingBox = mathObject.getBoundingBox();

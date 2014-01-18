@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSymbolEditor;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
 
 import android.app.DialogFragment;
@@ -20,13 +21,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
-public class FragmentKeyboard extends DialogFragment
+public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor.OnStateChangeListener
 {
     /** The {@link MathSymbolEditor} in this fragment */
     private MathSymbolEditor mathSymbolEditor = null;
     
-    /** A {@link Symbol} we saved for later to set to {@link FragmentKeyboard#mathSymbolEditor mathSymbolEditor} */
-    private Symbol mathSymbolForLater = null;
+    /** A {@link Expression} we saved for later to set to {@link FragmentKeyboard#mathSymbolEditor mathSymbolEditor} */
+    private Expression exprForLater = null;
     
     /** We'll keep a list of all variable buttons */
     private ArrayList<ToggleButton> varButtons = new ArrayList<ToggleButton>();
@@ -43,32 +44,28 @@ public class FragmentKeyboard extends DialogFragment
     	
     	// Get the MathSymbolEditor
     	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
-        if(mathSymbolForLater != null)
-            mathSymbolEditor.fromMathSymbol(mathSymbolForLater);
+    	mathSymbolEditor.setStateChangeListener(this);
+        if(exprForLater != null)
+            mathSymbolEditor.fromExpression(exprForLater);
         else if(savedInstanceState != null && savedInstanceState.getBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE) != null)
             mathSymbolEditor.fromBundle(savedInstanceState.getBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE));
 		
     	// Acquire access to all buttons
-    	final Button button1 =  (Button) myFragmentView.findViewById(R.id.keyboardButton1);
-    	final Button button2 =  (Button) myFragmentView.findViewById(R.id.keyboardButton2);
-    	final Button button3 =  (Button) myFragmentView.findViewById(R.id.keyboardButton3);
-    	final Button button4 =  (Button) myFragmentView.findViewById(R.id.keyboardButton4);
-    	final Button button5 =  (Button) myFragmentView.findViewById(R.id.keyboardButton5);
-    	final Button button6 =  (Button) myFragmentView.findViewById(R.id.keyboardButton6);
-    	final Button button7 =  (Button) myFragmentView.findViewById(R.id.keyboardButton7);
-    	final Button button8 =  (Button) myFragmentView.findViewById(R.id.keyboardButton8);
-    	final Button button9 =  (Button) myFragmentView.findViewById(R.id.keyboardButton9);
-    	final Button button0 =  (Button) myFragmentView.findViewById(R.id.keyboardButton0);
+        final Button numButtons[] = new Button[10];
+        for(int i = 0; i <= 9; ++i)
+            numButtons[i] = (Button) myFragmentView.findViewWithTag("keyboardButton" + Integer.toString(i));
     	final ImageButton buttonClr = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonClear);
     	final ImageButton buttonDel = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonDelete);
         final ImageButton buttonCancel = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonCancel);
     	final ImageButton buttonOK  = (ImageButton) myFragmentView.findViewById(R.id.keyboardButtonConfirm);
+    	final Button buttonNegate = (Button) myFragmentView.findViewById(R.id.keyboardButtonNegate);
+        final Button buttonDot = (Button) myFragmentView.findViewById(R.id.keyboardButtonDot);
         final ToggleButton buttonPi = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonPi);
         final ToggleButton buttonE  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonE);
         final ToggleButton buttonI  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonI);
         final ToggleButton buttonX  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonX);
-        final ToggleButton buttonY  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonY);
-        final ToggleButton buttonZ  = (ToggleButton) myFragmentView.findViewById(R.id.keyboardButtonZ);
+        final Button buttonPlus = (Button) myFragmentView.findViewById(R.id.keyboardButtonPlus);
+        final Button buttonMinus = (Button) myFragmentView.findViewById(R.id.keyboardButtonMinus);
         final ToggleButton buttonTabNumpad = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_numpad);
         final ToggleButton buttonTabVariables  = (ToggleButton) myFragmentView.findViewById(R.id.btn_tab_variables);
     	
@@ -77,18 +74,11 @@ public class FragmentKeyboard extends DialogFragment
         final ButtonSymbolOnClickListener buttonSymbolOnClickListener = new ButtonSymbolOnClickListener();
         final ButtonTabOnClickListener buttonTabOnClickListener = new ButtonTabOnClickListener();
         final ButtonVarOnClickListener buttonVarOnClickListener = new ButtonVarOnClickListener();
+        final ButtonAddSubtractOnClickListener buttonAddSubtractOnClickListener = new ButtonAddSubtractOnClickListener();
     	
     	// Attach the OnClicklisteners to the buttons
-    	button1.setOnClickListener(buttonNumberOnClickListener);
-    	button2.setOnClickListener(buttonNumberOnClickListener);
-    	button3.setOnClickListener(buttonNumberOnClickListener);
-    	button4.setOnClickListener(buttonNumberOnClickListener);
-    	button5.setOnClickListener(buttonNumberOnClickListener);
-    	button6.setOnClickListener(buttonNumberOnClickListener);
-    	button7.setOnClickListener(buttonNumberOnClickListener);
-    	button8.setOnClickListener(buttonNumberOnClickListener);
-    	button9.setOnClickListener(buttonNumberOnClickListener);
-    	button0.setOnClickListener(buttonNumberOnClickListener);
+        for(int i = 0; i < numButtons.length; ++i)
+            numButtons[i].setOnClickListener(buttonNumberOnClickListener);
     	buttonPi.setOnClickListener(buttonSymbolOnClickListener);
     	buttonE.setOnClickListener(buttonSymbolOnClickListener);
     	buttonI.setOnClickListener(buttonSymbolOnClickListener);
@@ -96,11 +86,13 @@ public class FragmentKeyboard extends DialogFragment
     	buttonClr.setOnClickListener(new ButtonClearOnClickListener());
         buttonCancel.setOnClickListener(new ButtonCancelOnClickListener());
     	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
+    	buttonNegate.setOnClickListener(new ButtonNegateOnClickListener());
+    	buttonDot.setOnClickListener(new ButtonDotOnClickListener());
     	buttonTabNumpad.setOnClickListener(buttonTabOnClickListener);
     	buttonTabVariables.setOnClickListener(buttonTabOnClickListener);
     	buttonX.setOnClickListener(buttonVarOnClickListener);
-        buttonY.setOnClickListener(buttonVarOnClickListener);
-        buttonZ.setOnClickListener(buttonVarOnClickListener);
+    	buttonPlus.setOnClickListener(buttonAddSubtractOnClickListener);
+    	buttonMinus.setOnClickListener(buttonAddSubtractOnClickListener);
         
         // Show the right tab and highlight the right button
         if(savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_NUMPAD_VISIBLE))
@@ -184,15 +176,15 @@ public class FragmentKeyboard extends DialogFragment
     }
     
     /** Sets the current value from the given {@link Symbol}
-     * @param mathSymbol The {@link Symbol} to set the current value to (can be <tt>null</tt> in which case the value will be reset) */
-    public void setMathSymbol(Symbol mathSymbol)
+     * @param mathSymbol The {@link Expression} to set the current value to (can be <tt>null</tt> in which case the value will be reset) */
+    public void setExpression(Expression mathSymbol)
     {
         if(mathSymbolEditor == null)
-            mathSymbolForLater = mathSymbol;
+            exprForLater = mathSymbol;
         else if(mathSymbol == null)
             mathSymbolEditor.reset();
         else
-            mathSymbolEditor.fromMathSymbol(mathSymbol);
+            mathSymbolEditor.fromExpression(mathSymbol);
         
         refreshButtonState();
     }
@@ -200,9 +192,9 @@ public class FragmentKeyboard extends DialogFragment
     /** A listener that's called when the symbol has been confirmed */
     public interface OnConfirmListener
     {
-        /** Called when the symbol has been confirmed
-         * @param mathSymbol The input */
-        public void confirmed(Symbol mathSymbol);
+        /** Called when the input has been confirmed
+         * @param input The input */
+        public void confirmed(Expression input);
     }
     
     /** The current {@link OnConfirmListener} */
@@ -219,11 +211,11 @@ public class FragmentKeyboard extends DialogFragment
     { return onConfirmListener; }
     
     /** Calls the {@link OnConfirmListener}
-     * @param mathSymbol The input */
-    private void callOnConfirmListener(Symbol mathSymbol)
+     * @param input The input */
+    private void callOnConfirmListener(Expression input)
     {
         if(onConfirmListener != null)
-            onConfirmListener.confirmed(mathSymbol);
+            onConfirmListener.confirmed(input);
     }
     
     @Override
@@ -254,16 +246,13 @@ public class FragmentKeyboard extends DialogFragment
         final ToggleButton buttonE  = (ToggleButton) view.findViewById(R.id.keyboardButtonE);
         final ToggleButton buttonI  = (ToggleButton) view.findViewById(R.id.keyboardButtonI);
         final ToggleButton buttonX  = (ToggleButton) view.findViewById(R.id.keyboardButtonX);
-        final ToggleButton buttonY  = (ToggleButton) view.findViewById(R.id.keyboardButtonY);
-        final ToggleButton buttonZ  = (ToggleButton) view.findViewById(R.id.keyboardButtonZ);
+        final Button buttonDot = (Button) view.findViewById(R.id.keyboardButtonDot);
         
         // Uncheck all buttons
         buttonPi.setChecked(false);
         buttonE.setChecked(false);
         buttonI.setChecked(false);
         buttonX.setChecked(false);
-        buttonY.setChecked(false);
-        buttonZ.setChecked(false);
         for(ToggleButton btn : varButtons)
             btn.setChecked(false);
         
@@ -279,19 +268,23 @@ public class FragmentKeyboard extends DialogFragment
                     if(btn.getText().charAt(0) == mathSymbolEditor.getCurrVar())
                     {
                         btn.setChecked(true);
-                        switch(mathSymbolEditor.getCurrVar())
-                        {
-                            case 'x': buttonX.setChecked(true); break;
-                            case 'y': buttonY.setChecked(true); break;
-                            case 'z': buttonZ.setChecked(true); break;
-                        }
-                        
+                        if(mathSymbolEditor.getCurrVar() == 'x')
+                            buttonX.setChecked(true);
                         break;
                     }
                 }
             break;
             default:  /* Just to suppress warnings */   break;
         }
+        
+        // Enable / disable the dot button
+        buttonDot.setEnabled(mathSymbolEditor.getEditingSymbol() == MathSymbolEditor.EditingSymbol.FACTOR && !mathSymbolEditor.containsDot());
+        
+        // Enable / disable the number buttons
+        final boolean enableNumberButtons = mathSymbolEditor.getEditingSymbol() != MathSymbolEditor.EditingSymbol.FACTOR || mathSymbolEditor.decimalCount() < 6;
+        for(int i = 0; i <= 9; ++i)
+            ((Button) view.findViewWithTag("keyboardButton" + Integer.toString(i))).setEnabled(enableNumberButtons);
+        
     }
     
     /** Activates the given tab
@@ -317,6 +310,9 @@ public class FragmentKeyboard extends DialogFragment
             // Get the number we pressed and add it to the MathSymbolEditor
             final int number = Integer.parseInt(((Button) v).getText().toString());
             mathSymbolEditor.addNumber(number);
+            
+            // The button state might need refreshing
+            refreshButtonState();
         }
     }
     
@@ -379,8 +375,29 @@ public class FragmentKeyboard extends DialogFragment
         @Override
         public void onClick(final View v)
         {
-            callOnConfirmListener(mathSymbolEditor.getMathSymbol());
+            callOnConfirmListener(mathSymbolEditor.getExpression());
             dismiss();
+        }
+    }
+
+    /** The OnClickListener for the negate button */
+    private class ButtonNegateOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View v)
+        {
+            mathSymbolEditor.negate();
+        }
+    }
+
+    /** The OnClickListener for the dot button */
+    private class ButtonDotOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View v)
+        {
+            mathSymbolEditor.dot();
+            refreshButtonState();
         }
     }
     
@@ -421,5 +438,26 @@ public class FragmentKeyboard extends DialogFragment
             refreshButtonState();
         }
     }
+    
+    /** The OnClickListener for the plus and minus buttons */
+    private class ButtonAddSubtractOnClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(final View v)
+        {
+            // Subtract or add a new symbol
+            if(((Button) v).getText().equals("+"))
+                mathSymbolEditor.plus();
+            else
+                mathSymbolEditor.subtract();
+            
+            // Refresh the buttons
+            refreshButtonState();
+        }
+    }
+
+    @Override
+    public void stateChanged()
+    { refreshButtonState(); }
 }
 

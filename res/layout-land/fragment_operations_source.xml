@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightgray" >
+    
+    <!-- Tabs -->
+    <LinearLayout
+        android:id="@+id/keyboard_tabs"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ToggleButton
+            android:id="@+id/btn_tab_operators"
+            style="@style/TabButton"
+            android:text="@string/operators"
+            android:textOff="@string/operators"
+            android:textOn="@string/operators" />
+
+        <ToggleButton
+            android:id="@+id/btn_tab_funcs"
+            style="@style/TabButton"
+            android:text="@string/functions"
+            android:textOn="@string/functions"
+            android:textOff="@string/functions" />
+
+    </LinearLayout>
+
+    <!-- Operators -->
+    <LinearLayout
+        android:id="@+id/operators_container"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/keyboard_tabs"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="3" >
+        
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:orientation="horizontal"
+	        android:weightSum="4"
+	        android:layout_weight="1" >
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceAdd"
+	        	style="@style/MathSourceView" />
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceSubtract"
+	        	style="@style/MathSourceView" />
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceMultiply"
+	        	style="@style/MathSourceView"/>
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceDivide"
+	        	style="@style/MathSourceView"/>
+	
+	    </LinearLayout>
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:orientation="horizontal"
+	        android:weightSum="4"
+	        android:layout_weight="1" >
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourcePower"
+	        	style="@style/MathSourceView" />
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceRoot"
+	        	style="@style/MathSourceView" />
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceDerivative"
+	        	style="@style/MathSourceView" />
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceIntegral"
+	        	style="@style/MathSourceView" />
+	
+	    </LinearLayout>
+	    
+    </LinearLayout>
+
+    <!-- Functions -->
+    <LinearLayout
+        android:id="@+id/functions_container"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/keyboard_tabs"
+        android:visibility="invisible"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="3" >
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:orientation="horizontal"
+	        android:layout_weight="1"
+	        android:weightSum="4" >
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceSin"
+	        	style="@style/MathSourceView" />
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceArcSin"
+	        	style="@style/MathSourceView" />
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceCos"
+	        	style="@style/MathSourceView" />
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceArcCos"
+	        	style="@style/MathSourceView" />
+	
+	    </LinearLayout>
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:orientation="horizontal"
+	        android:layout_weight="1"
+	        android:weightSum="4" >
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceTan"
+	        	style="@style/MathSourceView" />
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceArcTan"
+	        	style="@style/MathSourceView" />
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceSinh"
+	        	style="@style/MathSourceView" />
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceCosh"
+	        	style="@style/MathSourceView" />
+	
+	    </LinearLayout>
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:orientation="horizontal"
+	        android:layout_weight="1"
+	        android:weightSum="4" >
+	
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceLog"
+	        	style="@style/MathSourceView" />
+	        
+	        <org.teaminfty.math_dragon.view.MathSourceView
+	            android:id="@+id/mathSourceLn"
+	        	style="@style/MathSourceView" />
+	
+	    </LinearLayout>
+	    
+    </LinearLayout>
+
+</RelativeLayout>

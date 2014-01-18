@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon.model;
 
 import org.matheclipse.core.expression.F;
+import org.matheclipse.core.expression.FractionSym;
 import org.matheclipse.core.interfaces.IExpr;
 import org.matheclipse.core.interfaces.ISymbol;
 import org.teaminfty.math_dragon.exceptions.EmptyChildException;
@@ -32,54 +33,86 @@ public class EvalHelper
 {
     private EvalHelper()
     {}
+    
+    /** The list of substitutions */
+    public static Database.Substitution[] substitutions = null;
 
     /**
-     * Convert the mathematical object to an expression returned by the symja
-     * library. Never returns <tt>null</tt>. On failure, a {@link MathException}
-     * is thrown.
+     * Convert the mathematical expression to a symja compatible expression.
+     * Never returns <tt>null</tt>. On failure, a {@link MathException} is
+     * thrown.
      * 
-     * @param o
-     *        The mathematical object. May not be <tt>null</tt>.
+     * @param expr
+     *        The mathematical expression. May not be <tt>null</tt>.
      * @return The mathematical expression returned by symja.
      * @throws MathException
      *         Thrown when it could not be converted.
      */
-    public static IExpr eval(Expression o) throws MathException
+    public static IExpr eval(Expression expr) throws MathException
     {
-        if(o == null)
-            throw new NullPointerException("o");
-        if(o instanceof Binary)
-        {
-            Binary op = (Binary) o;
-            if(op instanceof Add)
-                return add((Add) op);
-            if(op instanceof Subtract)
-                return sub((Subtract) op);
-            if(op instanceof Multiply)
-                return mul((Multiply) op);
-            if(op instanceof Divide)
-                return div((Divide) op);
-            if(op instanceof Power)
-                return pow((Power) op);
-            if(op instanceof Root)
-                return root((Root) op);
-            if(op instanceof Derivative)
-                return derivative((Derivative) op);
-        }
-        else if(o instanceof Limit)
-            return limit((Limit) o);
-        else if(o instanceof Function)
-            return function((Function) o);
-        else if(o instanceof Integral)
-            return integral((Integral) o);
-        else if(o instanceof Symbol)
-            return symbol((Symbol) o);
-        else if(o instanceof Parentheses)
-            return eval(o.getChild(0));
-        else if(o instanceof Empty)
+        if(expr == null)
+            throw new NullPointerException("expr");
+        if (expr instanceof Operation)
+            return operation((Operation) expr);
+        if(expr instanceof Function)
+            return function((Function) expr);
+        if(expr instanceof Symbol)
+            return symbol((Symbol) expr);
+        if(expr instanceof Parentheses)
+            return eval(expr.getChild(0));
+        if(expr instanceof Empty)
             throw new EmptyChildException();
 
-        throw new ParseException(o.toString());
+        throw new ParseException(expr.toString());
+    }
+    
+    /**
+     * Convert the mathematical operation to a symja compatible expression.
+     * 
+     * @param op
+     *        The mathematical operation
+     * @return A mathematical operation returned by symja.
+     * @throws MathException
+     *         Thrown when it could not be converted.
+     */
+    static IExpr operation(Operation op) throws MathException
+    {
+        if(op instanceof Binary)
+            return binary((Binary) op);
+        if(op instanceof Limit)
+            return limit((Limit) op);
+        if(op instanceof Integral)
+            return integral((Integral) op);
+        throw new MathException(op.toString());
+    }
+
+    /**
+     * Convert the binary mathematical operation to a symja compatible
+     * expression.
+     * 
+     * @param bin
+     *        The binary mathematical operation
+     * @return A binary mathematical operation returned by symja.
+     * @throws MathException
+     *         Thrown when it could not be converted.
+     */
+    static IExpr binary(Binary bin) throws MathException
+    {
+        if(bin instanceof Add)
+            return add((Add) bin);
+        if(bin instanceof Subtract)
+            return sub((Subtract) bin);
+        if(bin instanceof Multiply)
+            return mul((Multiply) bin);
+        if(bin instanceof Divide)
+            return div((Divide) bin);
+        if(bin instanceof Power)
+            return pow((Power) bin);
+        if(bin instanceof Root)
+            return root((Root) bin);
+        if(bin instanceof Derivative)
+            return derivative((Derivative) bin);
+        throw new MathException(bin.toString());
     }
 
     /**
@@ -122,11 +155,11 @@ public class EvalHelper
             F.e, F.f, F.g, F.h, F.i, F.j, F.k, F.l, F.m, F.n, F.o, F.p, F.q,
             F.r, F.s, F.t, F.u, F.v, F.w, F.x, F.y, F.z};
 
-    public static IExpr symbol(Symbol symbol)
+    public static IExpr symbol(Symbol symbol) throws MathException
     {
         if(symbol == null)
             throw new NullPointerException("symbol");
-        IExpr result = F.ZZ(symbol.getFactor());
+        IExpr result = FractionSym.valueOf(symbol.getFactor());
         if(symbol.getFactor() == 0)
             return result;
         
@@ -151,11 +184,30 @@ public class EvalHelper
         for(int i = 0; i < symbol.varPowCount(); i++)
         {
             if(symbol.getVarPow(i) != 0)
-                result = F.Times(result, F.Power(SYMBOLS[i], symbol.getVarPow(i)));
+                result = F.Times(result, F.Power(getVarSymbol((char) ('a' + i)), symbol.getVarPow(i)));
         }
 
         // Return the result
         return result;
+    }
+    
+    /** Returns the symbol for the given variable (this will substitute the variable when necessary)
+     * @param var The variable name 
+     * @throws MathException Thrown when the conversion fails */
+    private static IExpr getVarSymbol(char varName) throws MathException
+    {
+        // Check if we have to substitute the variable
+        if(substitutions != null)
+        {
+            for(Database.Substitution sub : substitutions)
+            {
+                if(sub.name == varName && sub.value != null)
+                    return eval(sub.value);
+            }
+        }
+        
+        // Return the Symja variable symbol
+        return SYMBOLS[varName - 'a'];
     }
 
     /**
@@ -229,8 +281,9 @@ public class EvalHelper
      */
     public static IExpr root(Root root) throws MathException
     {
-        checkChildren(root);
-        return F.Power(eval(root.getBase()), F.Divide(F.ZZ(1), eval(root.getExponent())));
+        if (!root.isCompleted())
+            throw new EmptyChildException(1);
+        return F.Power(eval(root.getBase()), F.Divide(F.ZZ(1), root.getExponent() instanceof Empty ? F.ZZ(2) : eval(root.getExponent())));
     }
 
     /**
@@ -292,41 +345,7 @@ public class EvalHelper
     public static IExpr limit(Limit lim) throws MathException
     {
         checkChildren(lim);
-        // try {
-        // EvalEngine eng = new EvalEngine();
-        // IExpr result = eng.parse("Limit[x,x->34]");
-        // System.out.println(result);
-        // } catch (Throwable t) {
-        // }
-        // IExpr result = F.Limit(eval(lim.getExpression()),
-        // F.Rule(eval(lim.getStart()), eval(lim.getEnd())));
-        // System.out.println(result);
         return F.Limit(eval(lim.getExpression()), F.Rule(eval(lim.getStart()), eval(lim.getEnd())));
-        //return temporary.parse("Limit[(" + eval(lim.getExpression()) + "),(" + eval(lim.getStart()) + ")->(" + eval(lim.getEnd()) + ")]");
-        // [5], symbol=limit, symbol=x, rule=x->34, null, null
-        // [5], symbol=limit, ast=1*x^1, ast=rule=1*a^1->34
-        // return F.Limit(eval(lim.getExpression()), F.unary(F.$p(F.SymbolHead,
-        // eval(lim.getStart())), eval(lim.getEnd())));
-        // return F.Limit(F.Rule(eval(lim.getStart()), eval(lim.getEnd())),
-        // eval(lim.getExpression()));
-        /*
-         * try { Field f = Limit.class.getDeclaredField("RULES");
-         * f.setAccessible(true); Class<?> t = f.getType();
-         * System.out.println("type: " + t.getCanonicalName());
-         * System.out.println(((IAST) f.get(Limit.class)).toString()); }
-         * catch(Exception e) { e.printStackTrace(); } evaluates to: 01-08
-         * 09:32:32.097: I/System.out(2206): type:
-         * org.matheclipse.core.interfaces.IAST 01-08 09:32:32.121:
-         * I/System.out(2206): {null, null,
-         * Limit[(x_^(-1)+1)^x_,x_symbol->Infinity]=E,
-         * Limit[(-x_^(-1)+1)^x_,x_symbol->Infinity]=E^(-1)}
-         * 
-         * Limit[(x_^(-1)+1)^x_,x_symbol->Infinity]=E
-         * 
-         * F.Limit(F.Power(F.Plus(F.C1, F.Power(F.$p(F.x), F.CN1)), F.$p(F.x)),
-         * F.Rule(F.$p(F.x, F.SymbolHead), F.CInfinity)) ((1) + ((x) ^ (-1))) ^
-         * (x), ((x) -> (Infinity))
-         */
     }
     
     /**

@@ -22,7 +22,7 @@ public class TestModelHelper
 		Symbol rc = new Symbol();
 		rc.setFactor(-34);
 		Add a = new Add(lc, rc);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(a));
 		assertTrue(result instanceof Add);
 		Add add = (Add) a;
 		Expression tmp = add.getLeft();
@@ -33,7 +33,7 @@ public class TestModelHelper
 		Symbol right = (Symbol) tmp;
 		assertTrue(lc.equals(left));
 		assertTrue(rc.equals(right));
-		result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
+		result = ModelHelper.toExpression(EvalEngine.eval(EvalHelper.eval(a)));
 		assertTrue(result instanceof Symbol);
 		Symbol c = new Symbol(-28, 0, 0, 0, null);
 		assertTrue(c.equals((Symbol) result));
@@ -47,7 +47,7 @@ public class TestModelHelper
 		Symbol rc = new Symbol();
 		rc.setFactor(-4);
 		Multiply m = new Multiply(lc, rc);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(m));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(m));
 		assertTrue(result instanceof Multiply);
 	}
 	
@@ -60,7 +60,7 @@ public class TestModelHelper
 		rc.setFactor(8);
 		Divide d = new Divide();
 		d.set(lc, rc);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(d));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(d));
 		assertTrue(result instanceof Divide);
 	}
 	
@@ -73,7 +73,7 @@ public class TestModelHelper
 		rc.setFactor(12);
 		Power p = new Power();
 		p.set(lc, rc);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(p));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(p));
 		assertTrue(result instanceof Power);
 	}
 	
@@ -87,7 +87,7 @@ public class TestModelHelper
 		rc.setFactor(21);
 		Add a = new Add();
 		a.set(lc, rc);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(a));
 		assertTrue(result instanceof Add);
 	}
 	
@@ -101,7 +101,7 @@ public class TestModelHelper
 		rc.setEPow(1);
 		Multiply m = new Multiply();
 		m.set(lc, rc);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(m));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(m));
 		assertTrue(result instanceof Multiply);
 	}
 	
@@ -115,7 +115,7 @@ public class TestModelHelper
 		rc.setIPow(1);
 		Multiply m = new Multiply();
 		m.set(lc, rc);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(m));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(m));
 		assertTrue(result instanceof Multiply);
 	}
 	
@@ -128,7 +128,7 @@ public class TestModelHelper
 		Symbol rc = new Symbol(1, 0, 1, 0, null);
 		Add ra = new Add(mc, rc);
 		Add a = new Add(lc, ra);
-		Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+		Expression result = ModelHelper.toExpression(EvalHelper.eval(a));
 		assertTrue(result instanceof Add);
 		Add add = (Add) result;
 		Add radd = (Add) add.getRight();
@@ -138,7 +138,7 @@ public class TestModelHelper
 		assertTrue(lc.equals(left));
 		assertTrue(mc.equals(middle));
 		assertTrue(rc.equals(right));
-		result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
+		result = ModelHelper.toExpression(EvalEngine.eval(EvalHelper.eval(a)));
 		assertTrue(result instanceof Add);
 		add = (Add) result;
 		radd = (Add) add.getRight();
@@ -163,7 +163,7 @@ public class TestModelHelper
 	    Symbol rc = new Symbol(2, 0, 0, 0, null);
 	    Divide d = new Divide(rc, cpi);
 	    Add a = new Add(cpi, d);
-	    Expression result = ModelHelper.toMathObject(EvalHelper.eval(a));
+	    Expression result = ModelHelper.toExpression(EvalHelper.eval(a));
 	    assertTrue(result instanceof Add);
 	    Add add = (Add) result;
 	    Expression tmp = add.getRight();
@@ -181,7 +181,7 @@ public class TestModelHelper
 	    assertTrue(cpi.equals(c1));
 	    assertTrue(rc.equals(c2));
 	    assertTrue(cpi.equals(c3));
-	    result = ModelHelper.toMathObject(EvalEngine.eval(EvalHelper.eval(a)));
+	    result = ModelHelper.toExpression(EvalEngine.eval(EvalHelper.eval(a)));
 	    // TODO test result
 	}
 }

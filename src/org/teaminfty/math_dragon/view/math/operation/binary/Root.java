@@ -193,4 +193,10 @@ public class Root extends Binary
     {
         return TYPE;
     }
+    
+    @Override
+    public boolean isCompleted()
+    {
+        return getBase().isCompleted();
+    }
 }

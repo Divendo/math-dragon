@@ -21,7 +21,6 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
-import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
 import org.w3c.dom.Document;
@@ -53,8 +52,10 @@ public class FragmentMainScreen extends Fragment
         
         // Listen for events from the MathView
         mathView = (MathView) view.findViewById(R.id.mathView);
-        mathView.setOnShowKeyboardListener(new ShowKeyboardListener());
-        mathView.setOnMathObjectChangeListener(new MathObjectChangeListener());
+        mathView.setEventListener(new MathViewEventListener());
+        
+        // Disable the evaluate buttons by default
+        enableDisableEvalButtons(view, mathView.getExpression());
         
         if(savedInstanceState != null)
         {
@@ -80,7 +81,10 @@ public class FragmentMainScreen extends Fragment
             try
             {
                 historyPos = Math.min(history.size() - 1, savedInstanceState.getInt(BUNDLE_HISTORY_POS));
-                mathView.setMathObjectSilent(ExpressionXMLReader.fromXML(history.get(historyPos)));
+                mathView.setExpressionSilent(ExpressionXMLReader.fromXML(history.get(historyPos)));
+                
+                // Enable the evaluate buttons (if necessary)
+                enableDisableEvalButtons(view, mathView.getExpression());
             }
             catch(ParseException e)
             {
@@ -101,7 +105,7 @@ public class FragmentMainScreen extends Fragment
             try
             {
                 Document doc = Expression.createXMLDocument();
-                mathView.getMathObject().writeToXML(doc, doc.getDocumentElement());
+                mathView.getExpression().writeToXML(doc, doc.getDocumentElement());
                 history.add(doc);
                 historyPos = history.size() - 1; 
             }
@@ -168,11 +172,11 @@ public class FragmentMainScreen extends Fragment
     /** Clears the current formula */
     public void clear()
     {
-        if(mathView.getMathObject() instanceof Empty)
+        if(mathView.getExpression() instanceof Empty)
             mathView.resetScroll();
         else
         {
-            mathView.setMathObject(null);
+            mathView.setExpression(null);
             mathView.invalidate();
         }
     }
@@ -181,7 +185,7 @@ public class FragmentMainScreen extends Fragment
      * @return The current {@link Expression} */
     public Expression getMathObject()
     {
-        return mathView.getMathObject();
+        return mathView.getExpression();
     }
     
     /** Enables or disables the undo/redo buttons according to the current position in the history */
@@ -202,8 +206,11 @@ public class FragmentMainScreen extends Fragment
         // Get the MathObject at the given history position
         try
         {
-            mathView.setMathObjectSilent(ExpressionXMLReader.fromXML(history.get(pos)));
+            mathView.setExpressionSilent(ExpressionXMLReader.fromXML(history.get(pos)));
             historyPos = pos;
+
+            // Enable / disable the evaluate buttons
+            enableDisableEvalButtons(getView(), mathView.getExpression());
         }
         catch(ParseException e)
         {
@@ -223,37 +230,35 @@ public class FragmentMainScreen extends Fragment
     public void redo()
     { goToHistoryPos(historyPos + 1); }
     
-    /** The tag of the keyboard fragment */
-    private static final String KEYBOARD_TAG = "keyboard";
-    
-    /** We'll want to listen for keyboard show requests from the {@link MathView} */
-    private class ShowKeyboardListener implements MathView.OnShowKeyboardListener
+    /** Enables / disables the evaluate, approximate and Wolfram|Alpha buttons according to the current {@link Expression}
+     * @param view The root view containing the buttons
+     * @param expr The {@link Expression} that determines whether the buttons should be enabled or disabled */
+    private void enableDisableEvalButtons(View view, Expression expr)
     {
-        @Override
-        public void showKeyboard(Symbol mathConstant, OnConfirmListener listener)
-        {
-            // If a keyboard is already shown, stop here
-            if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
-                return;
-            
-            // Create a keyboard
-            FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
-            
-            // Set the listener and the math symbol
-            fragmentKeyboard.setOnConfirmListener(listener);
-            fragmentKeyboard.setMathSymbol(mathConstant);
-            
-            // Show the keyboard
-            fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);
-        }
+        // Whether or not the expression is completed
+        final boolean isCompleted = expr.isCompleted();
+        
+        // Enable / disable the buttons
+        view.findViewById(R.id.btn_wolfram).setEnabled(isCompleted);
+        view.findViewById(R.id.btn_approximate).setEnabled(isCompleted);
+        view.findViewById(R.id.btn_evaluate).setEnabled(isCompleted);
     }
     
-    /** We'll want to listen for MathObject change events */
-    private class MathObjectChangeListener implements MathView.OnMathObjectChangeListener
+    /** The tag for the keyboard fragment */
+    private static final String KEYBOARD_TAG = "keyboard";
+    
+    /** The tag for the warning dialog fragment */
+    private static final String WARNING_DLG_TAG = "warning_dlg";
+    
+    /** We'll want to listen for events from the {@link MathView} */
+    private class MathViewEventListener implements MathView.OnEventListener
     {
         @Override
-        public void changed(Expression mathObject)
+        public void changed(Expression expression)
         {
+            // Enable / disable the evaluate buttons
+            enableDisableEvalButtons(getView(), expression);
+            
             // Remove the history from the current position
             if(historyPos + 1 < history.size())
                 history.subList(historyPos + 1, history.size()).clear();
@@ -262,7 +267,7 @@ public class FragmentMainScreen extends Fragment
             try
             {
                 Document doc = Expression.createXMLDocument();
-                mathObject.writeToXML(doc, doc.getDocumentElement());
+                expression.writeToXML(doc, doc.getDocumentElement());
                 history.add(doc);
                 historyPos = history.size() - 1; 
             }
@@ -274,6 +279,31 @@ public class FragmentMainScreen extends Fragment
             
             // Refresh the state of the undo/redo buttons
             refreshUndoRedoButtons();
+        }
+        
+        @Override
+        public void showKeyboard(Expression expr, OnConfirmListener listener)
+        {
+            // If a keyboard is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
+                return;
+            
+            // Create a keyboard
+            FragmentKeyboard fragmentKeyboard = new FragmentKeyboard();
+            
+            // Set the listener and the math symbol
+            fragmentKeyboard.setOnConfirmListener(listener);
+            fragmentKeyboard.setExpression(expr);
+            
+            // Show the keyboard
+            fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);
+        }
+
+        @Override
+        public void showWarning(int title, int msg)
+        {
+            FragmentWarningDialog warningDlg = new FragmentWarningDialog(title, msg);
+            warningDlg.show(getFragmentManager(), WARNING_DLG_TAG);
         }
     }
     

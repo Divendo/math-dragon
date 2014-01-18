@@ -13,8 +13,15 @@ import android.graphics.Rect;
 /** This class represents a math constant */
 public class Symbol extends Expression
 {
+    /**
+     * Cached mathematical symbolic constant for the mathematical <tt>1</tt> in
+     * order to speed up helpers and parsers so they don't need to make this
+     * symbolic constant themselves.
+     */
+    public static final Symbol ONE = new Symbol(1);
+    
     /** The factor of this constant */
-    private long factor = 0;
+    private double factor = 0;
     /** The power of the E constant */
     private long ePow = 0;
     /** The power of the PI constant */
@@ -40,7 +47,7 @@ public class Symbol extends Expression
      * Simple constructor with a factor just for simplicity.
      * @param factor The base number
      */
-    public Symbol(long factor)
+    public Symbol(double factor)
     {
         this(factor, 0, 0, 0);
     }
@@ -51,7 +58,7 @@ public class Symbol extends Expression
      * @param piPow The pi power
      * @param iPow The imaginary power
      */
-    public Symbol(long factor, long ePow, long piPow, long iPow)
+    public Symbol(double factor, long ePow, long piPow, long iPow)
     {
         this(factor, ePow, piPow, iPow, new long[0]);
     }
@@ -63,18 +70,18 @@ public class Symbol extends Expression
      * @param iPow The imaginary power
      * @param varPows The first <tt>varPows.length</tt> powers for the variables (may be <tt>null</tt>)
      */
-    public Symbol(long factor, long ePow, long piPow, long iPow, long[] varPows)
+    public Symbol(double factor, long ePow, long piPow, long iPow, long[] varPows)
     {
-    	initPaints();
-    	this.factor = factor;
-    	this.ePow = ePow;
-    	this.piPow = piPow;
-    	this.iPow = iPow;
-    	if(varPows != null)
-    	{
-    	    // arraycopy is safer and more efficient.
-    	    System.arraycopy(varPows, 0, this.varPows, 0, Math.min(varPows.length, this.varPows.length));
-    	}
+        initPaints();
+        setFactor(factor);
+        this.ePow = ePow;
+        this.piPow = piPow;
+        this.iPow = iPow;
+        if(varPows != null)
+        {
+            // arraycopy is safer and more efficient.
+            System.arraycopy(varPows, 0, this.varPows, 0, Math.min(varPows.length, this.varPows.length));
+        }
     }
     
     /** Initialises the paints */
@@ -86,17 +93,22 @@ public class Symbol extends Expression
 
     /**
      * Helper method for appending literals.
-     * @param sb
-     * @param c
-     * @param pow
+     * @param sb The {@link StringBuilder} to append the string to
+     * @param c The character of the symbol
+     * @param pow The power of the symbol
      */
     private static void appendLit(StringBuilder sb, char c, long pow)
     {
-        if (pow != 0)
+        if(pow != 0)
         {
             sb.append(c);
-            if (pow != 1)
+            if(pow != 1)
             {
+                if(pow < 0)
+                {
+                    sb.append('\u207b');
+                    pow *= -1;
+                }
                 long num = pow;
                 StringBuilder sb2 = new StringBuilder();
                 while (num > 0)
@@ -222,9 +234,9 @@ public class Symbol extends Expression
         StringBuilder sb = new StringBuilder();
 
         if(symbolVisible())
-            sb.append(factor == -1 ? '-' : (factor == 1 ? "" : Long.toString(factor)) );
+            sb.append(factor == -1 ? '-' : (factor == 1 ? "" : doubleToString(factor)) );
         else
-            sb.append(Long.toString(factor));
+            sb.append(doubleToString(factor));
         
         if(factor != 0)
         {
@@ -236,47 +248,137 @@ public class Symbol extends Expression
         }
         return "(" + sb.toString() + ")";
     }
+    
+    /** Converts a <tt>double</tt> to a string, dropping <tt>".0"</tt> if necessary.
+     * Also returns, for example, <tt>"0.002"</tt> instead of <tt>"2.0E-3"</tt>.
+     * @param x The <tt>double</tt> to convert
+     * @return The <tt>double</tt> as a string */
+    private String doubleToString(double x)
+    {
+        // Convert the double to a string
+        String str = Double.toString(x);
+        
+        // Search for an 'E'
+        final int ePos = str.indexOf('E');
+        if(ePos != -1)
+        {
+            // Determine the amount of zeros and whether they need to be appended or prepended
+            int zeros = Integer.parseInt(str.substring(ePos + 1));
+            final boolean append = zeros >= 0;
+            if(!append)
+                zeros = (-zeros) - 1;
+            
+            // Remember the part before the 'E'
+            String before = str.substring(0, ePos);
+            final int dotPos = before.indexOf('.');
+            if(dotPos != -1)
+            {
+                String tmp = before.substring(dotPos + 1);
+                while(tmp.endsWith("0"))
+                    tmp = tmp.substring(0, tmp.length() - 1);
+                before = before.substring(0, dotPos) + tmp;
+                
+                if(append)
+                    zeros -= tmp.length();
+                if(zeros < 0)
+                    before = before.substring(0, before.length() + zeros) + '.' + before.substring(before.length() + zeros);
+            }
+            boolean negative = before.startsWith("-");
+            if(negative)
+                before = before.substring(1);
+            
+            // Prepend/append the zeros
+            while(zeros > 0)
+            {
+                if(append)
+                    before += '0';
+                else
+                    before = '0' + before;
+                --zeros;
+            }
+            if(zeros == 0 && !append)
+                before = "0." + before;
+            
+            // Put back the minus sign
+            if(negative)
+                before = '-' + before;
+            
+            // Remember the result
+            str = before;
+        }
+        
+        // Chop off unnecessary '.' and '0'
+        while(str.contains(".") && (str.endsWith(".") || str.endsWith("0")))
+            str = str.substring(0, str.length() - 1);
+        
+        // Return the string
+        return str;
+    }
 
-    /** Retrieve the ground base number factor.
-     * @return The base number.
+    /**
+     * Checks whether only {@code factor != 0}.
+     * 
+     * @return <tt>true</tt> if all other variables equal <tt>0</tt>.
+     *         <tt>false</tt> otherwise.
      */
-	public long getFactor()
-	{ return factor; }
+    public boolean isFactorOnly()
+    {
+        for(int i = 0; i < varPows.length; ++i)
+        {
+            if(varPows[i] != 0)
+            {
+                return false;
+            }
+        }
+        return ePow == 0 && piPow == 0 && iPow == 0;
+    }
 
-	/** Assign the new factor to <tt>factor</tt>
-	 * @param factor the new <tt>factor</tt> */
-	public void setFactor(long factor)
-	{ this.factor = factor; }
+    /** Retrieve the factor
+     * @return The base number */
+    public double getFactor()
+    { return factor; }
 
-	/** Get the current power for <tt>pi</tt>
-	 * @return The current power for <tt>pi</tt> */
-	public long getPiPow()
-	{ return piPow; }
+    /** Assign the new factor to <tt>factor</tt>
+     * @param factor the new <tt>factor</tt> */
+    public void setFactor(double factor)
+    {
+        // Round the factor to 6 decimals
+        double decimals = factor > 0 ? factor - Math.floor(factor) : factor - Math.ceil(factor);
+        decimals = Math.round(decimals * 1000000) / 1000000.0;
+        
+        // Set the factor
+        this.factor = (factor > 0 ? Math.floor(factor) : Math.ceil(factor)) + decimals;
+    }
+
+    /** Get the current power for <tt>pi</tt>
+     * @return The current power for <tt>pi</tt> */
+    public long getPiPow()
+    { return piPow; }
 
     /** Set the new power for <tt>pi</tt>
      * @param factor the new power for <tt>pi</tt> */
-	public void setPiPow(long piPow)
-	{ this.piPow = piPow; }
+    public void setPiPow(long piPow)
+    { this.piPow = piPow; }
 
     /** Get the current power for <tt>e</tt>
      * @return The current power for <tt>e</tt> */
-	public long getEPow()
-	{ return ePow; }
+    public long getEPow()
+    { return ePow; }
 
     /** Set the new power for <tt>e</tt>
      * @param factor the new power for <tt>e</tt> */
-	public void setEPow(long ePow)
-	{ this.ePow = ePow; }
+    public void setEPow(long ePow)
+    { this.ePow = ePow; }
 
     /** Get the current power for <tt>i</tt>
      * @return The current power for <tt>i</tt> */
-	public long getIPow()
-	{ return iPow; }
+    public long getIPow()
+    { return iPow; }
 
     /** Set the new power for <tt>i</tt>
      * @param factor the new power for <tt>i</tt> */
-	public void setIPow(long iPow)
-	{ this.iPow = iPow; }
+    public void setIPow(long iPow)
+    { this.iPow = iPow; }
 
     /** Get the current power for the given variable
      * @param index The variable index
@@ -287,27 +389,30 @@ public class Symbol extends Expression
     /** Set the new power for the given variable
      * @param index The variable index
      * @param factor the new power for the variable */
-	public void setVarPow(int index, long pow)
-	{ varPows[index] = pow; }
-	
-	/** The amount of variables that this symbol supports */
-	public int varPowCount()
-	{ return varPows.length; }
+    public void setVarPow(int index, long pow)
+    { varPows[index] = pow; }
+    
+    public void setVarPow(char index, long pow)
+    { setVarPow(index > 'Z' ? index - 'a' : index - 'A', pow); }
+    
+    /** The amount of variables that this symbol supports */
+    public int varPowCount()
+    { return varPows.length; }
 
-	/**
-	 * Reset all numerical values to new specified values.
-	 * @param factor The new factor
-	 * @param ePow The new euler power
-	 * @param piPow The new pi power
-	 * @param iPow The new imaginary power
-	 */
-	public void set(long factor, long ePow, long piPow, long iPow)
-	{
-		setFactor(factor);
-		setEPow(ePow);
-		setPiPow(piPow);
-		setIPow(iPow);
-	}
+    /**
+     * Reset all numerical values to new specified values.
+     * @param factor The new factor
+     * @param ePow The new euler power
+     * @param piPow The new pi power
+     * @param iPow The new imaginary power
+     */
+    public void set(double factor, long ePow, long piPow, long iPow)
+    {
+        setFactor(factor);
+        setEPow(ePow);
+        setPiPow(piPow);
+        setIPow(iPow);
+    }
 
     /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible (i.e. their power >= 1)
      * @return True if one or more symbols are visible, false otherwise */
@@ -322,8 +427,8 @@ public class Symbol extends Expression
         }
         return false;
     }
-	
-	/** The XML element name */
+    
+    /** The XML element name */
     public static final String NAME = "constant";
     /** The factor XML element attribute */
     public static final String ATTR_FACTOR = "factor";
@@ -336,7 +441,7 @@ public class Symbol extends Expression
     /** The prefix for a variable XML element attribute (followed by the name of the variable) */
     public static final String ATTR_VAR = "var_";
     
-	@Override
+    @Override
     public void writeToXML(Document doc, Element el)
     {
         Element e = doc.createElement(NAME);

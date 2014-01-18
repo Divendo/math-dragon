@@ -4,13 +4,29 @@
     android:layout_height="match_parent"
     android:padding="@dimen/keyboard_padding"
     android:background="@color/white" >
+    
+    <!-- The negate and dot button -->
+	<Button
+	    android:id="@+id/keyboardButtonDot"
+	    style="@style/KeyboardButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+	    android:text="@string/dot" />
+	
+	<Button
+	    android:id="@+id/keyboardButtonNegate"
+	    style="@style/KeyboardButton"
+		android:layout_toLeftOf="@id/keyboardButtonDot"
+        android:layout_alignParentTop="true"
+	    android:text="@string/plusminus" />
 
     <!-- The MathSymbolEditor -->
     <HorizontalScrollView
         android:id="@+id/mathSymbolEditorScroller"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
+		android:layout_toLeftOf="@id/keyboardButtonNegate"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/keyboard_button_margin"
         android:minHeight="@dimen/math_symbol_editor_min_height"
@@ -96,28 +112,43 @@
 
             <Button
                 android:id="@+id/keyboardButton1"
+                android:tag="keyboardButton1"
                 style="@style/KeyboardButton"
                 android:text="1" />
 
             <Button
                 android:id="@+id/keyboardButton2"
+                android:tag="keyboardButton2"
                 style="@style/KeyboardButton"
                 android:text="2" />
 
             <Button
                 android:id="@+id/keyboardButton3"
+                android:tag="keyboardButton3"
                 style="@style/KeyboardButton"
                 android:text="3" />
 
             <Button
                 android:id="@+id/keyboardButton4"
+                android:tag="keyboardButton4"
                 style="@style/KeyboardButton"
                 android:text="4" />
 
             <Button
                 android:id="@+id/keyboardButton5"
+                android:tag="keyboardButton5"
                 style="@style/KeyboardButton"
                 android:text="5" />
+            
+			<Button
+			    android:id="@+id/keyboardButtonPlus"
+			    style="@style/KeyboardButton"
+			    android:text="+" />
+			
+			<Button
+			    android:id="@+id/keyboardButtonMinus"
+			    style="@style/KeyboardButton"
+			    android:text="-" />
             
 			<ToggleButton
 			    android:id="@+id/keyboardButtonX"
@@ -127,24 +158,6 @@
 			    android:text="x"
 			    android:textOff="x"
 			    android:textOn="x" />
-            
-			<ToggleButton
-			    android:id="@+id/keyboardButtonY"
-        		android:layout_gravity="center"
-			    style="@style/KeyboardButtonSmall"
-			    android:layout_margin="@dimen/keyboard_button_small_margin"
-			    android:text="y"
-			    android:textOff="y"
-			    android:textOn="y" />
-			
-			<ToggleButton
-			    android:id="@+id/keyboardButtonZ"
-        		android:layout_gravity="center"
-			    style="@style/KeyboardButtonSmall"
-			    android:layout_margin="@dimen/keyboard_button_small_margin"
-			    android:text="z"
-			    android:textOff="z"
-			    android:textOn="z" />
 
         </LinearLayout>
 
@@ -156,26 +169,31 @@
 
             <Button
                 android:id="@+id/keyboardButton6"
+                android:tag="keyboardButton6"
                 style="@style/KeyboardButton"
                 android:text="6" />
 
             <Button
                 android:id="@+id/keyboardButton7"
+                android:tag="keyboardButton7"
                 style="@style/KeyboardButton"
                 android:text="7" />
 
             <Button
                 android:id="@+id/keyboardButton8"
+                android:tag="keyboardButton8"
                 style="@style/KeyboardButton"
                 android:text="8" />
 
             <Button
                 android:id="@+id/keyboardButton9"
+                android:tag="keyboardButton9"
                 style="@style/KeyboardButton"
                 android:text="9" />
 
             <Button
                 android:id="@+id/keyboardButton0"
+                android:tag="keyboardButton0"
                 style="@style/KeyboardButton"
                 android:text="0" />
             

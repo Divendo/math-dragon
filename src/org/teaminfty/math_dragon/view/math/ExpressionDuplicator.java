@@ -5,7 +5,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.w3c.dom.Document;
 
-public final class MathObjectDuplicator
+public final class ExpressionDuplicator
 {
     /** Creates a deep copy of the given {@link Expression}
      * @param src The {@link Expression} to copy

@@ -18,7 +18,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Expression;
-import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 
 import android.content.ContentValues;
@@ -142,7 +141,14 @@ public class Database extends SQLiteOpenHelper
     public static final class Substitution
     {
         /** Constructor */
-        public Substitution(char name, Symbol value)
+        public Substitution(char name)
+        {
+            this.name = name;
+            this.value = null;
+        }
+        
+        /** Constructor */
+        public Substitution(char name, Expression value)
         {
             this.name = name;
             this.value = value;
@@ -161,9 +167,7 @@ public class Database extends SQLiteOpenHelper
             {
                 try
                 {
-                    Expression tmp = ExpressionXMLReader.fromXML(xml);
-                    if(tmp instanceof Symbol)
-                        value = (Symbol) tmp;
+                    value = ExpressionXMLReader.fromXML(xml);
                 }
                 catch(ParseException e)
                 {
@@ -176,7 +180,7 @@ public class Database extends SQLiteOpenHelper
         /** The name of the variable to substitute */
         public char name = 'a';
         /** The value to substitute for the variable (<tt>null</tt> means no substitution) */
-        public Symbol value = null;
+        public Expression value = null;
     }
     
     /** Constructor */
@@ -441,7 +445,7 @@ public class Database extends SQLiteOpenHelper
     
     /** Saves the given substitution
      * @param sub The substitution to save
-     * @return <tt>true</tt> if the substitution was saved succesful, <tt>false</tt> otherwise */
+     * @return <tt>true</tt> if the substitution was saved successful, <tt>false</tt> otherwise */
     public boolean saveSubstitution(Substitution sub)
     {
         // Get the variable name as an integer
@@ -454,7 +458,7 @@ public class Database extends SQLiteOpenHelper
         if(sub.value == null)
         {
             // If the substitution doesn't exist, we don't have anything to do
-            if(subExists) return true;
+            if(!subExists) return true;
             
             // Open a connection to the database
             SQLiteDatabase db = getWritableDatabase();

@@ -54,13 +54,14 @@ public class FragmentEvaluation extends DialogFragment
         // Disable the the MathView
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEnabled(false);
+        mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
         if(showMathObject != null)
-            mathView.setMathObject(showMathObject);
+            mathView.setExpression(showMathObject);
         else if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_MATH_EXPRESSION) != null)
         {
             try
             {
-                mathView.setMathObject(ExpressionXMLReader.fromXML(savedInstanceState.getString(BUNDLE_MATH_EXPRESSION)));
+                mathView.setExpression(ExpressionXMLReader.fromXML(savedInstanceState.getString(BUNDLE_MATH_EXPRESSION)));
             }
             catch(ParseException e)
             {
@@ -100,7 +101,7 @@ public class FragmentEvaluation extends DialogFragment
             {
                 // Convert the MathObject to a XML document
                 Document doc = Expression.createXMLDocument();
-                mathView.getMathObject().writeToXML(doc, doc.getDocumentElement());
+                mathView.getExpression().writeToXML(doc, doc.getDocumentElement());
                 
                 // Convert the XML document to a string and add it to the list
                 Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -126,7 +127,7 @@ public class FragmentEvaluation extends DialogFragment
     	if(mathView == null)
     	    showMathObject = mathObject;
     	else
-    	    mathView.setMathObject(mathObject);
+    	    mathView.setExpression(mathObject);
     }
 
     /** Sets whether an approximation or exact evaluation is shown.

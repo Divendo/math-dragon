@@ -5,16 +5,19 @@ public abstract class Precedence
 {
     /** The highest precedence */
     public static final int HIGHEST = 0;
+    
+    /** The precedence that integrals have */
+    public static final int INTEGRAL = 1;
 
     /** The precedence power operations have */
-    public static final int POWER = 1;
+    public static final int POWER = 2;
 
     /** The precedence multiply operations have */
-    public static final int MULTIPLY = 2;
+    public static final int MULTIPLY = 3;
 
     /** The precedence add operations have */
-    public static final int ADD = 3;
+    public static final int ADD = 4;
     
     /** The precedence functions have */
-    public static final int FUNCTION = 4;
+    public static final int FUNCTION = 5;
 }
