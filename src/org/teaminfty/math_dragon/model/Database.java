@@ -35,7 +35,7 @@ public class Database extends SQLiteOpenHelper
     /** The database name */
     private static final String DATABASE_NAME = "formula_database";
     /** The database version */
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     
     /** The information about the formulas table */
     public static final class TABLE_FORMULAS
@@ -183,6 +183,45 @@ public class Database extends SQLiteOpenHelper
         public Expression value = null;
     }
     
+    /** The information about the tutorials table */
+    public static final class TABLE_TUTORIALS
+    {
+        /** The name of the table */
+        public static final String NAME = "tutorials";
+
+        /** The ID of the fragment */
+        public static final String ID = "id";
+        /** Whether or not the tutorial is in progress */
+        public static final String TUTORIAL_IN_PROGRESS = "tut_in_prog";
+        /** Whether or not a 'show tutorial' dialog should be shown */
+        public static final String SHOW_TUTORIAL_DIALOG = "show_tut_dlg";
+    }
+    
+    /** Represents the state of a tutorial for a certain fragment */
+    public static final class TutorialState
+    {
+        /** Constructor */
+        public TutorialState(int id)
+        {
+            this.id = id;
+        }
+        
+        /** Constructor */
+        public TutorialState(int id, boolean tutInProg, boolean showTutDlg)
+        {
+            this.id = id;
+            this.tutInProg = tutInProg;
+            this.showTutDlg = showTutDlg;
+        }
+
+        /** The ID of the fragment */
+        public int id;
+        /** Whether or not the tutorial is in progress */
+        public boolean tutInProg = false;
+        /** Whether or not a 'show tutorial' dialog should be shown */
+        public boolean showTutDlg = true;
+    }
+    
     /** Constructor */
     public Database(Context ctx)
     {
@@ -204,7 +243,14 @@ public class Database extends SQLiteOpenHelper
         // Create a table for the substitutions
         db.execSQL("CREATE TABLE " + TABLE_SUBSTITUTIONS.NAME + " (" +
                         TABLE_SUBSTITUTIONS.VAR_NAME + " INTEGER NOT NULL PRIMARY KEY," +
-                        TABLE_SUBSTITUTIONS.VALUE+ " BLOB NOT NULL" +
+                        TABLE_SUBSTITUTIONS.VALUE + " BLOB NOT NULL" +
+                   ")");
+
+        // Create a table for the tutorials
+        db.execSQL("CREATE TABLE " + TABLE_TUTORIALS.NAME + " (" +
+                        TABLE_TUTORIALS.ID + " INTEGER NOT NULL PRIMARY KEY," +
+                        TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS + " INTEGER NOT NULL," +
+                        TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG + " INTEGER NOT NULL" +
                    ")");
     }
 
@@ -215,6 +261,9 @@ public class Database extends SQLiteOpenHelper
             upgradeV1toV2(db);
         if(oldVersion <= 2 && newVersion >= 3)
             upgradeV2toV3(db);
+        if(oldVersion <= 3 && newVersion >= 4)
+            upgradeV3toV4(db);
+            
     }
     
     /** Upgrades the database from version 1 to version 2
@@ -234,6 +283,18 @@ public class Database extends SQLiteOpenHelper
         db.execSQL("CREATE TABLE " + TABLE_SUBSTITUTIONS.NAME + " (" +
                         TABLE_SUBSTITUTIONS.VAR_NAME + " INTEGER NOT NULL PRIMARY KEY," +
                         TABLE_SUBSTITUTIONS.VALUE+ " BLOB NOT NULL" +
+                   ")");
+    }
+
+    /** Upgrades the database from version 3 to version 4
+     * @param db The database to upgrade */
+    private void upgradeV3toV4(SQLiteDatabase db)
+    {
+        // Create a table for the tutorials
+        db.execSQL("CREATE TABLE " + TABLE_TUTORIALS.NAME + " (" +
+                        TABLE_TUTORIALS.ID + " INTEGER NOT NULL PRIMARY KEY," +
+                        TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS + " INTEGER NOT NULL," +
+                        TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG + " INTEGER NOT NULL" +
                    ")");
     }
 
@@ -498,11 +559,68 @@ public class Database extends SQLiteOpenHelper
         // Open a connection to the database
         SQLiteDatabase db = getWritableDatabase();
         
-        // Determine if we've to insert or update a formula
+        // Determine if we've to insert or update the substitution
         if(subExists)
         {
             // Update the substitution
             final long result = db.update(TABLE_SUBSTITUTIONS.NAME, values, TABLE_SUBSTITUTIONS.VAR_NAME + " = " + Integer.toString(varName), null);
+
+            // Close the database connection and return whether we've inserted the substitution successfully
+            db.close();
+            return result == 1;
+        }
+        else
+        {
+            // Insert the substitution
+            final long result = db.insert(TABLE_SUBSTITUTIONS.NAME, null, values);
+
+            // Close the database connection and return whether we've inserted the substitution successfully
+            db.close();
+            return result != -1;
+        }
+    }
+    
+    /** Returns the {@link Database.TutorialState TutorialState} for the given fragment
+     * @param id The id of the fragment
+     * @return The {@link Database.TutorialState TutorialState} */
+    public TutorialState getTutorialState(int id)
+    {
+        // Open a connection to the database
+        SQLiteDatabase db = getReadableDatabase();
+        
+        // Get a cursor to check whether the requested substitution exists
+        Cursor cursor = db.query(TABLE_TUTORIALS.NAME, new String[]{ TABLE_TUTORIALS.ID, TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS, TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG },
+                TABLE_TUTORIALS.ID + " = " + Integer.toString(id), null, null, null, null);
+        
+        // Check if the substitution exists
+        if(!cursor.moveToFirst()) return new TutorialState(id);
+        
+        // Construct and return the substitution
+        return new TutorialState(cursor.getInt(0), cursor.getInt(1) == 1, cursor.getInt(2) == 1);
+    }
+    
+    /** Saves the given {@link Database.TutorialState TutorialState}
+     * @param tutState The {@link Database.TutorialState TutorialState} to save
+     * @return <tt>true</tt> if the {@link Database.TutorialState TutorialState} was saved successful, <tt>false</tt> otherwise */
+    public boolean saveTutorialState(TutorialState tutState)
+    {
+        // Create a ContentValues instance and set the values
+        ContentValues values = new ContentValues(2);
+        values.put(TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS, tutState.tutInProg);
+        values.put(TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG, tutState.showTutDlg);
+        
+        // Open a connection to the database
+        SQLiteDatabase db = getWritableDatabase();
+        
+        // Determine if the tutorial exists
+        Cursor cursor = db.query(TABLE_TUTORIALS.NAME, new String[]{ TABLE_TUTORIALS.ID }, TABLE_TUTORIALS.ID + " = " + Integer.toString(tutState.id), null, null, null, null);
+        final boolean exists = cursor.getCount() != 0;
+        
+        // Determine if we've to insert or update a formula
+        if(exists)
+        {
+            // Update the substitution
+            final long result = db.update(TABLE_TUTORIALS.NAME, values, TABLE_TUTORIALS.ID + " = " + Integer.toString(tutState.id), null);
 
             // Close the database connection and return whether we've inserted the formula successfully
             db.close();
@@ -511,7 +629,7 @@ public class Database extends SQLiteOpenHelper
         else
         {
             // Insert the substitution
-            final long result = db.insert(TABLE_SUBSTITUTIONS.NAME, null, values);
+            final long result = db.insert(TABLE_TUTORIALS.NAME, null, values);
 
             // Close the database connection and return whether we've inserted the formula successfully
             db.close();
