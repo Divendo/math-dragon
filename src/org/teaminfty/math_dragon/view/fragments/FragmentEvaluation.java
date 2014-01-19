@@ -11,17 +11,21 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.teaminfty.math_dragon.MainActivity;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.MathView;
-import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.w3c.dom.Document;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +34,15 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.espian.showcaseview.OnShowcaseEventListener;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.ShowcaseViews;
+import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
+import com.espian.showcaseview.targets.ActionViewTarget;
+import com.espian.showcaseview.targets.PointTarget;
+
+
+//TODO oops wrong fragment
 public class FragmentEvaluation extends DialogFragment
 {
     /** The {@link MathView} in this fragment */
@@ -40,6 +53,7 @@ public class FragmentEvaluation extends DialogFragment
     
     /** The evaluation type, <tt>true</tt> if an exact evaluation is shown, <tt>false</tt> for an approximation */
     private boolean exactEvaluation = true;
+
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -69,6 +83,7 @@ public class FragmentEvaluation extends DialogFragment
                 e.printStackTrace();
             }
         }
+
         
         // The close button
         ((ImageButton) view.findViewById(R.id.btn_close)).setOnClickListener(new OnCloseBtnClickListener());
@@ -77,10 +92,11 @@ public class FragmentEvaluation extends DialogFragment
         ((TextView) view.findViewById(R.id.textViewEvalType)).setText(exactEvaluation ? R.string.evaluate_exact : R.string.evaluate_approximate);
         if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_TITLE) != null)
             ((TextView) view.findViewById(R.id.textViewEvalType)).setText(savedInstanceState.getString(BUNDLE_TITLE));
-        
+
         // Return the content view
         return view;
     }
+
 
     /** A string containing the title of the dialog */
     private static final String BUNDLE_TITLE = "title";
@@ -93,6 +109,8 @@ public class FragmentEvaluation extends DialogFragment
     {
         // Save the title
         outState.putString(BUNDLE_TITLE, ((TextView) getView().findViewById(R.id.textViewEvalType)).getText().toString());
+        
+        
         
         // Save the current math expression
         if(mathView != null)

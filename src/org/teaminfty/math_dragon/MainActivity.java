@@ -15,6 +15,7 @@ import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.fragments.FragmentSubstitute;
+import org.teaminfty.math_dragon.view.fragments.FragmentTutorialDialog;
 import org.teaminfty.math_dragon.view.math.Expression;
 
 import android.app.Activity;
@@ -28,18 +29,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 
 import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.ShowcaseViews;
-import com.espian.showcaseview.ShowcaseView.ConfigOptions;
+import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
 import com.espian.showcaseview.targets.ActionViewTarget;
 import com.espian.showcaseview.targets.PointTarget;
-import com.espian.showcaseview.targets.ViewTarget;
 
 public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
+	
+	public static final int TUTORIAL_ID = 0;
 
     /** The ActionBarDrawerToggle that is used to toggle the drawer using the action bar */
     ActionBarDrawerToggle actionBarDrawerToggle = null;
@@ -60,160 +61,8 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             return null;
         }
     }
-    private void tutorial() {
-		final ShowcaseView actionBar, slideToOpen, editExpr, ops, evaluate;
 
-		// TODO use string resources instead of hardcoded strings
 
-		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-		
-		co.shotType = ShowcaseView.TYPE_ONE_SHOT;
-		
-		final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-		
-		
-		
-		
-		actionBar = ShowcaseView
-				.insertShowcaseView(
-						new ActionViewTarget(this, ActionViewTarget.Type.HOME),
-						this,
-						"Functions and Operators",
-						"Click on the MathDragOn icon to open the side-menu. Here you will find various functions and operators that you can drag n drop into the main screen",co);
-
-		slideToOpen = ShowcaseView
-				.insertShowcaseView(
-						new PointTarget(0, 300),
-						this,
-						"Functions and Operators",
-						"You can also slide from the left edge of the screen to quickly reveal the side-menu");
-
-		
-
-		slideToOpen.hide();
-	
-		actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-			@Override
-			public void onShowcaseViewHide(ShowcaseView showcaseView) {
-				slideToOpen.show();
-				drawerLayout.closeDrawer(Gravity.LEFT);
-			}
-
-			@Override
-			public void onShowcaseViewDidHide(ShowcaseView showcaseView) {}
-
-			@Override
-			public void onShowcaseViewShow(ShowcaseView showcaseView) {}
-
-		});
-
-		final MainActivity self = this;
-		slideToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-			boolean wasHiding = false;
-			@Override
-			public void onShowcaseViewShow(ShowcaseView showcaseView) {
-				slideToOpen.animateGesture(-40, 0, 200, 0);
-			}
-
-			@Override
-			public void onShowcaseViewHide(ShowcaseView showcaseView) {
-				wasHiding = true;
-				
-				ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-				final ShowcaseView dragNDrop = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.mathSourceDivide)), self,
-						"Building an expression",
-						"Try dragging the divide operator into the main view");
-				
-				dragNDrop.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-					
-					@Override
-					public void onShowcaseViewShow(ShowcaseView showcaseView) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void onShowcaseViewHide(ShowcaseView showcaseView) {
-						
-					}
-					
-					@Override
-					public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-						// TODO Auto-generated method stub
-						
-					}
-				});
-				
-				
-				
-//				
-//				ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//				
-//				co.hideOnClickOutside = true;
-//				final ShowcaseView dragNDrop = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.mathSourceAdd)), self,
-//						"Building an expression",
-//						"Drag the highlighted operation into the screen", co); 
-//				dragNDrop.show();
-//				
-//				dragNDrop.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//					
-//					@Override
-//					public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//					
-//					@Override
-//					public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//						
-//						if (drawerLayout.isDrawerOpen(Gravity.LEFT))
-//						{
-//							// The user didn't drag n drop anything. so what is the use.
-//							
-//							dragNDrop.show();
-//							return;
-//						}
-//						final ShowcaseView editStuff = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.mathView)), self, "Editing", "now our operator needs content. Touch one of the boxes to start editing them!");
-//						
-//						editStuff.setOnClickListener(new OnClickListener() {
-//							
-//							@Override
-//							public void onClick(View v) {
-//						
-//								editStuff.hide();
-//							}
-//						});
-//					
-//					}
-//					
-//					@Override
-//					public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-//						
-//						
-//					}
-//				});
-//				
-//			
-		}
-			@Override
-			public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-				
-				// make sure the user has opened the drawer before he continues with the tutorial
-				if (wasHiding && !drawerLayout.isDrawerOpen(Gravity.LEFT))
-				{
-					slideToOpen.show();
-					slideToOpen.animateGesture(-40, 0, 200, 0);
-					return;
-				}
-				
-			}
-			
-		});
-		
-		
-	}
 	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -258,10 +107,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             {
                 // There was no drawer to close
             }
-        }
-        
-        tutorial();
-        
+        }        
     }
 
     @Override
@@ -295,6 +141,14 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         return super.onOptionsItemSelected(item);
     }
     
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        // TODO Auto-generated method stub
+        super.onSaveInstanceState(outState);
+    }
+
     /**
      * Gets called when wolfram alpha needs to be started. It will send the unevaluated IExpr to wolfram alpha for evaluation and inspection
      * @param view

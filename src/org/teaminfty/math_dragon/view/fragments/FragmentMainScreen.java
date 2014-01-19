@@ -18,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.Empty;
@@ -28,6 +29,8 @@ import org.xml.sax.SAXException;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,8 @@ import android.widget.ImageButton;
 
 import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.ShowcaseViews;
+import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
 import com.espian.showcaseview.targets.ActionViewTarget;
 import com.espian.showcaseview.targets.PointTarget;
 
@@ -49,7 +54,144 @@ public class FragmentMainScreen extends Fragment
     /** The current position in the history */
     private int historyPos = 0;
     
-	
+
+    private boolean isShowingDialog = false;
+    
+    
+    public static final int TUTORIAL_ID = 0;
+    private void tutorial()
+    {
+        //TODO werken met savedInstanceState
+        final Database db = new Database(getActivity());
+        try
+        {
+            Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
+            
+            System.out.println("SHOW_TUT_DG:"+ state.showTutDlg);
+   
+            
+            
+            if(!state.tutInProg && state.showTutDlg && !isShowingDialog)
+            {
+                
+                FragmentTutorialDialog dg = new FragmentTutorialDialog(
+                        R.string.app_name, R.string.app_name,
+                        new FragmentTutorialDialog.OnConfirmListener()
+                        {
+
+                            @Override
+                            public void confirm()
+                            {
+                                
+                                System.out.println("IK BEN TOCH ECHT GECONFIRMEERD");
+                                
+                                
+                                //TODO andere tutInProgs inzetten
+                               // savedInstanceState.putBoolean("isShowingDialog", false);
+                                continueTutorial(db);
+                            }
+                        });
+                dg.show(getFragmentManager(), "tut_dlg");
+                //savedInstanceState.putBoolean("isShowingDialog", true);
+                isShowingDialog = true;
+            }
+
+        }
+        // make sure the database is closed.
+        finally
+        {
+            db.close();
+        }
+
+    }
+    
+    private void continueTutorial(final Database db)
+    {
+
+        final ShowcaseView actionBar, swipeToOpen, editExpr, ops, evaluate;
+
+        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+
+        co.shotType = ShowcaseView.TYPE_ONE_SHOT;
+
+        final DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
+
+        actionBar = ShowcaseView.insertShowcaseView(new ActionViewTarget(getActivity(),
+                ActionViewTarget.Type.HOME), getActivity(),
+                R.string.tutorial_fun_op_title, R.string.tutorial_fun_op_msg,
+                co);
+        swipeToOpen = ShowcaseView.insertShowcaseView(new PointTarget(0, 300),
+                getActivity(), R.string.tutorial_fun_op_title,
+                R.string.tutorial_fun_op_drag_msg);
+
+        swipeToOpen.hide();
+
+        actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener()
+        {
+
+            @Override
+            public void onShowcaseViewHide(ShowcaseView showcaseView)
+            {
+                swipeToOpen.show();
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+
+            @Override
+            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
+            {}
+
+            @Override
+            public void onShowcaseViewShow(ShowcaseView showcaseView)
+            {}
+
+        });
+
+        final ShowcaseViews views = new ShowcaseViews(getActivity(),
+                new OnShowcaseAcknowledged()
+                {
+
+                    @Override
+                    public void onShowCaseAcknowledged(ShowcaseView showcaseView)
+                    {
+                        Database.TutorialState state = new Database.TutorialState(
+                                TUTORIAL_ID, false, false);
+                        db.saveTutorialState(state);
+                        db.close();
+                    }
+                });
+
+        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_undo,
+                R.string.tutorial_undo_redo_title,
+                R.string.tutorial_undo_redo_msg));
+
+        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_evaluate,
+                R.string.tutorial_eval_title, R.string.tutorial_eval_msg));
+
+        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_substitute,
+                R.string.tutorial_subst_title, R.string.tutorial_subst_msg1));
+        
+        swipeToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener()
+        {
+            @Override
+            public void onShowcaseViewShow(ShowcaseView showcaseView)
+            {
+                swipeToOpen.animateGesture(-40, 0, 200, 0);
+            }
+
+            @Override
+            public void onShowcaseViewHide(ShowcaseView showcaseView)
+            {
+                drawerLayout.closeDrawer(Gravity.LEFT);
+                views.show();
+            }
+
+            @Override
+            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
+            {}
+
+        });
+
+    }	
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -57,22 +199,6 @@ public class FragmentMainScreen extends Fragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
     
-        
-        
-        // TODO use string resources
-        
-        
-        // ACTION BAR BUTTON
-        // SLIDE TO OPEN
-        // CLICK ON THE BOX
-
-
-//		ShowcaseView showcase = ShowcaseView.insertShowcaseView(new ViewTarget(
-//				view.findViewById(R.id.btn_evaluate)), getActivity(),
-//				"Evaluate", "You can evaluate your expressions using either Wolfram-Alpha, an approximation, or an exact evaluation.");
-//		
-        
-        
 		// Listen for events from the MathView
         
         mathView = (MathView) view.findViewById(R.id.mathView);
@@ -146,11 +272,37 @@ public class FragmentMainScreen extends Fragment
         view.findViewById(R.id.btn_redo).setEnabled(historyPos < history.size() - 1);
         btnUndo.setOnClickListener(new UndoRedoClickListener());
         btnRedo.setOnClickListener(new UndoRedoClickListener());
+
+        
+        
+    
+        
+        
+        if (savedInstanceState != null)
+        {
+            isShowingDialog = savedInstanceState.getBoolean("isShowingDialog");
+        }
         
         // Return the view
         return view;
     }
     
+	
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        // TODO Auto-generated method stub
+        super.onActivityCreated(savedInstanceState);
+    }
+    
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        tutorial();
+    }
+
+
     /** An integer in the state bundle that indicates the current history position */
     private static final String BUNDLE_HISTORY_POS = "history_pos";
     
@@ -163,6 +315,9 @@ public class FragmentMainScreen extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
+        
+        
+        outState.putBoolean("isShowingDialog", isShowingDialog);
         // Save the history
         ArrayList<String> historyStrings = new ArrayList<String>();
         for(Document doc : history)
