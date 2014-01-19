@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSymbolEditor;
+import org.teaminfty.math_dragon.view.MathSymbolEditor.EditingSymbol;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
 
@@ -278,10 +279,10 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         }
         
         // Enable / disable the dot button
-        buttonDot.setEnabled(mathSymbolEditor.getEditingSymbol() == MathSymbolEditor.EditingSymbol.FACTOR && !mathSymbolEditor.containsDot());
+        buttonDot.setEnabled(mathSymbolEditor.getEditingSymbol() == EditingSymbol.FACTOR && !mathSymbolEditor.containsDot());
         
         // Enable / disable the number buttons
-        final boolean enableNumberButtons = mathSymbolEditor.getEditingSymbol() != MathSymbolEditor.EditingSymbol.FACTOR || mathSymbolEditor.decimalCount() < 6;
+        final boolean enableNumberButtons = mathSymbolEditor.containsDot() ? mathSymbolEditor.decimalCount() < 6 : mathSymbolEditor.numberCount() < 12;
         for(int i = 0; i <= 9; ++i)
             ((Button) view.findViewWithTag("keyboardButton" + Integer.toString(i))).setEnabled(enableNumberButtons);
         

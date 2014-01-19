@@ -899,17 +899,61 @@ public class MathSymbolEditor extends View
         requestLayout();
     }
     
-    /** Whether or not the factor currently contains a dot
-     * @return <tt>true</tt> if the factor contains a dot, <tt>false</tt> otherwise */
-    public boolean containsDot()
-    { return symbols.get(editingIndex).factor.contains("."); }
+    /** The amount of numbers before the dot (if there is one) the current symbol we're editing contains
+     * @return The amount of numbers before the dot as an integer */
+    public int numberCount()
+    {
+        String str = "";
+        switch(editingSymbol)
+        {
+            case FACTOR:    str = symbols.get(editingIndex).factor; break;
+            case PI:        str = symbols.get(editingIndex).piPow; break;
+            case E:         str = symbols.get(editingIndex).ePow; break;
+            case I:         str = symbols.get(editingIndex).iPow; break;
+            case VAR:       str = symbols.get(editingIndex).varPowers[currVar - 'a']; break;
+        }
+        
+        if(str.startsWith("-"))
+            str = str.substring(1);
+        
+        final int dotPos = str.indexOf('.');
+        if(dotPos == -1) return str.length();
+        return dotPos;
+    }
     
-    /** The amount of decimals the current factor contains
+    /** Whether or not the current symbol we're editing contains a dot
+     * @return <tt>true</tt> if the current symbol we're editing contains a dot, <tt>false</tt> otherwise */
+    public boolean containsDot()
+    {
+        String str = "";
+        switch(editingSymbol)
+        {
+            case FACTOR:    str = symbols.get(editingIndex).factor; break;
+            case PI:        str = symbols.get(editingIndex).piPow; break;
+            case E:         str = symbols.get(editingIndex).ePow; break;
+            case I:         str = symbols.get(editingIndex).iPow; break;
+            case VAR:       str = symbols.get(editingIndex).varPowers[currVar - 'a']; break;
+        }
+        return str.contains(".");
+    }
+    
+    /** The amount of decimals the current symbol we're editing contains
      * @return The amount of decimals as an integer */
     public int decimalCount()
     {
-        if(!containsDot()) return 0;
-        return symbols.get(editingIndex).factor.length() - symbols.get(editingIndex).factor.indexOf('.') - 1;
+        String str = "";
+        switch(editingSymbol)
+        {
+            case FACTOR:    str = symbols.get(editingIndex).factor; break;
+            case PI:        str = symbols.get(editingIndex).piPow; break;
+            case E:         str = symbols.get(editingIndex).ePow; break;
+            case I:         str = symbols.get(editingIndex).iPow; break;
+            case VAR:       str = symbols.get(editingIndex).varPowers[currVar - 'a']; break;
+        }
+        
+        final int dotPos = str.indexOf('.');
+        if(dotPos == -1) return 0;
+        return str.length() - dotPos - 1;
     }
 
     /** Adds a dot to the factor */
