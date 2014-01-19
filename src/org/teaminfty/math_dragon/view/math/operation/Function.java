@@ -202,7 +202,7 @@ public class Function extends Expression
     }
     
     @Override
-    public Rect[] getOperatorBoundingBoxes() 
+    public Rect[] calculateOperatorBoundingBoxes() 
     {
         // Get the sizes
         final Rect childRect = getChild(0).getBoundingBox();
@@ -221,7 +221,7 @@ public class Function extends Expression
     }
     
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException 
+    public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException 
     {
         // Make sure the child index is valid
         checkChildIndex(index);
@@ -241,7 +241,7 @@ public class Function extends Expression
     
     //Complete bounding box
     @Override
-    public Rect getBoundingBox()
+    public Rect calculateBoundingBox()
     {
         Rect[] operatorSizes = getOperatorBoundingBoxes();
         Rect child = getChild(0).getBoundingBox();

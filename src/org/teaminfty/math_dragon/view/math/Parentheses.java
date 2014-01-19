@@ -49,7 +49,7 @@ public class Parentheses extends Expression
     }
     
     @Override
-    public Rect[] getOperatorBoundingBoxes()
+    public Rect[] calculateOperatorBoundingBoxes()
     {
     	final Rect childRect = getChild(0).getBoundingBox();
     	final int width = (int)(childRect.height() * RATIO);
@@ -59,7 +59,7 @@ public class Parentheses extends Expression
     }
     
     @Override
-    public Rect getBoundingBox()
+    public Rect calculateBoundingBox()
     {
     	final Rect childRect = getChild(0).getBoundingBox();
     	return new Rect(0, 0, 2 * (int)(childRect.height() * RATIO) + childRect.width(), childRect.height());
@@ -76,7 +76,7 @@ public class Parentheses extends Expression
     }
 
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Check the child index
         checkChildIndex(index);

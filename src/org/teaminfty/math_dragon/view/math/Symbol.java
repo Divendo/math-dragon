@@ -180,14 +180,14 @@ public class Symbol extends Expression
     }
 
     @Override
-    public Rect[] getOperatorBoundingBoxes()
+    public Rect[] calculateOperatorBoundingBoxes()
     {
         // Find the right text size and return the bounding box for it
         return new Rect[]{ sizeAddPadding(getSize(findTextSize(level))) };
     }
 
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Will always throw an error since constants do not have children
         checkChildIndex(index);

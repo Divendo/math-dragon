@@ -514,6 +514,8 @@ public class MathView extends View
         @Override
         public boolean onScale(ScaleGestureDetector detector)
         {
+        	// Reset all the bounding boxes
+        	expression.validateAllBoundingBox(false);
             expressionDefaultHeight = Math.min(getResources().getDimensionPixelSize(R.dimen.math_object_max_default_size),
                     Math.max(expressionDefaultHeight * detector.getScaleFactor(), getResources().getDimensionPixelSize(R.dimen.math_object_min_default_size)));
             expression.setDefaultHeight((int) expressionDefaultHeight);
@@ -868,6 +870,9 @@ public class MathView extends View
                 
                 // Notify the listener of the change
                 expressionChanged();
+                
+                // Invalidate all bounding boxes of all expressions
+                expression.validateAllBoundingBox(false);
             }
         }
     }
