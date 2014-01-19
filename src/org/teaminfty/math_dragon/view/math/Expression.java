@@ -33,7 +33,9 @@ public abstract class Expression
     
     /** The boolean to keep track if the bounding boxes are still valid */
     protected boolean operatorBoundingBoxValid = false;
+    /** The boolean to keep track if the child bounding boxes are still valid */
     protected boolean childrenBoundingBoxValid = false;
+    /** The boolean to keep track if the total bounding box is still valid */
     protected boolean totalBoundingBoxValid = false;
     
     /** The default height of an object */
@@ -100,6 +102,9 @@ public abstract class Expression
         // Refresh all levels and default heights
         setLevel(level);
         setDefaultHeight(defaultHeight);
+        
+        // Invalidate the cache
+        validateAllBoundingBox(false);
     }
     
     /** Returns the default height for this {@link Expression}
@@ -111,6 +116,10 @@ public abstract class Expression
      * @param height The default height */
     public void setDefaultHeight(int height)
     {
+        // Invalidate the cache (if necessary)
+        if(height != defaultHeight)
+            validateAllBoundingBox(false);
+        
         // Set the default height
         defaultHeight = height;
         
@@ -126,13 +135,13 @@ public abstract class Expression
      * @param bool to validate or invalidate the bounding boxes */
     public void validateOperatorBoundingBox(boolean bool)
     {
-    	// Set the boolean
-    	operatorBoundingBoxValid = bool;
-    	
-    	// Set the boolean for all children if it is false
-    	if(!bool)
-    		for(Expression child : children)
-    			child.validateAllBoundingBox(false);
+        // Set the boolean
+        operatorBoundingBoxValid = bool;
+        
+        // Set the boolean for all children if it is false
+        if(!bool)
+            for(Expression child : children)
+                child.validateAllBoundingBox(false);
     }
     
     /** 
@@ -141,13 +150,13 @@ public abstract class Expression
      * @param bool to validate or invalidate the bounding boxes */
     public void validateChildrenBoundingBox(boolean bool)
     {
-    	// Set the boolean
-    	childrenBoundingBoxValid = bool;
-    	
-    	// Set the boolean for all children if it is false
-    	if(!bool)
-    		for(Expression child : children)
-    			child.validateAllBoundingBox(false);
+        // Set the boolean
+        childrenBoundingBoxValid = bool;
+        
+        // Set the boolean for all children if it is false
+        if(!bool)
+            for(Expression child : children)
+                child.validateAllBoundingBox(false);
     }
     
     /** 
@@ -156,21 +165,21 @@ public abstract class Expression
      * @param bool to validate or invalidate the bounding box */
     public void validateTotalBoundingBox(boolean bool)
     {
-    	// Set the boolean
-    	totalBoundingBoxValid = bool;
-    	
-    	// Set the boolean for all children if it is false
-    	if(!bool)
-    		for(Expression child : children)
-    			child.validateAllBoundingBox(false);
+        // Set the boolean
+        totalBoundingBoxValid = bool;
+        
+        // Set the boolean for all children if it is false
+        if(!bool)
+            for(Expression child : children)
+                child.validateAllBoundingBox(false);
     }
     
     /** Invalidate or validate all bounding boxes in the cache */
     public void validateAllBoundingBox(boolean bool)
     {
-    	validateOperatorBoundingBox(bool);
-    	validateChildrenBoundingBox(bool);
-    	validateTotalBoundingBox(bool);
+        validateOperatorBoundingBox(bool);
+        validateChildrenBoundingBox(bool);
+        validateTotalBoundingBox(bool);
     }
     
     
@@ -203,30 +212,30 @@ public abstract class Expression
 
     public Rect[] getOperatorBoundingBoxes()
     {
-    	// If the cache is invalid or there are no bounding boxes in the current cache, recalculate them
-    	if( !getOperatorBoundingBoxValid() || operatorBoundingBoxes.isEmpty())
-    	{
-    		// First clear the current list
-    		operatorBoundingBoxes.clear();
-    		
-    		// Recalculate the bounding boxes
-    		Rect[] operatorBB = calculateOperatorBoundingBoxes();
-    		
-    		for(int i = 0; i < operatorBB.length; i ++)
-    			operatorBoundingBoxes.add( operatorBB[i]);
-    		
-    		// Set the cache to valid
-    		validateOperatorBoundingBox(true);
-    	}
-    	
-    	// Create a new array and get a copy of all the bounding boxes
-    	Rect[] result = new Rect[ operatorBoundingBoxes.size()];
-    	
-    	for(int i = 0; i < result.length; i ++)
-    		result[i] = new Rect(operatorBoundingBoxes.get(i));
-    	
-    	// Return the array with the rectangles
-    	return result;
+        // If the cache is invalid or there are no bounding boxes in the current cache, recalculate them
+        if( !getOperatorBoundingBoxValid() || operatorBoundingBoxes.isEmpty())
+        {
+            // First clear the current list
+            operatorBoundingBoxes.clear();
+            
+            // Recalculate the bounding boxes
+            Rect[] operatorBB = calculateOperatorBoundingBoxes();
+            
+            for(int i = 0; i < operatorBB.length; i ++)
+                operatorBoundingBoxes.add( operatorBB[i]);
+            
+            // Set the cache to valid
+            validateOperatorBoundingBox(true);
+        }
+        
+        // Create a new array and get a copy of all the bounding boxes
+        Rect[] result = new Rect[ operatorBoundingBoxes.size()];
+        
+        for(int i = 0; i < result.length; i ++)
+            result[i] = new Rect(operatorBoundingBoxes.get(i));
+        
+        // Return the array with the rectangles
+        return result;
     }
     /**
      * Returns the bounding box of the child at the given index.
@@ -242,21 +251,21 @@ public abstract class Expression
 
     public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
-    	// If the cache is invalid or the amount of bounding boxes isn't the amount of children, recalculate them
-    	if( !getChildrenBoundingBoxValid() || (getChildCount() != childrenBoundingBoxes.size()))
-    	{
-    		childrenBoundingBoxes.clear();
-    		
-    		int size = getChildCount();
-    		
-    		for(int i = 0; i < size; i ++)
-    			childrenBoundingBoxes.add( calculateChildBoundingBox(i));
-    		 
-    		validateChildrenBoundingBox(true);
-    	}
-    	
-    	// Return a copy of the requested bounding box
-    	return new Rect(childrenBoundingBoxes.get(index));
+        // If the cache is invalid or the amount of bounding boxes isn't the amount of children, recalculate them
+        if( !getChildrenBoundingBoxValid() || (getChildCount() != childrenBoundingBoxes.size()))
+        {
+            childrenBoundingBoxes.clear();
+            
+            int size = getChildCount();
+            
+            for(int i = 0; i < size; i ++)
+                childrenBoundingBoxes.add( calculateChildBoundingBox(i));
+             
+            validateChildrenBoundingBox(true);
+        }
+        
+        // Return a copy of the requested bounding box
+        return new Rect(childrenBoundingBoxes.get(index));
     }
     /**
      * Returns the bounding box for the entire {@link Expression}.
@@ -271,7 +280,7 @@ public abstract class Expression
 
         // Add all operator bounding boxes
         Rect[] operatorBoundingBoxes = getOperatorBoundingBoxes();
-        	for(Rect tmp : operatorBoundingBoxes)
+        for(Rect tmp : operatorBoundingBoxes)
             out.union(tmp);
 
         // Add all child bounding boxes
@@ -286,15 +295,15 @@ public abstract class Expression
     
     public Rect getBoundingBox()
     {
-    	// If the cache is invalid or there is no bounding box in the cache, recalculate
-    	if( !getTotalBoundingBoxValid() || totalBoundingBox == null)
-    	{
-    		totalBoundingBox = calculateBoundingBox();
-    		validateTotalBoundingBox(true);
-    	}
-    	
-    	// Return a copy of the bounding box
-    	return new Rect(totalBoundingBox);
+        // If the cache is invalid or there is no bounding box in the cache, recalculate
+        if( !getTotalBoundingBoxValid() || totalBoundingBox == null)
+        {
+            totalBoundingBox = calculateBoundingBox();
+            validateTotalBoundingBox(true);
+        }
+        
+        // Return a copy of the bounding box
+        return new Rect(totalBoundingBox);
     }
     
     /**
@@ -390,11 +399,11 @@ public abstract class Expression
      */
     protected int getColor()
     {
-    	if(this.state == HoverState.DRAG)
-    		return Color.rgb(0x88, 0x88, 0x88);
-    	if(this.state == HoverState.HOVER)
-    		return Color.rgb(0x44, 0x44, 0xff);
-    	return Color.BLACK;
+        if(this.state == HoverState.DRAG)
+            return Color.rgb(0x88, 0x88, 0x88);
+        if(this.state == HoverState.HOVER)
+            return Color.rgb(0x44, 0x44, 0xff);
+        return Color.BLACK;
     }
     
     /** Returns the centre of the {@link Expression}
@@ -402,21 +411,25 @@ public abstract class Expression
      */
     public Point getCenter()
     {
-    	Rect bounding = this.getBoundingBox();
-    	return new Point(bounding.centerX(), bounding.centerY());
+        Rect bounding = this.getBoundingBox();
+        return new Point(bounding.centerX(), bounding.centerY());
     }
     
-	/** Sets the new level for this {@link Expression} and all of its children
-	 * @param l The new level */
-	public void setLevel(int l)
-	{
-		level = l;
-		for(Expression child : children)
-			child.setLevel(l);
-	}
+    /** Sets the new level for this {@link Expression} and all of its children
+     * @param l The new level */
+    public void setLevel(int l)
+    {
+        // Invalidate the cache (if necessary)
+        if(l != level)
+            validateAllBoundingBox(false);
+        
+        level = l;
+        for(Expression child : children)
+            child.setLevel(l);
+    }
     
     /** Whether or not to draw the bounding boxes */
-    private final static boolean DRAW_BOUNDING = false;
+    private final static boolean DRAW_BOUNDING = true;
     
     /** Draws the bounding box and the bounding boxes of the children (for debug purposes).
      * The boxes will only be drawn if {@link Expression#DRAW_BOUNDING DRAW_BOUNDING} is set to true.
@@ -467,8 +480,8 @@ public abstract class Expression
      */
     public void writeToXML(Document doc, Element parent)
     {
-    	Log.w("XML", "not a writable element yet");
-    	parent.appendChild(doc.createElement(Empty.NAME));
+        Log.w("XML", "not a writable element yet");
+        parent.appendChild(doc.createElement(Empty.NAME));
     }
     
     /**

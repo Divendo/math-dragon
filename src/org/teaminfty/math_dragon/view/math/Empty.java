@@ -13,8 +13,8 @@ import android.graphics.Rect;
 /** Represents an empty child */
 public class Empty extends Expression
 {
-	public static final String NAME = "empty";
-	
+    public static final String NAME = "empty";
+    
     /** The ratio (width : height) of the empty child box (i.e. the golden ratio) */
     public final static float RATIO = 1 / 1.61803398874989f;
     
@@ -71,24 +71,23 @@ public class Empty extends Expression
     @Override
     public Rect calculateBoundingBox()
     {
-    	int width = (int)(defaultHeight*RATIO);
-    	int height = defaultHeight;
-    	
-    	for(int t = 0; t < this.level && t < MAX_LEVEL; t++)
-    	{
-    		width = 2*width/3;
-    		height = 2*height/3;
-    	}
-    	
-    	return new Rect(0, 0, width, height);
+        int width = (int)(defaultHeight*RATIO);
+        int height = defaultHeight;
+        
+        for(int t = 0; t < this.level && t < MAX_LEVEL; t++)
+        {
+            width = 2*width/3;
+            height = 2*height/3;
+        }
+        
+        return new Rect(0, 0, width, height);
     }
     
     @Override
     public Rect[] calculateOperatorBoundingBoxes()
     {
-    	//emptyObjects don't have an operator, but they do need one for the drag and drop
-    	
-    	return new Rect[] { this.getBoundingBox()};
+        //emptyObjects don't have an operator, but they do need one for the drag and drop
+        return new Rect[] { this.getBoundingBox()};
     }
 
     @Override
