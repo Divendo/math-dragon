@@ -28,11 +28,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 
+import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.ShowcaseViews;
+import com.espian.showcaseview.ShowcaseView.ConfigOptions;
 import com.espian.showcaseview.targets.ActionViewTarget;
 import com.espian.showcaseview.targets.PointTarget;
+import com.espian.showcaseview.targets.ViewTarget;
 
 public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
@@ -56,8 +60,161 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             return null;
         }
     }
+    private void tutorial() {
+		final ShowcaseView actionBar, slideToOpen, editExpr, ops, evaluate;
 
-    @Override
+		// TODO use string resources instead of hardcoded strings
+
+		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+		
+		co.shotType = ShowcaseView.TYPE_ONE_SHOT;
+		
+		final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+		
+		
+		
+		
+		actionBar = ShowcaseView
+				.insertShowcaseView(
+						new ActionViewTarget(this, ActionViewTarget.Type.HOME),
+						this,
+						"Functions and Operators",
+						"Click on the MathDragOn icon to open the side-menu. Here you will find various functions and operators that you can drag n drop into the main screen",co);
+
+		slideToOpen = ShowcaseView
+				.insertShowcaseView(
+						new PointTarget(0, 300),
+						this,
+						"Functions and Operators",
+						"You can also slide from the left edge of the screen to quickly reveal the side-menu");
+
+		
+
+		slideToOpen.hide();
+	
+		actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+
+			@Override
+			public void onShowcaseViewHide(ShowcaseView showcaseView) {
+				slideToOpen.show();
+				drawerLayout.closeDrawer(Gravity.LEFT);
+			}
+
+			@Override
+			public void onShowcaseViewDidHide(ShowcaseView showcaseView) {}
+
+			@Override
+			public void onShowcaseViewShow(ShowcaseView showcaseView) {}
+
+		});
+
+		final MainActivity self = this;
+		slideToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+
+			boolean wasHiding = false;
+			@Override
+			public void onShowcaseViewShow(ShowcaseView showcaseView) {
+				slideToOpen.animateGesture(-40, 0, 200, 0);
+			}
+
+			@Override
+			public void onShowcaseViewHide(ShowcaseView showcaseView) {
+				wasHiding = true;
+				
+				ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+				final ShowcaseView dragNDrop = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.mathSourceDivide)), self,
+						"Building an expression",
+						"Try dragging the divide operator into the main view");
+				
+				dragNDrop.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+					
+					@Override
+					public void onShowcaseViewShow(ShowcaseView showcaseView) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onShowcaseViewHide(ShowcaseView showcaseView) {
+						
+					}
+					
+					@Override
+					public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+				
+				
+				
+//				
+//				ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//				
+//				co.hideOnClickOutside = true;
+//				final ShowcaseView dragNDrop = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.mathSourceAdd)), self,
+//						"Building an expression",
+//						"Drag the highlighted operation into the screen", co); 
+//				dragNDrop.show();
+//				
+//				dragNDrop.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//					
+//					@Override
+//					public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//						// TODO Auto-generated method stub
+//						
+//					}
+//					
+//					@Override
+//					public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//						
+//						if (drawerLayout.isDrawerOpen(Gravity.LEFT))
+//						{
+//							// The user didn't drag n drop anything. so what is the use.
+//							
+//							dragNDrop.show();
+//							return;
+//						}
+//						final ShowcaseView editStuff = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.mathView)), self, "Editing", "now our operator needs content. Touch one of the boxes to start editing them!");
+//						
+//						editStuff.setOnClickListener(new OnClickListener() {
+//							
+//							@Override
+//							public void onClick(View v) {
+//						
+//								editStuff.hide();
+//							}
+//						});
+//					
+//					}
+//					
+//					@Override
+//					public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+//						
+//						
+//					}
+//				});
+//				
+//			
+		}
+			@Override
+			public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+				
+				// make sure the user has opened the drawer before he continues with the tutorial
+				if (wasHiding && !drawerLayout.isDrawerOpen(Gravity.LEFT))
+				{
+					slideToOpen.show();
+					slideToOpen.animateGesture(-40, 0, 200, 0);
+					return;
+				}
+				
+			}
+			
+		});
+		
+		
+	}
+	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -74,17 +231,16 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Load Symja
         new SymjaLoader().execute();
 
+        DrawerLayout drawerLayout;
         // DrawLayout specific code
-        if(findViewById(R.id.drawerLayout) != null)
+        if((drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout)) != null)
         {
-            // Get the DrawerLayout object
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-    
+
             // Remove the grey overlay
             drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
     
             // Set the shadow
-            drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+            //drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
     
             try
             {
@@ -104,12 +260,8 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             }
         }
         
-        ShowcaseViews views= new ShowcaseViews(this);
-        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_approximate, R.string.showcase_approximate_title, R.string.showcase_approximate_message));
-        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_evaluate, R.string.showcase_evaluate_title, R.string.showcase_evaluate_message));
-//        ShowcaseView sv1 = ShowcaseView.insertShowcaseView(new PointTarget(10,200), this, "Access functions and operators", "Swipe from edge to right to open the sidebar");
-//        ShowcaseView sv2 = ShowcaseView.insertShowcaseView(new ActionViewTarget(this,ActionViewTarget.Type.HOME), this, "Hello0", "Wrod");
-        views.show();
+        tutorial();
+        
     }
 
     @Override

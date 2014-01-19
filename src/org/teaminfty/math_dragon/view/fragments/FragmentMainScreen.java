@@ -20,9 +20,9 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
-import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
-import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -32,6 +32,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+import com.espian.showcaseview.OnShowcaseEventListener;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.targets.ActionViewTarget;
+import com.espian.showcaseview.targets.PointTarget;
 
 public class FragmentMainScreen extends Fragment
 {
@@ -43,14 +48,33 @@ public class FragmentMainScreen extends Fragment
     
     /** The current position in the history */
     private int historyPos = 0;
+    
+	
 
-    @Override
+	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
+    
         
-        // Listen for events from the MathView
+        
+        // TODO use string resources
+        
+        
+        // ACTION BAR BUTTON
+        // SLIDE TO OPEN
+        // CLICK ON THE BOX
+
+
+//		ShowcaseView showcase = ShowcaseView.insertShowcaseView(new ViewTarget(
+//				view.findViewById(R.id.btn_evaluate)), getActivity(),
+//				"Evaluate", "You can evaluate your expressions using either Wolfram-Alpha, an approximation, or an exact evaluation.");
+//		
+        
+        
+		// Listen for events from the MathView
+        
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEventListener(new MathViewEventListener());
         
@@ -116,6 +140,8 @@ public class FragmentMainScreen extends Fragment
         // Disable the undo and redo buttons and set their click listeners
         ImageButton btnUndo = (ImageButton) view.findViewById(R.id.btn_undo);
         ImageButton btnRedo = (ImageButton) view.findViewById(R.id.btn_redo);
+        
+        ImageButton btnHep = (ImageButton) view.findViewById(R.id.btn_help);
         view.findViewById(R.id.btn_undo).setEnabled(historyPos > 0);
         view.findViewById(R.id.btn_redo).setEnabled(historyPos < history.size() - 1);
         btnUndo.setOnClickListener(new UndoRedoClickListener());
