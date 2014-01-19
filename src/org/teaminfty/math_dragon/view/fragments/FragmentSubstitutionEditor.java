@@ -91,7 +91,7 @@ public class FragmentSubstitutionEditor extends DialogFragment
     {
         super.onResume();
 
-        // Set the right size for the keyboard dialog
+        // Set the right size for the dialog
         Configuration resConfig = getResources().getConfiguration();
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
         if((resConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE ||
@@ -226,6 +226,7 @@ public class FragmentSubstitutionEditor extends DialogFragment
             // Set the listener
             fragmentKeyboard.setOnConfirmListener(new SetSubstitutionValueListener());
             fragmentKeyboard.setExpression(value);
+            fragmentKeyboard.enableVariableButtons(false);
             
             // Show the keyboard
             fragmentKeyboard.show(getFragmentManager(), KEYBOARD_TAG);
