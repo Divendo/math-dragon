@@ -2,6 +2,8 @@ package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Log;
+import org.teaminfty.math_dragon.view.math.operation.Limit;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 
 import android.graphics.Canvas;
@@ -12,7 +14,7 @@ public class MathSourceOperationPower extends MathSourceObject
 {
     @Override
     public Expression createMathObject()
-    { return new Power(); }
+    { return new Limit(); }
 
     @Override
     public void draw(Canvas canvas, int w, int h)

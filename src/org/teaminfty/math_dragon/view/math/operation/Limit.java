@@ -10,6 +10,8 @@ import org.w3c.dom.Element;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Region;
 
 /**
  * Ternary mathematical operation that implements a mathematical limit using a
@@ -123,7 +125,7 @@ public class Limit extends Operation
         Rect[] operatorSizes = getOperatorBoundingBoxes();
         Rect[] child = this.getChildrenSize();
         
-        return new Rect(0,Math.min(operatorSizes[0].top, child[2].top), operatorSizes[0].width() + operatorSizes[2].width() + operatorSizes[3].width() + child[2].width(),Math.max(operatorSizes[0].bottom + child[1].bottom, child[2].bottom));
+        return new Rect(Math.min(operatorSizes[0].left, getChildBoundingBox(0).left),Math.min(operatorSizes[0].top, child[2].top), operatorSizes[0].width() + operatorSizes[1].width() + operatorSizes[2].width() + child[2].width(),Math.max(operatorSizes[0].bottom + child[1].bottom, child[2].bottom));
     }
 
     
@@ -135,6 +137,16 @@ public class Limit extends Operation
     {
         setChild(2, expr);
     }
+    
+    @Override
+ 	public void setLevel(int l)
+ 	{
+ 		level = l;
+ 		getChild(0).setLevel(level + 2);
+ 		getChild(1).setLevel(level + 2);
+ 		getChild(2).setLevel(level);
+ 	}
+    
 
     @Override
     protected String getType()
@@ -181,18 +193,18 @@ public class Limit extends Operation
         final Rect[] child = getChildrenSize();
         final int parentheseWidth = (int)(child[1].height() * PARENTHESES_RATIO);
         Rect textBounding = getSize(findTextSize());
-        final int arrowWidth = textBounding.width() - child[0].width() - child[1].width();
+        final int arrowWidth = textBounding.width()/4;
         
         // Make sure everything is aligned nicely
-        final int childCenterY = getChild(1).getCenter().y;
+        final int childCenterY = getChild(2).getCenter().y;
         final int childTop = Math.max(textBounding.centerY() - childCenterY, 0);
-        textBounding.offsetTo(0, Math.max(childCenterY - textBounding.centerY(), 0));
+        textBounding.offsetTo(0,this.getChild(2).getCenter().y - textBounding.centerY());
         
         // Return the bounding boxes
         return new Rect[]{ textBounding,
-        		 new Rect(child[0].width(), textBounding.bottom, arrowWidth, child[0].height()),
-                 new Rect(textBounding.width() + child[1].width(), childTop, textBounding.width() + parentheseWidth +child[1].width(), childTop + child[1].height()), 
-                 new Rect(textBounding.width() + parentheseWidth +  child[2].width(), childTop, textBounding.width() + child[2].width() + 2 * parentheseWidth, childTop + child[1].height())};
+                 new Rect(textBounding.width(), childTop, textBounding.width() + parentheseWidth, childTop + child[2].height()), 
+                 new Rect(textBounding.width() + parentheseWidth +  child[2].width(), childTop, textBounding.width() + child[2].width() + 2 * parentheseWidth, childTop + child[2].height()),
+                 new Rect(textBounding.centerX() - arrowWidth, textBounding.bottom,textBounding.centerX() + arrowWidth, child[0].height()),};
     }
 
     @Override
@@ -210,12 +222,12 @@ public class Limit extends Operation
         // Translate and return the operand's bounding box
         if(index == 0)
         {
-            leftChild.offsetTo(0, operatorSize[0].height());
+            leftChild.offsetTo(operatorSize[0].centerX() - operatorSize[3].width()/2 - leftChild.width(),operatorSize[0].bottom);
             return leftChild;
         }
         else if(index == 1)
         {
-            rightChild.offsetTo(operatorSize[1].width() + leftChild.width(), operatorSize[0].height());
+            rightChild.offsetTo(operatorSize[0].centerX() + operatorSize[3].width()/2, operatorSize[0].bottom);
             return rightChild;
         }
         else 
@@ -228,7 +240,51 @@ public class Limit extends Operation
     @Override
     public void draw(Canvas canvas)
     {
-        // TODO Auto-generated method stub
-        throw new RuntimeException("stub");
+    	 // Draw the bounding boxes 
+        drawBoundingBoxes(canvas);
+        
+        // Set the right values for the paint
+        operatorPaint.setColor(getColor());
+        operatorPaint.setTextSize(findTextSize());
+        
+        // Get our operator bounding boxes
+        Rect[] operatorBounding = this.getOperatorBoundingBoxes();
+        
+        //Draws the operator
+        canvas.save();
+        Rect textBounding = new Rect();
+        operatorPaint.getTextBounds(name, 0, name.length(), textBounding);
+        canvas.translate((operatorBounding[0].width() - textBounding.width()) / 2, (operatorBounding[0].height() - textBounding.height()) / 2);
+        canvas.drawText(name, operatorBounding[0].left - textBounding.left, operatorBounding[0].top - textBounding.top, operatorPaint);
+        canvas.drawLine(operatorBounding[3].left, operatorBounding[3].bottom - operatorBounding[3].height()/2, operatorBounding[3].right, operatorBounding[3].bottom - operatorBounding[3].height()/2, operatorPaint);
+        canvas.restore();
+        
+
+        // Use stroke style for the parentheses
+        operatorPaint.setStyle(Paint.Style.STROKE);
+        
+        // Draw the left bracket
+        canvas.save();
+        canvas.clipRect(operatorBounding[1], Region.Op.INTERSECT);
+        RectF bracket = new RectF(operatorBounding[1]);
+        bracket.inset(0, -operatorPaint.getStrokeWidth());
+        bracket.offset(bracket.width() / 4, 0);
+        canvas.drawArc(bracket, 100.0f, 160.0f, false, operatorPaint);
+        canvas.restore();
+        
+        // Draw the right bracket
+        canvas.save();
+        canvas.clipRect(operatorBounding[2], Region.Op.INTERSECT);
+        bracket = new RectF(operatorBounding[2]);
+        bracket.inset(0, -operatorPaint.getStrokeWidth());
+        bracket.offset(-bracket.width() / 4, 0);
+        canvas.drawArc(bracket, -80.0f, 160.0f, false, operatorPaint);
+        canvas.restore();
+
+        // Set the paint back to fill style
+        operatorPaint.setStyle(Paint.Style.FILL);
+        
+        // Draw the children
+        drawChildren(canvas);
     }
 }

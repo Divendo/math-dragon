@@ -43,11 +43,14 @@ public class Multiply extends Linear
         // Get the bounding box
         final Rect operator = getOperatorBoundingBoxes()[0];
         
+        // Set the radius of the times symbol
+        int radius = operator.width()/10;
+        
         // Draw the operator
         canvas.save();
         operatorPaint.setColor(this.getColor());
         operatorPaint.setAntiAlias(true);
-        canvas.drawCircle(operator.centerX(), operator.centerY(), 2 * lineWidth, operatorPaint);
+        canvas.drawCircle(operator.centerX(), operator.centerY(), radius, operatorPaint);
         canvas.restore();
         
         // Draw the children
