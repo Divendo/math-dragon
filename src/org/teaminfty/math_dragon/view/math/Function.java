@@ -1,10 +1,7 @@
-package org.teaminfty.math_dragon.view.math.operation;
+package org.teaminfty.math_dragon.view.math;
 
 
 import org.teaminfty.math_dragon.view.TypefaceHolder;
-import org.teaminfty.math_dragon.view.math.Expression;
-import org.teaminfty.math_dragon.view.math.Empty;
-import org.teaminfty.math_dragon.view.math.Precedence;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -2,8 +2,8 @@ package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
-import org.teaminfty.math_dragon.view.math.operation.Function;
-import org.teaminfty.math_dragon.view.math.operation.Function.FunctionType;
+import org.teaminfty.math_dragon.view.math.Function;
+import org.teaminfty.math_dragon.view.math.Function.FunctionType;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

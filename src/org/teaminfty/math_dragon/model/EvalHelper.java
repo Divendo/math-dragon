@@ -9,14 +9,15 @@ import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.Operation;
 import org.teaminfty.math_dragon.view.math.Parentheses;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Derivative;
-import org.teaminfty.math_dragon.view.math.operation.Function;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
 import org.teaminfty.math_dragon.view.math.operation.Limit;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
+import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
@@ -83,6 +84,8 @@ public class EvalHelper
             return limit((Limit) op);
         if(op instanceof Integral)
             return integral((Integral) op);
+        if(op instanceof Negate)
+            return negate((Negate) op);
         throw new MathException(op.toString());
     }
 
@@ -376,5 +379,20 @@ public class EvalHelper
             
             return F.Integrate( eval(i.getIntegratePart()), F.List(eval(i.getIntegrateOver()), eval(i.getIntegrateFrom()), eval(i.getIntegrateTo())) );
         }
+    }
+
+    /**
+     * Simply negates the child.
+     * 
+     * @param neg The negate operation
+     * @return Converted negated expression for Symja
+     * @throws MathException
+     *         Thrown when <tt>neg</tt> contains invalid children
+     */
+    private static IExpr negate(Negate neg) throws MathException
+    {
+        if(neg.getChild(0) instanceof Empty)
+            throw new EmptyChildException(0);
+        return F.Negate(eval(neg.getChild(0)));
     }
 }

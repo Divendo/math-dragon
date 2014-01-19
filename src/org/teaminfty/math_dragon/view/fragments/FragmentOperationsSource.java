@@ -10,7 +10,7 @@ import org.teaminfty.math_dragon.view.MathSourceOperationPower;
 import org.teaminfty.math_dragon.view.MathSourceOperationRoot;
 import org.teaminfty.math_dragon.view.MathSourceOperationFunction;
 import org.teaminfty.math_dragon.view.MathSourceView;
-import org.teaminfty.math_dragon.view.math.operation.Function;
+import org.teaminfty.math_dragon.view.math.Function;
 
 import android.app.Fragment;
 import android.os.Bundle;

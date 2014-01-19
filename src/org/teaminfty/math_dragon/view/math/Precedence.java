@@ -17,7 +17,10 @@ public abstract class Precedence
 
     /** The precedence multiply operations have */
     public static final int MULTIPLY = 3;
+    
+    /** The precedence of the negate operator */
+    public static final int NEGATE = 4;
 
     /** The precedence add operations have */
-    public static final int ADD = 4;
+    public static final int ADD = 5;
 }
