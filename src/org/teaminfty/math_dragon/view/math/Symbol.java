@@ -14,6 +14,12 @@ import android.graphics.Rect;
 public class Symbol extends Expression
 {
     /**
+     * Cached mathematical symbolic constant for the mathematical <tt>0</tt> in
+     * order to speed up helpers and parsers so they don't need to make this
+     * symbolic constant themselves.
+     */
+    public static final Symbol ZERO = new Symbol();
+    /**
      * Cached mathematical symbolic constant for the mathematical <tt>1</tt> in
      * order to speed up helpers and parsers so they don't need to make this
      * symbolic constant themselves.
@@ -29,7 +35,14 @@ public class Symbol extends Expression
     /** The power of the imaginary unit */
     private long iPow = 0;
     /** The powers of the variables */
-    private long varPows[] = new long[26];
+    private long varPows[] = new long[VAR_POWS_LENGTH];
+    
+    /**
+     * Maximum supported number of variable powers. Specifying arrays with more
+     * elements than {@code VAR_POWS_LENGTH} will be accepted, but only the
+     * first {@code VAR_POWS_LENGTH} elements will be copied.
+     */
+    public static final int VAR_POWS_LENGTH = 26;
     
     /** The paint that is used to draw the factor and the constants */
     protected Paint paint = new Paint();
@@ -80,7 +93,7 @@ public class Symbol extends Expression
         if(varPows != null)
         {
             // arraycopy is safer and more efficient.
-            System.arraycopy(varPows, 0, this.varPows, 0, Math.min(varPows.length, this.varPows.length));
+            System.arraycopy(varPows, 0, this.varPows, 0, Math.min(VAR_POWS_LENGTH, Math.min(varPows.length, this.varPows.length)));
         }
     }
     
@@ -398,6 +411,31 @@ public class Symbol extends Expression
     /** The amount of variables that this symbol supports */
     public int varPowCount()
     { return varPows.length; }
+    
+    /**
+     * Try to combine the specified mathematical symbol and return whether they
+     * were combined.
+     * 
+     * @param exp
+     *        A mathematical symbol
+     * @return <tt>true</tt> if they are combined. <tt>false</tt> otherwise.
+     */
+    public boolean setPow(Symbol exp)
+    {
+        if(!isFactorOnly())
+        {
+            double factor = exp.factor;
+            piPow *= factor;
+            ePow *= factor;
+            iPow *= factor;
+            for(int i = 0; i < varPows.length; ++i)
+            {
+                varPows[i] *= factor;
+            }
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Reset all numerical values to new specified values.
