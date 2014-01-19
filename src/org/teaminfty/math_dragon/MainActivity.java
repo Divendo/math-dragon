@@ -60,8 +60,11 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Load the typefaces
         TypefaceHolder.loadFromAssets(getAssets());
 
-        // Set the default size in the MathObject class
+        // Set the default size in the Expression class
         Expression.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
+        
+        // Set the default size for formula thumbnails in the save load dialog
+        Database.TABLE_FORMULAS.IMAGE_SIZE = getResources().getDimensionPixelSize(R.dimen.formula_thumb_size);
         
         // Load the layout
         setContentView(R.layout.main);

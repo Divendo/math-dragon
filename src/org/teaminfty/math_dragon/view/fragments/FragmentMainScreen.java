@@ -121,6 +121,9 @@ public class FragmentMainScreen extends Fragment
         btnUndo.setOnClickListener(new UndoRedoClickListener());
         btnRedo.setOnClickListener(new UndoRedoClickListener());
         
+        // The click listener for the favourites button
+        view.findViewById(R.id.btn_favourites).setOnClickListener(new FavouritesClickListener());
+        
         // Return the view
         return view;
     }
@@ -317,6 +320,38 @@ public class FragmentMainScreen extends Fragment
                 undo();
             else
                 redo();
+        }
+    }
+    
+    /** The tag for the favourites dialog */
+    private static final String FAVOURITES_TAG = "favourites";
+
+    /** The click listener that handles clicks from the favourites button */
+    private class FavouritesClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View v)
+        {
+            // If a favourites dialog is already shown, stop here
+            if(getFragmentManager().findFragmentByTag(FAVOURITES_TAG) != null)
+                return;
+            
+            // Create and show the favourites dialog
+            FragmentSaveLoad fragmentSaveLoad = new FragmentSaveLoad();
+            fragmentSaveLoad.setFormulaLoadListener(new FavouriteLoadedListener());
+            fragmentSaveLoad.setExpression(mathView.getExpression());
+            fragmentSaveLoad.show(getFragmentManager(), FAVOURITES_TAG);
+        }
+    }
+    
+    /** Listener that handles load events from the favourites dialog */
+    private class FavouriteLoadedListener implements FragmentSaveLoad.OnFormulaLoadListener
+    {
+        @Override
+        public void loaded(Expression expression)
+        {
+            // Simply set the new expression
+            mathView.setExpression(expression);
         }
     }
 }

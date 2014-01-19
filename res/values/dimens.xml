@@ -47,4 +47,7 @@
     
     <dimen name="warning_dlg_padding">8dp</dimen>
     
+    <dimen name="formula_thumb_size">64dp</dimen>
+    <dimen name="formula_row_margin">8dp</dimen>
+    
 </resources>
