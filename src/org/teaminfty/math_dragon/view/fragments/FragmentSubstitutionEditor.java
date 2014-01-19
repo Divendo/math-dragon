@@ -99,7 +99,7 @@ public class FragmentSubstitutionEditor extends DialogFragment
         {
             // Set the size of the dialog
             params.width = getResources().getDimensionPixelSize(R.dimen.keyboard_dlg_width);
-            params.height = getResources().getDimensionPixelSize(R.dimen.evaluation_dlg_height);
+            params.height = getResources().getDimensionPixelSize(R.dimen.substitution_editor_dlg_height);
         }
         else
         {
