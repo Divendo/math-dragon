@@ -743,87 +743,93 @@ public class MathView extends View
         boundingBox.offset(scrollTranslate.x, scrollTranslate.y);
         boundingBox.offset((getWidth() - boundingBox.width()) / 2, (getHeight() - boundingBox.height()) / 2);
         
-        // If we don't intersect with the bounding box at all, we can stop here
-        if(!Rect.intersects(dragBoundingBox, boundingBox))
-            return;
-        
         // Some variables that will keep track of where we're hovering above
         int sourceChild = -1;                   // The source child that's causing the hover (-1 means the complete expression)
         int dst = -1;                           // The best distance (squared) we've found so far (-1 means that no hover has been found yet)
         HoverInformation currHover = null;      // The hover information of the Expression we're currently hovering over
         
-        // Keep track of which objects still need to be checked
-        ArrayDeque<HoverInformation> queue = new ArrayDeque<HoverInformation>();
-        queue.addLast(new HoverInformation(expression, boundingBox, null, 0));
-        
-        // Keep going until the queue is empty
-        while(!queue.isEmpty())
+        // If we've only one empty box, the drag and drop should always succeed
+        if(expression instanceof Empty)
+            currHover = new HoverInformation(expression, boundingBox, null, 0);
+        else
         {
-            // Pop off an element of the queue
-            HoverInformation info = queue.pollFirst();
+            // If we don't intersect with the bounding box at all, we can stop here
+            if(!Rect.intersects(dragBoundingBox, boundingBox))
+                return;
             
-            // If the Expression is Empty, we check the distance to the main aiming point
-            if(info.expression instanceof Empty)
+            // Keep track of which objects still need to be checked
+            ArrayDeque<HoverInformation> queue = new ArrayDeque<HoverInformation>();
+            queue.addLast(new HoverInformation(expression, boundingBox, null, 0));
+            
+            // Keep going until the queue is empty
+            while(!queue.isEmpty())
             {
-                // If the aim point is not in the rectangle at all, we've nothing to do
-                if(!info.boundingBox.contains(aimPoint.x, aimPoint.y))
-                    continue;
+                // Pop off an element of the queue
+                HoverInformation info = queue.pollFirst();
                 
-                // Check if the distance is smaller than what we've found so far
-                final int tmpDst = getDst(aimPoint, info.boundingBox);
-                if(dst == -1 || tmpDst < dst)
+                // If the Expression is Empty, we check the distance to the main aiming point
+                if(info.expression instanceof Empty)
                 {
-                    sourceChild = -1;
-                    dst = tmpDst;
-                    currHover = info;
-                }
-            }
-            else
-            {
-                // Determine if we're aiming at this object itself
-                Rect[] operatorBounds = info.expression.getOperatorBoundingBoxes();
-                for(Rect rect : operatorBounds)
-                    rect.offset(info.boundingBox.left, info.boundingBox.top);
-                for(int i = 0; i < childAimPoints.length; ++i)
-                {
-                    // If the current child has no aim point, we skip
-                    if(childAimPoints[i] == null) continue;
+                    // If the aim point is not in the rectangle at all, we've nothing to do
+                    if(!info.boundingBox.contains(aimPoint.x, aimPoint.y))
+                        continue;
                     
-                    // Determine the distance to the centre of every operator bounding box
-                    for(Rect rect : operatorBounds)
+                    // Check if the distance is smaller than what we've found so far
+                    final int tmpDst = getDst(aimPoint, info.boundingBox);
+                    if(dst == -1 || tmpDst < dst)
                     {
-                        // If the aim point is not in the rectangle at all, we've nothing to do
-                        if(!rect.contains(childAimPoints[i].x, childAimPoints[i].y))
-                            continue;
-                        
-                        // Check if the distance is smaller than what we've found so far
-                        final int tmpDst = getDst(childAimPoints[i], rect);
-                        if(dst == -1 || tmpDst < dst)
-                        {
-                            sourceChild = i;
-                            dst = tmpDst;
-                            currHover = info;
-                        }
+                        sourceChild = -1;
+                        dst = tmpDst;
+                        currHover = info;
                     }
                 }
-                
-                // Add the children we intersect with to the queue
-                for(int i = 0; i < info.expression.getChildCount(); ++i)
+                else
                 {
-                    // Ignore the 'integrate over' child of the integral
-                    if(info.expression instanceof Integral && i == 1)
-                        continue;
+                    // Determine if we're aiming at this object itself
+                    Rect[] operatorBounds = info.expression.getOperatorBoundingBoxes();
+                    for(Rect rect : operatorBounds)
+                        rect.offset(info.boundingBox.left, info.boundingBox.top);
+                    for(int i = 0; i < childAimPoints.length; ++i)
+                    {
+                        // If the current child has no aim point, we skip
+                        if(childAimPoints[i] == null) continue;
+                        
+                        // Determine the distance to the centre of every operator bounding box
+                        for(Rect rect : operatorBounds)
+                        {
+                            // If the aim point is not in the rectangle at all, we've nothing to do
+                            if(!rect.contains(childAimPoints[i].x, childAimPoints[i].y))
+                                continue;
+                            
+                            // Check if the distance is smaller than what we've found so far
+                            final int tmpDst = getDst(childAimPoints[i], rect);
+                            if(dst == -1 || tmpDst < dst)
+                            {
+                                sourceChild = i;
+                                dst = tmpDst;
+                                currHover = info;
+                            }
+                        }
+                    }
                     
-                    // Get the bounding box for the child
-                    Rect childBoundingBox = info.expression.getChildBoundingBox(i);
-                    childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
-                    
-                    // If we don't intersect with the bounding box at all, we're not interested
-                    if(!Rect.intersects(dragBoundingBox, childBoundingBox))
-                        continue;
-                    
-                    // Add the child to the queue
-                    queue.addLast(new HoverInformation(info.expression.getChild(i), childBoundingBox, info.expression, i));
+                    // Add the children we intersect with to the queue
+                    for(int i = 0; i < info.expression.getChildCount(); ++i)
+                    {
+                        // Ignore the 'integrate over' child of the integral
+                        if(info.expression instanceof Integral && i == 1)
+                            continue;
+                        
+                        // Get the bounding box for the child
+                        Rect childBoundingBox = info.expression.getChildBoundingBox(i);
+                        childBoundingBox.offset(info.boundingBox.left, info.boundingBox.top);
+                        
+                        // If we don't intersect with the bounding box at all, we're not interested
+                        if(!Rect.intersects(dragBoundingBox, childBoundingBox))
+                            continue;
+                        
+                        // Add the child to the queue
+                        queue.addLast(new HoverInformation(info.expression.getChild(i), childBoundingBox, info.expression, i));
+                    }
                 }
             }
         }
