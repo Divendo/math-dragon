@@ -97,6 +97,16 @@ public class Symbol extends Expression
         }
     }
     
+    /** Returns a symbol that simply consists out of the given variable
+     * @param var The variable that should be put in the symbol
+     * @return The symbol with the given variable */
+    public static Symbol createVarSymbol(char var)
+    {
+        Symbol out = new Symbol(1);
+        out.setVarPow(var, 1);
+        return out;
+    }
+    
     /** Initialises the paints */
     private void initPaints()
     {
