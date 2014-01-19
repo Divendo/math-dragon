@@ -4,6 +4,7 @@ import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Parentheses;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Derivative;
+import org.teaminfty.math_dragon.view.math.operation.Function;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
@@ -108,9 +109,12 @@ public class ParenthesesHelper
             definitivePlaceParentheses = true;
         }
 
-        // Special cases: the children of a Root operation, Parentheses and the first child of the Derivative
-        // There should never be placed parentheses around these children
-        if(parent instanceof Root || (parent instanceof Derivative && index == 0) || parent instanceof Parentheses)
+        // Special cases to never place parentheses around:
+        //      The children of a Root operation
+        //      The child of a Parentheses object
+        //      The first child of the Derivative
+        //      The child of a function
+        if(parent instanceof Root || (parent instanceof Derivative && index == 0) || parent instanceof Parentheses || parent instanceof Function)
         {
             placeParentheses = false;
             definitivePlaceParentheses = true;

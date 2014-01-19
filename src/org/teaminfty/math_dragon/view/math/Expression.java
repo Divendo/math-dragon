@@ -429,7 +429,7 @@ public abstract class Expression
     }
     
     /** Whether or not to draw the bounding boxes */
-    private final static boolean DRAW_BOUNDING = true;
+    private final static boolean DRAW_BOUNDING = false;
     
     /** Draws the bounding box and the bounding boxes of the children (for debug purposes).
      * The boxes will only be drawn if {@link Expression#DRAW_BOUNDING DRAW_BOUNDING} is set to true.
