@@ -141,22 +141,6 @@
 	            android:id="@+id/mathSourceArcTan"
 	        	style="@style/MathSourceView" />
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
-	            android:id="@+id/mathSourceSinh"
-	        	style="@style/MathSourceView" />
-	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
-	            android:id="@+id/mathSourceCosh"
-	        	style="@style/MathSourceView" />
-	
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="0dp"
-	        android:orientation="horizontal"
-	        android:layout_weight="1"
-	        android:weightSum="4" >
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceLog"

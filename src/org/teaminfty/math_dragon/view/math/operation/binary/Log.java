@@ -1,5 +1,6 @@
 package org.teaminfty.math_dragon.view.math.operation.binary;
 
+import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Precedence;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
@@ -50,6 +51,8 @@ public class Log extends Binary
     public Log()
     {
         this.name = "log";
+        
+        initPaint();
     }
 
     /** Constructor */
@@ -57,6 +60,15 @@ public class Log extends Binary
     {
         super(base, parameter);
         this.name = "log";
+        
+        initPaint();
+    }
+    
+    /** Initialises the paint */
+    private void initPaint()
+    {
+        operatorPaint.setTypeface(TypefaceHolder.dejavuSans);
+        operatorPaint.setAntiAlias(true);
     }
     
     @Override

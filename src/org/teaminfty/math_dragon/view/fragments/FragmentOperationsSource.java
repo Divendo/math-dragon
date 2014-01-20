@@ -46,8 +46,6 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         setMathSourceObjectFor(layout, R.id.mathSourceArcCos, new MathSourceOperationFunction(Function.FunctionType.ARCCOS));
         setMathSourceObjectFor(layout, R.id.mathSourceTan, new MathSourceOperationFunction(Function.FunctionType.TAN));
         setMathSourceObjectFor(layout, R.id.mathSourceArcTan, new MathSourceOperationFunction(Function.FunctionType.ARCTAN));
-        setMathSourceObjectFor(layout, R.id.mathSourceSinh, new MathSourceOperationFunction(Function.FunctionType.SINH));
-        setMathSourceObjectFor(layout, R.id.mathSourceCosh, new MathSourceOperationFunction(Function.FunctionType.COSH));
         setMathSourceObjectFor(layout, R.id.mathSourceLog, new MathSourceOperationLog());
         setMathSourceObjectFor(layout, R.id.mathSourceLn, new MathSourceOperationFunction(Function.FunctionType.LN));
         
