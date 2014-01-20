@@ -24,13 +24,6 @@ public class Multiply extends Linear
     }
 
     @Override
-    protected Rect getOperatorSize()
-    {
-        final int size = (int) (18 * lineWidth);
-        return new Rect(0, 0, size, size);
-    }
-    
-    @Override
     public int getPrecedence()
     { return Precedence.MULTIPLY; }
     
@@ -43,14 +36,13 @@ public class Multiply extends Linear
         // Get the bounding box
         final Rect operator = getOperatorBoundingBoxes()[0];
         
-        // Set the radius of the times symbol
-        int radius = operator.width()/10;
-        
         // Draw the operator
+        operator.inset(operator.width() / 10, operator.height() / 10);      // Padding
         canvas.save();
+        canvas.translate(operator.left, operator.top);
+        operatorPaint.setStrokeWidth(lineWidth);
         operatorPaint.setColor(this.getColor());
-        operatorPaint.setAntiAlias(true);
-        canvas.drawCircle(operator.centerX(), operator.centerY(), radius, operatorPaint);
+        canvas.drawCircle(operator.width()/2, operator.height()/2, operator.width()/10, operatorPaint);
         canvas.restore();
         
         // Draw the children
