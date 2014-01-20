@@ -14,6 +14,7 @@ import org.teaminfty.math_dragon.view.math.operation.Binary;
 import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Log;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
@@ -67,6 +68,10 @@ public final class ExpressionXMLReader
             else if(type.equals(Derivative.TYPE))
             {
                 return new Derivative(toMath((Element) e.getFirstChild()), toMath((Element) e.getLastChild()));
+            }
+            else if(type.equals(Log.TYPE))
+            {
+                return new Log(toMath((Element) e.getFirstChild()), toMath((Element) e.getLastChild()));
             }
         }
         catch(RuntimeException ex)

@@ -8,6 +8,8 @@ import org.teaminfty.math_dragon.view.math.operation.binary.Linear;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import android.graphics.Rect;
+
 /**
  * This class draws binary operations and provides simply functions to modify
  * both mathematical expressions.
@@ -107,6 +109,25 @@ public abstract class Binary extends Operation
     public Expression getRight()
     {
         return getChild(1);
+    }
+    
+    /**
+     * Returns the sizes of the bounding of the children.
+     * 
+     * @param maxWidth
+     *        The maximum width the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     * @param maxHeight
+     *        The maximum height the {@link MathObject} can have (can be {@link MathObject#NO_MAXIMUM})
+     * @return The size of the child bounding boxes
+     */
+    public Rect[] getChildrenSize()
+    {
+        // Get the sizes both operands want to take
+        Rect leftSize = getChild(0).getBoundingBox();
+        Rect rightSize = getChild(1).getBoundingBox();
+        
+        // Return the Sizes
+        return new Rect[] {leftSize, rightSize};
     }
     
     protected final void writeChildrenToXML(Document doc, Element el)

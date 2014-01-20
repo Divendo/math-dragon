@@ -20,6 +20,7 @@ import org.teaminfty.math_dragon.view.math.operation.Binary;
 import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Log;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
@@ -115,6 +116,8 @@ public class EvalHelper
             return root((Root) bin);
         if(bin instanceof Derivative)
             return derivative((Derivative) bin);
+        if(bin instanceof Log)
+            return log((Log) bin);
         throw new MathException(bin.toString());
     }
 
@@ -317,6 +320,21 @@ public class EvalHelper
     {
         checkChildren(ddx);
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
+    }
+    
+    /**
+     * Evaluate mathematical logarithm using specified argument.
+     * 
+     * @param log
+     *        The mathematical logarithm.
+     * @return Converted mathematical logarithm for Symja.
+     * @throws MathException
+     *         Thrown when <tt>log</tt> contains invalid children.
+     */
+    public static IExpr log(Log log) throws MathException
+    {
+        checkChildren(log);
+        return F.Divide(F.Log(eval(log.getRight())), F.Log(eval(log.getLeft())));
     }
 
     /**

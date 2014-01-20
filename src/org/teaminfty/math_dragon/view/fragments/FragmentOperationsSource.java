@@ -6,6 +6,7 @@ import org.teaminfty.math_dragon.view.MathSourceObject;
 import org.teaminfty.math_dragon.view.MathSourceOperationDerivative;
 import org.teaminfty.math_dragon.view.MathSourceOperationDivide;
 import org.teaminfty.math_dragon.view.MathSourceOperationIntegral;
+import org.teaminfty.math_dragon.view.MathSourceOperationLog;
 import org.teaminfty.math_dragon.view.MathSourceOperationPower;
 import org.teaminfty.math_dragon.view.MathSourceOperationRoot;
 import org.teaminfty.math_dragon.view.MathSourceOperationFunction;
@@ -37,6 +38,7 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         setMathSourceObjectFor(layout, R.id.mathSourceRoot, new MathSourceOperationRoot());
         setMathSourceObjectFor(layout, R.id.mathSourceDerivative, new MathSourceOperationDerivative());
         setMathSourceObjectFor(layout, R.id.mathSourceIntegral, new MathSourceOperationIntegral());
+        setMathSourceObjectFor(layout, R.id.mathSourceLog, new MathSourceOperationLog());
         // Functions
         setMathSourceObjectFor(layout, R.id.mathSourceSin, new MathSourceOperationFunction(Function.FunctionType.SIN));
         setMathSourceObjectFor(layout, R.id.mathSourceArcSin, new MathSourceOperationFunction(Function.FunctionType.ARCSIN));
@@ -46,7 +48,7 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         setMathSourceObjectFor(layout, R.id.mathSourceArcTan, new MathSourceOperationFunction(Function.FunctionType.ARCTAN));
         setMathSourceObjectFor(layout, R.id.mathSourceSinh, new MathSourceOperationFunction(Function.FunctionType.SINH));
         setMathSourceObjectFor(layout, R.id.mathSourceCosh, new MathSourceOperationFunction(Function.FunctionType.COSH));
-        /* setMathSourceObjectFor(layout, R.id.mathSourceLog, ); */
+        setMathSourceObjectFor(layout, R.id.mathSourceLog, new MathSourceOperationLog());
         setMathSourceObjectFor(layout, R.id.mathSourceLn, new MathSourceOperationFunction(Function.FunctionType.LN));
         
         // Get the tabs and set their OnClickListener and activate the right one
