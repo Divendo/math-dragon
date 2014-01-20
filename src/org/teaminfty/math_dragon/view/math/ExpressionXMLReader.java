@@ -82,7 +82,7 @@ public final class ExpressionXMLReader
             if(tag.equals(Symbol.NAME))
             {
                 // The values of the powers
-                long factor = 0;
+                double factor = 0;
                 long ePow = 0;
                 long piPow = 0;
                 long iPow = 0;
@@ -94,7 +94,7 @@ public final class ExpressionXMLReader
                 {
                     final String name = attrMap.item(i).getNodeName();
                     if(name.equals(Symbol.ATTR_FACTOR))
-                        factor = Long.parseLong(attrMap.item(i).getNodeValue());
+                        factor = Double.parseDouble(attrMap.item(i).getNodeValue());
                     else if(name.equals(Symbol.ATTR_E))
                         ePow = Long.parseLong(attrMap.item(i).getNodeValue());
                     else if(name.equals(Symbol.ATTR_PI))
