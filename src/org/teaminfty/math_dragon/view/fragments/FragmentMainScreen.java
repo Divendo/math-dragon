@@ -23,6 +23,9 @@ import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListen
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.operation.Derivative;
+import org.teaminfty.math_dragon.view.math.operation.Integral;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -128,6 +131,11 @@ public class FragmentMainScreen extends Fragment
         if(getFragmentManager().findFragmentByTag(FAVOURITES_TAG) != null)
             ((FragmentSaveLoad) getFragmentManager().findFragmentByTag(FAVOURITES_TAG)).setFormulaLoadListener(new FavouriteLoadedListener());
         
+        // Set the click listener for the derivative and integrate buttons
+        DerivativeIntegrateButtonListener derivativeIntegrateButtonListener = new DerivativeIntegrateButtonListener();
+        view.findViewById(R.id.btn_derivative).setOnClickListener(derivativeIntegrateButtonListener);
+        view.findViewById(R.id.btn_integrate).setOnClickListener(derivativeIntegrateButtonListener);
+        
         // Return the view
         return view;
     }
@@ -190,7 +198,7 @@ public class FragmentMainScreen extends Fragment
     
     /** Returns the current {@link Expression}
      * @return The current {@link Expression} */
-    public Expression getMathObject()
+    public Expression getExpression()
     {
         return mathView.getExpression();
     }
@@ -356,6 +364,27 @@ public class FragmentMainScreen extends Fragment
         {
             // Simply set the new expression
             mathView.setExpression(expression);
+        }
+    }
+
+    /** Listener that handles derive / integrate button clicks */
+    private class DerivativeIntegrateButtonListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View v)
+        {
+            // Determine the new expression
+            Expression newExpr = null;
+            if(v.getId() == R.id.btn_integrate)
+                newExpr = new Integral(mathView.getExpression(), Symbol.createVarSymbol('x'));
+            else
+                newExpr = new Derivative(mathView.getExpression(), Symbol.createVarSymbol('x'));
+            
+            // Set the new expression
+            mathView.setExpression(newExpr);
+            
+            // Evaluate (by simulating an evaluate button press)
+            getView().findViewById(R.id.btn_evaluate).performClick();
         }
     }
 }

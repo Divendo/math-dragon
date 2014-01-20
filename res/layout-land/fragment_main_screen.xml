@@ -47,18 +47,18 @@
     <Button
         android:id="@+id/btn_integrate"
         style="@style/CircleButton"
-        android:layout_above="@id/btn_evaluate"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/main_screen_button_margin"
-        android:layout_marginRight="@dimen/main_screen_button_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/btn_wolfram"
+        android:layout_marginBottom="@dimen/main_screen_button_margin"
+        android:layout_marginLeft="@dimen/main_screen_button_margin"
         android:text="@string/f_integrate" />
     
     <Button
         android:id="@+id/btn_derivative"
         style="@style/CircleButton"
-        android:layout_above="@id/btn_integrate"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/main_screen_button_margin"
+        android:layout_toLeftOf="@id/btn_integrate"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/main_screen_button_margin"
         android:text="@string/f_derivative" />
 
     <!-- Buttons in the top right corner -->
