@@ -42,6 +42,7 @@ public class Multiply extends Linear
         canvas.translate(operator.left, operator.top);
         operatorPaint.setStrokeWidth(lineWidth);
         operatorPaint.setColor(this.getColor());
+        operatorPaint.setAntiAlias(true);
         canvas.drawCircle(operator.width()/2, operator.height()/2, operator.width()/10, operatorPaint);
         canvas.restore();
         
