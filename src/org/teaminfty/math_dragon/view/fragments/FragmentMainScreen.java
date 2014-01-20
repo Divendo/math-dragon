@@ -124,6 +124,10 @@ public class FragmentMainScreen extends Fragment
         // The click listener for the favourites button
         view.findViewById(R.id.btn_favourites).setOnClickListener(new FavouritesClickListener());
         
+        // Set the favourites listener (if necessary)
+        if(getFragmentManager().findFragmentByTag(FAVOURITES_TAG) != null)
+            ((FragmentSaveLoad) getFragmentManager().findFragmentByTag(FAVOURITES_TAG)).setFormulaLoadListener(new FavouriteLoadedListener());
+        
         // Return the view
         return view;
     }

@@ -18,28 +18,21 @@
         android:text="@string/edit_substitution" />
     
     <!-- Dialog buttons -->
-    <LinearLayout
-        android:id="@+id/dlg_buttons_container"
-        android:layout_alignParentLeft="true"
+	<ImageButton
+	    android:id="@+id/btn_ok"
+	    style="@style/KeyboardButton"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center" >
-        
-		<ImageButton
-		    android:id="@+id/btn_ok"
-		    style="@style/KeyboardButton"
-		    android:src="@drawable/check"
-		    android:contentDescription="@string/ok" />
-		
-		<ImageButton
-		    android:id="@+id/btn_cancel"
-		    style="@style/KeyboardButton"
-		    android:src="@drawable/cross"
-		    android:contentDescription="@string/cancel" />
-		
-    </LinearLayout>
+	    android:src="@drawable/check"
+	    android:contentDescription="@string/ok" />
+	
+	<ImageButton
+	    android:id="@+id/btn_cancel"
+	    style="@style/KeyboardButton"
+        android:layout_toLeftOf="@id/btn_ok"
+        android:layout_alignParentBottom="true"
+	    android:src="@drawable/cross"
+	    android:contentDescription="@string/cancel" />
     
     <!-- Value that is to be substituted for -->
     <Button
@@ -48,8 +41,8 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/substitute_row_height"
         android:layout_marginRight="@dimen/substitute_margin"
-        android:layout_alignParentRight="true"
-        android:layout_above="@id/dlg_buttons_container"
+        android:layout_toLeftOf="@id/btn_cancel"
+        android:layout_alignParentBottom="true"
         android:text="@string/edit" />
     
     <HorizontalScrollView
@@ -59,7 +52,7 @@
         android:layout_marginLeft="@dimen/substitute_margin"
         android:layout_marginRight="@dimen/substitute_margin"
         android:layout_alignParentLeft="true"
-        android:layout_above="@id/dlg_buttons_container"
+        android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@id/btn_edit_substitute_for"
         android:gravity="center_vertical"
         android:overScrollMode="never"
@@ -90,20 +83,23 @@
     <!-- Variable buttons -->
     <LinearLayout
         android:id="@+id/var_buttons_container"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_below="@id/text_title"
         android:layout_above="@id/text_substitute_for_label"
     	android:gravity="center"
     	android:orientation="vertical" >
-		
-	    <TextView
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_margin="@dimen/keyboard_button_margin"
-	        android:text="@string/var_to_substitute" />
     
     </LinearLayout>
+    
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@id/var_buttons_container"
+        android:layout_toLeftOf="@id/var_buttons_container"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:text="@string/var_to_substitute" />
 
 </RelativeLayout>

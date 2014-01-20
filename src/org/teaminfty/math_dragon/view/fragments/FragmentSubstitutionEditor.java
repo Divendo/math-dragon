@@ -1,11 +1,24 @@
 package org.teaminfty.math_dragon.view.fragments;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Symbol;
+import org.w3c.dom.Document;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -40,6 +53,21 @@ public class FragmentSubstitutionEditor extends DialogFragment
         
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_substitution_editor, container, false);
+        
+        // Restore the current value and variable name (if necessary)
+        if(savedInstanceState != null)
+        {
+            varName = savedInstanceState.getChar(VAR_NAME);
+            try
+            {
+                value = ExpressionXMLReader.fromXML(savedInstanceState.getByteArray(CURRENT_VALUE));
+            }
+            catch(ParseException e)
+            {
+                // TODO Auto-generated catch block (when an error occurs during the conversion from the XML document to a MathObject)
+                e.printStackTrace();
+            }
+        }
         
         // Click listeners for the confirm, edit and cancel buttons
         view.findViewById(R.id.btn_ok).setOnClickListener(new ButtonOkOnClickListener());
@@ -82,6 +110,10 @@ public class FragmentSubstitutionEditor extends DialogFragment
         ((TextView) view.findViewById(R.id.text_substitute_for)).setTypeface(TypefaceHolder.dejavuSans);
         ((TextView) view.findViewById(R.id.text_substitute_for)).setText(valueToString());
         
+        // Restore the keyboard confirm listener (if necessary)
+        if(getFragmentManager().findFragmentByTag(KEYBOARD_TAG) != null)
+            ((FragmentKeyboard) getFragmentManager().findFragmentByTag(KEYBOARD_TAG)).setOnConfirmListener(new SetSubstitutionValueListener());
+        
         // Return the content view
         return view;
     }
@@ -108,6 +140,41 @@ public class FragmentSubstitutionEditor extends DialogFragment
             params.height = WindowManager.LayoutParams.MATCH_PARENT;
         }
         getDialog().getWindow().setAttributes(params);
+    }
+
+    /** A char containing the name of the variable we're editing */
+    private static final String VAR_NAME = "var_name";
+    
+    /** A byte array containing the current value as XML */
+    private static final String CURRENT_VALUE = "curr_val";
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // Store the name of the variable we're editing
+        outState.putChar(VAR_NAME, varName);
+        
+        // Store the current value
+        try
+        {
+            // Convert the MathObject to a XML document
+            Document doc = Expression.createXMLDocument();
+            value.writeToXML(doc, doc.getDocumentElement());
+            
+            // Convert the XML document to a byte array and add it to the ContentValues instance
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            transformer.transform(new DOMSource(doc), new StreamResult(byteStream));
+            outState.putByteArray(CURRENT_VALUE, byteStream.toByteArray());
+        }
+        catch(TransformerConfigurationException e)
+        { /* Never thrown, ignore */ }
+        catch(TransformerFactoryConfigurationError e)
+        { /* Ignore */ }
+        catch(TransformerException e)
+        { /* Ignore */ }
+        catch(ParserConfigurationException e)
+        { /* Ignore */ }
     }
     
     /** Gets the value as a string */

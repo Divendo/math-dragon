@@ -35,7 +35,7 @@
 	<string name="add_substitution">Add substitution</string>
 	<string name="edit_substitution">Edit substitution</string>
 	<string name="var_to_substitute">Variable to substitute:</string>
-	<string name="substitute_for">Substitute for:</string>
+	<string name="substitute_by">Substitute by:</string>
 	<string name="edit">Edit</string>
 	<string name="delete_substitution">Delete substitution?</string>
 	<string name="sure_to_delete_substitution">Are you sure you want to delete the substitution?</string>

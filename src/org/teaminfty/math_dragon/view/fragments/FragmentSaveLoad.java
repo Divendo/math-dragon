@@ -1,12 +1,25 @@
 package org.teaminfty.math_dragon.view.fragments;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.Database.Formula;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
+import org.w3c.dom.Document;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -48,6 +61,34 @@ public class FragmentSaveLoad extends DialogFragment
         
         // The add button
         view.findViewById(R.id.btn_save).setOnClickListener(new BtnSaveClickListener());
+
+        // Restore the confirmation listener
+        if(savedInstanceState != null && getFragmentManager().findFragmentByTag(CONFIRMATION_DLG_TAG) != null)
+        {
+            // Create the listener
+            FragmentWarningDialog.OnConfirmListener listener = null;
+            if(savedInstanceState.getBoolean(CONFIRM_DELETE))
+                listener = new ConfirmDeleteListener(savedInstanceState.getInt(CONFIRM_ID));
+            else
+                listener = new ConfirmOverwriteListener(savedInstanceState.getInt(CONFIRM_ID));
+            
+            // Set the listener
+            ((FragmentWarningDialog) getFragmentManager().findFragmentByTag(CONFIRMATION_DLG_TAG)).setOnConfirmListener(listener);
+        }
+        
+        // Restore the current expression
+        if(savedInstanceState != null && savedInstanceState.getByteArray(CURRENT_EXPR) != null)
+        {
+            try
+            {
+                currExpr = ExpressionXMLReader.fromXML(savedInstanceState.getByteArray(CURRENT_EXPR));
+            }
+            catch(ParseException e)
+            {
+                // TODO Auto-generated catch block (when an error occurs during the conversion from the XML document to a MathObject)
+                e.printStackTrace();
+            }
+        }
         
         // Return the content view
         return view;
@@ -80,6 +121,54 @@ public class FragmentSaveLoad extends DialogFragment
     @Override
     public void onCancel(DialogInterface dialog)
     { dismiss(); }
+    
+    /** A boolean containing whether the delete (<tt>true</tt>) or overwrite (<tt>false</tt>) confirm listener is set for the confirmation dialog (if present) */
+    private static final String CONFIRM_DELETE = "confirm_delete";
+    
+    /** An int containing the ID of the confirm listener for the confirmation dialog (if present) */
+    private static final String CONFIRM_ID = "confirm_id";
+    
+    /** A byte array containing the current expression as XML */
+    private static final String CURRENT_EXPR = "curr_expr";
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // Store the confirmation listener
+        if(getFragmentManager().findFragmentByTag(CONFIRMATION_DLG_TAG) != null)
+        {
+            // Get the dialog's listener
+            FragmentWarningDialog.OnConfirmListener listener = ((FragmentWarningDialog) getFragmentManager().findFragmentByTag(CONFIRMATION_DLG_TAG)).getOnConfirmListener();
+            
+            // Store the type of the confirm listener
+            outState.putBoolean(CONFIRM_DELETE, listener instanceof ConfirmDeleteListener);
+            
+            // Store the ID of the confirm listener
+            outState.putInt(CONFIRM_ID, listener instanceof ConfirmDeleteListener ? ((ConfirmDeleteListener) listener).id : ((ConfirmOverwriteListener) listener).id);
+        }
+        
+        // Store the current expression
+        try
+        {
+            // Convert the MathObject to a XML document
+            Document doc = Expression.createXMLDocument();
+            currExpr.writeToXML(doc, doc.getDocumentElement());
+            
+            // Convert the XML document to a byte array and add it to the ContentValues instance
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            transformer.transform(new DOMSource(doc), new StreamResult(byteStream));
+            outState.putByteArray(CURRENT_EXPR, byteStream.toByteArray());
+        }
+        catch(TransformerConfigurationException e)
+        { /* Never thrown, ignore */ }
+        catch(TransformerFactoryConfigurationError e)
+        { /* Ignore */ }
+        catch(TransformerException e)
+        { /* Ignore */ }
+        catch(ParserConfigurationException e)
+        { /* Ignore */ }
+    }
     
     /** Set the current {@link Expression}
      * @param expr The current {@link Expression} */
@@ -229,7 +318,7 @@ public class FragmentSaveLoad extends DialogFragment
     private class ConfirmOverwriteListener implements FragmentWarningDialog.OnConfirmListener
     {
         /** The id of the formula */
-        private int id;
+        public int id;
         
         /** Constructor
          * @param id The id of the formula */
@@ -295,7 +384,7 @@ public class FragmentSaveLoad extends DialogFragment
     private class ConfirmDeleteListener implements FragmentWarningDialog.OnConfirmListener
     {
         /** The id of the formula */
-        private int id;
+        public int id;
         
         /** Constructor
          * @param id The id of the formula */
