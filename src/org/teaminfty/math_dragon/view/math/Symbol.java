@@ -14,6 +14,12 @@ import android.graphics.Rect;
 public class Symbol extends Expression
 {
     /**
+     * Cached mathematical symbolic constant for the mathematical <tt>-1</tt> in
+     * order to speed up helpers and parsers so they don't need to make this
+     * symbolic constant themselves.
+     */
+    public static final Symbol M_ONE = new Symbol(-1);
+    /**
      * Cached mathematical symbolic constant for the mathematical <tt>0</tt> in
      * order to speed up helpers and parsers so they don't need to make this
      * symbolic constant themselves.
