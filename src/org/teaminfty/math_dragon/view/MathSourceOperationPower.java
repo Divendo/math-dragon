@@ -14,7 +14,7 @@ public class MathSourceOperationPower extends MathSourceObject
 {
     @Override
     public Expression createMathObject()
-    { return new Limit(); }
+    { return new Power(); }
 
     @Override
     public void draw(Canvas canvas, int w, int h)
