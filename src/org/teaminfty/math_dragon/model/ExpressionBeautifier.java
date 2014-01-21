@@ -1,17 +1,20 @@
 package org.teaminfty.math_dragon.model;
 
 import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.Operation;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
+import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
+import org.teaminfty.math_dragon.view.math.operation.binary.Subtract;
 
 /**
- * Ensures that complicated and hard-to-read mathematical expression are
+ * Ensures that complicated and hard-to-read mathematical expressions are
  * simplified and beautified such that the expression remains as simple as
  * possible to be read by users.
  * 
@@ -36,9 +39,17 @@ public class ExpressionBeautifier
      */
     public static Expression parse(Expression expr)
     {
+        if (expr instanceof Symbol)
+            return symbol((Symbol) expr);
         if (expr instanceof Operation)
             return operation((Operation) expr);
         return expr;
+    }
+    
+    static Symbol symbol(Symbol s)
+    {
+        // TODO expand to ... * 10^ x if factor really large or really small
+        return s;
     }
     
     /**
@@ -106,6 +117,16 @@ public class ExpressionBeautifier
             return right;
         if (right.equals(Symbol.ZERO))
             return left;
+        if (right instanceof Symbol)
+        {
+            Symbol symr = (Symbol) right;
+            double factor = symr.getFactor();
+            if (factor < 0)
+            {
+                symr.setFactor(-factor);
+                return new Subtract(left, symr);
+            }
+        }
         return add;
     }
     
@@ -155,6 +176,11 @@ public class ExpressionBeautifier
             ldiv.setNumerator(mul(new Multiply(ldiv.getNumerator(), rdiv.getNumerator())));
             ldiv.setDenominator(mul(new Multiply(ldiv.getDenominator(), rdiv.getDenominator())));
             return ldiv;
+        }
+        // combine if left operand equals -1 and right operand is a function
+        if (left.equals(Symbol.M_ONE) && right instanceof Function)
+        {
+            return new Negate(right);
         }
         return mul;
     }
