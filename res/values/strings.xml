@@ -45,6 +45,8 @@
     <string name="delete_substitution">Delete substitution?</string>
     <string name="sure_to_delete_substitution">Are you sure you want to delete the substitution?</string>
     <string name="dont_show">Don\'t ask again</string>
+    <string name="tutorial_dialog_title">Tutorial</string>
+    <string name="tutorial_dialog_msg">Do you want to follow the tutorial?</string>
     <string name="tutorial_fun_op_title">Functions and Operators</string>
     <string name="tutorial_fun_op_msg">Click on the MathDragOn icon to open the side-menu. Here you will find various functions and operators that you can drag n drop into the main screen</string>
     <string name="tutorial_fun_op_drag_msg">You can also swipe from the left edge of the screen to reveal the side menu</string>

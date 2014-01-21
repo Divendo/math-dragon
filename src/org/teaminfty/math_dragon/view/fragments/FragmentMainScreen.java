@@ -75,7 +75,7 @@ public class FragmentMainScreen extends Fragment
             {
                 
                 FragmentTutorialDialog dg = new FragmentTutorialDialog(
-                        R.string.app_name, R.string.app_name,
+                        R.string.tutorial_dialog_title, R.string.tutorial_dialog_msg,
                         new FragmentTutorialDialog.OnConfirmListener()
                         {
 
