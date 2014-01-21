@@ -330,7 +330,7 @@ public class FragmentSaveLoad extends DialogFragment
         {
             // Save the current expression
             Database db = new Database(getActivity());
-            db.saveFormula(id, ((TextView) getView().findViewById(R.id.edit_name)).getText().toString(), currExpr);
+            db.saveFormula(id, null, currExpr);
             db.close();
             
             // Refresh the formula with given id
