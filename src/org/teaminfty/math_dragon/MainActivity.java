@@ -164,6 +164,9 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             // Get the query
             String query = substitutedExpr.toString();
             
+            // Replace the iota we write for the imaginary unit by an i (which WA understands)
+            query = query.replace('\u03b9', 'i');
+
             // Strip the query of unnecessary outer parentheses
             if(query.startsWith("(") && query.endsWith(")"))
                 query = query.substring(1, query.length() - 1);
