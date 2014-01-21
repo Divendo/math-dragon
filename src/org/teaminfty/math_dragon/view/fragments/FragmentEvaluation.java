@@ -11,8 +11,16 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.expression.F;
+import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.model.EvalHelper;
+import org.teaminfty.math_dragon.model.ExpressionBeautifier;
+import org.teaminfty.math_dragon.model.ModelHelper;
+import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Expression;
@@ -21,6 +29,7 @@ import org.w3c.dom.Document;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,10 +45,13 @@ public class FragmentEvaluation extends DialogFragment
     private MathView mathView = null;
     
     /** The {@link Expression} to show when the {@link MathView} is created */
-    private Expression showMathObject = null;
+    private Expression showExpression = null;
     
     /** The evaluation type, <tt>true</tt> if an exact evaluation is shown, <tt>false</tt> for an approximation */
     private boolean exactEvaluation = true;
+    
+    /** The current evaluator (or <tt>null</tt> if there is none) */
+    private Evaluator evaluator = null;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -55,13 +67,19 @@ public class FragmentEvaluation extends DialogFragment
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEnabled(false);
         mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
-        if(showMathObject != null)
-            mathView.setExpression(showMathObject);
+        if(showExpression != null)
+        {
+            mathView.setExpression(showExpression);
+            view.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            view.findViewById(R.id.mathView).setVisibility(View.VISIBLE);
+        }
         else if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_MATH_EXPRESSION) != null)
         {
             try
             {
                 mathView.setExpression(ExpressionXMLReader.fromXML(savedInstanceState.getString(BUNDLE_MATH_EXPRESSION)));
+                view.findViewById(R.id.progressBar).setVisibility(View.GONE);
+                view.findViewById(R.id.mathView).setVisibility(View.VISIBLE);
             }
             catch(ParseException e)
             {
@@ -121,13 +139,17 @@ public class FragmentEvaluation extends DialogFragment
     }
     
     /** Sets the {@link Expression} that is to be shown
-     * @param mathObject The {@link Expression} that is to be shown */
-    public void showMathObject(Expression mathObject)
+     * @param expr The {@link Expression} that is to be shown */
+    public void showExpression(Expression expr)
     {
     	if(mathView == null)
-    	    showMathObject = mathObject;
+    	    showExpression = expr;
     	else
-    	    mathView.setExpression(mathObject);
+    	{
+    	    mathView.setExpression(expr);
+            getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+    	    getView().findViewById(R.id.mathView).setVisibility(View.VISIBLE);
+    	}
     }
 
     /** Sets whether an approximation or exact evaluation is shown.
@@ -135,6 +157,15 @@ public class FragmentEvaluation extends DialogFragment
      * @param exact Set to <tt>true</tt> if an exact evaluation is shown, set to <tt>false</tt> for an approximation */
     public void setEvalType(boolean exact)
     { exactEvaluation = exact; }
+    
+    /** Evaluates the given expression
+     * @param expr The expression to evaluate */
+    public void evaluate(Expression expr)
+    {
+        // Start the evaluator
+        evaluator = new Evaluator();
+        evaluator.execute(expr);
+    }
 
     @Override
     public void onResume()
@@ -168,6 +199,13 @@ public class FragmentEvaluation extends DialogFragment
     public void onDismiss(DialogInterface dialog)
     {
         mathView = null;
+        if(evaluator != null)
+        {
+            synchronized(evaluator)
+            {
+                evaluator.cancel(true);
+            }
+        }
     }
     
     private class OnCloseBtnClickListener implements View.OnClickListener
@@ -175,6 +213,51 @@ public class FragmentEvaluation extends DialogFragment
         @Override
         public void onClick(View btn)
         { dismiss(); }
+    }
+
+    /** Class that evaluates the expression in a separate thread */
+    private class Evaluator extends AsyncTask<Expression, Void, Expression>
+    {
+        @Override
+        protected Expression doInBackground(Expression... args)
+        {
+            synchronized(evaluator)
+            {
+                if(!isCancelled())
+                {
+                    try
+                    {
+                        // Calculate the answer
+                        IExpr result = null;
+                        if(exactEvaluation)
+                            result = EvalEngine.eval(EvalHelper.eval(args[0]));
+                        else
+                            result = F.evaln(EvalHelper.eval(args[0]));
+                        
+                        // Parse the expression, beautify it and place parentheses
+                        Expression resultExpr = ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result)));
+                        
+                        // Return the result
+                        return resultExpr;
+                    }
+                    catch(MathException e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+            // Something went wrong, return null
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Expression result)
+        {
+            if(result != null)
+                showExpression(result);
+        }
     }
 }
 
