@@ -18,11 +18,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
-public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor.OnStateChangeListener
+public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor.OnStateChangeListener, MathSymbolEditor.OnScrollToListener
 {
     /** The {@link MathSymbolEditor} in this fragment */
     private MathSymbolEditor mathSymbolEditor = null;
@@ -49,6 +50,7 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     	// Get the MathSymbolEditor
     	mathSymbolEditor = (MathSymbolEditor) myFragmentView.findViewById(R.id.mathSymbolEditor);
     	mathSymbolEditor.setStateChangeListener(this);
+    	mathSymbolEditor.setOnScrollToListener(this);
         if(exprForLater != null)
             mathSymbolEditor.fromExpression(exprForLater);
         else if(savedInstanceState != null && savedInstanceState.getBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE) != null)
@@ -479,5 +481,14 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     @Override
     public void stateChanged()
     { refreshButtonState(); }
+
+    @Override
+    public void scroll(int left, int right)
+    {
+        if(getView() == null) return;
+        HorizontalScrollView scrollView = (HorizontalScrollView) getView().findViewById(R.id.mathSymbolEditorScroller);
+        final int padding = getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_scroll_padding);
+        scrollView.scrollTo(Math.max(left - padding, right - scrollView.getWidth() + padding), scrollView.getScrollY());
+    }
 }
 

@@ -8,11 +8,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.teaminfty.math_dragon.exceptions.ParseException;
-import org.teaminfty.math_dragon.view.math.operation.Derivative;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
 import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
+import org.teaminfty.math_dragon.view.math.operation.binary.Derivative;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Log;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;

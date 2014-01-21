@@ -47,6 +47,10 @@
         <item name="android:layout_weight">0.5</item>
     </style>
     
+    <style name="OperationsSourceTabButton" parent="@style/TabButton">
+        <item name="android:background">@drawable/border_operations_source_tab_bottom</item>
+    </style>
+    
     <style name="DeleteConfirmer">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>

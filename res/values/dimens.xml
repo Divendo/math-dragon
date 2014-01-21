@@ -24,6 +24,7 @@
     <dimen name="math_symbol_editor_font_size">48sp</dimen>
     <dimen name="math_symbol_editor_min_height">48dp</dimen>
     <dimen name="math_symbol_editor_padding">8dp</dimen>
+    <dimen name="math_symbol_editor_scroll_padding">16dp</dimen>
     <dimen name="keyboard_button_margin">8dp</dimen>
     <dimen name="keyboard_padding">8dp</dimen>
     <dimen name="keyboard_button_small_margin">16dp</dimen>

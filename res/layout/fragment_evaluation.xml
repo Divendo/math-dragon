@@ -47,5 +47,29 @@
 		android:visibility="gone"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" />
+    
+    <LinearLayout
+        android:id="@+id/unableToEvalLayout"
+		android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unable_to_eval"
+        	android:gravity="center" />
+        
+        <ImageButton
+        	android:id="@+id/btn_wolfram"
+	        style="@style/CircleButton"
+	        android:layout_margin="@dimen/main_screen_button_margin"
+	        android:contentDescription="@string/wolfram"
+	        android:onClick="wolfram"
+	        android:src="@drawable/wolfram" />
+        
+    </LinearLayout>
 
 </LinearLayout>

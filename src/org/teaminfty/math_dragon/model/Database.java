@@ -352,7 +352,7 @@ public class Database extends SQLiteOpenHelper
     
     /** Save the {@link Expression} as a formula with the given ID.
      * @param id The ID of the formula to overwrite, or {@link Database#INSERT_ID INSERT_ID} to create a new entry
-     * @param name The name of the formula to save
+     * @param name The name of the formula to save (<tt>null</tt> if it should remain unchanged)
      * @param expr The {@link Expression} that is to be stored
      * @return Whether the formula was saved successfully or not
      */
@@ -362,7 +362,8 @@ public class Database extends SQLiteOpenHelper
         ContentValues values = new ContentValues(4);
         
         // Add the name to the ContentValues instance
-        values.put(TABLE_FORMULAS.FORMULA_NAME, name);
+        if(name != null)
+            values.put(TABLE_FORMULAS.FORMULA_NAME, name);
         
         // Remember the default height of the MathObject and change its default height
         final int defHeight = expr.getDefaultHeight();
@@ -376,7 +377,7 @@ public class Database extends SQLiteOpenHelper
         // Scale and translate the canvas so that the whole MathObject fits in
         final float scale = Math.min(1.0f, Math.min(((float) TABLE_FORMULAS.IMAGE_SIZE) / bounding.width(), ((float) TABLE_FORMULAS.IMAGE_SIZE) / bounding.height()));
         canvas.scale(scale, scale);
-        canvas.translate((TABLE_FORMULAS.IMAGE_SIZE - bounding.width() * scale) / 2, (TABLE_FORMULAS.IMAGE_SIZE - bounding.height() * scale) / 2);
+        canvas.translate((TABLE_FORMULAS.IMAGE_SIZE - bounding.width() * scale) / (2 * scale), (TABLE_FORMULAS.IMAGE_SIZE - bounding.height() * scale) / (2 * scale));
         
         // Draw the MathObject and reset its default height
         expr.draw(canvas);
@@ -624,9 +625,10 @@ public class Database extends SQLiteOpenHelper
     public boolean saveTutorialState(TutorialState tutState)
     {
         // Create a ContentValues instance and set the values
-        ContentValues values = new ContentValues(2);
-        values.put(TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS, tutState.tutInProg?1:0);
-        values.put(TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG, tutState.showTutDlg?1:0);
+        ContentValues values = new ContentValues(3);
+        values.put(TABLE_TUTORIALS.ID, tutState.id);
+        values.put(TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS, tutState.tutInProg);
+        values.put(TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG, tutState.showTutDlg);
         
         // Open a connection to the database
         SQLiteDatabase db = getWritableDatabase();

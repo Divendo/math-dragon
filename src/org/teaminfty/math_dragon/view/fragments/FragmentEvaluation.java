@@ -31,8 +31,10 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +67,15 @@ public class FragmentEvaluation extends DialogFragment
     /** The current evaluator (or <tt>null</tt> if there is none) */
     private Evaluator evaluator = null;
     
+    /** The timer to timeout the evaluator (or <tt>null</tt> if there is none) */
+    private Handler timerHandler = null;
+    
+    /** Whether or not the timer is cancelled */
+    private boolean timerCancelled = false;
+    
+    /** Whether or not we were unable to evaluate the expression */
+    private boolean unableToEval = false;
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -75,7 +86,7 @@ public class FragmentEvaluation extends DialogFragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_evaluation, container, false);
         
-        // Disable the the MathView
+        // Disable the the MathView and set its contents
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEnabled(false);
         mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
@@ -108,6 +119,24 @@ public class FragmentEvaluation extends DialogFragment
         ((TextView) view.findViewById(R.id.textViewEvalType)).setText(exactEvaluation ? R.string.evaluate_exact : R.string.evaluate_approximate);
         if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_TITLE) != null)
             ((TextView) view.findViewById(R.id.textViewEvalType)).setText(savedInstanceState.getString(BUNDLE_TITLE));
+
+        // If an error occurred, show the error
+        if(unableToEval)
+        {
+            view.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            view.findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+        }
+        
+        // Wolfram|Alpha button click listener
+        view.findViewById(R.id.btn_wolfram).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(onWolframListener != null)
+                    onWolframListener.wolfram();
+            }
+        });
 
         // Return the content view
         return view;
@@ -181,6 +210,11 @@ public class FragmentEvaluation extends DialogFragment
         // Start the evaluator
         evaluator = new Evaluator();
         evaluator.execute(expr);
+        
+        // Set and start the timer
+        timerCancelled = false;
+        timerHandler = new Handler();
+        timerHandler.postDelayed(new EvaluatorTimeout(), 5000);
     }
 
     @Override
@@ -217,6 +251,7 @@ public class FragmentEvaluation extends DialogFragment
         mathView = null;
         if(evaluator != null)
         {
+            timerCancelled = true;
             synchronized(evaluator)
             {
                 evaluator.cancel(true);
@@ -230,10 +265,40 @@ public class FragmentEvaluation extends DialogFragment
         public void onClick(View btn)
         { dismiss(); }
     }
+    
+    /** Runnable that is executed when the evaluation times out */
+    private class EvaluatorTimeout implements Runnable
+    {
+        @Override
+        public void run()
+        {
+            // Check before synchronising if the timer was cancelled
+            // because we may have cancelled it from our ui thread
+            if(timerCancelled) return;
+            
+            synchronized(timerHandler)
+            {
+                // Check after synchronising if the timer was cancelled
+                // because we may have cancelled it from the evaluation thread
+                if(timerCancelled) return;
+                
+                // Cancel the evaluator (interrupt)
+                evaluator.cancel(true);
+                
+                // Show that we were unable to evaluate the expression
+                unableToEval = true;
+                if(getView() != null)
+                {
+                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                    getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
 
     /** Class that evaluates the expression in a separate thread */
     private class Evaluator extends AsyncTask<Expression, Void, Expression>
-    {
+    {        
         @Override
         protected Expression doInBackground(Expression... args)
         {
@@ -244,24 +309,43 @@ public class FragmentEvaluation extends DialogFragment
                     try
                     {
                         // Calculate the answer
+                        // Note that we use a two-step evaluation as for some reason integrals like integrate(x*sin(x), {x, 0, pi})
+                        // wouldn't work in approximation mode otherwise
                         IExpr result = null;
-                        if(exactEvaluation)
-                            result = EvalEngine.eval(EvalHelper.eval(args[0]));
-                        else
-                            result = F.evaln(EvalHelper.eval(args[0]));
+                        result = EvalEngine.eval(EvalHelper.eval(args[0]));
+                        if(!exactEvaluation)
+                            result = F.evaln(result);
                         
                         // Parse the expression, beautify it and place parentheses
                         Expression resultExpr = ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result)));
+                        
+                        // Cancel the timer
+                        synchronized(timerHandler)
+                        {
+                            timerCancelled = true;
+                        }
                         
                         // Return the result
                         return resultExpr;
                     }
                     catch(MathException e)
                     {
-                        // TODO Auto-generated catch block
+                        // Apparently we were unable to correctly parse the calculation
+                        unableToEval = true;
                         e.printStackTrace();
                     }
+                    catch(RuntimeException e)
+                    {
+                        // This occurs for impossible to solve expression (e.g. integrate(x^x, x))
+                        unableToEval = true;
+                    }
                 }
+            }
+            
+            // Cancel the timer
+            synchronized(timerHandler)
+            {
+                timerCancelled = true;
             }
             
             // Something went wrong, return null
@@ -273,7 +357,30 @@ public class FragmentEvaluation extends DialogFragment
         {
             if(result != null)
                 showExpression(result);
+            else if(getView() != null)
+            {
+                if(unableToEval)
+                {
+                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                    getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+                }
+            }
         }
     }
+    
+    /** Interface that can be implemented to listen when the expression should be evaluated using Wolfram|Alpha */
+    public interface OnWolframListener
+    {
+        /** Called when the expression should be evaluated using Wolfram|Alpha */
+        public void wolfram();
+    }
+    
+    /** The current {@link FragmentEvaluation#OnWolframListener OnWolframListener} */
+    private OnWolframListener onWolframListener = null;
+    
+    /** Set the {@link FragmentEvaluation#OnWolframListener OnWolframListener}
+     * @param listener The new {@link FragmentEvaluation#OnWolframListener OnWolframListener} */
+    public void setOnWolframListener(OnWolframListener listener)
+    { onWolframListener = listener; }
 }
 
