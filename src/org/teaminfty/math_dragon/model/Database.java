@@ -625,7 +625,8 @@ public class Database extends SQLiteOpenHelper
     public boolean saveTutorialState(TutorialState tutState)
     {
         // Create a ContentValues instance and set the values
-        ContentValues values = new ContentValues(2);
+        ContentValues values = new ContentValues(3);
+        values.put(TABLE_TUTORIALS.ID, tutState.id);
         values.put(TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS, tutState.tutInProg);
         values.put(TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG, tutState.showTutDlg);
         
