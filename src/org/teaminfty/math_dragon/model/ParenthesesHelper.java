@@ -4,7 +4,7 @@ import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.Parentheses;
 import org.teaminfty.math_dragon.view.math.Symbol;
-import org.teaminfty.math_dragon.view.math.operation.Derivative;
+import org.teaminfty.math_dragon.view.math.operation.binary.Derivative;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Log;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;

@@ -3,7 +3,7 @@ package org.teaminfty.math_dragon.view;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
 import org.teaminfty.math_dragon.view.math.Symbol;
-import org.teaminfty.math_dragon.view.math.operation.Derivative;
+import org.teaminfty.math_dragon.view.math.operation.binary.Derivative;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

@@ -540,6 +540,9 @@ public class MathView extends View
         public void onScaleEnd(ScaleGestureDetector detector)
         {
             cacheEnabled = true;
+            
+            // Redraw (to cache the current expression)
+            invalidate();
         }
     }
     

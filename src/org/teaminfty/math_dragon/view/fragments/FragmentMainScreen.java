@@ -24,8 +24,8 @@ import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
 import org.teaminfty.math_dragon.view.math.Symbol;
-import org.teaminfty.math_dragon.view.math.operation.Derivative;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
+import org.teaminfty.math_dragon.view.math.operation.binary.Derivative;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
