@@ -306,8 +306,14 @@ public class MathSymbolEditor extends View
      * @param newSymbol The symbol we're editing from now on */
     public void setEditingSymbol(EditingSymbol newSymbol)
     {
+        // Set the new symbol
         editingSymbol = newSymbol;
+        
+        // Redraw
         invalidate();
+        
+        // Request a scroll
+        callOnScrollToListener();
     }
     
     /** Toggle the symbol we're currently editing for the given variable name
@@ -695,6 +701,16 @@ public class MathSymbolEditor extends View
         
         // Return our size
         setMeasuredDimension(width, height);
+    }
+    
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom)
+    {
+        // Call the parent
+        super.onLayout(changed, left, top, right, bottom);
+        
+        // Request a scroll
+        callOnScrollToListener();
     }
     
     /** Converts the number in the given string to superscript
@@ -1200,6 +1216,54 @@ public class MathSymbolEditor extends View
     public void setStateChangeListener(OnStateChangeListener listener)
     { onStateChangeListener = listener; }
     
+    /** A listener that's called when the editor should be scrolled */
+    public interface OnScrollToListener
+    {
+        /** Called when the editor should be scrolled to a certain position
+         * @param left The left side of the currently active part
+         * @param right The right side of the currently active part */
+        public void scroll(int left, int right);
+    }
+    
+    /** The current {@link OnScrollToListener} */
+    private OnScrollToListener onScrollToListener = null;
+    
+    /** Set the {@link OnScrollToListener}
+     * @param listener The new {@link OnScrollToListener} */
+    public void setOnScrollToListener(OnScrollToListener listener)
+    { onScrollToListener = listener; }
+    
+    /** Calls the {@link OnScrollToListener} */
+    private void callOnScrollToListener()
+    {
+        // If no listener is set, we've nothing to do here
+        if(onScrollToListener == null) return;
+
+        // Get the string parts
+        StringBuilder totalStrBuilder = new StringBuilder();
+        ArrayList<StringPart> stringParts = getStringParts(totalStrBuilder);
+        final String totalStr = totalStrBuilder.toString();
+        
+        // Search for the currently active part
+        float x = 0;
+        for(StringPart part : stringParts)
+        {
+            // Calculate the width of the current part
+            final float width = paint.measureText(totalStr, part.start, part.end);
+            
+            // If this isn't the currently active part, we add its width and continue
+            if(part.symbolIndex != editingIndex || part.editingSymbol != editingSymbol || (editingSymbol == EditingSymbol.VAR && part.varName != currVar))
+            {
+                x += width;
+                continue;
+            }
+
+            // Call the scroll listener and stop
+            onScrollToListener.scroll((int) x, (int) (x + width));
+            return;
+        }
+    }
+    
     /** The {@link GestureDetector} */
     private GestureDetector gestureDetector;
 
@@ -1216,100 +1280,13 @@ public class MathSymbolEditor extends View
     /** Listens for click events to switch the symbol we're editing */
     private class GestureListener extends GestureDetector.SimpleOnGestureListener
     {
-        /** Represents a part of the string with information about what is displayed in that part */
-        private class StringPart
-        {
-            /** The starting position of the string part */
-            public int start;
-            /** The end position of the string part (exclusive) */
-            public int end;
-            
-            /** The index of the symbol representation of this part */
-            public int symbolIndex;
-            /** The symbol type of this part */
-            public EditingSymbol editingSymbol;
-            /** The variable name of this part (ignored if this part isn't a variable) */
-            public char varName = 'a';
-            
-            /** Constructor
-             * @param s The starting position of the string part
-             * @param e The end position of the string part (exclusive)
-             * @param index The index of the symbol representation of this part
-             * @param symbol The symbol type of this part */
-            public StringPart(int s, int e, int index, EditingSymbol symbol)
-            {
-                start = s;
-                end = e;
-                symbolIndex = index;
-                editingSymbol = symbol;
-            }
-
-            /** Constructor
-             * @param s The starting position of the string part
-             * @param e The end position of the string part (exclusive)
-             * @param index The index of the symbol representation of this part
-             * @param var The variable name of this part */
-            public StringPart(int s, int e, int index, char var)
-            {
-                this(s, e, index, EditingSymbol.VAR);
-                varName = var;
-            }
-        }
-        
         @Override
         public boolean onSingleTapUp(MotionEvent me)
         {
-            // Determine the string we'd draw while keeping track of the positions of each part
-            ArrayList<StringPart> stringParts = new ArrayList<StringPart>(symbols.size() * 3);
-            String totalStr = "";
-            int oldLength = 0;
-            for(int index = 0; index < symbols.size(); ++index)
-            {
-                // Get the symbol
-                SymbolRepresentation symbol = symbols.get(index);
-                
-                // Factor
-                oldLength = totalStr.length();
-                if(!totalStr.isEmpty() && !symbol.factor.startsWith("-"))
-                    totalStr += '+';
-                totalStr += symbol.factor;
-                stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.FACTOR));
-                
-                // Pi
-                if(symbol.showPi)
-                {
-                    oldLength = totalStr.length();
-                    totalStr += '\u03c0' + toSuperScript(symbol.piPow);
-                    stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.PI));
-                }
-                
-                // Eulers number
-                if(symbol.showE)
-                {
-                    oldLength = totalStr.length();
-                    totalStr += 'e' + toSuperScript(symbol.ePow);
-                    stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.E));
-                }
-                
-                // Imaginary unit
-                if(symbol.showI)
-                {
-                    oldLength = totalStr.length();
-                    totalStr += '\u03b9' + toSuperScript(symbol.iPow);
-                    stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.I));
-                }
-                
-                // Variables
-                for(int i = 0; i < symbol.varPowers.length; ++i)
-                {
-                    if(symbol.showVars[i])
-                    {
-                        oldLength = totalStr.length();
-                        totalStr += (char) ('a' + i) + toSuperScript(symbol.varPowers[i]);
-                        stringParts.add(new StringPart(oldLength, totalStr.length(), index, (char) ('a' + i)));
-                    }
-                }
-            }
+            // Get the string parts
+            StringBuilder totalStrBuilder = new StringBuilder();
+            ArrayList<StringPart> stringParts = getStringParts(totalStrBuilder);
+            final String totalStr = totalStrBuilder.toString();
 
             // Determine the point where the user clicks
             Rect totalTextBounds = new Rect();
@@ -1342,6 +1319,9 @@ public class MathSymbolEditor extends View
                     if(onStateChangeListener != null)
                         onStateChangeListener.stateChanged();
                     
+                    // Request a scroll
+                    callOnScrollToListener();
+                    
                     // Redraw
                     invalidate();
                     
@@ -1357,5 +1337,104 @@ public class MathSymbolEditor extends View
             // Always return true
             return true;
         }
+    }
+    
+    /** Represents a part of the string with information about what is displayed in that part */
+    private class StringPart
+    {
+        /** The starting position of the string part */
+        public int start;
+        /** The end position of the string part (exclusive) */
+        public int end;
+        
+        /** The index of the symbol representation of this part */
+        public int symbolIndex;
+        /** The symbol type of this part */
+        public EditingSymbol editingSymbol;
+        /** The variable name of this part (ignored if this part isn't a variable) */
+        public char varName = 'a';
+        
+        /** Constructor
+         * @param s The starting position of the string part
+         * @param e The end position of the string part (exclusive)
+         * @param index The index of the symbol representation of this part
+         * @param symbol The symbol type of this part */
+        public StringPart(int s, int e, int index, EditingSymbol symbol)
+        {
+            start = s;
+            end = e;
+            symbolIndex = index;
+            editingSymbol = symbol;
+        }
+
+        /** Constructor
+         * @param s The starting position of the string part
+         * @param e The end position of the string part (exclusive)
+         * @param index The index of the symbol representation of this part
+         * @param var The variable name of this part */
+        public StringPart(int s, int e, int index, char var)
+        {
+            this(s, e, index, EditingSymbol.VAR);
+            varName = var;
+        }
+    }
+    
+    /** Returns a list with {@link StringPart}s for the current visible symbol
+     * @param totalStr Used to build (and output) the total string */
+    private ArrayList<StringPart> getStringParts(StringBuilder totalStr)
+    {
+        // Determine the string we'd draw while keeping track of the positions of each part
+        ArrayList<StringPart> stringParts = new ArrayList<StringPart>(symbols.size() * 3);
+        int oldLength = 0;
+        for(int index = 0; index < symbols.size(); ++index)
+        {
+            // Get the symbol
+            SymbolRepresentation symbol = symbols.get(index);
+            
+            // Factor
+            oldLength = totalStr.length();
+            if(totalStr.length() != 0 && !symbol.factor.startsWith("-"))
+                totalStr.append('+');
+            totalStr.append(symbol.factor);
+            stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.FACTOR));
+            
+            // Pi
+            if(symbol.showPi)
+            {
+                oldLength = totalStr.length();
+                totalStr.append('\u03c0' + toSuperScript(symbol.piPow));
+                stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.PI));
+            }
+            
+            // Eulers number
+            if(symbol.showE)
+            {
+                oldLength = totalStr.length();
+                totalStr.append('e' + toSuperScript(symbol.ePow));
+                stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.E));
+            }
+            
+            // Imaginary unit
+            if(symbol.showI)
+            {
+                oldLength = totalStr.length();
+                totalStr.append('\u03b9' + toSuperScript(symbol.iPow));
+                stringParts.add(new StringPart(oldLength, totalStr.length(), index, EditingSymbol.I));
+            }
+            
+            // Variables
+            for(int i = 0; i < symbol.varPowers.length; ++i)
+            {
+                if(symbol.showVars[i])
+                {
+                    oldLength = totalStr.length();
+                    totalStr.append((char) ('a' + i) + toSuperScript(symbol.varPowers[i]));
+                    stringParts.add(new StringPart(oldLength, totalStr.length(), index, (char) ('a' + i)));
+                }
+            }
+        }
+        
+        // Return the result
+        return stringParts;
     }
 }
