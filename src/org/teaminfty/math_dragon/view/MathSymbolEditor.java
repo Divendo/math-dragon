@@ -624,7 +624,9 @@ public class MathSymbolEditor extends View
         else if(expr instanceof Empty)
         {
             // Simply add a 0
-            symbols.add(new SymbolRepresentation());
+            SymbolRepresentation rep = new SymbolRepresentation();
+            rep.factor = negate ? "-0" : "0";
+            symbols.add(rep);
         }
         else if(expr instanceof Add)
         {
