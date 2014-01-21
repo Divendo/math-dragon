@@ -2,14 +2,8 @@ package org.teaminfty.math_dragon;
 
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
-import org.matheclipse.core.interfaces.IExpr;
-import org.teaminfty.math_dragon.exceptions.EmptyChildException;
-import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.EvalHelper;
-import org.teaminfty.math_dragon.model.ExpressionBeautifier;
-import org.teaminfty.math_dragon.model.ModelHelper;
-import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
@@ -179,78 +173,57 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         }
     }
 
+    /** Tag of the evaluation dialog */
+    private static final String EVALUATION_TAG = "evaluation";
+    
     public void evaluate(View view)
     {
-        try
-        {
-            // Get the expression
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            Expression expr = fragmentMainScreen.getExpression();
-            
-            // If the expression isn't completed yet, we stop here
-            if(!expr.isCompleted()) return;
-            
-            // Load the substitutions
-            Database db = new Database(this);
-            EvalHelper.substitutions = db.getAllSubstitutions();
-            db.close();
-            
-            // Calculate the answer
-            IExpr result = EvalEngine.eval(EvalHelper.eval(expr));
+        // If the evaluation dialog is already shown, stop here
+        if(getFragmentManager().findFragmentByTag(EVALUATION_TAG) != null)
+            return;
+        
+        // Get the expression
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+        Expression expr = fragmentMainScreen.getExpression();
+        
+        // If the expression isn't completed yet, we stop here
+        if(!expr.isCompleted()) return;
+        
+        // Load the substitutions
+        Database db = new Database(this);
+        EvalHelper.substitutions = db.getAllSubstitutions();
+        db.close();
 
-            // Create an evaluation fragment and show the result
-            FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
-            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result))));
-            fragmentEvaluation.setEvalType(true);
-            fragmentEvaluation.show(getFragmentManager(), "evaluation");
-        }
-        catch(EmptyChildException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch(MathException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        // Create an evaluation fragment and show the result
+        FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+        fragmentEvaluation.setEvalType(true);
+        fragmentEvaluation.evaluate(expr);
+        fragmentEvaluation.show(getFragmentManager(), EVALUATION_TAG);
     }
 
     public void approximate(View view)
     {
-        try
-        {
-            // Get the expression
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            Expression expr = fragmentMainScreen.getExpression();
-            
-            // If the expression isn't completed yet, we stop here
-            if(!expr.isCompleted()) return;
-            
-            // Load the substitutions
-            Database db = new Database(this);
-            EvalHelper.substitutions = db.getAllSubstitutions();
-            db.close();
-            
-            // Approximate the answer
-            IExpr result = F.evaln(EvalHelper.eval(expr));
+        // If the evaluation dialog is already shown, stop here
+        if(getFragmentManager().findFragmentByTag(EVALUATION_TAG) != null)
+            return;
+        
+        // Get the expression
+        FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+        Expression expr = fragmentMainScreen.getExpression();
+        
+        // If the expression isn't completed yet, we stop here
+        if(!expr.isCompleted()) return;
+        
+        // Load the substitutions
+        Database db = new Database(this);
+        EvalHelper.substitutions = db.getAllSubstitutions();
+        db.close();
 
-            // Create an evaluation fragment and show the result
-            FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
-            fragmentEvaluation.showMathObject(ParenthesesHelper.setParentheses(ModelHelper.toExpression(result)));
-            fragmentEvaluation.setEvalType(false);
-            fragmentEvaluation.show(getFragmentManager(), "evaluation");
-        }
-        catch(EmptyChildException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch(MathException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        // Create an evaluation fragment and show the result
+        FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+        fragmentEvaluation.setEvalType(false);
+        fragmentEvaluation.evaluate(expr);
+        fragmentEvaluation.show(getFragmentManager(), EVALUATION_TAG);
     }
 
     public void clear(View view)
