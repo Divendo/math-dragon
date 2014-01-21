@@ -1,29 +1,18 @@
 package org.teaminfty.math_dragon.view.fragments;
 
-import org.teaminfty.math_dragon.MainActivity;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.Database;
-
-import com.espian.showcaseview.OnShowcaseEventListener;
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.ShowcaseViews;
-import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
-import com.espian.showcaseview.targets.ActionViewTarget;
-import com.espian.showcaseview.targets.PointTarget;
+import org.teaminfty.math_dragon.view.fragments.FragmentWarningDialog.OnConfirmListener;
 
 import android.annotation.SuppressLint;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 @SuppressLint("ValidFragment")
@@ -61,6 +50,12 @@ public class FragmentTutorialDialog extends DialogFragment
         onConfirmListener = listener;
     }
     
+    /** A string containing the title text */
+    private static final String TITLE_TEXT = "title_text_tut";
+    
+    /** A string containing the message text */
+    private static final String MSG_TEXT = "msg_text_tut";
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -69,86 +64,79 @@ public class FragmentTutorialDialog extends DialogFragment
         getDialog().setCanceledOnTouchOutside(true);
         
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_tut_dlg, container, false);
+        final View view = inflater.inflate(R.layout.fragment_tut_dlg, container, false);
         
         // Set the title
         if(titleId != 0)
             ((TextView) view.findViewById(R.id.text_title)).setText(titleId);
+        if(savedInstanceState != null && savedInstanceState.getString(TITLE_TEXT) != null)
+            ((TextView) view.findViewById(R.id.text_title)).setText(savedInstanceState.getString(TITLE_TEXT));
         
         // Set the message
         if(msgId != 0)
             ((TextView) view.findViewById(R.id.text_msg)).setText(msgId);
+        if(savedInstanceState != null && savedInstanceState.getString(MSG_TEXT) != null)
+            ((TextView) view.findViewById(R.id.text_msg)).setText(savedInstanceState.getString(MSG_TEXT));
         
+        final FragmentTutorialDialog self = this;
         // Set the listener for the ok and cancel buttons
-        view.findViewById(R.id.btn_yes).setOnClickListener(new ButtonYesOnClickListener());
-        view.findViewById(R.id.btn_no).setOnClickListener(new ButtonNoOnClickListener());
-       
-        CheckBox b = ((CheckBox)view.findViewById(R.id.check_dont_show));
-        
-        Database db = new Database(getActivity());
-        b.setOnCheckedChangeListener(new DontShowChangedListener(db));
-        // Check if we're a confirmation dialog
-        if(onConfirmListener != null)
+        view.findViewById(R.id.btn_yes).setOnClickListener(new OnClickListener()
         {
-            ((Button) view.findViewById(R.id.btn_yes)).setText(R.string.yes);
-            view.findViewById(R.id.btn_no).setVisibility(View.VISIBLE);
-        }
-
+            
+            @Override
+            public void onClick(View v)
+            {
+                self.onConfirmListener.confirm();
+                dismiss();
+                 
+            }
+        });
+        view.findViewById(R.id.btn_no).setOnClickListener(new OnClickListener()
+        {
+            
+            @Override
+            public void onClick(View v)
+            {
+                if(((CheckBox)view.findViewById(R.id.check_dont_show)).isChecked())
+                {
+                    Database db = new Database(getActivity());
+                    Database.TutorialState state = db.getTutorialState(FragmentMainScreen.TUTORIAL_ID);
+                    state.showTutDlg = false;
+                    db.saveTutorialState(state);
+                    db.close();
+                }
+                dismiss();
+                
+            }
+        });
+       
+       
+        
         // Return the content view
         return view;
     }
- 
-    /** An interface that can be implemented to listen for confirms */
+   
     public interface OnConfirmListener
     {
         public void confirm();
     }
+   
     
-    /** The listener for the yes button */
-    private class ButtonYesOnClickListener implements View.OnClickListener
-    {
-        @Override
-        public void onClick(View v)
-        {
-            if(onConfirmListener != null)
-                onConfirmListener.confirm();
-            dismiss();
-        }
-    }
+    public void setOnConfirmListener(OnConfirmListener listener)
+    { onConfirmListener = listener; }
     
-
-    /** The listener for the no button */
-    private class ButtonNoOnClickListener implements View.OnClickListener
-    {
-        @Override
-        public void onClick(View v)
-        { dismiss(); }
-    }
+    public OnConfirmListener getOnConfirmListener()
+    { return onConfirmListener; }
     
-    /** the listener for the dont-show button */
-    private class DontShowChangedListener implements CompoundButton.OnCheckedChangeListener
+    //TODO onconfirmlistener confirm(boolean, showTutorial, boolean dontAskAgain)
+    @Override
+    public void onSaveInstanceState(Bundle outState)
     {
-    	private Database db;
-    	public DontShowChangedListener(Database db)
-    	{ this.db = db; }
-    	
-
-		@Override
-		public void onCheckedChanged(CompoundButton buttonView,
-				boolean isChecked)
-		{
-			if (isChecked)
-			{
-			    System.out.println("I HAVE BEEN CHECKED");
-				Database.TutorialState state = db.getTutorialState(MainActivity.TUTORIAL_ID);
-				
-				state.showTutDlg = false;
-				
-				db.saveTutorialState(state);
-				db.close();
-			}
-		}
-    	
+        // Store the title text
+        outState.putString(TITLE_TEXT, ((TextView) getView().findViewById(R.id.text_title)).getText().toString());
+        
+        // Store the message text
+        outState.putString(MSG_TEXT, ((TextView) getView().findViewById(R.id.text_msg)).getText().toString());        
     }
     
 }

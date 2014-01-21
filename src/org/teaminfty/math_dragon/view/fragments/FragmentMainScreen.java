@@ -62,55 +62,47 @@ public class FragmentMainScreen extends Fragment
     
     
     public static final int TUTORIAL_ID = 0;
+    
+    public static final String TUTORIAL_TAG =  "tut_dlg";
     private void tutorial()
     {
         //TODO werken met savedInstanceState
         final Database db = new Database(getActivity());
-        try
-        {
-            Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
-            
-            System.out.println("SHOW_TUT_DG:"+ state.showTutDlg);
+        Database.TutorialState state = db.getTutorialState(FragmentMainScreen.TUTORIAL_ID);
+        state.showTutDlg = false;
+        db.close();
+        
+        System.out.println("SHOW_TUT_DG:"+ state.showTutDlg);
    
-            
-            
-            if(!state.tutInProg && state.showTutDlg && !isShowingDialog)
-            {
-                
-                FragmentTutorialDialog dg = new FragmentTutorialDialog(
-                        R.string.tutorial_dialog_title, R.string.tutorial_dialog_msg,
-                        new FragmentTutorialDialog.OnConfirmListener()
-                        {
-
-                            @Override
-                            public void confirm()
-                            {
-                                
-                                System.out.println("IK BEN TOCH ECHT GECONFIRMEERD");
-                                
-                                
-                                //TODO andere tutInProgs inzetten
-                               // savedInstanceState.putBoolean("isShowingDialog", false);
-                                continueTutorial(db);
-                            }
-                        });
-                dg.show(getFragmentManager(), "tut_dlg");
-                //savedInstanceState.putBoolean("isShowingDialog", true);
-                isShowingDialog = true;
-            }
-
-        }
-        // make sure the database is closed.
-        finally
+        if(!state.tutInProg && state.showTutDlg && !isShowingDialog)
         {
-            db.close();
-        }
 
+            FragmentTutorialDialog dg = new FragmentTutorialDialog(
+                    R.string.tutorial_dialog_title,
+                    R.string.tutorial_dialog_msg);
+
+            dg.setOnConfirmListener(new OnTutorialConfirmListener());
+            dg.show(getFragmentManager(), TUTORIAL_TAG);
+
+            isShowingDialog = true;
+        }
     }
     
-    private void continueTutorial(final Database db)
+    final class OnTutorialConfirmListener implements FragmentTutorialDialog.OnConfirmListener
+    {
+        
+
+        @Override
+        public void confirm()
+        {
+            continueTutorial();
+        }
+        
+    }
+    private void continueTutorial()
     {
 
+        final Database db = new Database(getActivity());
         final ShowcaseView actionBar, swipeToOpen, editExpr, ops, evaluate;
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
@@ -202,8 +194,7 @@ public class FragmentMainScreen extends Fragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
     
-		// Listen for events from the MathView
-        
+
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEventListener(new MathViewEventListener());
         
@@ -251,6 +242,11 @@ public class FragmentMainScreen extends Fragment
                 FragmentKeyboard.OnConfirmListener listener = mathView.keyboardListenerFromBundle(savedInstanceState.getBundle(BUNDLE_KEYBOARD_LISTENER));
                 ((FragmentKeyboard) getFragmentManager().findFragmentByTag(KEYBOARD_TAG)).setOnConfirmListener(listener);
             }
+            
+            if(getFragmentManager().findFragmentByTag(TUTORIAL_TAG) != null)
+            {
+                
+            }
         }
         else
         {
@@ -284,6 +280,10 @@ public class FragmentMainScreen extends Fragment
         if (savedInstanceState != null)
         {
             isShowingDialog = savedInstanceState.getBoolean("isShowingDialog");
+            
+            FragmentTutorialDialog dg;
+            if ((dg = (FragmentTutorialDialog)getFragmentManager().findFragmentByTag(TUTORIAL_TAG)) != null)
+                dg.setOnConfirmListener(new OnTutorialConfirmListener());
         }
         
         // The click listener for the favourites button
@@ -297,7 +297,8 @@ public class FragmentMainScreen extends Fragment
         DerivativeIntegrateButtonListener derivativeIntegrateButtonListener = new DerivativeIntegrateButtonListener();
         view.findViewById(R.id.btn_derivative).setOnClickListener(derivativeIntegrateButtonListener);
         view.findViewById(R.id.btn_integrate).setOnClickListener(derivativeIntegrateButtonListener);
-        
+        // Listen for events from the MathView
+        tutorial();
         // Return the view
         return view;
     }
@@ -314,7 +315,7 @@ public class FragmentMainScreen extends Fragment
     public void onResume()
     {
         super.onResume();
-        tutorial();
+
     }
 
 

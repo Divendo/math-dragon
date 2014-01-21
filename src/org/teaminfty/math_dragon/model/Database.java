@@ -625,8 +625,8 @@ public class Database extends SQLiteOpenHelper
     {
         // Create a ContentValues instance and set the values
         ContentValues values = new ContentValues(2);
-        values.put(TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS, tutState.tutInProg);
-        values.put(TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG, tutState.showTutDlg);
+        values.put(TABLE_TUTORIALS.TUTORIAL_IN_PROGRESS, tutState.tutInProg?1:0);
+        values.put(TABLE_TUTORIALS.SHOW_TUTORIAL_DIALOG, tutState.showTutDlg?1:0);
         
         // Open a connection to the database
         SQLiteDatabase db = getWritableDatabase();
