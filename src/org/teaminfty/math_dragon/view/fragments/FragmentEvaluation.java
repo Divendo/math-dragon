@@ -322,6 +322,11 @@ public class FragmentEvaluation extends DialogFragment
                         // This occurs for impossible to solve expression (e.g. integrate(x^x, x))
                         unableToEval = true;
                     }
+                    catch(StackOverflowError e)
+                    {
+                        // This occurs for impossible to solve expression (e.g. integrate(x*(x*x)^x, x))
+                        unableToEval = true;
+                    }
                 }
             }
             
