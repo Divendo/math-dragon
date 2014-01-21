@@ -57,8 +57,25 @@ public class FragmentOperationsSource extends Fragment implements MathSourceView
         tabOperators.setOnClickListener(tabOnClickListener);
         tabFunctions.setOnClickListener(tabOnClickListener);
         
+        // Show the right tab
+        boolean operatorsVisible = true;
+        if(savedInstanceState != null)
+            operatorsVisible = savedInstanceState.getBoolean(BUNDLE_OPERATORS_VISIBLE);
+        layout.findViewById(R.id.operators_container).setVisibility(operatorsVisible ? View.VISIBLE : View.GONE);
+        layout.findViewById(R.id.functions_container).setVisibility(operatorsVisible ? View.GONE : View.VISIBLE);
+        
         // Return the layout
         return layout;
+    }
+    
+    /** A boolean containing which tab is currently shown (<tt>true</tt> means the operators tab is shown, <tt>false</tt> means the functions tab is shown) */
+    private static final String BUNDLE_OPERATORS_VISIBLE = "operators_visible";
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // Store which tab is shown
+        outState.putBoolean(BUNDLE_OPERATORS_VISIBLE, ((ToggleButton) getView().findViewById(R.id.btn_tab_operators)).isChecked());
     }
     
     /** Sets the given {@link MathSourceObject} to the {@link MathSourceView} with the given ID
