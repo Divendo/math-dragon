@@ -6,6 +6,9 @@ public abstract class Precedence
     /** The highest precedence */
     public static final int HIGHEST = 0;
     
+    /** The precedence functions have */
+    public static final int FUNCTION = HIGHEST;
+    
     /** The precedence that integrals have */
     public static final int INTEGRAL = 1;
 
@@ -14,10 +17,10 @@ public abstract class Precedence
 
     /** The precedence multiply operations have */
     public static final int MULTIPLY = 3;
+    
+    /** The precedence of the negate operator */
+    public static final int NEGATE = 4;
 
     /** The precedence add operations have */
-    public static final int ADD = 4;
-    
-    /** The precedence functions have */
-    public static final int FUNCTION = 5;
+    public static final int ADD = 5;
 }

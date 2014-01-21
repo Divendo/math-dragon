@@ -55,20 +55,20 @@ public class Database extends SQLiteOpenHelper
         public static final String MATH_OBJECT = "math_object";
         
         /** The size of the formula image (in pixels) */
-        public static final int IMAGE_SIZE = 64;
+        public static int IMAGE_SIZE = 64;
     }
     
     /** Represents a single row in the formulas table */
     public static class Formula
     {
         /** Constructor */
-        public Formula(int id, String name, long lastChange, Bitmap bmp, Expression mathObject)
+        public Formula(int id, String name, long lastChange, Bitmap bmp, Expression expression)
         {
             this.id = id;
             this.name = name;
             this.lastChange = lastChange;
             this.bmp = bmp;
-            this.mathObject = mathObject;
+            this.expression = expression;
         }
         
         /** Constructor for construction from raw data
@@ -103,7 +103,7 @@ public class Database extends SQLiteOpenHelper
             {
                 try
                 {
-                    mathObject = ExpressionXMLReader.fromXML(xml);
+                    expression = ExpressionXMLReader.fromXML(xml);
                 }
                 catch(ParseException e)
                 {
@@ -122,7 +122,7 @@ public class Database extends SQLiteOpenHelper
         /** The image of the formula (can be <tt>null</tt>) */
         public Bitmap bmp = null;
         /** The math object of the formula (can be <tt>null</tt>) */
-        public Expression mathObject = null;
+        public Expression expression = null;
     }
     
     /** The information about the substitutions table */
@@ -325,7 +325,6 @@ public class Database extends SQLiteOpenHelper
 
     /** Returns the formula with the given ID from the database.
      * If no formula with such an ID is found, <tt>null</tt> is returned.
-     * Note that the result doesn't contain the bitmap of the formula.
      * @param id The ID of the formula to get.
      * @return The list of formulas */
     public Formula getFormulaByID(int id)
@@ -335,7 +334,7 @@ public class Database extends SQLiteOpenHelper
         
         // Get a cursor for the requested formula and check if it exists
         Cursor cursor = db.query(TABLE_FORMULAS.NAME,
-                new String[]{ TABLE_FORMULAS.ID, TABLE_FORMULAS.FORMULA_NAME, TABLE_FORMULAS.LAST_CHANGE, TABLE_FORMULAS.MATH_OBJECT },
+                new String[]{ TABLE_FORMULAS.ID, TABLE_FORMULAS.FORMULA_NAME, TABLE_FORMULAS.LAST_CHANGE, TABLE_FORMULAS.MATH_OBJECT, TABLE_FORMULAS.IMAGE },
                 TABLE_FORMULAS.ID + " = " + Integer.toString(id), null, null, null, null);
         if(cursor.getCount() == 0)
             return null;
@@ -345,7 +344,7 @@ public class Database extends SQLiteOpenHelper
         db.close();
         
         // Create a formula from the retrieved data and return it
-        return new Formula(cursor.getInt(0), cursor.getString(1), cursor.getString(2), null, cursor.getBlob(3));
+        return new Formula(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlob(4), cursor.getBlob(3));
     }
     
     /** The ID that's used for inserting a formula into the database */
@@ -354,10 +353,10 @@ public class Database extends SQLiteOpenHelper
     /** Save the {@link Expression} as a formula with the given ID.
      * @param id The ID of the formula to overwrite, or {@link Database#INSERT_ID INSERT_ID} to create a new entry
      * @param name The name of the formula to save
-     * @param mathObject The {@link Expression} that is to be stored
+     * @param expr The {@link Expression} that is to be stored
      * @return Whether the formula was saved successfully or not
      */
-    public boolean saveFormula(int id, String name, Expression mathObject)
+    public boolean saveFormula(int id, String name, Expression expr)
     {
         // Create a ContentValues instance we're going to pass to the database
         ContentValues values = new ContentValues(4);
@@ -366,12 +365,12 @@ public class Database extends SQLiteOpenHelper
         values.put(TABLE_FORMULAS.FORMULA_NAME, name);
         
         // Remember the default height of the MathObject and change its default height
-        final int defHeight = mathObject.getDefaultHeight();
-        mathObject.setDefaultHeight(TABLE_FORMULAS.IMAGE_SIZE);
+        final int defHeight = expr.getDefaultHeight();
+        expr.setDefaultHeight(TABLE_FORMULAS.IMAGE_SIZE);
         
         // Create a bitmap of the right size and create a canvas for it
         Bitmap bmp = Bitmap.createBitmap(TABLE_FORMULAS.IMAGE_SIZE, TABLE_FORMULAS.IMAGE_SIZE, Bitmap.Config.ARGB_8888);
-        Rect bounding = mathObject.getBoundingBox();
+        Rect bounding = expr.getBoundingBox();
         Canvas canvas = new Canvas(bmp);
         
         // Scale and translate the canvas so that the whole MathObject fits in
@@ -380,8 +379,8 @@ public class Database extends SQLiteOpenHelper
         canvas.translate((TABLE_FORMULAS.IMAGE_SIZE - bounding.width() * scale) / 2, (TABLE_FORMULAS.IMAGE_SIZE - bounding.height() * scale) / 2);
         
         // Draw the MathObject and reset its default height
-        mathObject.draw(canvas);
-        mathObject.setDefaultHeight(defHeight);
+        expr.draw(canvas);
+        expr.setDefaultHeight(defHeight);
         
         // Put the bitmap in the ContentValues instance
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -393,7 +392,7 @@ public class Database extends SQLiteOpenHelper
         {
             // Convert the MathObject to a XML document
             Document doc = Expression.createXMLDocument();
-            mathObject.writeToXML(doc, doc.getDocumentElement());
+            expr.writeToXML(doc, doc.getDocumentElement());
             
             // Convert the XML document to a byte array and add it to the ContentValues instance
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -436,6 +435,26 @@ public class Database extends SQLiteOpenHelper
             db.close();
             return result == 1;
         }
+    }
+    
+    /** Deletes the formula with the given ID
+     * @param id The ID of the formula that is to be removed
+     * @return <tt>true</tt> if the formula was deleted succesfully, <tt>false</tt> otherwise */
+    public boolean deleteFormula(int id)
+    {
+        // Open a connection to the database
+        SQLiteDatabase db = getWritableDatabase();
+        
+        // Check if the formula exists
+        Cursor cursor = db.query(TABLE_FORMULAS.NAME, new String[]{ TABLE_FORMULAS.ID },
+                TABLE_FORMULAS.ID + " = " + Integer.toString(id), null, null, null, null);
+        if(cursor.getCount() == 0)
+            return true;
+        
+        // Delete the formula
+        final int count = db.delete(TABLE_FORMULAS.NAME, TABLE_FORMULAS.ID + " = " + Integer.toString(id), null);
+        db.close();
+        return count != 0;
     }
     
     /** Returns an array containing all substitutions */

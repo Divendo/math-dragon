@@ -2,6 +2,7 @@ package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Symbol;
 //import org.teaminfty.math_dragon.view.math.MathObjectEmpty;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
 
@@ -23,7 +24,7 @@ public class MathSourceOperationIntegral extends MathSourceObject
     
     @Override
     public Expression createMathObject()
-    { return new Integral(); }
+    { return new Integral(null, Symbol.createVarSymbol('x')); }
 
     @Override
     public void draw(Canvas canvas, int w, int h)

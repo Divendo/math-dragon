@@ -174,27 +174,6 @@
 	            android:layout_height="@dimen/math_source_height" />
 	
 	        <org.teaminfty.math_dragon.view.MathSourceView
-	            android:id="@+id/mathSourceSinh"
-	        	style="@style/MathSourceView"
-	            android:layout_width="0dp"
-	            android:layout_weight="1"
-	            android:layout_height="@dimen/math_source_height" />
-	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
-	            android:id="@+id/mathSourceCosh"
-	        	style="@style/MathSourceView"
-	            android:layout_width="0dp"
-	            android:layout_weight="1"
-	            android:layout_height="@dimen/math_source_height" />
-	
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:weightSum="4" >
-	
-	        <org.teaminfty.math_dragon.view.MathSourceView
 	            android:id="@+id/mathSourceLog"
 	        	style="@style/MathSourceView"
 	            android:layout_width="0dp"

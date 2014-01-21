@@ -125,7 +125,7 @@ public class Integral extends Operation
 	
 	
 	@Override
-	public Rect[] getOperatorBoundingBoxes() {
+	public Rect[] calculateOperatorBoundingBoxes() {
 		
 		// Get all the sizes of the bounding boxes
 		Rect sizes[] = getSizes();
@@ -133,7 +133,7 @@ public class Integral extends Operation
 		int height = sizes[0].height();
 		
 		// Offset all the bounding boxes
-		sizes[0].offsetTo( horizontalOffset, sizes[5].height());
+		sizes[0].offsetTo( horizontalOffset, sizes[4].height());
 		sizes[3].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (height - sizes[3].height()) / 2);		
 		
 		// Return them
@@ -144,7 +144,7 @@ public class Integral extends Operation
 	}
 
 	@Override
-	public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException {
+	public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException {
 		// Get the sizes of the bounding boxes
 		Rect[] sizes = getSizes();
 		
@@ -179,7 +179,7 @@ public class Integral extends Operation
 	
 	
 	@Override
-    public Rect getBoundingBox()
+    public Rect calculateBoundingBox()
     {
         // Get the sizes
         Rect[] sizes = getSizes();

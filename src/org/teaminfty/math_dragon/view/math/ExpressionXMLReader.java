@@ -9,11 +9,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.operation.Derivative;
-import org.teaminfty.math_dragon.view.math.operation.Function;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
+import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Log;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
@@ -68,6 +69,10 @@ public final class ExpressionXMLReader
             {
                 return new Derivative(toMath((Element) e.getFirstChild()), toMath((Element) e.getLastChild()));
             }
+            else if(type.equals(Log.TYPE))
+            {
+                return new Log(toMath((Element) e.getFirstChild()), toMath((Element) e.getLastChild()));
+            }
         }
         catch(RuntimeException ex)
         {}
@@ -112,6 +117,9 @@ public final class ExpressionXMLReader
             {
                 switch(Integer.parseInt(e.getAttribute(Operation.ATTR_OPERANDS)))
                 {
+                    case 1:
+                        if(e.getAttribute("type").equals(Negate.TYPE))
+                            return new Negate(toMath((Element) e.getFirstChild()));
                     case 2: return toOpBin(e);
                     case 4:
                         if(e.getAttribute("type").equals(Integral.TYPE))

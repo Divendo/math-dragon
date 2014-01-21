@@ -9,16 +9,18 @@ import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.Operation;
 import org.teaminfty.math_dragon.view.math.Parentheses;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Derivative;
-import org.teaminfty.math_dragon.view.math.operation.Function;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
 import org.teaminfty.math_dragon.view.math.operation.Limit;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
+import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Log;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
@@ -83,6 +85,8 @@ public class EvalHelper
             return limit((Limit) op);
         if(op instanceof Integral)
             return integral((Integral) op);
+        if(op instanceof Negate)
+            return negate((Negate) op);
         throw new MathException(op.toString());
     }
 
@@ -112,6 +116,8 @@ public class EvalHelper
             return root((Root) bin);
         if(bin instanceof Derivative)
             return derivative((Derivative) bin);
+        if(bin instanceof Log)
+            return log((Log) bin);
         throw new MathException(bin.toString());
     }
 
@@ -315,6 +321,21 @@ public class EvalHelper
         checkChildren(ddx);
         return F.D(eval(ddx.getLeft()), eval(ddx.getRight()));
     }
+    
+    /**
+     * Evaluate mathematical logarithm using specified argument.
+     * 
+     * @param log
+     *        The mathematical logarithm.
+     * @return Converted mathematical logarithm for Symja.
+     * @throws MathException
+     *         Thrown when <tt>log</tt> contains invalid children.
+     */
+    public static IExpr log(Log log) throws MathException
+    {
+        checkChildren(log);
+        return F.Divide(F.Log(eval(log.getRight())), F.Log(eval(log.getLeft())));
+    }
 
     /**
      * Evaluate mathematical function using specified argument.
@@ -376,5 +397,20 @@ public class EvalHelper
             
             return F.Integrate( eval(i.getIntegratePart()), F.List(eval(i.getIntegrateOver()), eval(i.getIntegrateFrom()), eval(i.getIntegrateTo())) );
         }
+    }
+
+    /**
+     * Simply negates the child.
+     * 
+     * @param neg The negate operation
+     * @return Converted negated expression for Symja
+     * @throws MathException
+     *         Thrown when <tt>neg</tt> contains invalid children
+     */
+    private static IExpr negate(Negate neg) throws MathException
+    {
+        if(neg.getChild(0) instanceof Empty)
+            throw new EmptyChildException(0);
+        return F.Negate(eval(neg.getChild(0)));
     }
 }

@@ -1,14 +1,14 @@
 package org.teaminfty.math_dragon.model;
 
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.ARCCOS;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.ARCSIN;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.ARCTAN;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.COS;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.COSH;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.LN;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.SIN;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.SINH;
-import static org.teaminfty.math_dragon.view.math.operation.Function.FunctionType.TAN;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.ARCCOS;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.ARCSIN;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.ARCTAN;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.COS;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.COSH;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.LN;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.SIN;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.SINH;
+import static org.teaminfty.math_dragon.view.math.Function.FunctionType.TAN;
 
 import java.util.Locale;
 
@@ -23,7 +23,7 @@ import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IRational;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.view.math.Expression;
-import org.teaminfty.math_dragon.view.math.operation.Function;
+import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;

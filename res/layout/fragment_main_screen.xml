@@ -43,16 +43,34 @@
         android:contentDescription="@string/wolfram"
         android:onClick="wolfram"
         android:src="@drawable/wolfram" />
+    
+    <Button
+        android:id="@+id/btn_integrate"
+        style="@style/CircleButton"
+        android:layout_above="@id/btn_evaluate"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/main_screen_button_margin"
+        android:layout_marginRight="@dimen/main_screen_button_margin"
+        android:text="@string/f_integrate" />
+    
+    <Button
+        android:id="@+id/btn_derivative"
+        style="@style/CircleButton"
+        android:layout_above="@id/btn_integrate"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/main_screen_button_margin"
+        android:text="@string/f_derivative" />
 
     <!-- Buttons in the top right corner -->
     <ImageButton
-        android:id="@+id/btn_favourite"
+        android:id="@+id/btn_favourites"
         style="@style/CircleButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="@dimen/main_screen_button_margin"
-        android:contentDescription="@string/favourite"
-        android:src="@drawable/favourite" />
+        android:contentDescription="@string/favourites"
+        android:onClick="favourites"
+        android:src="@drawable/favourites" />
 
     <ImageButton
         android:id="@+id/btn_clear"
@@ -60,7 +78,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="@dimen/main_screen_button_margin"
         android:layout_marginTop="@dimen/main_screen_button_margin"
-        android:layout_toLeftOf="@id/btn_favourite"
+        android:layout_toLeftOf="@id/btn_favourites"
         android:contentDescription="@string/clear"
         android:onClick="clear"
         android:src="@drawable/clear" />
@@ -69,7 +87,7 @@
         android:id="@+id/btn_redo"
         style="@style/CircleButton"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/btn_favourite"
+        android:layout_below="@id/btn_favourites"
         android:layout_marginLeft="@dimen/main_screen_button_margin"
         android:layout_marginRight="@dimen/main_screen_button_margin"
         android:contentDescription="@string/redo"

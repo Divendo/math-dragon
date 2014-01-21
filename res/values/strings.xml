@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Math DragOn</string>
     <string name="operation_drawer_open">Open the drawer with the operations</string>
     <string name="operation_drawer_close">Close the drawer with the operations</string>
@@ -14,7 +13,6 @@
     <string name="backspace">Backspace</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="favourite">Favourite</string>
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
     <string name="help">Help</string>
@@ -28,10 +26,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="remove">Remove?</string>
-    <string name="showcase_evaluate_message">Clicks here to evaluates</string>
-    <string name="showcase_evaluate_title">Evaluate</string>
-    <string name="showcase_approximate_title">Approximate</string>
-    <string name="showcase_approximate_message">Clicks here to approximates</string>
     <string name="plusminus">±</string>
     <string name="dot">.</string>
     <string name="invalid_input">Invalid input</string>
@@ -40,20 +34,31 @@
     <string name="add_substitution">Add substitution</string>
     <string name="edit_substitution">Edit substitution</string>
     <string name="var_to_substitute">Variable to substitute:</string>
-    <string name="substitute_for">Substitute for:</string>
+    <string name="substitute_by">Substitute by:</string>
     <string name="edit">Edit</string>
     <string name="delete_substitution">Delete substitution?</string>
     <string name="sure_to_delete_substitution">Are you sure you want to delete the substitution?</string>
+    <string name="favourites">Favourites</string>
+    <string name="save">Save</string>
+    <string name="save_under_name">Save under name</string>
+    <string name="thumbnail">Thumbnail</string>
+    <string name="delete">Delete</string>
+    <string name="sure_to_delete_title">Delete formula?</string>
+    <string name="sure_to_delete_msg">Are you sure you want to delete this formula? This can not be undone.</string>
+    <string name="sure_to_overwrite_title">Overwrite formula?</string>
+    <string name="sure_to_overwrite_msg">Are you sure you want to overwrite this formula? This can not be undone.</string>
+    <string name="f_integrate">F</string>
+    <string name="f_derivative">f\'</string>
     <string name="dont_show">Don\'t ask again</string>
     <string name="tutorial_dialog_title">Tutorial</string>
     <string name="tutorial_dialog_msg">Do you want to follow the tutorial?</string>
     <string name="tutorial_fun_op_title">Functions and Operators</string>
     <string name="tutorial_fun_op_msg">Click on the MathDragOn icon to open the side-menu. Here you will find various functions and operators that you can drag n drop into the main screen</string>
     <string name="tutorial_fun_op_drag_msg">You can also swipe from the left edge of the screen to reveal the side menu</string>
-	<string name="tutorial_undo_redo_title">Undo / Redo</string>
-	<string name="tutorial_undo_redo_msg">Here you can find redo and undoo buttons. and a button to delete the entire expression</string>
-	<string name="tutorial_eval_title">Evaluation</string>
-	<string name="tutorial_eval_msg">You can evaluate your expressions in three different ways: Exact evaluation, approximation, or send it to wolfram-alpha.</string>
-	<string name="tutorial_subst_title">Substitutions</string>
-	<string name="tutorial_subst_msg1">Here you can substitute variables by values</string>
+    <string name="tutorial_undo_redo_title">Undo / Redo</string>
+    <string name="tutorial_undo_redo_msg">Here you can find redo and undoo buttons. and a button to delete the entire expression</string>
+    <string name="tutorial_eval_title">Evaluation</string>
+    <string name="tutorial_eval_msg">You can evaluate your expressions in three different ways: Exact evaluation, approximation, or send it to wolfram-alpha.</string>
+    <string name="tutorial_subst_title">Substitutions</string>
+    <string name="tutorial_subst_msg1">Here you can substitute variables by values</string>
 </resources>

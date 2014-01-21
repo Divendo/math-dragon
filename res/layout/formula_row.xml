@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/img_thumb"
+        android:layout_width="@dimen/formula_thumb_size"
+        android:layout_height="@dimen/formula_thumb_size"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/formula_row_margin"
+        android:contentDescription="@string/thumbnail" />
+    
+    <ImageButton
+        android:id="@+id/btn_overwrite"
+        style="@style/CircleButton"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/formula_row_margin"
+        android:contentDescription="@string/save"
+        android:src="@drawable/save" />
+
+    <TextView
+        android:id="@+id/text_formula_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/img_thumb"
+        android:layout_toLeftOf="@id/btn_overwrite" />
+
+</RelativeLayout>

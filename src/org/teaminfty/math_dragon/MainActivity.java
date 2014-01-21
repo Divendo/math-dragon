@@ -71,8 +71,11 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Load the typefaces
         TypefaceHolder.loadFromAssets(getAssets());
 
-        // Set the default size in the MathObject class
+        // Set the default size in the Expression class
         Expression.lineWidth = getResources().getDimensionPixelSize(R.dimen.math_object_line_width);
+        
+        // Set the default size for formula thumbnails in the save load dialog
+        Database.TABLE_FORMULAS.IMAGE_SIZE = getResources().getDimensionPixelSize(R.dimen.formula_thumb_size);
         
         // Load the layout
         setContentView(R.layout.main);
@@ -157,7 +160,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         // Get the MathObject
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-        Expression obj = fragmentMainScreen.getMathObject();
+        Expression obj = fragmentMainScreen.getExpression();
         
         // Only send to Wolfram|Alpha if the MathObject is completed
         if(obj.isCompleted())
@@ -180,14 +183,20 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         try
         {
+            // Get the expression
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+            Expression expr = fragmentMainScreen.getExpression();
+            
+            // If the expression isn't completed yet, we stop here
+            if(!expr.isCompleted()) return;
+            
             // Load the substitutions
             Database db = new Database(this);
             EvalHelper.substitutions = db.getAllSubstitutions();
             db.close();
             
             // Calculate the answer
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            IExpr result = EvalEngine.eval( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
+            IExpr result = EvalEngine.eval(EvalHelper.eval(expr));
 
             // Create an evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
@@ -211,14 +220,20 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         try
         {
+            // Get the expression
+            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
+            Expression expr = fragmentMainScreen.getExpression();
+            
+            // If the expression isn't completed yet, we stop here
+            if(!expr.isCompleted()) return;
+            
             // Load the substitutions
             Database db = new Database(this);
             EvalHelper.substitutions = db.getAllSubstitutions();
             db.close();
             
-            // Calculate the answer
-            FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-            IExpr result = F.evaln( EvalHelper.eval(fragmentMainScreen.getMathObject()) );
+            // Approximate the answer
+            IExpr result = F.evaln(EvalHelper.eval(expr));
 
             // Create an evaluation fragment and show the result
             FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();

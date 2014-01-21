@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSymbolEditor;
+import org.teaminfty.math_dragon.view.MathSymbolEditor.EditingSymbol;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
 
@@ -31,6 +32,9 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     
     /** We'll keep a list of all variable buttons */
     private ArrayList<ToggleButton> varButtons = new ArrayList<ToggleButton>();
+    
+    /** Whether or not to enable the variable buttons */
+    private boolean enableVarBtns = true;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -189,6 +193,15 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         refreshButtonState();
     }
     
+    /** Enables or disables all variable buttons
+     * @param enable Whether or not to enable all variable buttons */
+    public void enableVariableButtons(boolean enable)
+    {
+        enableVarBtns = enable;
+        if(getView() != null)
+            refreshButtonState();
+    }
+    
     /** A listener that's called when the symbol has been confirmed */
     public interface OnConfirmListener
     {
@@ -263,14 +276,17 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
             case E:     buttonE.setChecked(true);       break;
             case I:     buttonI.setChecked(true);       break;
             case VAR:
-                for(ToggleButton btn : varButtons)
+                if(enableVarBtns)
                 {
-                    if(btn.getText().charAt(0) == mathSymbolEditor.getCurrVar())
+                    for(ToggleButton btn : varButtons)
                     {
-                        btn.setChecked(true);
-                        if(mathSymbolEditor.getCurrVar() == 'x')
-                            buttonX.setChecked(true);
-                        break;
+                        if(btn.getText().charAt(0) == mathSymbolEditor.getCurrVar())
+                        {
+                            btn.setChecked(true);
+                            if(mathSymbolEditor.getCurrVar() == 'x')
+                                buttonX.setChecked(true);
+                            break;
+                        }
                     }
                 }
             break;
@@ -278,13 +294,17 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         }
         
         // Enable / disable the dot button
-        buttonDot.setEnabled(mathSymbolEditor.getEditingSymbol() == MathSymbolEditor.EditingSymbol.FACTOR && !mathSymbolEditor.containsDot());
+        buttonDot.setEnabled(mathSymbolEditor.getEditingSymbol() == EditingSymbol.FACTOR && !mathSymbolEditor.containsDot());
         
         // Enable / disable the number buttons
-        final boolean enableNumberButtons = mathSymbolEditor.getEditingSymbol() != MathSymbolEditor.EditingSymbol.FACTOR || mathSymbolEditor.decimalCount() < 6;
+        final boolean enableNumberButtons = mathSymbolEditor.containsDot() ? mathSymbolEditor.decimalCount() < 6 : mathSymbolEditor.numberCount() < 12;
         for(int i = 0; i <= 9; ++i)
             ((Button) view.findViewWithTag("keyboardButton" + Integer.toString(i))).setEnabled(enableNumberButtons);
         
+        // Enable / disable the variable buttons
+        for(ToggleButton btn : varButtons)
+            btn.setEnabled(enableVarBtns);
+        buttonX.setEnabled(enableVarBtns);
     }
     
     /** Activates the given tab

@@ -77,7 +77,7 @@
         
     </HorizontalScrollView>
     
-    <!-- Substitute for label -->
+    <!-- Substitute by label -->
     <TextView
         android:id="@+id/text_substitute_for_label"
         android:layout_width="match_parent"
@@ -85,7 +85,7 @@
         android:layout_alignParentLeft="true"
         android:layout_above="@id/substitute_for_scroller"
         android:layout_margin="@dimen/keyboard_button_margin"
-        android:text="@string/substitute_for" />
+        android:text="@string/substitute_by" />
     
     <!-- Variable buttons -->
     <LinearLayout

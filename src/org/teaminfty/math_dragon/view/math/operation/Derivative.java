@@ -103,7 +103,7 @@ public class Derivative extends Binary
     }
 
     @Override
-    public Rect[] getOperatorBoundingBoxes()
+    public Rect[] calculateOperatorBoundingBoxes()
     {
         // Get the sizes
         Rect[] sizes = getSizes();
@@ -125,7 +125,7 @@ public class Derivative extends Binary
     }
 
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
+    public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException
     {
         // Make sure the child index is valid
         checkChildIndex(index);
@@ -151,7 +151,7 @@ public class Derivative extends Binary
     }
     
     @Override
-    public Rect getBoundingBox()
+    public Rect calculateBoundingBox()
     {
         // Get the sizes
         Rect[] sizes = getSizes();

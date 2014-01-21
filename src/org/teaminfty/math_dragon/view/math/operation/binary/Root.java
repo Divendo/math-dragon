@@ -75,7 +75,7 @@ public class Root extends Binary
     }
 
     @Override
-    public Rect[] getOperatorBoundingBoxes() 
+    public Rect[] calculateOperatorBoundingBoxes() 
     {
         // Get the bounding boxes (not the sizes) of the children
         Rect exponentBounding = getChildBoundingBox(0);
@@ -93,7 +93,7 @@ public class Root extends Binary
     }
 
     @Override
-    public Rect getBoundingBox()
+    public Rect calculateBoundingBox()
     {
         // Get the bounding box (not the size) of the base
         Rect baseBounding = getChildBoundingBox(1);
@@ -103,7 +103,7 @@ public class Root extends Binary
     }
     
     @Override
-    public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException 
+    public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException 
     {
         // Check if the child exists
         checkChildIndex(index);

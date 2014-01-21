@@ -74,7 +74,7 @@ public class MathSourceView extends View
     {
         // We only want ACTION_DOWN events
         if(mathSourceObject == null || me.getAction() != MotionEvent.ACTION_DOWN)
-            return false;
+            return true;
         
         // Prepare a MathObject for dragging
         Expression mathObject = mathSourceObject.createMathObject();

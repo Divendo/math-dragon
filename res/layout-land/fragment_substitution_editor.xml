@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/circle_button_size"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="@dimen/dialog_title_font_size"
+        android:text="@string/edit_substitution" />
+    
+    <!-- Dialog buttons -->
+	<ImageButton
+	    android:id="@+id/btn_ok"
+	    style="@style/KeyboardButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+	    android:src="@drawable/check"
+	    android:contentDescription="@string/ok" />
+	
+	<ImageButton
+	    android:id="@+id/btn_cancel"
+	    style="@style/KeyboardButton"
+        android:layout_toLeftOf="@id/btn_ok"
+        android:layout_alignParentBottom="true"
+	    android:src="@drawable/cross"
+	    android:contentDescription="@string/cancel" />
+    
+    <!-- Value that is to be substituted for -->
+    <Button
+        android:id="@+id/btn_edit_substitute_for"
+        style="@style/FlatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/substitute_row_height"
+        android:layout_marginRight="@dimen/substitute_margin"
+        android:layout_toLeftOf="@id/btn_cancel"
+        android:layout_alignParentBottom="true"
+        android:text="@string/edit" />
+    
+    <HorizontalScrollView
+        android:id="@+id/substitute_for_scroller"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/substitute_row_height"
+        android:layout_marginLeft="@dimen/substitute_margin"
+        android:layout_marginRight="@dimen/substitute_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/btn_edit_substitute_for"
+        android:gravity="center_vertical"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:requiresFadingEdge="horizontal"
+        android:fillViewport="true" >
+
+        <TextView
+            android:id="@+id/text_substitute_for"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        	android:layout_gravity="center_vertical"
+        	android:gravity="left|center_vertical"
+        	android:textSize="@dimen/substitute_text_size" />
+        
+    </HorizontalScrollView>
+    
+    <!-- Substitute by label -->
+    <TextView
+        android:id="@+id/text_substitute_for_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@id/substitute_for_scroller"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:text="@string/substitute_by" />
+    
+    <!-- Variable buttons -->
+    <LinearLayout
+        android:id="@+id/var_buttons_container"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/text_title"
+        android:layout_above="@id/text_substitute_for_label"
+    	android:gravity="center"
+    	android:orientation="vertical" >
+    
+    </LinearLayout>
+    
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@id/var_buttons_container"
+        android:layout_toLeftOf="@id/var_buttons_container"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:text="@string/var_to_substitute" />
+
+</RelativeLayout>

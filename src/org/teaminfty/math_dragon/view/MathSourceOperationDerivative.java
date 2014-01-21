@@ -2,6 +2,7 @@ package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
+import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Derivative;
 
 import android.graphics.Canvas;
@@ -15,7 +16,7 @@ public class MathSourceOperationDerivative extends MathSourceObject
     
     @Override
     public Expression createMathObject()
-    { return new Derivative(); }
+    { return new Derivative(null, Symbol.createVarSymbol('x')); }
 
     @Override
     public void draw(Canvas canvas, int w, int h)

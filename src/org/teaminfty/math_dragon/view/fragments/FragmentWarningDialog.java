@@ -60,10 +60,14 @@ public class FragmentWarningDialog extends DialogFragment
         // Set the title
         if(titleId != 0)
             ((TextView) view.findViewById(R.id.text_title)).setText(titleId);
+        if(savedInstanceState != null && savedInstanceState.getString(TITLE_TEXT) != null)
+            ((TextView) view.findViewById(R.id.text_title)).setText(savedInstanceState.getString(TITLE_TEXT));
         
         // Set the message
         if(msgId != 0)
             ((TextView) view.findViewById(R.id.text_msg)).setText(msgId);
+        if(savedInstanceState != null && savedInstanceState.getString(MSG_TEXT) != null)
+            ((TextView) view.findViewById(R.id.text_msg)).setText(savedInstanceState.getString(MSG_TEXT));
         
         // Set the listener for the ok and cancel buttons
         view.findViewById(R.id.btn_ok).setOnClickListener(new ButtonOkOnClickListener());
@@ -80,11 +84,54 @@ public class FragmentWarningDialog extends DialogFragment
         return view;
     }
     
+    /** A string containing the title text */
+    private static final String TITLE_TEXT = "title_text";
+    
+    /** A string containing the message text */
+    private static final String MSG_TEXT = "msg_text";
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // Store the title text
+        outState.putString(TITLE_TEXT, ((TextView) getView().findViewById(R.id.text_title)).getText().toString());
+        
+        // Store the message text
+        outState.putString(MSG_TEXT, ((TextView) getView().findViewById(R.id.text_msg)).getText().toString());
+    }
+    
     /** An interface that can be implemented to listen for confirms */
     public interface OnConfirmListener
     {
         public void confirm();
     }
+
+    /** Sets the {@link FragmentWarningDialog#onConfirmListener OnConfirmListener}
+     * @param listener The new {@link FragmentWarningDialog#onConfirmListener OnConfirmListener} */
+    public void setOnConfirmListener(OnConfirmListener listener)
+    {
+        // Set the listener
+        onConfirmListener = listener;
+        
+        // Update the layout
+        if(getView() != null)
+        {
+            if(onConfirmListener != null)
+            {
+                ((Button) getView().findViewById(R.id.btn_ok)).setText(R.string.yes);
+                getView().findViewById(R.id.btn_cancel).setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ((Button) getView().findViewById(R.id.btn_ok)).setText(R.string.ok);
+                getView().findViewById(R.id.btn_cancel).setVisibility(View.GONE);
+            }
+        }
+    }
+    
+    /** Returns the current {@link FragmentWarningDialog#onConfirmListener OnConfirmListener} */
+    public OnConfirmListener getOnConfirmListener()
+    { return onConfirmListener; }
     
     /** The listener for the ok button */
     private class ButtonOkOnClickListener implements View.OnClickListener

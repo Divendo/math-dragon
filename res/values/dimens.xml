@@ -43,8 +43,12 @@
     <dimen name="substitute_var_width">48dp</dimen>
     <dimen name="substitute_margin">8dp</dimen>
     <dimen name="substitute_text_size">32sp</dimen>
+    <dimen name="substitution_editor_dlg_height">512dp</dimen>
     
     <dimen name="warning_dlg_padding">8dp</dimen>
     <dimen name="tut_dlg_padding">10dp</dimen>
+    
+    <dimen name="formula_thumb_size">64dp</dimen>
+    <dimen name="formula_row_margin">8dp</dimen>
     
 </resources>
