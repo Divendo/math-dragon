@@ -231,22 +231,14 @@ public class FragmentSubstitute extends DialogFragment
         }
     }
     
-<<<<<<< HEAD
-    private class DeleteSubstitutionListener implements FragmentWarningDialog.OnConfirmListener
-=======
     private class DeleteSubstituteListener implements FragmentWarningDialog.OnConfirmListener
->>>>>>> 0511cc914af78cdd58d93f4df55f7edd53fbde17
     {
         /** The variable that is to be deleted */
         public char varName = 'a';
         
         /** Constructor
          * @param name The variable that is to be deleted */
-<<<<<<< HEAD
-        public DeleteSubstitutionListener(char name)
-=======
         public DeleteSubstituteListener(char name)
->>>>>>> 0511cc914af78cdd58d93f4df55f7edd53fbde17
         { varName = name; }
 
         @Override
@@ -305,11 +297,7 @@ public class FragmentSubstitute extends DialogFragment
                 return true;
             
             // Create and show a warning dialog
-<<<<<<< HEAD
-            FragmentWarningDialog dlg = new FragmentWarningDialog(R.string.delete_substitution, R.string.sure_to_delete_substitution, new DeleteSubstitutionListener(varName));
-=======
             FragmentWarningDialog dlg = new FragmentWarningDialog(R.string.delete_substitution, R.string.sure_to_delete_substitution, new DeleteSubstituteListener(varName));
->>>>>>> 0511cc914af78cdd58d93f4df55f7edd53fbde17
             dlg.show(getFragmentManager(), WARNING_TAG);
             
             // We've consumed the event
