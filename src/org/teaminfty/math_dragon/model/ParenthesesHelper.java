@@ -6,6 +6,7 @@ import org.teaminfty.math_dragon.view.math.Parentheses;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Derivative;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
+import org.teaminfty.math_dragon.view.math.operation.binary.Log;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
 import org.teaminfty.math_dragon.view.math.operation.binary.Subtract;
@@ -114,7 +115,8 @@ public class ParenthesesHelper
         //      The child of a Parentheses object
         //      The first child of the Derivative
         //      The child of a function
-        if(parent instanceof Root || (parent instanceof Derivative && index == 0) || parent instanceof Parentheses || parent instanceof Function)
+        //      The children of a logarithm
+        if(parent instanceof Root || (parent instanceof Derivative && index == 0) || parent instanceof Parentheses || parent instanceof Function || parent instanceof Log)
         {
             placeParentheses = false;
             definitivePlaceParentheses = true;
