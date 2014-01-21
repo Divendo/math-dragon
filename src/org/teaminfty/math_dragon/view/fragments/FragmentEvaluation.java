@@ -31,6 +31,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,12 @@ public class FragmentEvaluation extends DialogFragment
     
     /** The current evaluator (or <tt>null</tt> if there is none) */
     private Evaluator evaluator = null;
+    
+    /** The timer to timeout the evaluator (or <tt>null</tt> if there is none) */
+    private Handler timerHandler = null;
+    
+    /** Whether or not the timer is cancelled */
+    private boolean timerCancelled = false;
     
     /** Whether or not we were unable to evaluate the expression */
     private boolean unableToEval = false;
@@ -186,6 +193,11 @@ public class FragmentEvaluation extends DialogFragment
         // Start the evaluator
         evaluator = new Evaluator();
         evaluator.execute(expr);
+        
+        // Set and start the timer
+        timerCancelled = false;
+        timerHandler = new Handler();
+        timerHandler.postDelayed(new EvaluatorTimeout(), 5000);
     }
 
     @Override
@@ -222,6 +234,7 @@ public class FragmentEvaluation extends DialogFragment
         mathView = null;
         if(evaluator != null)
         {
+            timerCancelled = true;
             synchronized(evaluator)
             {
                 evaluator.cancel(true);
@@ -234,6 +247,36 @@ public class FragmentEvaluation extends DialogFragment
         @Override
         public void onClick(View btn)
         { dismiss(); }
+    }
+    
+    /** Runnable that is executed when the evaluation times out */
+    private class EvaluatorTimeout implements Runnable
+    {
+        @Override
+        public void run()
+        {
+            // Check before synchronising if the timer was cancelled
+            // because we may have cancelled it from our ui thread
+            if(timerCancelled) return;
+            
+            synchronized(timerHandler)
+            {
+                // Check after synchronising if the timer was cancelled
+                // because we may have cancelled it from the evaluation thread
+                if(timerCancelled) return;
+                
+                // Cancel the evaluator (interrupt)
+                evaluator.cancel(true);
+                
+                // Show that we were unable to evaluate the expression
+                unableToEval = true;
+                if(getView() != null)
+                {
+                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                    getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+                }
+            }
+        }
     }
 
     /** Class that evaluates the expression in a separate thread */
@@ -259,12 +302,19 @@ public class FragmentEvaluation extends DialogFragment
                         // Parse the expression, beautify it and place parentheses
                         Expression resultExpr = ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result)));
                         
+                        // Cancel the timer
+                        synchronized(timerHandler)
+                        {
+                            timerCancelled = true;
+                        }
+                        
                         // Return the result
                         return resultExpr;
                     }
                     catch(MathException e)
                     {
-                        // TODO Auto-generated catch block
+                        // Apparently we were unable to correctly parse the calculation
+                        unableToEval = true;
                         e.printStackTrace();
                     }
                     catch(RuntimeException e)
@@ -273,6 +323,12 @@ public class FragmentEvaluation extends DialogFragment
                         unableToEval = true;
                     }
                 }
+            }
+            
+            // Cancel the timer
+            synchronized(timerHandler)
+            {
+                timerCancelled = true;
             }
             
             // Something went wrong, return null
