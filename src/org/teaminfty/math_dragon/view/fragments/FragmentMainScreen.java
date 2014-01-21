@@ -22,14 +22,11 @@ import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.Empty;
-<<<<<<< HEAD
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
-=======
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Derivative;
 import org.teaminfty.math_dragon.view.math.operation.Integral;
->>>>>>> 0511cc914af78cdd58d93f4df55f7edd53fbde17
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
