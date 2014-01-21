@@ -53,6 +53,9 @@ public class FragmentEvaluation extends DialogFragment
     /** The current evaluator (or <tt>null</tt> if there is none) */
     private Evaluator evaluator = null;
     
+    /** Whether or not we were unable to evaluate the expression */
+    private boolean unableToEval = false;
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -63,7 +66,7 @@ public class FragmentEvaluation extends DialogFragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_evaluation, container, false);
         
-        // Disable the the MathView
+        // Disable the the MathView and set its contents
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEnabled(false);
         mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
@@ -95,6 +98,24 @@ public class FragmentEvaluation extends DialogFragment
         ((TextView) view.findViewById(R.id.textViewEvalType)).setText(exactEvaluation ? R.string.evaluate_exact : R.string.evaluate_approximate);
         if(savedInstanceState != null && savedInstanceState.getString(BUNDLE_TITLE) != null)
             ((TextView) view.findViewById(R.id.textViewEvalType)).setText(savedInstanceState.getString(BUNDLE_TITLE));
+        
+        // If an error occurred, show the error
+        if(unableToEval)
+        {
+            view.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            view.findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+        }
+        
+        // Wolfram|Alpha button click listener
+        view.findViewById(R.id.btn_wolfram).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(onWolframListener != null)
+                    onWolframListener.wolfram();
+            }
+        });
         
         // Return the content view
         return view;
@@ -217,7 +238,7 @@ public class FragmentEvaluation extends DialogFragment
 
     /** Class that evaluates the expression in a separate thread */
     private class Evaluator extends AsyncTask<Expression, Void, Expression>
-    {
+    {        
         @Override
         protected Expression doInBackground(Expression... args)
         {
@@ -245,6 +266,11 @@ public class FragmentEvaluation extends DialogFragment
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
+                    catch(RuntimeException e)
+                    {
+                        // This occurs for impossible to solve expression (e.g. integrate(x^x, x))
+                        unableToEval = true;
+                    }
                 }
             }
             
@@ -257,7 +283,30 @@ public class FragmentEvaluation extends DialogFragment
         {
             if(result != null)
                 showExpression(result);
+            else if(getView() != null)
+            {
+                if(unableToEval)
+                {
+                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                    getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+                }
+            }
         }
     }
+    
+    /** Interface that can be implemented to listen when the expression should be evaluated using Wolfram|Alpha */
+    public interface OnWolframListener
+    {
+        /** Called when the expression should be evaluated using Wolfram|Alpha */
+        public void wolfram();
+    }
+    
+    /** The current {@link FragmentEvaluation#OnWolframListener OnWolframListener} */
+    private OnWolframListener onWolframListener = null;
+    
+    /** Set the {@link FragmentEvaluation#OnWolframListener OnWolframListener}
+     * @param listener The new {@link FragmentEvaluation#OnWolframListener OnWolframListener} */
+    public void setOnWolframListener(OnWolframListener listener)
+    { onWolframListener = listener; }
 }
 

@@ -50,5 +50,6 @@
 	<string name="sure_to_overwrite_msg">Are you sure you want to overwrite this formula? This can not be undone.</string>
 	<string name="f_integrate">F</string>
 	<string name="f_derivative">f\'</string>
+	<string name="unable_to_eval">Math DragOn was unable to evaluate your expression. If you want to try it with Wolfram|Alpha, click the button below</string>
 	
 </resources>

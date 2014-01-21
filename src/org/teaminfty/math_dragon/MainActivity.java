@@ -95,6 +95,10 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
                 // There was no drawer to close
             }
         }
+        
+        // Restore the Wolfram|Alpha listener (if necessary)
+        if(getFragmentManager().findFragmentByTag(EVALUATION_TAG) != null)
+            ((FragmentEvaluation) getFragmentManager().findFragmentByTag(EVALUATION_TAG)).setOnWolframListener(new WolframListener());
     }
 
     @Override
@@ -154,6 +158,14 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             startActivity(intent);
         }
     }
+    
+    /** The listener for Wolfra|Alpha launch requests from the evaluation dialog */
+    private class WolframListener implements FragmentEvaluation.OnWolframListener
+    {
+        @Override
+        public void wolfram()
+        { MainActivity.this.wolfram(null); }
+    }
 
     /** Tag of the evaluation dialog */
     private static final String EVALUATION_TAG = "evaluation";
@@ -178,6 +190,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
         // Create an evaluation fragment and show the result
         FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+        fragmentEvaluation.setOnWolframListener(new WolframListener());
         fragmentEvaluation.setEvalType(true);
         fragmentEvaluation.evaluate(expr);
         fragmentEvaluation.show(getFragmentManager(), EVALUATION_TAG);
@@ -203,6 +216,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
         // Create an evaluation fragment and show the result
         FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+        fragmentEvaluation.setOnWolframListener(new WolframListener());
         fragmentEvaluation.setEvalType(false);
         fragmentEvaluation.evaluate(expr);
         fragmentEvaluation.show(getFragmentManager(), EVALUATION_TAG);
