@@ -4,12 +4,17 @@ import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.EvalHelper;
+import org.teaminfty.math_dragon.model.Database.Substitution;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.fragments.FragmentSubstitute;
 import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.ExpressionDuplicator;
+import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
+import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -140,13 +145,24 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         // Get the MathObject
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-        Expression obj = fragmentMainScreen.getExpression();
+        Expression expr = fragmentMainScreen.getExpression();
         
         // Only send to Wolfram|Alpha if the MathObject is completed
-        if(obj.isCompleted())
+        if(expr.isCompleted())
         {
+            // Load the substitutions
+            Database db = new Database(this);
+            Database.Substitution[] substArray = db.getAllSubstitutions();
+            substitutions = new Database.Substitution[26];
+            for(Substitution sub : substArray)
+                substitutions[sub.name - 'a'] = sub;
+            db.close();
+            
+            // Substitute
+            Expression substitutedExpr = substitute(ExpressionDuplicator.deepCopy(expr));
+            
             // Get the query
-            String query = obj.toString();
+            String query = substitutedExpr.toString();
             
             // Strip the query of unnecessary outer parentheses
             if(query.startsWith("(") && query.endsWith(")"))
@@ -258,5 +274,38 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             // there was no drawer to open.
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
-    }   
+    }
+    
+    /** An array of substitutions (per variable), an element can be <tt>null</tt> if there no substitution for that variable */
+    private Database.Substitution[] substitutions = new Database.Substitution[26];
+    
+    /** Substitutes all variables in the given {@link Expression} for the substitution in {@link MainActivity#substitutions substitutions}
+     * @param source The {@link Expression} to substitute in, note that this {@link Expression} may be invalid after the function returns
+     * @return The {@link Expression} where the variables have been substituted */
+    private Expression substitute(Expression source)
+    {
+        if(source instanceof Symbol)
+        {
+            Symbol symbol = (Symbol) source;
+            Expression out = symbol;
+            for(int i = 0; i < symbol.varPowCount(); ++i)
+            {
+                if(symbol.getVarPow(i) != 0 && substitutions[i] != null)
+                {
+                    if(symbol.getVarPow(i) == 1)
+                        out = new Multiply(out, substitutions[i].value);
+                    else
+                        out = new Multiply(out, new Power(substitutions[i].value, new Symbol(symbol.getVarPow(i))));
+                    symbol.setVarPow(i, 0);
+                }
+            }
+            return out;
+        }
+        else
+        {
+            for(int i = 0; i < source.getChildCount(); ++i)
+                source.setChild(i, substitute(source.getChild(i)));
+            return source;
+        }
+    }
 }
