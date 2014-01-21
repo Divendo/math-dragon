@@ -249,11 +249,12 @@ public class FragmentEvaluation extends DialogFragment
                     try
                     {
                         // Calculate the answer
+                        // Note that we use a two-step evaluation as for some reason integrals like integrate(x*sin(x), {x, 0, pi})
+                        // wouldn't work in approximation mode otherwise
                         IExpr result = null;
-                        if(exactEvaluation)
-                            result = EvalEngine.eval(EvalHelper.eval(args[0]));
-                        else
-                            result = F.evaln(EvalHelper.eval(args[0]));
+                        result = EvalEngine.eval(EvalHelper.eval(args[0]));
+                        if(!exactEvaluation)
+                            result = F.evaln(result);
                         
                         // Parse the expression, beautify it and place parentheses
                         Expression resultExpr = ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result)));
