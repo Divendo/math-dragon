@@ -43,12 +43,56 @@ public class ExpressionBeautifier
             return symbol((Symbol) expr);
         if (expr instanceof Operation)
             return operation((Operation) expr);
+        if (expr instanceof Function)
+            return function((Function) expr);
         return expr;
     }
     
-    static Symbol symbol(Symbol s)
+    /**
+     * Simplify and beautify the specified mathematical symbolic constant as far
+     * as possible such that the expression remains as simple as possible to be
+     * read by users.
+     * 
+     * @param s
+     *        The mathematical symbolic constant. If it could not be simplified
+     *        or beautified, {@code bin} is returned.
+     * @return Usually a simplified and beautified expression. <tt>this</tt>
+     *         otherwise.
+     */
+    static Expression symbol(Symbol s)
     {
-        // TODO expand to ... * 10^ x if factor really large or really small
+        double factor = s.getFactor();
+        // if it is interchangeable with 'real' integers
+        long tempFactor = (long) factor;
+        if(tempFactor == factor)
+        {
+            long pow = 0;
+            if(factor > 0)
+            {
+                while(tempFactor / 10 == factor / 10)
+                {
+                    tempFactor /= 10;
+                    factor /= 10;
+                    ++pow;
+                }
+            }
+            else
+            {
+                while(tempFactor * 10 == factor * 10)
+                {
+                    tempFactor *= 10;
+                    factor *= 10;
+                    --pow;
+                }
+            }
+            // only transform if it could be simplified
+            if(pow != 0)
+            {
+                s.setFactor(factor);
+                Expression power = pow(new Power(new Symbol(10), new Symbol(pow)));
+                return mul(new Multiply(s, power));
+            }
+        }
         return s;
     }
     
@@ -92,6 +136,23 @@ public class ExpressionBeautifier
         if (bin instanceof Power)
             return pow((Power) bin);
         return bin;
+    }
+    
+    /**
+     * Simplify and beautify the specified mathematical unary function as far as
+     * possible such that the expression remains as simple as possible to be
+     * read by users.
+     * 
+     * @param func
+     *        The mathematical unary function. If it could not be simplified or
+     *        beautified, {@code bin} is returned.
+     * @return Usually a simplified and beautified expression. <tt>this</tt>
+     *         otherwise.
+     */
+    static Expression function(Function func)
+    {
+        func.setChild(0, parse(func.getChild(0)));
+        return func;
     }
     
     /**
@@ -168,6 +229,7 @@ public class ExpressionBeautifier
                 return symleft;
             }
         }
+        System.err.println("I'm right here!");
         // combine if both expressions are fractions
         if (left instanceof Divide && right instanceof Divide)
         {
@@ -176,6 +238,28 @@ public class ExpressionBeautifier
             ldiv.setNumerator(mul(new Multiply(ldiv.getNumerator(), rdiv.getNumerator())));
             ldiv.setDenominator(mul(new Multiply(ldiv.getDenominator(), rdiv.getDenominator())));
             return ldiv;
+        }
+        // A * (B/C) -> (A*B)/C 
+        if (left instanceof Symbol && right instanceof Divide)
+        {
+            Symbol symleft = (Symbol) left;
+            Divide rdiv = (Divide) right;
+            if (symleft.isFactorOnly())
+            {
+                rdiv.setNumerator(mul(new Multiply(rdiv.getNumerator(), symleft)));
+                return rdiv;
+            }
+        }
+        // (A/B) * C -> (A*C)/B
+        if (left instanceof Divide && right instanceof Symbol)
+        {
+            Divide ldiv = (Divide) left;
+            Symbol symright = (Symbol) right;
+            if (symright.isFactorOnly())
+            {
+                ldiv.setNumerator(mul(new Multiply(ldiv.getNumerator(), symright)));
+                return ldiv;
+            }
         }
         // combine if left operand equals -1 and right operand is a function
         if (left.equals(Symbol.M_ONE) && right instanceof Function)
