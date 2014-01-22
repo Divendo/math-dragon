@@ -56,6 +56,8 @@ public class FragmentMainScreen extends Fragment
         // Listen for events from the MathView
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEventListener(new MathViewEventListener());
+        if(savedInstanceState != null)
+            mathView.setDefaultHeight(savedInstanceState.getInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT));
         
         // Disable the evaluate buttons by default
         enableDisableEvalButtons(view, mathView.getExpression());
@@ -149,6 +151,9 @@ public class FragmentMainScreen extends Fragment
     /** A bundle containing the current keyboard listener (if the keyboard is active) */
     private static final String BUNDLE_KEYBOARD_LISTENER = "keyboard_listener";
     
+    /** An integer containing the default height of the MathView */
+    private static final String BUNDLE_MATH_VIEW_DEFAULT_HEIGHT = "math_view_default_height";
+    
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
@@ -182,6 +187,9 @@ public class FragmentMainScreen extends Fragment
             FragmentKeyboard.OnConfirmListener listener = ((FragmentKeyboard) getFragmentManager().findFragmentByTag(KEYBOARD_TAG)).getOnConfirmListener();
             outState.putBundle(BUNDLE_KEYBOARD_LISTENER, mathView.keyboardListenerToBundle(listener));
         }
+        
+        // Save the default height
+        outState.putInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT, mathView.getDefaultHeight());
     }
 
     /** Clears the current formula */

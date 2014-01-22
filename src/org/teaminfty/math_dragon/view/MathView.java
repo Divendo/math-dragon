@@ -154,6 +154,10 @@ public class MathView extends View
         invalidate();
     }
     
+    /** Returns the default height of the expression */
+    public int getDefaultHeight()
+    { return (int) expressionDefaultHeight; }
+    
     /** Resets the scroll position */
     public void resetScroll()
     {
@@ -1035,7 +1039,7 @@ public class MathView extends View
         }
         
         /** An integer ArrayList in the state bundle that contains the path (in child numbers) to the child in expressionInfo */
-        public static final String BUNDLE_MATH_OBJECT_INFO = "math_object_info";
+        private static final String BUNDLE_MATH_OBJECT_INFO = "math_object_info";
         
         /** Returns the information about this {@link ExpressionReplacer} as a bundle
          * @param root The root {@link Expression} */

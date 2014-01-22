@@ -1,7 +1,6 @@
 package org.teaminfty.math_dragon.view.fragments;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
@@ -77,7 +76,10 @@ public class FragmentEvaluation extends DialogFragment
         // Disable the the MathView and set its contents
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEnabled(false);
-        mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
+        if(savedInstanceState != null)
+            mathView.setDefaultHeight(savedInstanceState.getInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT));
+        else
+            mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
         if(showExpression != null)
         {
             mathView.setExpression(showExpression);
@@ -135,6 +137,9 @@ public class FragmentEvaluation extends DialogFragment
     /** A XML string containing the current the expressions that is to be shown */
     private static final String BUNDLE_MATH_EXPRESSION = "math_expr";
     
+    /** An integer containing the default height of the MathView */
+    private static final String BUNDLE_MATH_VIEW_DEFAULT_HEIGHT = "math_view_default_height";
+    
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
@@ -164,6 +169,9 @@ public class FragmentEvaluation extends DialogFragment
             { /* Ignore */ }
             catch(ParserConfigurationException e)
             { /* Ignore */ }
+            
+            // Save the default height
+            outState.putInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT, mathView.getDefaultHeight());
         }
     }
     
