@@ -38,6 +38,9 @@ public class EvalHelper
     
     /** The list of substitutions */
     public static Database.Substitution[] substitutions = null;
+    
+    /** Whether or not substitutions should be done */
+    public static boolean substitute = true;
 
     /**
      * Convert the mathematical expression to a symja compatible expression.
@@ -203,7 +206,7 @@ public class EvalHelper
     private static IExpr getVarSymbol(char varName) throws MathException
     {
         // Check if we have to substitute the variable
-        if(substitutions != null)
+        if(substitute && substitutions != null)
         {
             for(Database.Substitution sub : substitutions)
             {

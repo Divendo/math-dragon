@@ -1,6 +1,7 @@
 package org.teaminfty.math_dragon.view.fragments;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
@@ -291,13 +292,27 @@ public class FragmentEvaluation extends DialogFragment
                 {
                     try
                     {
-                        // Calculate the answer
-                        // Note that we use a two-step evaluation as for some reason integrals like integrate(x*sin(x), {x, 0, pi})
-                        // wouldn't work in approximation mode otherwise
-                        IExpr result = null;
-                        result = EvalEngine.eval(EvalHelper.eval(args[0]));
-                        if(!exactEvaluation)
+                        // We always evaluate the answer exactly first (without substitutions)
+                        EvalHelper.substitute = false;
+                        IExpr result = EvalEngine.eval(EvalHelper.eval(args[0]));
+                        
+                        // Now we calculate the answer (with substitutions, if there are any)
+                        if(EvalHelper.substitutions != null && EvalHelper.substitutions.length != 0)
+                        {
+                            Expression resultExpr = ModelHelper.toExpression(result);
+                            EvalHelper.substitute = true;
+                            if(exactEvaluation)
+                                result = EvalEngine.eval(EvalHelper.eval(resultExpr));
+                            else
+                                result = F.evaln(EvalHelper.eval(resultExpr));
+                                
+                        }
+                        // We still might need to approximate the answer
+                        else if(!exactEvaluation)
                             result = F.evaln(result);
+                        
+                        // Note that we always approximate after exact evaluation because for some reason
+                        // integrals like integrate(x*sin(x), {x, 0, pi}) wouldn't work in approximation mode otherwise
                         
                         // Parse the expression, beautify it and place parentheses
                         Expression resultExpr = ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result)));
