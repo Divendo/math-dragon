@@ -479,7 +479,7 @@ public class Symbol extends Expression
         setIPow(iPow);
     }
 
-    /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible (i.e. their power >= 1)
+    /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible (i.e. their power != 0)
      * @return True if one or more symbols are visible, false otherwise */
     public boolean symbolVisible()
     {
