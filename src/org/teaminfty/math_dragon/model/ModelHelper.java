@@ -10,6 +10,7 @@ import static org.teaminfty.math_dragon.view.math.Function.FunctionType.SIN;
 import static org.teaminfty.math_dragon.view.math.Function.FunctionType.SINH;
 import static org.teaminfty.math_dragon.view.math.Function.FunctionType.TAN;
 
+import java.math.BigInteger;
 import java.util.Locale;
 
 import org.matheclipse.core.expression.F;
@@ -22,6 +23,7 @@ import org.matheclipse.core.interfaces.IInteger;
 import org.matheclipse.core.interfaces.INum;
 import org.matheclipse.core.interfaces.IRational;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.exceptions.TooBigValueException;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
@@ -125,6 +127,12 @@ public final class ModelHelper
      */
     static org.teaminfty.math_dragon.view.math.Symbol integer(IInteger i) throws ParseException
     {
+        BigInteger big = i.getBigNumerator();
+        if(big.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == 1)
+            throw new TooBigValueException(true);
+        else if(big.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) == -1)
+            throw new TooBigValueException(false);
+            
         return new org.teaminfty.math_dragon.view.math.Symbol(i.longValue());
     }
 

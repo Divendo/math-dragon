@@ -51,5 +51,8 @@
 	<string name="f_integrate">F</string>
 	<string name="f_derivative">f\'</string>
 	<string name="unable_to_eval">Math DragOn was unable to evaluate your expression. If you want to try it with Wolfram|Alpha, click the button below</string>
+	<string name="unable_to_eval_timeout">Math DragOn was unable to evaluate your expression, a timeout occurred. If you want to try it with Wolfram|Alpha, click the button below</string>
+	<string name="unable_to_eval_too_big">Math DragOn was unable to evaluate your expression, the answer contains a number that is too big. If you want to try it with Wolfram|Alpha, click the button below</string>
+	<string name="unable_to_eval_too_small">Math DragOn was unable to evaluate your expression, the answer contains a number that is too small. If you want to try it with Wolfram|Alpha, click the button below</string>
 	
 </resources>

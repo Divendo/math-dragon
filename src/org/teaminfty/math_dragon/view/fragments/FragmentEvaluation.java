@@ -17,6 +17,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.exceptions.TooBigValueException;
 import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.ExpressionBeautifier;
 import org.teaminfty.math_dragon.model.ModelHelper;
@@ -62,6 +63,9 @@ public class FragmentEvaluation extends DialogFragment
     
     /** Whether or not we were unable to evaluate the expression */
     private boolean unableToEval = false;
+    
+    /** The ID of the message to the user when we're unable to evaluate an expression */
+    private int unableToEvalMsgId = R.string.unable_to_eval;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -112,6 +116,7 @@ public class FragmentEvaluation extends DialogFragment
         // If an error occurred, show the error
         if(unableToEval)
         {
+            ((TextView) view.findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
             view.findViewById(R.id.progressBar).setVisibility(View.GONE);
             view.findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
         }
@@ -279,8 +284,10 @@ public class FragmentEvaluation extends DialogFragment
                 
                 // Show that we were unable to evaluate the expression
                 unableToEval = true;
+                unableToEvalMsgId = R.string.unable_to_eval_timeout;
                 if(getView() != null)
                 {
+                    ((TextView) getView().findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
                     getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
                     getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
                 }
@@ -334,21 +341,29 @@ public class FragmentEvaluation extends DialogFragment
                         // Return the result
                         return resultExpr;
                     }
+                    catch(TooBigValueException e)
+                    {
+                        unableToEval = true;
+                        unableToEvalMsgId = e.valTooBig ? R.string.unable_to_eval_too_big : R.string.unable_to_eval_too_small;
+                    }
                     catch(MathException e)
                     {
                         // Apparently we were unable to correctly parse the calculation
                         unableToEval = true;
+                        unableToEvalMsgId = R.string.unable_to_eval;
                         e.printStackTrace();
                     }
                     catch(RuntimeException e)
                     {
                         // This occurs for impossible to solve expression (e.g. integrate(x^x, x))
                         unableToEval = true;
+                        unableToEvalMsgId = R.string.unable_to_eval;
                     }
                     catch(StackOverflowError e)
                     {
                         // This occurs for impossible to solve expression (e.g. integrate(x*(x*x)^x, x))
                         unableToEval = true;
+                        unableToEvalMsgId = R.string.unable_to_eval;
                     }
                 }
             }
@@ -368,13 +383,11 @@ public class FragmentEvaluation extends DialogFragment
         {
             if(result != null)
                 showExpression(result);
-            else if(getView() != null)
+            else if(getView() != null && unableToEval)
             {
-                if(unableToEval)
-                {
-                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
-                    getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
-                }
+                ((TextView) getView().findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
+                getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
             }
         }
     }
