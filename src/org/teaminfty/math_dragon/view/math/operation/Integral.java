@@ -156,31 +156,28 @@ public class Integral extends Operation
 		int signWidth = Math.max( Math.max( sizes[0].width(), sizes[4].width()), sizes[5].width());
 		int height = sizes[0].height();
 		
-		// Offset all the bounding boxes
-		sizes[1].offsetTo( horizontalOffset + sizes[0].width(), sizes[4].height() + (height - sizes[1].height()) / 2);
-		sizes[2].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width(), sizes[4].height() + (height - sizes[2].height()) / 2);
-		sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, 0);
-		sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, sizes[0].height() + sizes[4].height());
-		
 		// Switch to return the correct bounding box
 		switch( index) 
 		{
 		case 0:
+			sizes[1].offsetTo( horizontalOffset + sizes[0].width(), sizes[4].height() + (height - sizes[1].height()) / 2);
 			return sizes[1];
 			
 		case 1:
+			sizes[2].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width(), sizes[4].height() + (height - sizes[2].height()) / 2);
 			return sizes[2];
 
 		case 2:
+			sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, sizes[0].height() + sizes[4].height());
 			return sizes[5];
 			
 		case 3:
+			sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, 0);
 			return sizes[4];
 		}
 		
 		return null;
 	}
-	
 	
 	@Override
     public Rect calculateBoundingBox()

@@ -158,6 +158,23 @@ public class Log extends Binary
         }
     }
     
+    @Override
+    public void calculateAllChildBoundingBox()
+    {
+        // Get the sizes
+        Rect[] operatorSize = getOperatorBoundingBoxes();
+        Rect leftChild = getChild(0).getBoundingBox();
+        Rect rightChild = getChild(1).getBoundingBox();
+        
+        // Translate and return the operand's bounding box
+        leftChild.offsetTo(operatorSize[0].width(), rightChild.height() - leftChild.height()/3);
+        rightChild.offsetTo(operatorSize[0].width() + operatorSize[1].width() + leftChild.width(), 0);
+        
+        // Add the bounding boxes
+        childrenBoundingBoxes.add( leftChild);
+        childrenBoundingBoxes.add( rightChild);
+    }
+    
     //Complete bounding box
     @Override
     public Rect calculateBoundingBox()
@@ -170,7 +187,7 @@ public class Log extends Binary
 
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {        
         return new Point(this.getBoundingBox().centerX(), getChild(1).getCenter().y);
     }

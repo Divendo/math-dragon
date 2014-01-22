@@ -135,7 +135,7 @@ public class Parentheses extends Expression
     }
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {
     	return new Point( this.getBoundingBox().centerX(), this.getChild(0).getCenter().y);
     }

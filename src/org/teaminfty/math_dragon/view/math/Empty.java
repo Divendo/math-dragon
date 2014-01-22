@@ -70,11 +70,11 @@ public class Empty extends Expression
     
     @Override
     public Rect calculateBoundingBox()
-    {
-        int width = (int)(defaultHeight*RATIO);
-        int height = defaultHeight;
-        
-        for(int t = 0; t < this.level && t < MAX_LEVEL; t++)
+    {    	
+    	int width = (int) (defaultHeight * RATIO);
+    	int height = defaultHeight;
+    	
+    	for(int t = 0; t < this.level && t < MAX_LEVEL; t++)
         {
             width = 2*width/3;
             height = 2*height/3;

@@ -26,9 +26,12 @@ public abstract class Expression
     /** The children of this {@link Expression} */
     protected ArrayList<Expression> children = new ArrayList<Expression>();
 
+    /** The center of this object */
+    protected Point center;
+    
     /** The bounding boxes of this object */
     protected ArrayList<Rect> childrenBoundingBoxes = new ArrayList<Rect>();
-    protected ArrayList<Rect> operatorBoundingBoxes = new ArrayList<Rect>();    
+    protected ArrayList<Rect> operatorBoundingBoxes = new ArrayList<Rect>();
     protected Rect totalBoundingBox = null;
     
     /** The boolean to keep track if the bounding boxes are still valid */
@@ -37,6 +40,8 @@ public abstract class Expression
     protected boolean childrenBoundingBoxValid = false;
     /** The boolean to keep track if the total bounding box is still valid */
     protected boolean totalBoundingBoxValid = false;
+    /** The boolean to keep track if the center is still valid */
+    protected boolean centerValid = false;
     
     /** The default height of an object */
     protected int defaultHeight = 100;
@@ -180,6 +185,7 @@ public abstract class Expression
         validateOperatorBoundingBox(bool);
         validateChildrenBoundingBox(bool);
         validateTotalBoundingBox(bool);
+        validateCenter(bool);
     }
     
     
@@ -211,7 +217,7 @@ public abstract class Expression
     public abstract Rect[] calculateOperatorBoundingBoxes();
 
     public Rect[] getOperatorBoundingBoxes()
-    {
+    {    	
         // If the cache is invalid or there are no bounding boxes in the current cache, recalculate them
         if( !getOperatorBoundingBoxValid() || operatorBoundingBoxes.isEmpty())
         {
@@ -250,16 +256,13 @@ public abstract class Expression
     public abstract Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException;
 
     public Rect getChildBoundingBox(int index) throws IndexOutOfBoundsException
-    {
+    {    	
         // If the cache is invalid or the amount of bounding boxes isn't the amount of children, recalculate them
         if( !getChildrenBoundingBoxValid() || (getChildCount() != childrenBoundingBoxes.size()))
         {
             childrenBoundingBoxes.clear();
             
-            int size = getChildCount();
-            
-            for(int i = 0; i < size; i ++)
-                childrenBoundingBoxes.add( calculateChildBoundingBox(i));
+            this.calculateAllChildBoundingBox();
              
             validateChildrenBoundingBox(true);
         }
@@ -267,6 +270,16 @@ public abstract class Expression
         // Return a copy of the requested bounding box
         return new Rect(childrenBoundingBoxes.get(index));
     }
+    
+    /** Calculate all the children's bounding boxes and add them to the children arraylist */
+    public void calculateAllChildBoundingBox()
+    {
+    	int size = getChildCount();
+        
+        for(int i = 0; i < size; i ++)
+            childrenBoundingBoxes.add( calculateChildBoundingBox(i));
+    }
+    
     /**
      * Returns the bounding box for the entire {@link Expression}.
      * The aspect ratio of the box should always be the same.
@@ -274,7 +287,7 @@ public abstract class Expression
      * @return The bounding box for the entire {@link Expression}
      */
     public Rect calculateBoundingBox()
-    {
+    {    	
         // This will be our result
         Rect out = new Rect();
 
@@ -406,13 +419,39 @@ public abstract class Expression
         return Color.BLACK;
     }
     
+    /** Set the state of the center point*/
+    public void validateCenter(boolean bool)
+    {
+    	centerValid = bool;
+    	
+    	if(!bool)
+    		for(Expression child : children)
+    			child.validateCenter(false);
+    }
+    
+    /** Get the state of the center point */
+    public boolean getCenterValid()
+    { return centerValid; }
+    
     /** Returns the centre of the {@link Expression}
      * @return The centre of the {@link Expression}
      */
     public Point getCenter()
     {
-        Rect bounding = this.getBoundingBox();
-        return new Point(bounding.centerX(), bounding.centerY());
+    	if(!getCenterValid() || center == null)
+    	{
+    		center = calculateCenter();
+    		this.validateCenter(true);
+    	}
+    	
+        return center;
+    }
+    
+    /** Calculate the center point */
+    public Point calculateCenter()
+    {
+    	Rect bounding = this.getBoundingBox();
+		return new Point(bounding.centerX(), bounding.centerY());
     }
     
     /** Sets the new level for this {@link Expression} and all of its children

@@ -236,6 +236,26 @@ public class Limit extends Operation
         	return mainChild;
         }
     }
+    
+    @Override
+    public void calculateAllChildBoundingBox()
+    {
+        // Get the sizes
+        Rect[] operatorSize = getOperatorBoundingBoxes();
+        Rect leftChild = getChild(0).getBoundingBox();
+        Rect rightChild = getChild(1).getBoundingBox();
+        Rect mainChild = getChild(2).getBoundingBox();
+        
+        // Translate and return the operand's bounding box
+        leftChild.offsetTo(operatorSize[0].centerX() - operatorSize[3].width()/2 - leftChild.width(),operatorSize[0].bottom);
+        rightChild.offsetTo(operatorSize[0].centerX() + operatorSize[3].width()/2, operatorSize[0].bottom);
+        mainChild.offsetTo(operatorSize[0].width() + operatorSize[2].width(), 0);
+        
+        // Add the bounding boxes
+        childrenBoundingBoxes.add( leftChild);
+        childrenBoundingBoxes.add( rightChild);
+        childrenBoundingBoxes.add( mainChild);
+    }
 
     @Override
     public void draw(Canvas canvas)
