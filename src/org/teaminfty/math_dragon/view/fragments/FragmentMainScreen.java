@@ -190,10 +190,9 @@ public class FragmentMainScreen extends Fragment
         if(mathView.getExpression() instanceof Empty)
             mathView.resetScroll();
         else
-        {
             mathView.setExpression(null);
-            mathView.invalidate();
-        }
+        mathView.resetDefaultHeight();
+        mathView.invalidate();
     }
     
     /** Returns the current {@link Expression}
