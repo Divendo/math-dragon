@@ -31,6 +31,12 @@ public class Symbol extends Expression
      * symbolic constant themselves.
      */
     public static final Symbol ONE = new Symbol(1);
+    /**
+     * Cached mathematical symbolic constant for the mathematical <tt>10</tt> in
+     * order to speed up helpers and parsers so they don't need to make this
+     * symbolic constant themselves.
+     */
+    public static final Symbol TEN = new Symbol(10);
     
     /** The factor of this constant */
     private double factor = 0;
