@@ -333,8 +333,9 @@ public class EvalHelper
      */
     public static IExpr log(Log log) throws MathException
     {
-        checkChildren(log);
-        return F.Divide(F.Log(eval(log.getRight())), F.Log(eval(log.getLeft())));
+        if (!log.isCompleted())
+            throw new EmptyChildException(1);
+        return F.Divide(F.Log(eval(log.getRight())), F.Log(log.getLeft() instanceof Empty ? F.ZZ(10) : eval(log.getLeft())));
     }
 
     /**

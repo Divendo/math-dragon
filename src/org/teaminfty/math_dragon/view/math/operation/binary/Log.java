@@ -242,4 +242,10 @@ public class Log extends Binary
 
 	@Override
 	protected String getType() {return TYPE;}
+
+    @Override
+    public boolean isCompleted()
+    {
+        return getChild(1).isCompleted();
+    }
 }
