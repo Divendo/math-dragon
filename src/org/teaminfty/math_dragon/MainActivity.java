@@ -4,12 +4,17 @@ import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.EvalHelper;
+import org.teaminfty.math_dragon.model.Database.Substitution;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.fragments.FragmentSubstitute;
 import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.ExpressionDuplicator;
+import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
+import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -95,6 +100,10 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
                 // There was no drawer to close
             }
         }
+        
+        // Restore the Wolfram|Alpha listener (if necessary)
+        if(getFragmentManager().findFragmentByTag(EVALUATION_TAG) != null)
+            ((FragmentEvaluation) getFragmentManager().findFragmentByTag(EVALUATION_TAG)).setOnWolframListener(new WolframListener());
     }
 
     @Override
@@ -136,14 +145,28 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
     {
         // Get the MathObject
         FragmentMainScreen fragmentMainScreen = (FragmentMainScreen) getFragmentManager().findFragmentById(R.id.fragmentMainScreen);
-        Expression obj = fragmentMainScreen.getExpression();
+        Expression expr = fragmentMainScreen.getExpression();
         
         // Only send to Wolfram|Alpha if the MathObject is completed
-        if(obj.isCompleted())
+        if(expr.isCompleted())
         {
-            // Get the query
-            String query = obj.toString();
+            // Load the substitutions
+            Database db = new Database(this);
+            Database.Substitution[] substArray = db.getAllSubstitutions();
+            substitutions = new Database.Substitution[26];
+            for(Substitution sub : substArray)
+                substitutions[sub.name - 'a'] = sub;
+            db.close();
             
+            // Substitute
+            Expression substitutedExpr = substitute(ExpressionDuplicator.deepCopy(expr));
+            
+            // Get the query
+            String query = substitutedExpr.toString();
+            
+            // Replace the iota we write for the imaginary unit by an i (which WA understands)
+            query = query.replace('\u03b9', 'i');
+
             // Strip the query of unnecessary outer parentheses
             if(query.startsWith("(") && query.endsWith(")"))
                 query = query.substring(1, query.length() - 1);
@@ -153,6 +176,14 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             intent.setData(Uri.parse("http://www.wolframalpha.com/input/?i=" + Uri.encode(query)));
             startActivity(intent);
         }
+    }
+    
+    /** The listener for Wolfra|Alpha launch requests from the evaluation dialog */
+    private class WolframListener implements FragmentEvaluation.OnWolframListener
+    {
+        @Override
+        public void wolfram()
+        { MainActivity.this.wolfram(null); }
     }
 
     /** Tag of the evaluation dialog */
@@ -178,6 +209,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
         // Create an evaluation fragment and show the result
         FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+        fragmentEvaluation.setOnWolframListener(new WolframListener());
         fragmentEvaluation.setEvalType(true);
         fragmentEvaluation.evaluate(expr);
         fragmentEvaluation.show(getFragmentManager(), EVALUATION_TAG);
@@ -203,6 +235,7 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
 
         // Create an evaluation fragment and show the result
         FragmentEvaluation fragmentEvaluation = new FragmentEvaluation();
+        fragmentEvaluation.setOnWolframListener(new WolframListener());
         fragmentEvaluation.setEvalType(false);
         fragmentEvaluation.evaluate(expr);
         fragmentEvaluation.show(getFragmentManager(), EVALUATION_TAG);
@@ -244,5 +277,38 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
             // there was no drawer to open.
             // Don't have a way to detect if there is a drawer yet so we just listen for this exception..
         }
-    }   
+    }
+    
+    /** An array of substitutions (per variable), an element can be <tt>null</tt> if there no substitution for that variable */
+    private Database.Substitution[] substitutions = new Database.Substitution[26];
+    
+    /** Substitutes all variables in the given {@link Expression} for the substitution in {@link MainActivity#substitutions substitutions}
+     * @param source The {@link Expression} to substitute in, note that this {@link Expression} may be invalid after the function returns
+     * @return The {@link Expression} where the variables have been substituted */
+    private Expression substitute(Expression source)
+    {
+        if(source instanceof Symbol)
+        {
+            Symbol symbol = (Symbol) source;
+            Expression out = symbol;
+            for(int i = 0; i < symbol.varPowCount(); ++i)
+            {
+                if(symbol.getVarPow(i) != 0 && substitutions[i] != null)
+                {
+                    if(symbol.getVarPow(i) == 1)
+                        out = new Multiply(out, substitutions[i].value);
+                    else
+                        out = new Multiply(out, new Power(substitutions[i].value, new Symbol(symbol.getVarPow(i))));
+                    symbol.setVarPow(i, 0);
+                }
+            }
+            return out;
+        }
+        else
+        {
+            for(int i = 0; i < source.getChildCount(); ++i)
+                source.setChild(i, substitute(source.getChild(i)));
+            return source;
+        }
+    }
 }

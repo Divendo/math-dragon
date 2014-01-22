@@ -1,8 +1,9 @@
-package org.teaminfty.math_dragon.view.math.operation;
+package org.teaminfty.math_dragon.view.math.operation.binary;
 
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.operation.Binary;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -36,7 +37,7 @@ public class Derivative extends Binary
     @Override
     public String toString()
     {
-        return "Derive(" + getLeft().toString() + "," + getRight().toString() + ")";
+        return "derive(" + getLeft().toString() + "," + getRight().toString() + ")";
     }
 
     @Override
@@ -75,9 +76,8 @@ public class Derivative extends Binary
         operatorPaint.getTextBounds("d", 0, 1, boundsTop);
         Rect boundsBottom = new Rect(boundsTop);
         
-        // Add a small amount of padding to the "d"s
-        boundsTop.inset((int) (-3 * lineWidth), 0);
-        boundsBottom.inset((int) (-3 * lineWidth), 0);
+        // Add a small amount of padding to the top "d" and place both of them at (0, 0)
+        boundsTop.inset((int) (-2 * lineWidth), 0);
         boundsTop.offsetTo(0, 0);
         boundsBottom.offsetTo(0, 0);
         
@@ -110,7 +110,7 @@ public class Derivative extends Binary
 
         // Position the bounding boxes and return them
         sizes[0].offsetTo(0, Math.max(sizes[1].height(), sizes[3].height()));
-        sizes[3].offsetTo(Math.max(0, sizes[0].width() - sizes[1].width() - sizes[3].width() - sizes[5].width() - sizes[6].width()) / 2, (sizes[1].height() - sizes[3].height()) / 2);
+        sizes[3].offsetTo(Math.max(0, sizes[0].width() - sizes[1].width() - sizes[3].width() - sizes[5].width() - sizes[6].width()) / 2, Math.max(0, (sizes[1].height() - sizes[3].height()) / 2));
         sizes[4].offsetTo(Math.max(0, sizes[0].width() - sizes[2].width() - sizes[4].width()) / 2, sizes[0].bottom + Math.max(0, (sizes[2].height() - sizes[4].height()) / 2));
         
         // Make a rectangle the size of the brackets
@@ -118,8 +118,8 @@ public class Derivative extends Binary
         Rect rightBracket = new Rect( 0, 0, sizes[6].width(), sizes[6].height());
         
         // Move them to the correct position
-        leftBracket.offsetTo( sizes[3].width() + Math.max( 0, sizes[0].width() - sizes[3].width() - sizes[1].width() - rightBracket.width() - leftBracket.width()) / 2, 0);
-        rightBracket.offsetTo( sizes[3].width() + sizes[1].width() + leftBracket.width() + Math.max( 0, sizes[0].width() - sizes[3].width() - sizes[1].width() - rightBracket.width() - leftBracket.width()) / 2, 0);
+        leftBracket.offsetTo( sizes[3].width() + Math.max( 0, sizes[0].width() - sizes[3].width() - sizes[1].width() - rightBracket.width() - leftBracket.width()) / 2, Math.max(0, (sizes[3].height() - sizes[1].height()) / 2));
+        rightBracket.offsetTo( sizes[3].width() + sizes[1].width() + leftBracket.width() + Math.max( 0, sizes[0].width() - sizes[3].width() - sizes[1].width() - rightBracket.width() - leftBracket.width()) / 2, Math.max(0, (sizes[3].height() - sizes[1].height()) / 2));
         
         return new Rect[] {sizes[0], sizes[3], sizes[4], leftBracket, rightBracket};
     }
@@ -143,7 +143,7 @@ public class Derivative extends Binary
         else
         {
             Point childCenter = getChild(1).getCenter();
-            sizes[2].offsetTo(ownCenterX - childCenter.x + sizes[4].width() / 2, Math.max(sizes[3].height(), sizes[1].height()) + sizes[0].height() + Math.max(0, (sizes[4].height() - sizes[2].height()) / 2));
+            sizes[2].offsetTo(ownCenterX - childCenter.x + sizes[4].width() / 2, Math.max(sizes[1].height(), sizes[3].height()) + sizes[0].height() + Math.max(0, sizes[4].height() - sizes[2].height()));
         }
 
         // Return the requested bounding box
@@ -171,14 +171,6 @@ public class Derivative extends Binary
         // Return the centre, which is the centre of the operator
         return new Point(operatorBounding.centerX(), operatorBounding.centerY());
     }
-    
-    @Override
-      public void setLevel(int l)
-      {
-          level = l;
-          getChild(0).setLevel(level+1);
-          getChild(1).setLevel(level+1);
-      }
 
     @Override
     public void draw(Canvas canvas)

@@ -66,10 +66,14 @@ public class Integral extends Operation
 	
 	public String toString()
 	{
+	    String over = getIntegrateOver().toString();
+	    if(over.startsWith("(") && over.endsWith(")"))
+	        over = over.substring(1, over.length() - 1);
+	    
 		if(getIntegrateFrom() instanceof Empty && getIntegrateTo() instanceof Empty)
-			return "Integrate(" + getIntegratePart().toString() + "," + getIntegrateOver().toString() + ")";
+			return "Integrate(" + getIntegratePart().toString() + "," + over + ")";
 		else
-			return "Integrate(" + getIntegratePart().toString() + ",{" + getIntegrateOver().toString() + "," + getIntegrateFrom().toString() + "," + getIntegrateTo().toString() + "})";
+			return "Integrate(" + getIntegratePart().toString() + ",{" + over + "," + getIntegrateFrom().toString() + "," + getIntegrateTo().toString() + "})";
 	}
 
     public int getPrecedence()

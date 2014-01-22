@@ -14,14 +14,14 @@
 
         <ToggleButton
             android:id="@+id/btn_tab_operators"
-            style="@style/TabButton"
+            style="@style/OperationsSourceTabButton"
             android:text="@string/operators"
             android:textOff="@string/operators"
             android:textOn="@string/operators" />
 
         <ToggleButton
             android:id="@+id/btn_tab_funcs"
-            style="@style/TabButton"
+            style="@style/OperationsSourceTabButton"
             android:text="@string/functions"
             android:textOn="@string/functions"
             android:textOff="@string/functions" />
