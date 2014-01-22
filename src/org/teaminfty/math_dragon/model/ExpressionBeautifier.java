@@ -1,17 +1,20 @@
 package org.teaminfty.math_dragon.model;
 
 import org.teaminfty.math_dragon.view.math.Expression;
+import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.Operation;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.teaminfty.math_dragon.view.math.operation.Binary;
+import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Add;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Multiply;
 import org.teaminfty.math_dragon.view.math.operation.binary.Power;
 import org.teaminfty.math_dragon.view.math.operation.binary.Root;
+import org.teaminfty.math_dragon.view.math.operation.binary.Subtract;
 
 /**
- * Ensures that complicated and hard-to-read mathematical expression are
+ * Ensures that complicated and hard-to-read mathematical expressions are
  * simplified and beautified such that the expression remains as simple as
  * possible to be read by users.
  * 
@@ -36,9 +39,65 @@ public class ExpressionBeautifier
      */
     public static Expression parse(Expression expr)
     {
+        if (expr instanceof Symbol)
+            return symbol((Symbol) expr);
         if (expr instanceof Operation)
             return operation((Operation) expr);
+        if (expr instanceof Function)
+            return function((Function) expr);
         return expr;
+    }
+    
+    /**
+     * Simplify and beautify the specified mathematical symbolic constant as far
+     * as possible such that the expression remains as simple as possible to be
+     * read by users.
+     * 
+     * @param s
+     *        The mathematical symbolic constant. If it could not be simplified
+     *        or beautified, {@code bin} is returned.
+     * @return Usually a simplified and beautified expression. <tt>this</tt>
+     *         otherwise.
+     */
+    static Expression symbol(Symbol s)
+    {
+        double factor = s.getFactor();
+        // if it is interchangeable with 'real' integers
+        long tempFactor = (long) factor;
+        if(tempFactor == factor)
+        {
+            long pow = 0;
+            if(factor > 0)
+            {
+                while(tempFactor >= 10 && tempFactor / 10 == factor / 10)
+                {
+                    tempFactor /= 10;
+                    factor /= 10;
+                    ++pow;
+                }
+            }
+            else
+            {
+                while(tempFactor <= -10 && tempFactor * 10 == factor * 10)
+                {
+                    tempFactor *= 10;
+                    factor *= 10;
+                    --pow;
+                }
+            }
+            // only transform if it could be simplified
+            if(pow != 0)
+            {
+                s.setFactor(factor);
+                Expression power = new Power(new Symbol(10), new Symbol(pow));
+                if (s.equals(Symbol.ONE))
+                {
+                    return power;
+                }
+                return new Multiply(s, power);
+            }
+        }
+        return s;
     }
     
     /**
@@ -84,6 +143,23 @@ public class ExpressionBeautifier
     }
     
     /**
+     * Simplify and beautify the specified mathematical unary function as far as
+     * possible such that the expression remains as simple as possible to be
+     * read by users.
+     * 
+     * @param func
+     *        The mathematical unary function. If it could not be simplified or
+     *        beautified, {@code bin} is returned.
+     * @return Usually a simplified and beautified expression. <tt>this</tt>
+     *         otherwise.
+     */
+    static Expression function(Function func)
+    {
+        func.setChild(0, parse(func.getChild(0)));
+        return func;
+    }
+    
+    /**
      * Simplify and beautify the specified mathematical addition as far as
      * possible such that the expression remains as simple as possible to be
      * read by users.
@@ -106,6 +182,16 @@ public class ExpressionBeautifier
             return right;
         if (right.equals(Symbol.ZERO))
             return left;
+        if (right instanceof Symbol)
+        {
+            Symbol symr = (Symbol) right;
+            double factor = symr.getFactor();
+            if (factor < 0)
+            {
+                symr.setFactor(-factor);
+                return new Subtract(left, symr);
+            }
+        }
         return add;
     }
     
@@ -156,6 +242,33 @@ public class ExpressionBeautifier
             ldiv.setDenominator(mul(new Multiply(ldiv.getDenominator(), rdiv.getDenominator())));
             return ldiv;
         }
+        // A * (B/C) -> (A*B)/C 
+        if (left instanceof Symbol && right instanceof Divide)
+        {
+            Symbol symleft = (Symbol) left;
+            Divide rdiv = (Divide) right;
+            if (symleft.isFactorOnly())
+            {
+                rdiv.setNumerator(mul(new Multiply(rdiv.getNumerator(), symleft)));
+                return rdiv;
+            }
+        }
+        // (A/B) * C -> (A*C)/B
+        if (left instanceof Divide && right instanceof Symbol)
+        {
+            Divide ldiv = (Divide) left;
+            Symbol symright = (Symbol) right;
+            if (symright.isFactorOnly())
+            {
+                ldiv.setNumerator(mul(new Multiply(ldiv.getNumerator(), symright)));
+                return ldiv;
+            }
+        }
+        // combine if left operand equals -1 and right operand is a function
+        if (left.equals(Symbol.M_ONE) && right instanceof Function)
+        {
+            return new Negate(right);
+        }
         return mul;
     }
     
@@ -180,6 +293,42 @@ public class ExpressionBeautifier
         // 0/x -> 0, x != 0
         if (num.equals(Symbol.ZERO) && !denom.equals(Symbol.ZERO))
             return num;
+        if (num.equals(Symbol.ONE) && denom instanceof Power)
+        {
+            Power power = (Power) denom;
+            if (power.getBase().equals(Symbol.TEN))
+            {
+                Expression powexp = power.getExponent();
+                if (powexp instanceof Symbol)
+                {
+                    Symbol symexp = (Symbol) powexp;
+                    if (symexp.isFactorOnly())
+                    {
+                        // 1/(10^n) -> 10^-n
+                        symexp.setFactor(-symexp.getFactor());
+                        return power;
+                    }
+                }
+            }
+            if (power.getBase() instanceof Symbol)
+            {
+                Symbol powbase = (Symbol) power.getBase();
+                if (powbase.isFactorOnly())
+                {
+                    Expression powexp = power.getExponent();
+                    if (powexp instanceof Symbol)
+                    {
+                        Symbol symexp = (Symbol) powexp;
+                        if (symexp.isFactorOnly())
+                        {
+                            // 1/(10^n) -> 10^-n
+                            symexp.setFactor(-symexp.getFactor());
+                            return power;
+                        }
+                    }
+                }
+            }
+        }
         div.set(num, denom);
         return div;
     }
