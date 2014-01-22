@@ -90,6 +90,10 @@ public class ExpressionBeautifier
             {
                 s.setFactor(factor);
                 Expression power = new Power(new Symbol(10), new Symbol(pow));
+                if (s.equals(Symbol.ONE))
+                {
+                    return power;
+                }
                 return new Multiply(s, power);
             }
         }
@@ -289,6 +293,42 @@ public class ExpressionBeautifier
         // 0/x -> 0, x != 0
         if (num.equals(Symbol.ZERO) && !denom.equals(Symbol.ZERO))
             return num;
+        if (num.equals(Symbol.ONE) && denom instanceof Power)
+        {
+            Power power = (Power) denom;
+            if (power.getBase().equals(Symbol.TEN))
+            {
+                Expression powexp = power.getExponent();
+                if (powexp instanceof Symbol)
+                {
+                    Symbol symexp = (Symbol) powexp;
+                    if (symexp.isFactorOnly())
+                    {
+                        // 1/(10^n) -> 10^-n
+                        symexp.setFactor(-symexp.getFactor());
+                        return power;
+                    }
+                }
+            }
+            if (power.getBase() instanceof Symbol)
+            {
+                Symbol powbase = (Symbol) power.getBase();
+                if (powbase.isFactorOnly())
+                {
+                    Expression powexp = power.getExponent();
+                    if (powexp instanceof Symbol)
+                    {
+                        Symbol symexp = (Symbol) powexp;
+                        if (symexp.isFactorOnly())
+                        {
+                            // 1/(10^n) -> 10^-n
+                            symexp.setFactor(-symexp.getFactor());
+                            return power;
+                        }
+                    }
+                }
+            }
+        }
         div.set(num, denom);
         return div;
     }
