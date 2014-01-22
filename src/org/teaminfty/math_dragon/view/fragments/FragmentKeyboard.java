@@ -134,6 +134,10 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
             }
         }
         
+        // Retrieve whether or not variable buttons should be enabled
+        if(savedInstanceState != null)
+            enableVarBtns = savedInstanceState.getBoolean(BUNDLE_ENABLE_VAR_BUTTONS);
+
         // Set the buttons to the right state
         refreshButtonState(myFragmentView);
 
@@ -170,6 +174,9 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     
     /** A bundle containing the state of the {@link MathSymbolEditor} */
     private static final String BUNDLE_MATH_SYMBOL_EDITOR_STATE = "math_symbol_editor_state";
+
+    /** A boolean containing whether or not the variable buttons should be enabled */
+    private static final String BUNDLE_ENABLE_VAR_BUTTONS = "enable_var_buttons";
     
     @Override
     public void onSaveInstanceState(Bundle outState)
@@ -179,6 +186,9 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         
         // Save the current MathSymbolEditor state
         outState.putBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE, mathSymbolEditor.toBundle());
+        
+        // Store which tab is shown
+        outState.putBoolean(BUNDLE_ENABLE_VAR_BUTTONS, enableVarBtns);
     }
     
     /** Sets the current value from the given {@link Symbol}
