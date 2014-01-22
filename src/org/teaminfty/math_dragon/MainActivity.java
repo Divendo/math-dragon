@@ -6,6 +6,7 @@ import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.Database.Substitution;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
+import org.teaminfty.math_dragon.view.fragments.FragmentAbout;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
@@ -310,5 +311,19 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
                 source.setChild(i, substitute(source.getChild(i)));
             return source;
         }
+    }
+
+    /** The tag for the about dialog */
+    private static final String ABOUT_TAG = "about";
+    
+    public void help(View view)
+    {
+        // If a about dialog is already shown, stop here
+        if(getFragmentManager().findFragmentByTag(ABOUT_TAG) != null)
+            return;
+        
+        // Create and show the about dialog
+        FragmentAbout fragmentAbout = new FragmentAbout();
+        fragmentAbout.show(getFragmentManager(), ABOUT_TAG);
     }
 }
