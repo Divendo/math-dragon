@@ -424,6 +424,17 @@ public class Symbol extends Expression
     public void setVarPow(char index, long pow)
     { setVarPow(index > 'Z' ? index - 'a' : index - 'A', pow); }
     
+    public int getVarCount()
+    {
+        int count = 0;
+        for (int i = 0; i < varPows.length; ++i)
+        {
+            if (varPows[i] != 0)
+                ++count;
+        }
+        return count;
+    }
+    
     /** The amount of variables that this symbol supports */
     public int varPowCount()
     { return varPows.length; }
