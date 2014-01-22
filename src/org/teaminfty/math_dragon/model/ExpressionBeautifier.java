@@ -69,7 +69,7 @@ public class ExpressionBeautifier
             long pow = 0;
             if(factor > 0)
             {
-                while(tempFactor / 10 == factor / 10)
+                while(tempFactor >= 10 && tempFactor / 10 == factor / 10)
                 {
                     tempFactor /= 10;
                     factor /= 10;
@@ -78,7 +78,7 @@ public class ExpressionBeautifier
             }
             else
             {
-                while(tempFactor * 10 == factor * 10)
+                while(tempFactor <= -10 && tempFactor * 10 == factor * 10)
                 {
                     tempFactor *= 10;
                     factor *= 10;
@@ -89,8 +89,8 @@ public class ExpressionBeautifier
             if(pow != 0)
             {
                 s.setFactor(factor);
-                Expression power = pow(new Power(new Symbol(10), new Symbol(pow)));
-                return mul(new Multiply(s, power));
+                Expression power = new Power(new Symbol(10), new Symbol(pow));
+                return new Multiply(s, power);
             }
         }
         return s;
@@ -229,7 +229,6 @@ public class ExpressionBeautifier
                 return symleft;
             }
         }
-        System.err.println("I'm right here!");
         // combine if both expressions are fractions
         if (left instanceof Divide && right instanceof Divide)
         {
