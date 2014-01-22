@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Operation;
+import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -115,6 +116,18 @@ public class Limit extends Operation
      */
     public void setEnd(Expression end)
     {
+        if (end != null)
+        {
+            if (!(end instanceof Symbol))
+            {
+                throw new IllegalArgumentException("'end' should be null or a symbolic constant");
+            }
+            Symbol sym = (Symbol) end;
+            if (sym.getVarCount() > 1)
+            {
+                throw new IllegalArgumentException("multiple variables not allowed for 'over'");
+            }
+        }
         setChild(1, end);
     }
     

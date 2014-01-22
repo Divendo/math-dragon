@@ -1,10 +1,11 @@
 package org.teaminfty.math_dragon.view.math.operation;
 
 import org.teaminfty.math_dragon.view.TypefaceHolder;
-import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
-import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Operation;
+import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -235,6 +236,18 @@ public class Integral extends Operation
     {
 		// Only set the integrate child and the child to integrate over
         setChild(0, integrate);
+        if (over != null)
+        {
+            if (!(over instanceof Symbol))
+            {
+                throw new IllegalArgumentException("'over' should be null or a symbolic constant");
+            }
+            Symbol sym = (Symbol) over;
+            if (sym.getVarCount() != 1)
+            {
+                throw new IllegalArgumentException("multiple variables not allowed for 'over'");
+            }
+        }
         setChild(1, over);
     }
 	
