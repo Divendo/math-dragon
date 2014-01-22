@@ -19,27 +19,73 @@ import android.view.WindowManager;
 
 public class ShowcaseViewDialog extends Dialog
 {
-    public ShowcaseViewDialog(Activity ctx, Target target, String title, String msg)
+    private ShowcaseView sv;
+    private Gesture gesture = null;
+    
+    public ShowcaseViewDialog(Activity ctx, Target target, String title,
+            String msg, Gesture gesture)
     {
         // Construct an invisible dialog
         super(ctx, R.style.ShowcaseViewDialogTheme);
-        
+
         // Create the ShowcaseView and directly remove is from its parent
-        ShowcaseView sv = ShowcaseView.insertShowcaseView(target, ctx, title, msg);
+        ShowcaseView sv = ShowcaseView.insertShowcaseView(target, ctx, title,
+                msg);
         ((ViewGroup) sv.getParent()).removeView(sv);
         sv.setOnShowcaseEventListener(new ShowcaseEventListener());
-        
+        this.sv = sv;
+
+        this.gesture = gesture;
+       
         // Set the ShowcaseView as content
         setContentView(sv);
+
     }
 
-    public ShowcaseViewDialog(Activity ctx, Target target, int titleId, int msgId)
+    public ShowcaseViewDialog(Activity ctx, Target target, String title,
+            String msg)
+    {
+        this(ctx, target, title, msg, null);
+    }
+
+    public ShowcaseViewDialog(Activity ctx, Target target, int titleId,
+            int msgId, Gesture gesture)
     {
         // Simply call the other constructor
-        this(ctx, target, ctx.getResources().getString(titleId), ctx.getResources().getString(msgId));
+        this(ctx, target, ctx.getResources().getString(titleId), ctx
+                .getResources().getString(msgId), gesture);
+    }
+
+    public ShowcaseViewDialog(Activity ctx, Target target, int titleId,
+            int msgId)
+    {
+        this(ctx, target, titleId, msgId, null);
     }
     
-    /** A target for the ShowcaseView that can target a certain view in a DialogFragment */
+    public void animateGesture()
+    {
+        if(gesture != null)
+            sv.animateGesture(gesture.offsetStartX, gesture.offsetStartY,
+                    gesture.offsetEndX, gesture.offsetEndY);
+    }
+    
+    public void animateGesture(Gesture gesture)
+    {
+        this.gesture = gesture;
+        animateGesture();
+    }
+    
+    @Override
+    public void show()
+    {
+        super.show();
+        animateGesture();
+    }
+    
+    /**
+     * A target for the ShowcaseView that can target a certain view in a
+     * DialogFragment
+     */
     public static class DialogFragmentTarget extends ViewTarget
     {
         /** The DialogFragment */
@@ -49,20 +95,23 @@ public class ShowcaseViewDialog extends Dialog
         {
             // Call the super constructor
             super(view);
-            
+
             // Remember the DialogFragment
             this.dlgFrag = dlgFrag;
         }
-        
+
         @Override
         public Point getPoint()
         {
             // Get the position of the view inside the window
             Point viewPos = super.getPoint();
-            
-            // Get the layout parameters of the dialog and get the content view and the action bar
-            WindowManager.LayoutParams params = dlgFrag.getDialog().getWindow().getAttributes();
-            View contentView = dlgFrag.getActivity().findViewById(android.R.id.content);
+
+            // Get the layout parameters of the dialog and get the content view
+            // and the action bar
+            WindowManager.LayoutParams params = dlgFrag.getDialog().getWindow()
+                    .getAttributes();
+            View contentView = dlgFrag.getActivity().findViewById(
+                    android.R.id.content);
             ActionBar actionBar = dlgFrag.getActivity().getActionBar();
 
             // Calculate the coordinates of the dialog
@@ -73,23 +122,29 @@ public class ShowcaseViewDialog extends Dialog
             int y = (int) params.verticalMargin;
             if(params.height != LayoutParams.MATCH_PARENT)
                 y += (contentView.getHeight() + actionBar.getHeight() - params.height) / 2;
-            
+
             // Offset the point by the coordinates of the window
             viewPos.offset(x, y);
-            
+
             // Return the new point
             return viewPos;
         }
     }
-    
+
     /** The current OnShowcaseEventListener */
     private OnShowcaseEventListener onShowcaseEventListener = null;
-    
-    /** Sets the current OnShowcaseEventListener
-     * @param listener The new listener */
+
+    /**
+     * Sets the current OnShowcaseEventListener
+     * 
+     * @param listener
+     *        The new listener
+     */
     public void setOnShowcaseEventListener(OnShowcaseEventListener listener)
-    { onShowcaseEventListener = listener; }
-    
+    {
+        onShowcaseEventListener = listener;
+    }
+
     /** Listens for events from the ShowcaseView */
     private class ShowcaseEventListener implements OnShowcaseEventListener
     {
@@ -119,7 +174,31 @@ public class ShowcaseViewDialog extends Dialog
             // Call the OnShowcaseEventListener
             if(onShowcaseEventListener != null)
                 onShowcaseEventListener.onShowcaseViewShow(showcaseView);
-            }
-        
+        }
+
+    }
+
+    /**
+     * Represents the handy gesture. POJO
+     */
+    public static class Gesture
+    {
+        public final float offsetStartX, offsetStartY, offsetEndX, offsetEndY;
+
+        /**
+         * 
+         * @param offsetStartX the x coordinate of the start of the gesture (relative to the middle of the {@link Target} of this {@link ShowcaseViewDialog})
+         * @param offsetStartY the y coordinate of the start of the gesture  (relative to the middle of the {@link Target} of this {@link ShowcaseViewDialog})
+         * @param offsetEndX  the x coordinate of the end of the gesture  (relative to the middle of the {@link Target} of this {@link ShowcaseViewDialog})
+         * @param offsetEndY the y coordinate of the end of the gesture  (relative to the middle of the {@link Target} of this {@link ShowcaseViewDialog})
+         */
+        public Gesture(float offsetStartX, float offsetStartY,
+                float offsetEndX, float offsetEndY)
+        {
+            this.offsetStartX = offsetStartX;
+            this.offsetStartY = offsetStartY;
+            this.offsetEndX = offsetEndX;
+            this.offsetEndY = offsetEndY;
+        }
     }
 }

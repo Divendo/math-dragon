@@ -13,10 +13,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.TutorialHelper;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.Database.Formula;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
@@ -36,7 +37,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.ShowcaseViews;
 import com.espian.showcaseview.targets.PointTarget;
 
 public class FragmentSaveLoad extends DialogFragment
@@ -51,7 +51,15 @@ public class FragmentSaveLoad extends DialogFragment
         
         Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
         
+        
 
+        
+        ShowcaseViewDialogs dgs = new ShowcaseViewDialogs();
+        
+        
+        dgs.addView(new ShowcaseViewDialog(getActivity(), new PointTarget(50,50), R.string.tutorial_dialog_title, R.string.tutorial_dialog_msg));
+        dgs.addView(new ShowcaseViewDialog(getActivity(), new PointTarget(90,100), R.string.tutorial_eval_title, R.string.tutorial_eval_msg));
+        dgs.show();
         
         db.close();
         
