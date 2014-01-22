@@ -76,6 +76,9 @@ public class Negate extends Operation
         paint.setTextSize(getTextSize());
         paint.getTextBounds("-", 0, 1, out);
         
+        // Add some padding
+        out.inset((int) (-2 * lineWidth), 0);
+        
         // Position the operator bounding box and return it
         out.offsetTo(0, Math.max(0, childCenter.y - out.height() / 2));
         return new Rect[]{ out };
@@ -91,6 +94,9 @@ public class Negate extends Operation
         Rect operatorBounding = new Rect();
         paint.setTextSize(getTextSize());
         paint.getTextBounds("-", 0, 1, operatorBounding);
+        
+        // Add some padding
+        operatorBounding.inset((int) (-2 * lineWidth), 0);
         
         // Get the size and centre of our child bounding box
         Rect out = getChild(0).getBoundingBox();

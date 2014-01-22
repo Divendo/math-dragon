@@ -34,7 +34,7 @@ public class ExpressionBeautifier
      * @param expr
      *        The mathematical expression. If it could not be simplified or
      *        beautified, {@code expr} is returned.
-     * @return Usually a simplified and beautified expression. <tt>this</tt>
+     * @return Usually a simplified and beautified expression. <tt>expr</tt>
      *         otherwise.
      */
     public static Expression parse(Expression expr)
@@ -133,6 +133,8 @@ public class ExpressionBeautifier
     {
         if (bin instanceof Add)
             return add((Add) bin);
+        if (bin instanceof Subtract)
+            return subtract((Subtract) bin);
         if (bin instanceof Multiply)
             return mul((Multiply) bin);
         if (bin instanceof Divide)
@@ -192,7 +194,43 @@ public class ExpressionBeautifier
                 return new Subtract(left, symr);
             }
         }
+        if (right instanceof Negate)
+            return subtract(new Subtract(left, right.getChild(0)));
         return add;
+    }
+    
+    /**
+     * Simplify and beautify the specified mathematical subtraction as far as
+     * possible such that the expression remains as simple as possible to be
+     * read by users.
+     * 
+     * @param sub
+     *        The mathematical subtraction. If it could not be simplified or
+     *        beautified, {@code expr} is returned.
+     * @return Usually a simplified and beautified expression. <tt>this</tt>
+     *         otherwise.
+     */
+    static Expression subtract(Subtract sub)
+    {
+        Expression left = parse(sub.getLeft());
+        Expression right = parse(sub.getRight());
+        if (left.equals(Symbol.ZERO))
+            return new Negate(right);
+        if (right.equals(Symbol.ZERO))
+            return left;
+        if (right instanceof Symbol)
+        {
+            Symbol symr = (Symbol) right;
+            double factor = symr.getFactor();
+            if (factor < 0)
+            {
+                symr.setFactor(-factor);
+                return new Add(left, symr);
+            }
+        }
+        if (right instanceof Negate)
+            return add(new Add(left, right.getChild(0)));
+        return sub;
     }
     
     /**
@@ -240,29 +278,23 @@ public class ExpressionBeautifier
             Divide rdiv = (Divide) right;
             ldiv.setNumerator(mul(new Multiply(ldiv.getNumerator(), rdiv.getNumerator())));
             ldiv.setDenominator(mul(new Multiply(ldiv.getDenominator(), rdiv.getDenominator())));
-            return ldiv;
+            return div(ldiv);
         }
         // A * (B/C) -> (A*B)/C 
         if (left instanceof Symbol && right instanceof Divide)
         {
             Symbol symleft = (Symbol) left;
             Divide rdiv = (Divide) right;
-            if (symleft.isFactorOnly())
-            {
-                rdiv.setNumerator(mul(new Multiply(rdiv.getNumerator(), symleft)));
-                return rdiv;
-            }
+            rdiv.setNumerator(mul(new Multiply(rdiv.getNumerator(), symleft)));
+            return div(rdiv);
         }
         // (A/B) * C -> (A*C)/B
         if (left instanceof Divide && right instanceof Symbol)
         {
             Divide ldiv = (Divide) left;
             Symbol symright = (Symbol) right;
-            if (symright.isFactorOnly())
-            {
-                ldiv.setNumerator(mul(new Multiply(ldiv.getNumerator(), symright)));
-                return ldiv;
-            }
+            ldiv.setNumerator(mul(new Multiply(ldiv.getNumerator(), symright)));
+            return div(ldiv);
         }
         // combine if left operand equals -1 and right operand is a function
         if (left.equals(Symbol.M_ONE) && right instanceof Function)
@@ -329,6 +361,26 @@ public class ExpressionBeautifier
                 }
             }
         }
+        // -a/b -> -(a/b), a/-b -> -(a/b), -a/-b -> a/b
+        boolean numNegative = (num instanceof Symbol && ((Symbol) num).getFactor() < 0) || num instanceof Negate;
+        boolean denomNegative = (denom instanceof Symbol && ((Symbol) denom).getFactor() < 0) || denom instanceof Negate;
+        if(numNegative)
+        {
+            if(num instanceof Symbol)
+                ((Symbol) num).setFactor(-((Symbol) num).getFactor());
+            else
+                num = num.getChild(0);
+        }
+        if(denomNegative)
+        {
+            if(denom instanceof Symbol)
+                ((Symbol) denom).setFactor(-((Symbol) denom).getFactor());
+            else
+                denom = denom.getChild(0);
+        }
+        if(numNegative ^ denomNegative)
+            return new Negate(new Divide(num, denom));
+        
         div.set(num, denom);
         return div;
     }
@@ -410,6 +462,4 @@ public class ExpressionBeautifier
         pow.setExponent(exponent);
         return pow;
     }
-    
-    // FIXME 5e * 9pi2 + 2i/4 + i, expected: 45epi2 + i*3/2
 }
