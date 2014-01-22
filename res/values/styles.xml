@@ -59,4 +59,12 @@
         <item name="android:textSize">@dimen/delete_confirmer_text_size</item>
     </style>
 
+    <style name="ShowcaseViewDialogTheme" parent="android:Theme.Dialog">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
 </resources>

@@ -79,6 +79,19 @@ public class Integral extends Operation
     public int getPrecedence()
     { return Precedence.INTEGRAL; }
 	
+    private Rect[] getIntegrateOverSizes()
+    {
+    	Expression child = getIntegratePart();
+    	
+    	while(true)
+    	{
+    		if(!(((Integral) child).getIntegratePart() instanceof Integral))
+    			return ((Integral) child).getSizes();
+    		
+    		child = ((Integral) child).getIntegratePart();
+    	}
+    }
+    
 	public Rect[] getSizes()
 	{
 		/* Index of the rectangles
@@ -98,7 +111,16 @@ public class Integral extends Operation
 		Rect to = getChild(3).getBoundingBox();
 		
 		// Calculate the height and width of the integral sign
-		int signHeight = (int) (Math.max( main.height(), over.height()) * signHeightAdd);
+		int signHeight;
+		
+		if(getIntegratePart() instanceof Integral)
+		{
+			Rect[] childSizes = getIntegrateOverSizes();
+			signHeight = (int) (Math.max( childSizes[1].height(), childSizes[2].height()) * signHeightAdd);
+		}
+		else
+			signHeight = (int) (Math.max( main.height(), over.height()) * signHeightAdd);
+
 		Rect sign = new Rect( );
 		
 		operatorPaint.setTextSize( Math.min( maxFontSize, signHeight));
@@ -137,9 +159,14 @@ public class Integral extends Operation
 		int height = sizes[0].height();
 		
 		// Offset all the bounding boxes
-		sizes[0].offsetTo( horizontalOffset, sizes[4].height());
-		sizes[3].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (height - sizes[3].height()) / 2);		
-		
+		if(getIntegratePart() instanceof Integral)
+		{			
+			sizes[0].offsetTo( horizontalOffset, sizes[4].height() + (getIntegratePart().getBoundingBox().height() - sizes[0].height()) / 2);
+			sizes[3].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (getIntegratePart().getBoundingBox().height() - sizes[3].height()) / 2);		
+		}else{
+			sizes[0].offsetTo( horizontalOffset, sizes[4].height());
+			sizes[3].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (height - sizes[3].height()) / 2);		
+		}
 		// Return them
 		return new Rect[]	{	
 								sizes[0],
@@ -157,10 +184,22 @@ public class Integral extends Operation
 		int height = sizes[0].height();
 		
 		// Offset all the bounding boxes
-		sizes[1].offsetTo( horizontalOffset + sizes[0].width(), sizes[4].height() + (height - sizes[1].height()) / 2);
-		sizes[2].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width(), sizes[4].height() + (height - sizes[2].height()) / 2);
-		sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, 0);
-		sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, sizes[0].height() + sizes[4].height());
+		if(getIntegratePart() instanceof Integral)
+		{
+			Rect[] childSizes = getIntegrateOverSizes();
+			
+			sizes[1].offsetTo( horizontalOffset + sizes[0].width(), sizes[4].height());
+			sizes[2].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width(), sizes[4].height() + (int) getIntegralChildHeight() + (childSizes[0].height() - sizes[2].height()) / 2);
+			sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, 0);
+			sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, getBoundingBox().height() - sizes[5].height());
+		}
+		else
+		{
+			sizes[1].offsetTo( horizontalOffset + sizes[0].width(), sizes[4].height() + (height - sizes[1].height()) / 2);
+			sizes[2].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width(), sizes[4].height() + (height - sizes[2].height()) / 2);
+			sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, 0);
+			sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, sizes[0].height() + sizes[4].height());
+		}
 		
 		// Switch to return the correct bounding box
 		switch( index) 
@@ -190,13 +229,43 @@ public class Integral extends Operation
         int horizontalOffset = getHorizontalOffset( sizes );
         
         // Return a bounding box, containing the bounding boxes of the children
-        int width = horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width() + sizes[2].width();
-        width = Math.max( Math.max( width,  sizes[4].width()), sizes[5].width());
-        int height = sizes[0].height() + sizes[4].height() + sizes[5].height();
+        int width, height;
+        
+        if(getIntegratePart() instanceof Integral)
+        {
+        	width = horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width() + sizes[2].width();
+        	width = Math.max( Math.max( width,  sizes[4].width()), sizes[5].width());
+        	height = getIntegratePart().getBoundingBox().height() + sizes[4].height() + sizes[5].height();
+        }
+        else
+        {
+        	width = horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width() + sizes[2].width();
+        	width = Math.max( Math.max( width,  sizes[4].width()), sizes[5].width());
+        	height = sizes[0].height() + sizes[4].height() + sizes[5].height();
+        }
 
         return new Rect(0, 0, width, height);
     }
 
+	
+	private float getIntegralChildHeight()
+	{
+		float result = 0;
+		
+		Expression child = getIntegratePart();
+    	
+    	while(true)
+    	{
+    		if(!(((Integral) child).getIntegratePart() instanceof Integral))
+    			return result + ((Integral) child).getIntegrateTo().getBoundingBox().height();
+    		else
+    			result += ((Integral) child).getIntegrateTo().getBoundingBox().height();
+    		
+    		child = ((Integral) child).getIntegratePart();
+    	}
+		
+	}
+	
 	@Override
 	public void draw(Canvas canvas) {
 		// Draw the bounding boxes
@@ -211,14 +280,30 @@ public class Integral extends Operation
 		
 		int height = sizes[0].height();        
         
-        // Draw the D
-        operatorPaint.setStyle(Paint.Style.FILL);
-        operatorPaint.setTextSize( Math.min( maxFontSize, sizes[2].height()) );
-        canvas.drawText( "d", horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (height - sizes[3].height()) / 2 + sizes[3].height(), operatorPaint);
-        
         // Draw the integral sign
-        operatorPaint.setTextSize( (int) (Math.min( maxFontSize, Math.max( sizes[1].height(), sizes[2].height()) * signHeightAdd)));
-        sizes[0].offsetTo( (int) ((sizes[0].width() / 1.2) * 0.1 + horizontalOffset), (int) (sizes[4].height() + sizes[0].height() * 0.75)); // We need to decrease the height by a little bit, because the integral sign isn't draw with the origin at the bottom.
+        if(getIntegratePart() instanceof Integral)
+        {
+        	Rect[] childSizes = getIntegrateOverSizes();
+        	
+        	// Draw the D
+            operatorPaint.setStyle(Paint.Style.FILL);
+            operatorPaint.setTextSize( Math.min( maxFontSize, sizes[2].height()) );
+            canvas.drawText( "d", horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[3].height() + sizes[4].height() + getIntegralChildHeight() + (childSizes[0].height() - sizes[3].height()) / 2, operatorPaint);
+            
+            operatorPaint.setTextSize( Math.min( maxFontSize, Math.max( childSizes[1].height(), childSizes[2].height()) * signHeightAdd));
+            sizes[0].offsetTo( (int) ((sizes[0].width() / 1.2) * 0.1 + horizontalOffset),  (int) getIntegralChildHeight() + (int) (sizes[4].height() + sizes[0].height() * 0.75)); // We need to decrease the height by a little bit, because the integral sign isn't draw with the origin at the bottom.
+        }
+        else
+        {
+        	// Draw the D
+            operatorPaint.setStyle(Paint.Style.FILL);
+            operatorPaint.setTextSize( Math.min( maxFontSize, sizes[2].height()) );
+            canvas.drawText( "d", horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (height - sizes[3].height()) / 2 + sizes[3].height(), operatorPaint);
+            
+        	operatorPaint.setTextSize( (int) (Math.min( maxFontSize, Math.max( sizes[1].height(), sizes[2].height()) * signHeightAdd)));
+        	sizes[0].offsetTo( (int) ((sizes[0].width() / 1.2) * 0.1 + horizontalOffset), (int) (sizes[4].height() + sizes[0].height() * 0.75)); // We need to decrease the height by a little bit, because the integral sign isn't draw with the origin at the bottom.
+        }
+        
         canvas.drawText( integralSign, sizes[0].left, sizes[0].top, operatorPaint);
         
         // Draw the children
@@ -268,7 +353,11 @@ public class Integral extends Operation
 		// Set the level of the children
   		level = l;
   		
-  		getChild(0).setLevel(level+1);
+  		if(getIntegratePart() instanceof Integral)
+  			getChild(0).setLevel(level);
+  		else
+  			getChild(0).setLevel(level+1);
+  		
   		getChild(1).setLevel(level+1);
   		
   		getChild(2).setLevel(level+1);

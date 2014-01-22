@@ -506,6 +506,23 @@ public class MathView extends View
         }
     }
     
+    /** Resets the default height for the current expression */
+    public void resetDefaultHeight()
+    {
+        // Reset the default height
+        expressionDefaultHeight = getResources().getDimensionPixelSize(R.dimen.math_object_default_size);
+        expression.setDefaultHeight((int) expressionDefaultHeight);
+        
+        // Reset all the bounding boxes
+        expression.validateAllBoundingBox(false);
+        
+        // Invalidate the cache
+        cache = null;
+        
+        // Redraw
+        invalidate();
+    }
+    
     /** The default height of the Expressions as a float */
     private float expressionDefaultHeight = 0.0f;
     
