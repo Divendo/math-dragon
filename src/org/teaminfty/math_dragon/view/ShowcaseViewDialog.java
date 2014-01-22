@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.graphics.Point;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -36,10 +37,10 @@ public class ShowcaseViewDialog extends Dialog
         this.sv = sv;
 
         this.gesture = gesture;
+        this.activity = ctx;
        
         // Set the ShowcaseView as content
         setContentView(sv);
-
     }
 
     public ShowcaseViewDialog(Activity ctx, Target target, String title,
@@ -82,10 +83,70 @@ public class ShowcaseViewDialog extends Dialog
         animateGesture();
     }
     
-    /**
-     * A target for the ShowcaseView that can target a certain view in a
-     * DialogFragment
-     */
+    /** The activity the dialog is shown for */
+    private Activity activity = null;
+
+    /** The DialogFragment the dialog is shown for */
+    private DialogFragment dlgFrag = null;
+    
+    /** Sets the DialogFragment that touch events should be passed to */
+    public void setDialogFragment(DialogFragment dlg)
+    { dlgFrag = dlg; }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        if(dlgFrag != null)
+        {
+            // Translate the touch position
+            Point pos = new Point((int) event.getX(), (int) event.getY());
+            int[] viewPos = new int[2];
+            dlgFrag.getView().getLocationOnScreen(viewPos);
+            event.setLocation(pos.x - viewPos[0], pos.y - viewPos[1]);
+            
+            // Dispatch the event to the DialogFragment
+            return dlgFrag.getView().dispatchTouchEvent(event);
+        }
+        else if(activity != null)
+        {
+            // Dispatch the event to the Activity
+            activity.dispatchTouchEvent(event);
+        }
+        return false;
+    }
+    
+    /** Translates the given position to or from the coordinate system used by the given DialogFragment
+     * @param pos The point to translate
+     * @param dlgFrag The DialogFragment that should be translated to or from
+     * @param translateFrom Whether the coordinates should be translated from or to the DialogFragment's coordinate system
+     * @return The translated point */
+    private static Point translateDialogFragmentPos(Point pos, DialogFragment dlgFrag, boolean translateFrom)
+    {
+        // Get the layout parameters of the dialog and get the content view and the action bar
+        WindowManager.LayoutParams params = dlgFrag.getDialog().getWindow().getAttributes();
+        View contentView = dlgFrag.getActivity().findViewById(android.R.id.content);
+        ActionBar actionBar = dlgFrag.getActivity().getActionBar();
+
+        // Calculate the coordinates of the dialog
+        int x = (int) params.horizontalMargin;
+        if(params.width != LayoutParams.MATCH_PARENT)
+            x += (contentView.getWidth() - params.width) / 2;
+
+        int y = (int) params.verticalMargin;
+        if(params.height != LayoutParams.MATCH_PARENT)
+            y += (contentView.getHeight() + actionBar.getHeight() - params.height) / 2;
+        
+        // Offset the point by the coordinates of the window
+        if(translateFrom)
+            pos.offset(x, y);
+        else
+            pos.offset(-x, -y);
+        
+        // Return the result
+        return pos;
+    }
+    
+    /** A target for the ShowcaseView that can target a certain view in a DialogFragment */
     public static class DialogFragmentTarget extends ViewTarget
     {
         /** The DialogFragment */
@@ -126,8 +187,9 @@ public class ShowcaseViewDialog extends Dialog
             // Offset the point by the coordinates of the window
             viewPos.offset(x, y);
 
-            // Return the new point
-            return viewPos;
+
+            // Translate the position of the view to a position in the ShowcaseView
+            return translateDialogFragmentPos(super.getPoint(), dlgFrag, true);
         }
     }
 
