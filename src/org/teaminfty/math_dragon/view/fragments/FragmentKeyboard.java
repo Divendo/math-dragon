@@ -170,6 +170,8 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     
     /** A bundle containing the state of the {@link MathSymbolEditor} */
     private static final String BUNDLE_MATH_SYMBOL_EDITOR_STATE = "math_symbol_editor_state";
+
+    public static final int TUTORIAL_ID = 3;
     
     @Override
     public void onSaveInstanceState(Bundle outState)

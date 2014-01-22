@@ -188,6 +188,8 @@ public class FragmentSubstitute extends DialogFragment
 
     /** The tag for the warning dialog fragment */
     private static final String WARNING_TAG = "warning_dlg";
+
+    public static final int TUTORIAL_ID = 1;
     
     private class OnCloseBtnClickListener implements View.OnClickListener
     {

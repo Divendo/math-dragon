@@ -277,6 +277,8 @@ public class FragmentSubstitutionEditor extends DialogFragment
     /** The tag for the keyboard fragment */
     private static final String KEYBOARD_TAG = "keyboard";
 
+    public static final int TUTORIAL_ID = 2;
+
     /** The OnClickListener for the cancel button */
     private class ButtonEditOnClickListener implements View.OnClickListener
     {

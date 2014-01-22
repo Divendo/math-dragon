@@ -13,6 +13,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.TutorialHelper;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.Database.Formula;
@@ -34,11 +35,29 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.ShowcaseViews;
+import com.espian.showcaseview.targets.PointTarget;
+
 public class FragmentSaveLoad extends DialogFragment
 {
     /** The current expression */
     private Expression currExpr = null;
 
+    private void tutorial()
+    {
+        
+        Database db = new Database(getActivity());
+        
+        Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
+        
+
+        
+        db.close();
+        
+       
+    }
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -90,10 +109,24 @@ public class FragmentSaveLoad extends DialogFragment
             }
         }
         
+        ShowcaseView.ConfigOptions opts = new ShowcaseView.ConfigOptions();
+        
+   
+        ShowcaseView view2 = ShowcaseView.insertShowcaseView(new PointTarget(10,10), getActivity(), "yo", "sup", opts);
+        view2.bringToFront();
         // Return the content view
+        
+       
         return view;
     }
 
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        tutorial();
+    }
+    
     @Override
     public void onResume()
     {
@@ -289,6 +322,8 @@ public class FragmentSaveLoad extends DialogFragment
     
     /** The tag for the confirmation dialog */
     private static final String CONFIRMATION_DLG_TAG = "confirm";
+
+    public static final int TUTORIAL_ID = 4;
     
     /** Listens for overwrite click events */
     private class OnOverwriteClickListener implements View.OnClickListener

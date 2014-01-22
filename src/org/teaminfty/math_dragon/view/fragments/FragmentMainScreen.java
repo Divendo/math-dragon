@@ -42,6 +42,8 @@ import android.widget.ImageButton;
 import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.ShowcaseViews;
+import com.espian.showcaseview.ShowcaseView.ConfigOptions;
+import com.espian.showcaseview.ShowcaseViews.ItemViewProperties;
 import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
 import com.espian.showcaseview.targets.ActionViewTarget;
 import com.espian.showcaseview.targets.PointTarget;
@@ -60,6 +62,7 @@ public class FragmentMainScreen extends Fragment
 
     private boolean isShowingDialog = false;
     
+    private boolean isShowingTutorial = false;
     
     public static final int TUTORIAL_ID = 0;
     
@@ -69,10 +72,6 @@ public class FragmentMainScreen extends Fragment
         //TODO werken met savedInstanceState
         final Database db = new Database(getActivity());
         Database.TutorialState state = db.getTutorialState(FragmentMainScreen.TUTORIAL_ID);
-        state.showTutDlg = false;
-        db.close();
-        
-        System.out.println("SHOW_TUT_DG:"+ state.showTutDlg);
    
         if(!state.tutInProg && state.showTutDlg && !isShowingDialog)
         {
@@ -85,7 +84,11 @@ public class FragmentMainScreen extends Fragment
             dg.show(getFragmentManager(), TUTORIAL_TAG);
 
             isShowingDialog = true;
+        } else if (state.tutInProg && !isShowingTutorial)
+        {
+            continueTutorial();
         }
+        db.close();
     }
     
     final class OnTutorialConfirmListener implements FragmentTutorialDialog.OnConfirmListener
@@ -101,9 +104,17 @@ public class FragmentMainScreen extends Fragment
     }
     private void continueTutorial()
     {
+        
+        isShowingTutorial = true;
 
         final Database db = new Database(getActivity());
+        
+        Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
+        state.tutInProg = true;
+        db.saveTutorialState(state);
+        
         final ShowcaseView actionBar, swipeToOpen, editExpr, ops, evaluate;
+
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
 
@@ -111,6 +122,8 @@ public class FragmentMainScreen extends Fragment
 
         final DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
 
+        
+        System.out.println(drawerLayout);
         actionBar = ShowcaseView.insertShowcaseView(new ActionViewTarget(getActivity(),
                 ActionViewTarget.Type.HOME), getActivity(),
                 R.string.tutorial_fun_op_title, R.string.tutorial_fun_op_msg,
@@ -121,6 +134,24 @@ public class FragmentMainScreen extends Fragment
 
         swipeToOpen.hide();
 
+        
+        
+        Database.TutorialState[] states = new Database.TutorialState[] {
+                db.getTutorialState(FragmentSubstitute.TUTORIAL_ID),
+                db.getTutorialState(FragmentSubstitutionEditor.TUTORIAL_ID),
+                db.getTutorialState(FragmentKeyboard.TUTORIAL_ID),
+                db.getTutorialState(FragmentSaveLoad.TUTORIAL_ID)};
+        
+        
+        for (Database.TutorialState s : states)
+        {
+            s.tutInProg = true;
+            db.saveTutorialState(s);
+        }
+        
+        System.out.println(db.getTutorialState(FragmentSaveLoad.TUTORIAL_ID).tutInProg);
+        
+        
         actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener()
         {
 
@@ -128,6 +159,7 @@ public class FragmentMainScreen extends Fragment
             public void onShowcaseViewHide(ShowcaseView showcaseView)
             {
                 swipeToOpen.show();
+                System.out.println(drawerLayout);
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }
 
@@ -148,22 +180,37 @@ public class FragmentMainScreen extends Fragment
                     @Override
                     public void onShowCaseAcknowledged(ShowcaseView showcaseView)
                     {
+                       
                         Database.TutorialState state = new Database.TutorialState(
                                 TUTORIAL_ID, false, false);
                         db.saveTutorialState(state);
+
+                        
+                                               
                         db.close();
                     }
                 });
 
+        
+        ShowcaseView.ConfigOptions co1 = new ShowcaseView.ConfigOptions();
+        
+        co1.noButton = true;
         views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_undo,
                 R.string.tutorial_undo_redo_title,
                 R.string.tutorial_undo_redo_msg));
+        
+        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_favourites,
+                R.string.tutorial_favs_title, R.string.tutorial_favs_msg));
+       
 
         views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_evaluate,
-                R.string.tutorial_eval_title, R.string.tutorial_eval_msg));
+                R.string.tutorial_eval_title, R.string.tutorial_eval_msg, co1));
 
         views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_substitute,
                 R.string.tutorial_subst_title, R.string.tutorial_subst_msg1));
+        
+        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_derivative,
+                R.string.tutorial_int_deriv_title, R.string.tutorial_int_deriv_msg));
         
         swipeToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener()
         {
@@ -203,6 +250,8 @@ public class FragmentMainScreen extends Fragment
         
         if(savedInstanceState != null)
         {
+            
+            isShowingTutorial = savedInstanceState.getBoolean("isShowingTutorial");
             // Load the history from the bundle
             ArrayList<String> historyStrings = savedInstanceState.getStringArrayList(BUNDLE_HISTORY);
             for(String xml : historyStrings)
@@ -272,6 +321,7 @@ public class FragmentMainScreen extends Fragment
         btnUndo.setOnClickListener(new UndoRedoClickListener());
         btnRedo.setOnClickListener(new UndoRedoClickListener());
 
+        view.findViewById(R.id.btn_help).setOnClickListener(new HelpClickListener());
         
         
     
@@ -298,7 +348,7 @@ public class FragmentMainScreen extends Fragment
         view.findViewById(R.id.btn_derivative).setOnClickListener(derivativeIntegrateButtonListener);
         view.findViewById(R.id.btn_integrate).setOnClickListener(derivativeIntegrateButtonListener);
         // Listen for events from the MathView
-        tutorial();
+
         // Return the view
         return view;
     }
@@ -317,6 +367,13 @@ public class FragmentMainScreen extends Fragment
         super.onResume();
 
     }
+    
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        tutorial();
+    }
 
 
     /** An integer in the state bundle that indicates the current history position */
@@ -334,6 +391,7 @@ public class FragmentMainScreen extends Fragment
         
         
         outState.putBoolean("isShowingDialog", isShowingDialog);
+        outState.putBoolean("isShowingTutorial", isShowingTutorial);
         // Save the history
         ArrayList<String> historyStrings = new ArrayList<String>();
         for(Document doc : history)
@@ -567,6 +625,23 @@ public class FragmentMainScreen extends Fragment
             
             // Evaluate (by simulating an evaluate button press)
             getView().findViewById(R.id.btn_evaluate).performClick();
+        }
+    }
+    
+    
+    private class HelpClickListener implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View v)
+        {
+            Database db = new Database(getActivity());
+            Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
+            
+            boolean wasInProgress = state.tutInProg;
+            state.tutInProg = true;
+            db.saveTutorialState(state);
+            db.close();
+            if (!wasInProgress) continueTutorial();
         }
     }
 }
