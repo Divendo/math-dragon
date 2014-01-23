@@ -18,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
@@ -386,6 +387,9 @@ public class FragmentMainScreen extends Fragment
                 newExpr = new Integral(mathView.getExpression(), Symbol.createVarSymbol('x'));
             else
                 newExpr = new Derivative(mathView.getExpression(), Symbol.createVarSymbol('x'));
+            
+            // Set the parentheses
+            newExpr = ParenthesesHelper.setParentheses(newExpr);
             
             // Set the new expression
             mathView.setExpression(newExpr);
