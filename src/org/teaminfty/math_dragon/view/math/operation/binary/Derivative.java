@@ -151,6 +151,23 @@ public class Derivative extends Binary
     }
     
     @Override
+    public void calculateAllChildBoundingBox()
+    {
+        // Get the sizes and the total height
+        Rect[] sizes = getSizes();
+        final int ownCenterX = sizes[0].width() / 2;
+        
+        Point childCenter = getChild(0).getCenter();
+        sizes[1].offsetTo(ownCenterX - childCenter.x + sizes[3].width() / 2, Math.max(0, (sizes[3].height() - sizes[1].height()) / 2));
+        childCenter = getChild(1).getCenter();
+        sizes[2].offsetTo(ownCenterX - childCenter.x + sizes[4].width() / 2, Math.max(sizes[3].height(), sizes[1].height()) + sizes[0].height() + Math.max(0, (sizes[4].height() - sizes[2].height()) / 2));
+
+        // Add the bounding boxes
+        childrenBoundingBoxes.add( sizes[1]);
+        childrenBoundingBoxes.add( sizes[2]);
+    }
+    
+    @Override
     public Rect calculateBoundingBox()
     {
         // Get the sizes
@@ -163,7 +180,7 @@ public class Derivative extends Binary
     }
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {
         // Get the operator bounding box
         Rect operatorBounding = getOperatorBoundingBoxes()[0];

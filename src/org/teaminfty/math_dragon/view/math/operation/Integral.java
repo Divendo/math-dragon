@@ -1,10 +1,11 @@
 package org.teaminfty.math_dragon.view.math.operation;
 
 import org.teaminfty.math_dragon.view.TypefaceHolder;
-import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Empty;
-import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Operation;
+import org.teaminfty.math_dragon.view.math.Precedence;
+import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -20,39 +21,26 @@ public class Integral extends Operation
 	final float signHeightAdd = 1.5f;
 	final float maxSignWidth = 100;
 	final float RATIO = 0.5f / 1.61803398874989f;
+	final float betweenIntegralPadding = 10 * lineWidth;
 	final int maxFontSize = 500;
 	final String integralSign = "\u222B"; // Unicode for the integral sign
 	
 	public Integral()
-	{
-	    super(4);
-		children.add(new Empty());
-		children.add(new Empty());
-		children.add(new Empty());
-		children.add(new Empty());
-		
-        initPaint();
-	}
+	{ this(null, null, null, null); }
 	
-	public Integral( Expression integrate, Expression over)
-	{
-	    super(4);
-		children.add(new Empty());
-        children.add(new Empty());
-        children.add(new Empty());
-		children.add(new Empty());
-		
-		set(integrate, over);
-        initPaint();
-	}
+	public Integral(Expression integrate, Expression over)
+    { this(integrate, over, null, null); }
 	
-	public Integral( Expression integrate, Expression over, Expression from, Expression to)
+	public Integral(Expression integrate, Expression over, Expression from, Expression to)
 	{
 	    super(4);
+	    
 		children.add(new Empty());
         children.add(new Empty());
         children.add(new Empty());
         children.add(new Empty());
+        
+        levelDeltas = new int[] {1, 1, 1, 1};
         
 		set(integrate, over, from, to);
 		initPaint();
@@ -157,12 +145,12 @@ public class Integral extends Operation
 		Rect sizes[] = getSizes();
 		int horizontalOffset = getHorizontalOffset( sizes );
 		int height = sizes[0].height();
-		
+				
 		// Offset all the bounding boxes
 		if(getIntegratePart() instanceof Integral)
 		{			
-			sizes[0].offsetTo( horizontalOffset, sizes[4].height() + (getIntegratePart().getBoundingBox().height() - sizes[0].height()) / 2);
-			sizes[3].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (getIntegratePart().getBoundingBox().height() - sizes[3].height()) / 2);		
+			sizes[0].offsetTo( horizontalOffset, (int) Math.max( getIntegralSignHeightOffset(), sizes[4].height()));
+			sizes[3].offsetTo( (int) betweenIntegralPadding + Math.max( Math.max( horizontalOffset + sizes[0].width(), sizes[4].width()), sizes[5].width()) + sizes[1].width(), Math.max( sizes[4].height(),(int) getIntegralSignHeightOffset()) + (sizes[0].height() - sizes[3].height()) / 2);		
 		}else{
 			sizes[0].offsetTo( horizontalOffset, sizes[4].height());
 			sizes[3].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[4].height() + (height - sizes[3].height()) / 2);		
@@ -178,20 +166,19 @@ public class Integral extends Operation
 	public Rect calculateChildBoundingBox(int index) throws IndexOutOfBoundsException {
 		// Get the sizes of the bounding boxes
 		Rect[] sizes = getSizes();
-		
+				
 		int horizontalOffset = getHorizontalOffset( sizes );
 		int signWidth = Math.max( Math.max( sizes[0].width(), sizes[4].width()), sizes[5].width());
 		int height = sizes[0].height();
-		
+				
 		// Offset all the bounding boxes
 		if(getIntegratePart() instanceof Integral)
-		{
-			Rect[] childSizes = getIntegrateOverSizes();
-			
-			sizes[1].offsetTo( horizontalOffset + sizes[0].width(), sizes[4].height());
-			sizes[2].offsetTo( horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width(), sizes[4].height() + (int) getIntegralChildHeight() + (childSizes[0].height() - sizes[2].height()) / 2);
-			sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, 0);
-			sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, getBoundingBox().height() - sizes[5].height());
+		{			
+			sizes[1].offsetTo( (int) betweenIntegralPadding + Math.max( Math.max(horizontalOffset + sizes[0].width(), sizes[4].width()), sizes[5].width()), Math.max( 0, sizes[4].height() - (int) getIntegralSignHeightOffset()));
+
+			sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, Math.max( 0, (int) getIntegralSignHeightOffset() - sizes[4].height()));
+			sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, sizes[4].height() + sizes[0].height() + Math.max( 0, (int) getIntegralSignHeightOffset() - sizes[4].height()));
+			sizes[2].offsetTo( (int) betweenIntegralPadding + Math.max( Math.max(horizontalOffset + sizes[0].width(), sizes[4].width()),  sizes[5].width()) + sizes[1].width() + sizes[3].width(), (sizes[0].height() - sizes[2].height())/2 + sizes[4].bottom);
 		}
 		else
 		{
@@ -200,31 +187,30 @@ public class Integral extends Operation
 			sizes[4].offsetTo( Math.max( 0, signWidth - sizes[4].width()) / 2, 0);
 			sizes[5].offsetTo( Math.max( 0, signWidth - sizes[5].width()) / 2, sizes[0].height() + sizes[4].height());
 		}
-		
+
 		// Switch to return the correct bounding box
 		switch( index) 
 		{
 		case 0:
 			return sizes[1];
-			
+					
 		case 1:
 			return sizes[2];
 
 		case 2:
 			return sizes[5];
-			
+					
 		case 3:
 			return sizes[4];
 		}
-		
+				
 		return null;
 	}
-	
 	
 	@Override
     public Rect calculateBoundingBox()
     {
-        // Get the sizes
+		// Get the sizes
         Rect[] sizes = getSizes();
         int horizontalOffset = getHorizontalOffset( sizes );
         
@@ -233,9 +219,8 @@ public class Integral extends Operation
         
         if(getIntegratePart() instanceof Integral)
         {
-        	width = horizontalOffset + sizes[0].width() + sizes[1].width() + sizes[3].width() + sizes[2].width();
-        	width = Math.max( Math.max( width,  sizes[4].width()), sizes[5].width());
-        	height = getIntegratePart().getBoundingBox().height() + sizes[4].height() + sizes[5].height();
+        	width = (int) betweenIntegralPadding + Math.max(Math.max(horizontalOffset + sizes[0].width(), sizes[4].width()),sizes[5].width()) + sizes[1].width() + sizes[3].width() + sizes[2].width();
+        	height = Math.max(getIntegratePart().getBoundingBox().height() + getChildBoundingBox(0).top, sizes[0].height() + sizes[4].height() + sizes[5].height() + getChildBoundingBox(3).top);
         }
         else
         {
@@ -247,8 +232,7 @@ public class Integral extends Operation
         return new Rect(0, 0, width, height);
     }
 
-	
-	private float getIntegralChildHeight()
+	private float getIntegralSignHeightOffset()
 	{
 		float result = 0;
 		
@@ -257,9 +241,9 @@ public class Integral extends Operation
     	while(true)
     	{
     		if(!(((Integral) child).getIntegratePart() instanceof Integral))
-    			return result + ((Integral) child).getIntegrateTo().getBoundingBox().height();
+    			return Math.max( result, ((Integral) child).getIntegrateTo().getBoundingBox().height());
     		else
-    			result += ((Integral) child).getIntegrateTo().getBoundingBox().height();
+    			result = Math.max( result, ((Integral) child).getIntegrateTo().getBoundingBox().height());
     		
     		child = ((Integral) child).getIntegratePart();
     	}
@@ -270,14 +254,14 @@ public class Integral extends Operation
 	public void draw(Canvas canvas) {
 		// Draw the bounding boxes
 		drawBoundingBoxes( canvas);
-		
+				
 		operatorPaint.setColor(getColor());
 		operatorPaint.setStrokeWidth(lineWidth);
-		
+				
 		// Get the sizes
 		Rect[] sizes = getSizes();
 		int horizontalOffset = getHorizontalOffset( sizes );
-		
+				
 		int height = sizes[0].height();        
         
         // Draw the integral sign
@@ -288,10 +272,10 @@ public class Integral extends Operation
         	// Draw the D
             operatorPaint.setStyle(Paint.Style.FILL);
             operatorPaint.setTextSize( Math.min( maxFontSize, sizes[2].height()) );
-            canvas.drawText( "d", horizontalOffset + sizes[0].width() + sizes[1].width(), sizes[3].height() + sizes[4].height() + getIntegralChildHeight() + (childSizes[0].height() - sizes[3].height()) / 2, operatorPaint);
+            canvas.drawText( "d", (int) betweenIntegralPadding + Math.max(Math.max( horizontalOffset + sizes[0].width(), sizes[4].width()), sizes[5].width()) + sizes[1].width(), Math.max( getIntegralSignHeightOffset(), sizes[4].height()) + (sizes[0].height() + sizes[3].height())/2, operatorPaint);
             
             operatorPaint.setTextSize( Math.min( maxFontSize, Math.max( childSizes[1].height(), childSizes[2].height()) * signHeightAdd));
-            sizes[0].offsetTo( (int) ((sizes[0].width() / 1.2) * 0.1 + horizontalOffset),  (int) getIntegralChildHeight() + (int) (sizes[4].height() + sizes[0].height() * 0.75)); // We need to decrease the height by a little bit, because the integral sign isn't draw with the origin at the bottom.
+            sizes[0].offsetTo( (int) ((sizes[0].width() / 1.2) * 0.1 + horizontalOffset),  (int) (Math.max( getIntegralSignHeightOffset(), sizes[4].height()) + sizes[0].height() * 0.75)); // We need to decrease the height by a little bit, because the integral sign isn't draw with the origin at the bottom.
         }
         else
         {
@@ -317,18 +301,27 @@ public class Integral extends Operation
 	}
 	
 	public void set(Expression integrate, Expression over)
-    {
-		// Only set the integrate child and the child to integrate over
-        setChild(0, integrate);
-        setChild(1, over);
-    }
+	{ set(integrate, over, getIntegrateFrom(), getIntegrateTo()); }
 	
 	public void set(Expression integrate, Expression over, Expression from, Expression to)
     {
+	    // Check whether `over` is valid
+        if(over != null)
+        {
+            if(!(over instanceof Symbol))
+                throw new IllegalArgumentException("'over' should be null or a symbolic constant");
+            
+            Symbol sym = (Symbol) over;
+            if(sym.getVarCount() != 1)
+                throw new IllegalArgumentException("multiple variables not allowed for 'over'");
+        }
+        
 		// Set all the children
-        set(integrate, over);
-        setChild(2, from);
-        setChild(3, to);
+        setChildWithoutRefresh(0, integrate);
+        setChildWithoutRefresh(1, over);
+        setChildWithoutRefresh(2, from);
+        setChildWithoutRefresh(3, to);
+        setAll(level, defaultHeight, false);
     }
 	
 	/** Returns the child that should be integrated */
@@ -350,19 +343,55 @@ public class Integral extends Operation
 	@Override
   	public void setLevel(int l)
   	{
-		// Set the level of the children
-  		level = l;
-  		
-  		if(getIntegratePart() instanceof Integral)
-  			getChild(0).setLevel(level);
-  		else
-  			getChild(0).setLevel(level+1);
-  		
-  		getChild(1).setLevel(level+1);
-  		
-  		getChild(2).setLevel(level+1);
-  		getChild(3).setLevel(level+1);
+        // Invalidate the cache (if necessary)
+        if(l != level)
+            invalidateBoundingBoxCacheForSelf();
+        
+        // Set the level
+        level = l;
+        
+        // Special treatment for the integrate part
+        if(getIntegratePart() instanceof Integral)
+            getChild(0).setLevel(level);
+        else
+            getChild(0).setLevel(level + 1);
+        
+        // Set the level every child
+        for(int i = 1; i < getChildCount(); ++i)
+        {
+            if(levelDeltas != null && i < levelDeltas.length)
+                getChild(i).setLevel(l + levelDeltas[i]);
+            else
+                getChild(i).setLevel(l);
+        }
   	}
+
+    @Override
+	public void setAll(int lvl, int defHeight, boolean valid)
+    {
+        // Set the values
+        level = lvl;
+        defaultHeight = defHeight;
+        operatorBoundingBoxValid = valid;
+        childrenBoundingBoxValid = valid;
+        totalBoundingBoxValid = valid;
+        centerValid = valid;
+        
+        // Special treatment for the integrate part
+        if(getIntegratePart() instanceof Integral)
+            getChild(0).setAll(lvl, defHeight, valid);
+        else
+            getChild(0).setAll(lvl + 1, defHeight, valid);
+        
+        // Set the values for all children
+        for(int i = 1; i < getChildCount(); ++i)
+        {
+            if(levelDeltas != null && i < levelDeltas.length)
+                getChild(i).setAll(lvl + levelDeltas[i], defHeight, valid);
+            else
+                getChild(i).setAll(lvl, defHeight, valid);
+        }
+    }
 	
 	@Override
 	protected String getType()

@@ -49,17 +49,15 @@ public class Log extends Binary
     
     /** Default constructor */
     public Log()
-    {
-        this.name = "log";
-        
-        initPaint();
-    }
+    { this(null, null); }
 
     /** Constructor */
     public Log(Expression base, Expression parameter)
     {
         super(base, parameter);
         this.name = "log";
+        
+        levelDeltas = new int[] {2, 0};
         
         initPaint();
     }
@@ -158,6 +156,23 @@ public class Log extends Binary
         }
     }
     
+    @Override
+    public void calculateAllChildBoundingBox()
+    {
+        // Get the sizes
+        Rect[] operatorSize = getOperatorBoundingBoxes();
+        Rect leftChild = getChild(0).getBoundingBox();
+        Rect rightChild = getChild(1).getBoundingBox();
+        
+        // Translate and return the operand's bounding box
+        leftChild.offsetTo(operatorSize[0].width(), rightChild.height() - leftChild.height()/3);
+        rightChild.offsetTo(operatorSize[0].width() + operatorSize[1].width() + leftChild.width(), 0);
+        
+        // Add the bounding boxes
+        childrenBoundingBoxes.add( leftChild);
+        childrenBoundingBoxes.add( rightChild);
+    }
+    
     //Complete bounding box
     @Override
     public Rect calculateBoundingBox()
@@ -170,18 +185,10 @@ public class Log extends Binary
 
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {        
         return new Point(this.getBoundingBox().centerX(), getChild(1).getCenter().y);
     }
-    
-    @Override
- 	public void setLevel(int l)
- 	{
- 		level = l;
- 		getChild(0).setLevel(level + 2);
- 		getChild(1).setLevel(level);
- 	}
     
     @Override
     public void draw(Canvas canvas)

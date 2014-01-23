@@ -14,6 +14,12 @@ import android.graphics.Rect;
 public class Symbol extends Expression
 {
     /**
+     * Cached mathematical symbolic constant for the mathematical <tt>-1</tt> in
+     * order to speed up helpers and parsers so they don't need to make this
+     * symbolic constant themselves.
+     */
+    public static final Symbol M_ONE = new Symbol(-1);
+    /**
      * Cached mathematical symbolic constant for the mathematical <tt>0</tt> in
      * order to speed up helpers and parsers so they don't need to make this
      * symbolic constant themselves.
@@ -25,6 +31,12 @@ public class Symbol extends Expression
      * symbolic constant themselves.
      */
     public static final Symbol ONE = new Symbol(1);
+    /**
+     * Cached mathematical symbolic constant for the mathematical <tt>10</tt> in
+     * order to speed up helpers and parsers so they don't need to make this
+     * symbolic constant themselves.
+     */
+    public static final Symbol TEN = new Symbol(10);
     
     /** The factor of this constant */
     private double factor = 0;
@@ -186,7 +198,7 @@ public class Symbol extends Expression
      * @return The right text size for the given level */
     protected float findTextSize(int lvl)
     {
-        return defaultHeight * (float) Math.pow(2.0 / 3.0, lvl);
+        return defaultHeight * (float) Math.pow(2.0 / 3.0, Math.min(lvl, MAX_LEVEL));
     }
 
     @Override
@@ -418,6 +430,17 @@ public class Symbol extends Expression
     public void setVarPow(char index, long pow)
     { setVarPow(index > 'Z' ? index - 'a' : index - 'A', pow); }
     
+    public int getVarCount()
+    {
+        int count = 0;
+        for (int i = 0; i < varPows.length; ++i)
+        {
+            if (varPows[i] != 0)
+                ++count;
+        }
+        return count;
+    }
+    
     /** The amount of variables that this symbol supports */
     public int varPowCount()
     { return varPows.length; }
@@ -462,7 +485,7 @@ public class Symbol extends Expression
         setIPow(iPow);
     }
 
-    /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible (i.e. their power >= 1)
+    /** Returns whether or not some symbols (i.e. variables or the constants pi, e, i) are visible (i.e. their power != 0)
      * @return True if one or more symbols are visible, false otherwise */
     public boolean symbolVisible()
     {

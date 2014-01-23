@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical" >
     
     <RelativeLayout
+        android:id="@+id/layoutEvalTitle"
     	android:layout_width="match_parent"
-    	android:layout_height="wrap_content" >
+    	android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" >
         
 	    <ImageButton
 	        android:id="@+id/btn_close"
@@ -40,13 +43,17 @@
         android:indeterminate="true"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/layoutEvalTitle"
         android:layout_gravity="center" />
     	
     <org.teaminfty.math_dragon.view.MathView
 		android:id="@+id/mathView"
 		android:visibility="gone"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
+		android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/layoutEvalTitle" />
     
     <LinearLayout
         android:id="@+id/unableToEvalLayout"
@@ -54,9 +61,12 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/layoutEvalTitle"
         android:gravity="center" >
 
         <TextView
+            android:id="@+id/text_unable_to_eval"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/unable_to_eval"
@@ -71,5 +81,16 @@
 	        android:src="@drawable/wolfram" />
         
     </LinearLayout>
+    
+    <TextView
+        android:id="@+id/text_warning_substitutions_used"
+		android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/warning_dlg_padding"
+        android:gravity="center"
+        android:text="@string/warning_substitutions_used" />
 
-</LinearLayout>
+</RelativeLayout>

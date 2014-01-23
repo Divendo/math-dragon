@@ -15,6 +15,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,7 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     	buttonDel.setOnClickListener(new ButtonDeleteOnClickListener());
     	buttonClr.setOnClickListener(new ButtonClearOnClickListener());
         buttonCancel.setOnClickListener(new ButtonCancelOnClickListener());
-    	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
+    	buttonOK.setOnClickListener(new ButtonConfirmOnClickListener());
     	buttonNegate.setOnClickListener(new ButtonNegateOnClickListener());
     	buttonDot.setOnClickListener(new ButtonDotOnClickListener());
     	buttonTabNumpad.setOnClickListener(buttonTabOnClickListener);
@@ -137,6 +138,10 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
             }
         }
         
+        // Retrieve whether or not variable buttons should be enabled
+        if(savedInstanceState != null)
+            enableVarBtns = savedInstanceState.getBoolean(BUNDLE_ENABLE_VAR_BUTTONS);
+
         // Set the buttons to the right state
         refreshButtonState(myFragmentView);
 
@@ -175,6 +180,9 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     private static final String BUNDLE_MATH_SYMBOL_EDITOR_STATE = "math_symbol_editor_state";
 
     public static final int TUTORIAL_ID = 3;
+    /** A boolean containing whether or not the variable buttons should be enabled */
+    private static final String BUNDLE_ENABLE_VAR_BUTTONS = "enable_var_buttons";
+
     
     @Override
     public void onSaveInstanceState(Bundle outState)
@@ -184,6 +192,9 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         
         // Save the current MathSymbolEditor state
         outState.putBundle(BUNDLE_MATH_SYMBOL_EDITOR_STATE, mathSymbolEditor.toBundle());
+        
+        // Store which tab is shown
+        outState.putBoolean(BUNDLE_ENABLE_VAR_BUTTONS, enableVarBtns);
     }
     
     /** Sets the current value from the given {@link Symbol}
@@ -396,13 +407,15 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         }
     }
     
-    /** The OnClickListener for the OK button */
-    private class ButtonOkOnClickListener implements View.OnClickListener
+    /** The OnClickListener for the confirm button */
+    private class ButtonConfirmOnClickListener implements View.OnClickListener
     {
         @Override
         public void onClick(final View v)
         {
+            long start = System.currentTimeMillis();
             callOnConfirmListener(mathSymbolEditor.getExpression());
+            Log.i("timing", Long.toString(System.currentTimeMillis() - start));
             dismiss();
         }
     }

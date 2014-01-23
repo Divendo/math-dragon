@@ -63,8 +63,9 @@ public abstract class Binary extends Operation
      */
     public void set(Expression left, Expression right)
     {
-        setChild(0, left);
-        setChild(1, right);
+        setChildWithoutRefresh(0, left);
+        setChildWithoutRefresh(1, right);
+        setAll(level, defaultHeight, false);
     }
 
     /**

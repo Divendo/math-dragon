@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.model.Database;
+import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
@@ -227,6 +228,9 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEventListener(new MathViewEventListener());
 
+        if(savedInstanceState != null)
+            mathView.setDefaultHeight(savedInstanceState.getInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT));
+
         // Disable the evaluate buttons by default
         enableDisableEvalButtons(view, mathView.getExpression());
 
@@ -394,6 +398,9 @@ public class FragmentMainScreen extends Fragment implements Tutorial
      */
     private static final String BUNDLE_KEYBOARD_LISTENER = "keyboard_listener";
 
+    /** An integer containing the default height of the MathView */
+    private static final String BUNDLE_MATH_VIEW_DEFAULT_HEIGHT = "math_view_default_height";
+    
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
@@ -433,6 +440,9 @@ public class FragmentMainScreen extends Fragment implements Tutorial
             outState.putBundle(BUNDLE_KEYBOARD_LISTENER,
                     mathView.keyboardListenerToBundle(listener));
         }
+        
+        // Save the default height
+        outState.putInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT, mathView.getDefaultHeight());
     }
 
     /** Clears the current formula */
@@ -665,9 +675,11 @@ public class FragmentMainScreen extends Fragment implements Tutorial
                 newExpr = new Integral(mathView.getExpression(),
                         Symbol.createVarSymbol('x'));
             else
-                newExpr = new Derivative(mathView.getExpression(),
-                        Symbol.createVarSymbol('x'));
-
+                newExpr = new Derivative(mathView.getExpression(), Symbol.createVarSymbol('x'));
+            
+            // Set the parentheses
+            newExpr = ParenthesesHelper.setParentheses(newExpr);
+            
             // Set the new expression
             mathView.setExpression(newExpr);
 

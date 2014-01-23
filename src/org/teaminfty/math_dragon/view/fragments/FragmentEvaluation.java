@@ -17,6 +17,7 @@ import org.matheclipse.core.interfaces.IExpr;
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.MathException;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.exceptions.TooBigValueException;
 import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.ExpressionBeautifier;
 import org.teaminfty.math_dragon.model.ModelHelper;
@@ -76,6 +77,12 @@ public class FragmentEvaluation extends DialogFragment
     /** Whether or not we were unable to evaluate the expression */
     private boolean unableToEval = false;
     
+    /** The ID of the message to the user when we're unable to evaluate an expression */
+    private int unableToEvalMsgId = R.string.unable_to_eval;
+    
+    /** Whether or not variables have been substituted */
+    private boolean varsSubstituted = false;
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -89,7 +96,10 @@ public class FragmentEvaluation extends DialogFragment
         // Disable the the MathView and set its contents
         mathView = (MathView) view.findViewById(R.id.mathView);
         mathView.setEnabled(false);
-        mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
+        if(savedInstanceState != null)
+            mathView.setDefaultHeight(savedInstanceState.getInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT));
+        else
+            mathView.setDefaultHeight(getResources().getDimensionPixelSize(R.dimen.math_object_eval_default_size));
         if(showExpression != null)
         {
             mathView.setExpression(showExpression);
@@ -123,9 +133,14 @@ public class FragmentEvaluation extends DialogFragment
         // If an error occurred, show the error
         if(unableToEval)
         {
+            ((TextView) view.findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
             view.findViewById(R.id.progressBar).setVisibility(View.GONE);
             view.findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
         }
+        
+        // Show a warning if variables have been substituted
+        if(varsSubstituted)
+            view.findViewById(R.id.text_warning_substitutions_used).setVisibility(View.VISIBLE);
         
         // Wolfram|Alpha button click listener
         view.findViewById(R.id.btn_wolfram).setOnClickListener(new View.OnClickListener()
@@ -148,6 +163,9 @@ public class FragmentEvaluation extends DialogFragment
 
     /** A XML string containing the current the expressions that is to be shown */
     private static final String BUNDLE_MATH_EXPRESSION = "math_expr";
+    
+    /** An integer containing the default height of the MathView */
+    private static final String BUNDLE_MATH_VIEW_DEFAULT_HEIGHT = "math_view_default_height";
     
     @Override
     public void onSaveInstanceState(Bundle outState)
@@ -180,6 +198,9 @@ public class FragmentEvaluation extends DialogFragment
             { /* Ignore */ }
             catch(ParserConfigurationException e)
             { /* Ignore */ }
+            
+            // Save the default height
+            outState.putInt(BUNDLE_MATH_VIEW_DEFAULT_HEIGHT, mathView.getDefaultHeight());
         }
     }
     
@@ -287,8 +308,10 @@ public class FragmentEvaluation extends DialogFragment
                 
                 // Show that we were unable to evaluate the expression
                 unableToEval = true;
+                unableToEvalMsgId = R.string.unable_to_eval_timeout;
                 if(getView() != null)
                 {
+                    ((TextView) getView().findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
                     getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
                     getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
                 }
@@ -308,13 +331,28 @@ public class FragmentEvaluation extends DialogFragment
                 {
                     try
                     {
-                        // Calculate the answer
-                        // Note that we use a two-step evaluation as for some reason integrals like integrate(x*sin(x), {x, 0, pi})
-                        // wouldn't work in approximation mode otherwise
-                        IExpr result = null;
-                        result = EvalEngine.eval(EvalHelper.eval(args[0]));
-                        if(!exactEvaluation)
+                        // We always evaluate the answer exactly first (without substitutions)
+                        EvalHelper.substitute = false;
+                        IExpr result = EvalEngine.eval(EvalHelper.eval(args[0]));
+                        
+                        // Now we calculate the answer (with substitutions, if there are any)
+                        if(EvalHelper.substitutions != null && EvalHelper.substitutions.length != 0)
+                        {
+                            Expression resultExpr = ModelHelper.toExpression(result);
+                            EvalHelper.substitute = true;
+                            EvalHelper.substitutionsMade = false;
+                            if(exactEvaluation)
+                                result = EvalEngine.eval(EvalHelper.eval(resultExpr));
+                            else
+                                result = F.evaln(EvalHelper.eval(resultExpr));
+                                
+                        }
+                        // We still might need to approximate the answer
+                        else if(!exactEvaluation)
                             result = F.evaln(result);
+                        
+                        // Note that we always approximate after exact evaluation because for some reason
+                        // integrals like integrate(x*sin(x), {x, 0, pi}) wouldn't work in approximation mode otherwise
                         
                         // Parse the expression, beautify it and place parentheses
                         Expression resultExpr = ParenthesesHelper.setParentheses(ExpressionBeautifier.parse(ModelHelper.toExpression(result)));
@@ -325,24 +363,35 @@ public class FragmentEvaluation extends DialogFragment
                             timerCancelled = true;
                         }
                         
+                        // Remember whether or not substitutions have been made
+                        varsSubstituted = EvalHelper.substitutionsMade;
+                        
                         // Return the result
                         return resultExpr;
+                    }
+                    catch(TooBigValueException e)
+                    {
+                        unableToEval = true;
+                        unableToEvalMsgId = e.valTooBig ? R.string.unable_to_eval_too_big : R.string.unable_to_eval_too_small;
                     }
                     catch(MathException e)
                     {
                         // Apparently we were unable to correctly parse the calculation
                         unableToEval = true;
+                        unableToEvalMsgId = R.string.unable_to_eval;
                         e.printStackTrace();
                     }
                     catch(RuntimeException e)
                     {
                         // This occurs for impossible to solve expression (e.g. integrate(x^x, x))
                         unableToEval = true;
+                        unableToEvalMsgId = R.string.unable_to_eval;
                     }
                     catch(StackOverflowError e)
                     {
                         // This occurs for impossible to solve expression (e.g. integrate(x*(x*x)^x, x))
                         unableToEval = true;
+                        unableToEvalMsgId = R.string.unable_to_eval;
                     }
                 }
             }
@@ -364,11 +413,19 @@ public class FragmentEvaluation extends DialogFragment
                 showExpression(result);
             else if(getView() != null)
             {
+                // We'll want to hide the progressbar anyway
+                getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                
+                // Show an error if we were unable to evaluate
                 if(unableToEval)
                 {
-                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                    ((TextView) getView().findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
                     getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
                 }
+                
+                // Show a warning if variables have been substituted
+                if(varsSubstituted)
+                    getView().findViewById(R.id.text_warning_substitutions_used).setVisibility(View.VISIBLE);
             }
         }
     }

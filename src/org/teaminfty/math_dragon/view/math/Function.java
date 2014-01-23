@@ -248,7 +248,7 @@ public class Function extends Expression
 
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {        
         return new Point(this.getBoundingBox().centerX(), getChild(0).getCenter().y);
     }

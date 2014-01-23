@@ -154,6 +154,10 @@ public class MathView extends View
         invalidate();
     }
     
+    /** Returns the default height of the expression */
+    public int getDefaultHeight()
+    { return (int) expressionDefaultHeight; }
+    
     /** Resets the scroll position */
     public void resetScroll()
     {
@@ -514,7 +518,7 @@ public class MathView extends View
         expression.setDefaultHeight((int) expressionDefaultHeight);
         
         // Reset all the bounding boxes
-        expression.validateAllBoundingBox(false);
+        expression.invalidateBoundingBoxCache();
         
         // Invalidate the cache
         cache = null;
@@ -537,7 +541,7 @@ public class MathView extends View
             expression.setDefaultHeight((int) expressionDefaultHeight);
             
             // Reset all the bounding boxes
-            expression.validateAllBoundingBox(false);
+            expression.invalidateBoundingBoxCache();
             
             // Redraw
             invalidate();
@@ -904,7 +908,7 @@ public class MathView extends View
                 expressionChanged();
                 
                 // Invalidate all bounding boxes of all expressions
-                expression.validateAllBoundingBox(false);
+                expression.invalidateBoundingBoxCache();
             }
         }
     }
@@ -1013,10 +1017,10 @@ public class MathView extends View
                 if(warningId == 0)
                 {
                     expressionInfo.parent.setChild(expressionInfo.childIndex, input);
-                    ParenthesesHelper.setParentheses(expression);
+                    expression = ParenthesesHelper.setParentheses(expression);
                     
                     // Invalidate the cache
-                    expression.validateAllBoundingBox(false);
+                    expression.invalidateBoundingBoxCache();
                 }
             }
             
@@ -1035,7 +1039,7 @@ public class MathView extends View
         }
         
         /** An integer ArrayList in the state bundle that contains the path (in child numbers) to the child in expressionInfo */
-        public static final String BUNDLE_MATH_OBJECT_INFO = "math_object_info";
+        private static final String BUNDLE_MATH_OBJECT_INFO = "math_object_info";
         
         /** Returns the information about this {@link ExpressionReplacer} as a bundle
          * @param root The root {@link Expression} */
@@ -1102,7 +1106,7 @@ public class MathView extends View
                 ParenthesesHelper.setParentheses(expression);
                 
                 // Invalidate the cache
-                expression.validateAllBoundingBox(false);
+                expression.invalidateBoundingBoxCache();
             }
 
             // Invalidate cache and redraw

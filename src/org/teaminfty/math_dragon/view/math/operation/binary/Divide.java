@@ -21,11 +21,13 @@ public class Divide extends Binary
     protected Paint operatorPaint = new Paint();
 
     public Divide()
-    {}
+    { this(null, null); }
     
     public Divide(Expression left, Expression right)
     {
     	super(left, right);
+        
+        levelDeltas = new int[] {1, 1};
     }
     
     public String toString()
@@ -99,6 +101,24 @@ public class Divide extends Binary
     }
     
     @Override
+    public void calculateAllChildBoundingBox()
+    {
+        // Get the sizes and the total height
+        Rect[] sizes = getSizes();
+        Point center_one = getChild(0).getCenter();
+        Point center_two = getChild(1).getCenter();
+        Point center_this = this.getCenter();
+        
+        // Translate the operand's bounding box
+        sizes[1].offsetTo(center_this.x - center_one.x, 0);
+        sizes[2].offsetTo(center_this.x - center_two.x, sizes[0].height() + sizes[1].height());
+
+        // Add the bounding boxes
+        childrenBoundingBoxes.add( sizes[1]);
+        childrenBoundingBoxes.add( sizes[2]);
+    }
+    
+    @Override
     public Rect calculateBoundingBox()
     {
         // Get the sizes
@@ -155,7 +175,7 @@ public class Divide extends Binary
     }
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {
         // Get the operator bounding box
         Rect operatorBounding = getOperatorBoundingBoxes()[0];
@@ -163,14 +183,6 @@ public class Divide extends Binary
         // Return the center, which is the center of the operator
         return new Point(operatorBounding.centerX(), operatorBounding.centerY());
     }
-    
-    @Override
-  	public void setLevel(int l)
-  	{
-  		level = l;
-  		getChild(0).setLevel(level + 1);
-  		getChild(1).setLevel(level + 1);
-  	}
 
     @Override
     public void draw(Canvas canvas)

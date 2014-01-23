@@ -20,6 +20,8 @@ public class Root extends Binary
     public Root(Expression base, Expression exponent)
     {
         super(exponent, base);
+        
+        levelDeltas = new int[] {1, 0};
 
         // Initialise the paint
         operatorPaint.setAntiAlias(true);
@@ -134,15 +136,34 @@ public class Root extends Binary
     }
     
     @Override
-	public void setLevel(int l)
-	{
-		level = l;
-		getChild(0).setLevel(level + 1);
-		getChild(1).setLevel(level);
-	}
+    public void calculateAllChildBoundingBox()
+    {        
+        // The size of the gap
+        final int gapSize = (int) (3 * Expression.lineWidth);
+        
+        // We'll always need the y-coordinate of the centre of the base
+        final int centerY = getChild(1).getCenter().y;
+        
+        // We'll always need the bounding box of the exponent
+        Rect exponentBounding = getChild(0).getBoundingBox();
+        if(exponentBounding.bottom - gapSize / 2 < centerY)
+            exponentBounding.offset(0, centerY - (exponentBounding.bottom - gapSize / 2));
+        
+        // add the exponent bounding box
+        childrenBoundingBoxes.add( exponentBounding);
+        
+        // We want the bounding box of the base, so we'll need its size
+        Rect baseBounding = getChild(1).getBoundingBox();
+        
+        // Position the bounding box
+        baseBounding.offsetTo(exponentBounding.right + 2 * gapSize, Math.max(0, exponentBounding.bottom + gapSize / 2 - centerY));
+        
+        // Add the base bounding box
+        childrenBoundingBoxes.add( baseBounding);
+    }
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {
         // The size of the gap
         final int gapSize = (int) (3 * Expression.lineWidth);
