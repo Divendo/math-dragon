@@ -99,6 +99,24 @@ public class Divide extends Binary
     }
     
     @Override
+    public void calculateAllChildBoundingBox()
+    {
+        // Get the sizes and the total height
+        Rect[] sizes = getSizes();
+        Point center_one = getChild(0).getCenter();
+        Point center_two = getChild(1).getCenter();
+        Point center_this = this.getCenter();
+        
+        // Translate the operand's bounding box
+        sizes[1].offsetTo(center_this.x - center_one.x, 0);
+        sizes[2].offsetTo(center_this.x - center_two.x, sizes[0].height() + sizes[1].height());
+
+        // Add the bounding boxes
+        childrenBoundingBoxes.add( sizes[1]);
+        childrenBoundingBoxes.add( sizes[2]);
+    }
+    
+    @Override
     public Rect calculateBoundingBox()
     {
         // Get the sizes
@@ -155,7 +173,7 @@ public class Divide extends Binary
     }
     
     @Override
-    public Point getCenter()
+    public Point calculateCenter()
     {
         // Get the operator bounding box
         Rect operatorBounding = getOperatorBoundingBoxes()[0];
