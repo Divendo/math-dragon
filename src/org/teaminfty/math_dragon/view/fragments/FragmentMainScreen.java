@@ -351,7 +351,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
                         db.saveTutorialState(state);
                         db.close();
                         fragmentAbout.dismiss();
-                        tutorial();
+                        continueTutorial();
                     }
                 });
                 fragmentAbout.show(getFragmentManager(), ABOUT_TAG);    
