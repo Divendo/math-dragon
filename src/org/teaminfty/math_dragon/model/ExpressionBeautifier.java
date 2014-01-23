@@ -335,6 +335,7 @@ public class ExpressionBeautifier
     {
         Expression num = parse(div.getNumerator());
         Expression denom = parse(div.getDenominator());
+        Expression result = div;
         // x/1 -> x
         if (denom.equals(Symbol.ONE))
             return num;
@@ -394,11 +395,22 @@ public class ExpressionBeautifier
             else
                 denom = denom.getChild(0);
         }
-        if(numNegative ^ denomNegative)
-            return new Negate(new Divide(num, denom));
-        
+        boolean negate = numNegative ^ denomNegative;
+        if (num instanceof Symbol && denom instanceof Symbol)
+        {
+            Symbol symnum = (Symbol) num;
+            Symbol symdenom = (Symbol) denom;
+            double n = symnum.getFactor();
+            double d = symdenom.getFactor();
+            if (n > d && n % 1 == 0 && d % 1 == 0)
+            {
+                Symbol intpart = new Symbol((long) (n / d));
+                symnum.setFactor(n - intpart.getFactor() * d);
+                result = new Add(intpart, div);
+            }
+        }
         div.set(num, denom);
-        return div;
+        return negate ? new Negate(result) : result;
     }
     
     /**
