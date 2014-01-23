@@ -67,6 +67,9 @@ public class FragmentEvaluation extends DialogFragment
     /** The ID of the message to the user when we're unable to evaluate an expression */
     private int unableToEvalMsgId = R.string.unable_to_eval;
     
+    /** Whether or not variables have been substituted */
+    private boolean varsSubstituted = false;
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -120,6 +123,10 @@ public class FragmentEvaluation extends DialogFragment
             view.findViewById(R.id.progressBar).setVisibility(View.GONE);
             view.findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
         }
+        
+        // Show a warning if variables have been substituted
+        if(varsSubstituted)
+            view.findViewById(R.id.text_warning_substitutions_used).setVisibility(View.VISIBLE);
         
         // Wolfram|Alpha button click listener
         view.findViewById(R.id.btn_wolfram).setOnClickListener(new View.OnClickListener()
@@ -316,6 +323,7 @@ public class FragmentEvaluation extends DialogFragment
                         {
                             Expression resultExpr = ModelHelper.toExpression(result);
                             EvalHelper.substitute = true;
+                            EvalHelper.substitutionsMade = false;
                             if(exactEvaluation)
                                 result = EvalEngine.eval(EvalHelper.eval(resultExpr));
                             else
@@ -337,6 +345,9 @@ public class FragmentEvaluation extends DialogFragment
                         {
                             timerCancelled = true;
                         }
+                        
+                        // Remember whether or not substitutions have been made
+                        varsSubstituted = EvalHelper.substitutionsMade;
                         
                         // Return the result
                         return resultExpr;
@@ -383,11 +394,21 @@ public class FragmentEvaluation extends DialogFragment
         {
             if(result != null)
                 showExpression(result);
-            else if(getView() != null && unableToEval)
+            else if(getView() != null)
             {
-                ((TextView) getView().findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
+                // We'll want to hide the progressbar anyway
                 getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
-                getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+                
+                // Show an error if we were unable to evaluate
+                if(unableToEval)
+                {
+                    ((TextView) getView().findViewById(R.id.text_unable_to_eval)).setText(unableToEvalMsgId);
+                    getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
+                }
+                
+                // Show a warning if variables have been substituted
+                if(varsSubstituted)
+                    getView().findViewById(R.id.text_warning_substitutions_used).setVisibility(View.VISIBLE);
             }
         }
     }

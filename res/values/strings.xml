@@ -66,5 +66,6 @@
 	<string name="special_thanks">Dawn Haaksman\nhttp://pixelsmedia.nl</string>
 	<string name="about_text">Math DragOn is open source. The source code is freely available under the LGPLv3 license and can be found at GitHub:\nhttps://github.com/Divendo/math-dragon</string>
 	<string name="start_tutorial">Start tutorial</string>
+	<string name="warning_substitutions_used">Some variables have been substituted</string>
 	
 </resources>

@@ -41,6 +41,9 @@ public class EvalHelper
     
     /** Whether or not substitutions should be done */
     public static boolean substitute = true;
+    
+    /** Set to true when substitutions have been made (should be set to false manually before evaluating) */
+    public static boolean substitutionsMade = false;
 
     /**
      * Convert the mathematical expression to a symja compatible expression.
@@ -211,7 +214,10 @@ public class EvalHelper
             for(Database.Substitution sub : substitutions)
             {
                 if(sub.name == varName && sub.value != null)
+                {
+                    substitutionsMade = true;
                     return eval(sub.value);
+                }
             }
         }
         
