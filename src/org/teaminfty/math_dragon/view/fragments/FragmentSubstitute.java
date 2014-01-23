@@ -355,7 +355,12 @@ public class FragmentSubstitute extends DialogFragment implements Tutorial
         
         showcases.addViews(new ShowcaseViewDialog[]
         {
-                // TODO voeg views toe, kul!
+            	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.titleRow), this),
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_open),
+            	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_add), this),
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_add)
         });
         
         showcases.show();

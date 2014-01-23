@@ -460,12 +460,26 @@ public class FragmentSaveLoad extends DialogFragment implements Tutorial
         
         showcases.addViews(new ShowcaseViewDialog[]
         {
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.titleRow), this),
+            			R.string.tutorial_favs_title,
+            			R.string.tutorial_favs_open),
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.edit_name), this),
+        				R.string.tutorial_favs_title,
+                        R.string.tutorial_favs_save_textbox),
             new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_save), this),
                         R.string.tutorial_favs_title,
                         R.string.tutorial_favs_save_btn),
-            new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.edit_name), this),
-                        R.string.tutorial_favs_title,
-                        R.string.tutorial_favs_save_textbox)
+            new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.layout_formula_list), this),
+            			R.string.tutorial_favs_title,
+            			R.string.tutorial_favs_load),
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.layout_formula_list), this),
+        				R.string.tutorial_favs_title,
+        				R.string.tutorial_favs_overwrite),
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.layout_formula_list), this),
+            			R.string.tutorial_favs_title,
+                		R.string.tutorial_favs_delete)
+           
+
             
         });
         

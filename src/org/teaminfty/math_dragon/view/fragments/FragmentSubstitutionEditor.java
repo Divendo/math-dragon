@@ -300,7 +300,21 @@ public class FragmentSubstitutionEditor extends DialogFragment implements Tutori
         
         showcases.addViews(new ShowcaseViewDialog[]
         {
-                // TODO voeg views toe, kul!
+        		new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.text_title), this),
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_edit),
+            	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.var_buttons_container), this),
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_choose),
+                new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_edit_substitute_for), this),
+                    	R.string.tutorial_subs_title,
+                        R.string.tutorial_subs_enter),
+                new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_ok), this),
+                		R.string.tutorial_subs_title,
+                   		R.string.tutorial_subs_confirm),
+                new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_ok), this),
+                		R.string.tutorial_subs_title,
+                   		R.string.tutorial_subs_delete)
         });
         
         showcases.show();
