@@ -86,8 +86,24 @@ public class ExpressionBeautifier
                 }
             }
             // only transform if it could be simplified
-            if(pow != 0)
+            if(pow != 0 && pow != 1)
             {
+                if (pow > 0)
+                {
+                    while (factor >= 10)
+                    {
+                        ++pow;
+                        factor /= 10;
+                    }
+                }
+                else
+                {
+                    while (factor <= -10)
+                    {
+                        --pow;
+                        factor *= 10;
+                    }
+                }
                 s.setFactor(factor);
                 Expression power = new Power(new Symbol(10), new Symbol(pow));
                 if (s.equals(Symbol.ONE))
@@ -319,6 +335,7 @@ public class ExpressionBeautifier
     {
         Expression num = parse(div.getNumerator());
         Expression denom = parse(div.getDenominator());
+        Expression result = div;
         // x/1 -> x
         if (denom.equals(Symbol.ONE))
             return num;
@@ -378,11 +395,22 @@ public class ExpressionBeautifier
             else
                 denom = denom.getChild(0);
         }
-        if(numNegative ^ denomNegative)
-            return new Negate(new Divide(num, denom));
-        
+        boolean negate = numNegative ^ denomNegative;
+        if (num instanceof Symbol && denom instanceof Symbol)
+        {
+            Symbol symnum = (Symbol) num;
+            Symbol symdenom = (Symbol) denom;
+            double n = symnum.getFactor();
+            double d = symdenom.getFactor();
+            if (n > d && n % 1 == 0 && d % 1 == 0)
+            {
+                Symbol intpart = new Symbol((long) (n / d));
+                symnum.setFactor(n - intpart.getFactor() * d);
+                result = new Add(intpart, div);
+            }
+        }
         div.set(num, denom);
-        return div;
+        return negate ? new Negate(result) : result;
     }
     
     /**
@@ -448,7 +476,9 @@ public class ExpressionBeautifier
                     // if a/b >= 0
                     if ((fnum > 0 && fdenom > 0) ||
                             (fnum < 0 && fdenom < 0))
+                    {
                         return new Root(pow(new Power(pow.getBase(), symnum)), symdenom);
+                    }
                     // if a < 0 && b > 0
                     if (fnum < 0 && fdenom > 0)
                     {
