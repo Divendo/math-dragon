@@ -26,35 +26,21 @@ public class Integral extends Operation
 	final String integralSign = "\u222B"; // Unicode for the integral sign
 	
 	public Integral()
-	{
-	    super(4);
-		children.add(new Empty());
-		children.add(new Empty());
-		children.add(new Empty());
-		children.add(new Empty());
-		
-        initPaint();
-	}
+	{ this(null, null, null, null); }
 	
-	public Integral( Expression integrate, Expression over)
-	{
-	    super(4);
-		children.add(new Empty());
-        children.add(new Empty());
-        children.add(new Empty());
-		children.add(new Empty());
-		
-		set(integrate, over);
-        initPaint();
-	}
+	public Integral(Expression integrate, Expression over)
+    { this(integrate, over, null, null); }
 	
-	public Integral( Expression integrate, Expression over, Expression from, Expression to)
+	public Integral(Expression integrate, Expression over, Expression from, Expression to)
 	{
 	    super(4);
+	    
 		children.add(new Empty());
         children.add(new Empty());
         children.add(new Empty());
         children.add(new Empty());
+        
+        levelDeltas = new int[] {1, 1, 1, 1};
         
 		set(integrate, over, from, to);
 		initPaint();
@@ -315,30 +301,27 @@ public class Integral extends Operation
 	}
 	
 	public void set(Expression integrate, Expression over)
-    {
-		// Only set the integrate child and the child to integrate over
-        setChild(0, integrate);
-        if (over != null)
-        {
-            if (!(over instanceof Symbol))
-            {
-                throw new IllegalArgumentException("'over' should be null or a symbolic constant");
-            }
-            Symbol sym = (Symbol) over;
-            if (sym.getVarCount() != 1)
-            {
-                throw new IllegalArgumentException("multiple variables not allowed for 'over'");
-            }
-        }
-        setChild(1, over);
-    }
+	{ set(integrate, over, getIntegrateFrom(), getIntegrateTo()); }
 	
 	public void set(Expression integrate, Expression over, Expression from, Expression to)
     {
+	    // Check whether `over` is valid
+        if(over != null)
+        {
+            if(!(over instanceof Symbol))
+                throw new IllegalArgumentException("'over' should be null or a symbolic constant");
+            
+            Symbol sym = (Symbol) over;
+            if(sym.getVarCount() != 1)
+                throw new IllegalArgumentException("multiple variables not allowed for 'over'");
+        }
+        
 		// Set all the children
-        set(integrate, over);
-        setChild(2, from);
-        setChild(3, to);
+        setChildWithoutRefresh(0, integrate);
+        setChildWithoutRefresh(1, over);
+        setChildWithoutRefresh(2, from);
+        setChildWithoutRefresh(3, to);
+        setAll(level, defaultHeight, false);
     }
 	
 	/** Returns the child that should be integrated */
@@ -360,19 +343,55 @@ public class Integral extends Operation
 	@Override
   	public void setLevel(int l)
   	{
-		// Set the level of the children
-  		level = l;
-  		
-  		if(getIntegratePart() instanceof Integral)
-  			getChild(0).setLevel(level);
-  		else
-  			getChild(0).setLevel(level+1);
-  		
-  		getChild(1).setLevel(level+1);
-  		
-  		getChild(2).setLevel(level+1);
-  		getChild(3).setLevel(level+1);
+        // Invalidate the cache (if necessary)
+        if(l != level)
+            invalidateBoundingBoxCacheForSelf();
+        
+        // Set the level
+        level = l;
+        
+        // Special treatment for the integrate part
+        if(getIntegratePart() instanceof Integral)
+            getChild(0).setLevel(level);
+        else
+            getChild(0).setLevel(level + 1);
+        
+        // Set the level every child
+        for(int i = 1; i < getChildCount(); ++i)
+        {
+            if(levelDeltas != null && i < levelDeltas.length)
+                getChild(i).setLevel(l + levelDeltas[i]);
+            else
+                getChild(i).setLevel(l);
+        }
   	}
+
+    @Override
+	public void setAll(int lvl, int defHeight, boolean valid)
+    {
+        // Set the values
+        level = lvl;
+        defaultHeight = defHeight;
+        operatorBoundingBoxValid = valid;
+        childrenBoundingBoxValid = valid;
+        totalBoundingBoxValid = valid;
+        centerValid = valid;
+        
+        // Special treatment for the integrate part
+        if(getIntegratePart() instanceof Integral)
+            getChild(0).setAll(lvl, defHeight, valid);
+        else
+            getChild(0).setAll(lvl + 1, defHeight, valid);
+        
+        // Set the values for all children
+        for(int i = 1; i < getChildCount(); ++i)
+        {
+            if(levelDeltas != null && i < levelDeltas.length)
+                getChild(i).setAll(lvl + levelDeltas[i], defHeight, valid);
+            else
+                getChild(i).setAll(lvl, defHeight, valid);
+        }
+    }
 	
 	@Override
 	protected String getType()

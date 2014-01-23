@@ -1,7 +1,5 @@
 package org.teaminfty.math_dragon.view.math.operation;
 
-import java.util.Arrays;
-
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Operation;
 import org.teaminfty.math_dragon.view.math.Symbol;
@@ -39,7 +37,14 @@ public class Limit extends Operation
      */
     public Limit(Expression start, Expression end, Expression expression)
     {
-        super(Arrays.asList(start, end, expression));
+        super(3);
+        
+        setChildWithoutRefresh(0, start);
+        setChildWithoutRefresh(1, end);
+        setChildWithoutRefresh(2, expression);
+        setAll(level, defaultHeight, false);
+        
+        levelDeltas = new int[] {2, 2, 0};
     }
     
     /** Default constructor */
@@ -150,16 +155,6 @@ public class Limit extends Operation
     {
         setChild(2, expr);
     }
-    
-    @Override
- 	public void setLevel(int l)
- 	{
- 		level = l;
- 		getChild(0).setLevel(level + 2);
- 		getChild(1).setLevel(level + 2);
- 		getChild(2).setLevel(level);
- 	}
-    
 
     @Override
     protected String getType()

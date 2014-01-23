@@ -518,7 +518,7 @@ public class MathView extends View
         expression.setDefaultHeight((int) expressionDefaultHeight);
         
         // Reset all the bounding boxes
-        expression.validateAllBoundingBox(false);
+        expression.invalidateBoundingBoxCache();
         
         // Invalidate the cache
         cache = null;
@@ -541,7 +541,7 @@ public class MathView extends View
             expression.setDefaultHeight((int) expressionDefaultHeight);
             
             // Reset all the bounding boxes
-            expression.validateAllBoundingBox(false);
+            expression.invalidateBoundingBoxCache();
             
             // Redraw
             invalidate();
@@ -908,7 +908,7 @@ public class MathView extends View
                 expressionChanged();
                 
                 // Invalidate all bounding boxes of all expressions
-                expression.validateAllBoundingBox(false);
+                expression.invalidateBoundingBoxCache();
             }
         }
     }
@@ -1017,10 +1017,10 @@ public class MathView extends View
                 if(warningId == 0)
                 {
                     expressionInfo.parent.setChild(expressionInfo.childIndex, input);
-                    ParenthesesHelper.setParentheses(expression);
+                    expression = ParenthesesHelper.setParentheses(expression);
                     
                     // Invalidate the cache
-                    expression.validateAllBoundingBox(false);
+                    expression.invalidateBoundingBoxCache();
                 }
             }
             
@@ -1106,7 +1106,7 @@ public class MathView extends View
                 ParenthesesHelper.setParentheses(expression);
                 
                 // Invalidate the cache
-                expression.validateAllBoundingBox(false);
+                expression.invalidateBoundingBoxCache();
             }
 
             // Invalidate cache and redraw

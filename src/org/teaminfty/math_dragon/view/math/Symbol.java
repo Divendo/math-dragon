@@ -198,7 +198,7 @@ public class Symbol extends Expression
      * @return The right text size for the given level */
     protected float findTextSize(int lvl)
     {
-        return defaultHeight * (float) Math.pow(2.0 / 3.0, lvl);
+        return defaultHeight * (float) Math.pow(2.0 / 3.0, Math.min(lvl, MAX_LEVEL));
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,7 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
     	buttonDel.setOnClickListener(new ButtonDeleteOnClickListener());
     	buttonClr.setOnClickListener(new ButtonClearOnClickListener());
         buttonCancel.setOnClickListener(new ButtonCancelOnClickListener());
-    	buttonOK.setOnClickListener(new ButtonOkOnClickListener());
+    	buttonOK.setOnClickListener(new ButtonConfirmOnClickListener());
     	buttonNegate.setOnClickListener(new ButtonNegateOnClickListener());
     	buttonDot.setOnClickListener(new ButtonDotOnClickListener());
     	buttonTabNumpad.setOnClickListener(buttonTabOnClickListener);
@@ -401,13 +402,15 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         }
     }
     
-    /** The OnClickListener for the OK button */
-    private class ButtonOkOnClickListener implements View.OnClickListener
+    /** The OnClickListener for the confirm button */
+    private class ButtonConfirmOnClickListener implements View.OnClickListener
     {
         @Override
         public void onClick(final View v)
         {
+            long start = System.currentTimeMillis();
             callOnConfirmListener(mathSymbolEditor.getExpression());
+            Log.i("timing", Long.toString(System.currentTimeMillis() - start));
             dismiss();
         }
     }

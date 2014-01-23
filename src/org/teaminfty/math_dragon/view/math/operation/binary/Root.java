@@ -20,6 +20,8 @@ public class Root extends Binary
     public Root(Expression base, Expression exponent)
     {
         super(exponent, base);
+        
+        levelDeltas = new int[] {1, 0};
 
         // Initialise the paint
         operatorPaint.setAntiAlias(true);
@@ -159,14 +161,6 @@ public class Root extends Binary
         // Add the base bounding box
         childrenBoundingBoxes.add( baseBounding);
     }
-    
-    @Override
-	public void setLevel(int l)
-	{
-		level = l;
-		getChild(0).setLevel(level + 1);
-		getChild(1).setLevel(level);
-	}
     
     @Override
     public Point calculateCenter()

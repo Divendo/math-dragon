@@ -45,18 +45,8 @@ public abstract class Operation extends Expression
     protected Operation(int operands)
     {
         if(operands < 1)
-        {
-            throw new IllegalArgumentException(operands
-                    + ": invalid number of operands, 1 or more expected ");
-        }
+            throw new IllegalArgumentException(operands + ": invalid number of operands, 1 or more expected ");
         this.children.ensureCapacity(operands);
-    }
-    
-    protected Operation(List<Expression> list)
-    {
-        if (list == null)
-            throw new NullPointerException("list");
-        set(list);
     }
 
     /**

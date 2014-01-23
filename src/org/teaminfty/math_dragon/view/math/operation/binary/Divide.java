@@ -21,11 +21,13 @@ public class Divide extends Binary
     protected Paint operatorPaint = new Paint();
 
     public Divide()
-    {}
+    { this(null, null); }
     
     public Divide(Expression left, Expression right)
     {
     	super(left, right);
+        
+        levelDeltas = new int[] {1, 1};
     }
     
     public String toString()
@@ -181,14 +183,6 @@ public class Divide extends Binary
         // Return the center, which is the center of the operator
         return new Point(operatorBounding.centerX(), operatorBounding.centerY());
     }
-    
-    @Override
-  	public void setLevel(int l)
-  	{
-  		level = l;
-  		getChild(0).setLevel(level + 1);
-  		getChild(1).setLevel(level + 1);
-  	}
 
     @Override
     public void draw(Canvas canvas)

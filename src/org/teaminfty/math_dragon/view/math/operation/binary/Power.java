@@ -24,6 +24,8 @@ public class Power extends Binary
     {
         super(base, power);
         
+        levelDeltas = new int[] {0, 1};
+        
         // Initialise the paint
         operatorPaint.setColor(0xcc4444ff);
     }
@@ -154,14 +156,6 @@ public class Power extends Binary
         // Return the right bounding box
         childrenBoundingBoxes.add( childrenSize[0]);
         childrenBoundingBoxes.add( childrenSize[1]);
-    }
-    
-    @Override
-    public void setLevel(int l)
-    {
-        level = l;
-        getBase().setLevel(level);
-        getExponent().setLevel(level + 1);
     }
     
     //We regard the base operand as the vertical center of the mathObject
