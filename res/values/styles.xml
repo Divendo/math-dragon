@@ -2,6 +2,7 @@
 
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <item name="showcaseViewStyle">@style/ShowcaseTheme</item>
     </style>
     
     <style name="ActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
@@ -64,6 +65,26 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
+    </style>
+    
+   <style name="ShowcaseTheme" parent="ShowcaseView.Light">
+        <item name="sv_backgroundColor">#334444ff</item>
+        <item name="sv_showcaseColor">@color/blue</item>
+        <item name="sv_titleTextAppearance">@style/ShowcaseTitle</item>
+        <item name="sv_detailTextAppearance">@style/ShowcaseDetail</item>
+        <item name="sv_buttonText">OK</item>
+    </style>
+
+    <style name="ShowcaseTitle" parent="TextAppearance.ShowcaseView.Title">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    
+    <style name="ShowcaseDetail" parent="TextAppearance.ShowcaseView.Detail">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    
+    <style name="ShowcaseButton" parent="ShowcaseButton">
+        <item name="android:background">@color/blue</item>
     </style>
 
 </resources>

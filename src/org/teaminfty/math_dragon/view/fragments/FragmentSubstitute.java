@@ -2,9 +2,12 @@ package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.Database;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -17,7 +20,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class FragmentSubstitute extends DialogFragment
+public class FragmentSubstitute extends DialogFragment implements Tutorial
 {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -188,6 +191,8 @@ public class FragmentSubstitute extends DialogFragment
 
     /** The tag for the warning dialog fragment */
     private static final String WARNING_TAG = "warning_dlg";
+
+    public static final int TUTORIAL_ID = 1;
     
     private class OnCloseBtnClickListener implements View.OnClickListener
     {
@@ -303,5 +308,62 @@ public class FragmentSubstitute extends DialogFragment
             // We've consumed the event
             return true;
         }
+    }
+
+    
+    private ShowcaseViewDialog currentShowcaseDialog;
+    @Override
+    public ShowcaseViewDialog getCurrentShowcaseDialog()
+    {
+        return this.currentShowcaseDialog;
+    }
+
+    @Override
+    public void setCurrentShowcaseDialog(ShowcaseViewDialog dialog)
+    {
+        this.currentShowcaseDialog = dialog;
+    }
+
+    @Override
+    public int getTutorialId()
+    {
+        return TUTORIAL_ID;
+    }
+    
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        tutorial();   
+    }
+    
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        if (getCurrentShowcaseDialog() != null)
+            getCurrentShowcaseDialog().dismiss();
+    }
+    
+    private void tutorial()
+    {
+
+        Activity ctx = getActivity();
+
+        
+        ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
+        
+        showcases.addViews(new ShowcaseViewDialog[]
+        {
+            	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.titleRow), this),
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_open),
+            	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_add), this),
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_add)
+        });
+        
+        showcases.show();
+
     }
 }

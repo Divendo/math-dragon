@@ -50,6 +50,7 @@
 	<string name="sure_to_overwrite_msg">Are you sure you want to overwrite this formula? This can not be undone.</string>
 	<string name="f_integrate">F</string>
 	<string name="f_derivative">f\'</string>
+	
 	<string name="unable_to_eval">Math DragOn was unable to evaluate your expression. If you want to try it with Wolfram|Alpha, click the button below</string>
 	<string name="unable_to_eval_timeout">Math DragOn was unable to evaluate your expression, a timeout occurred. If you want to try it with Wolfram|Alpha, click the button below</string>
 	<string name="unable_to_eval_too_big">Math DragOn was unable to evaluate your expression, the answer contains a number that is too big. If you want to try it with Wolfram|Alpha, click the button below</string>
@@ -67,5 +68,43 @@
 	<string name="about_text">Math DragOn is open source. The source code is freely available under the LGPLv3 license and can be found at GitHub:\nhttps://github.com/Divendo/math-dragon</string>
 	<string name="start_tutorial">Start tutorial</string>
 	<string name="warning_substitutions_used">Some variables have been substituted</string>
-	
+    <string name="dont_show">Don\'t ask again</string>
+    <string name="tutorial_dialog_title">Tutorial</string>
+    <string name="tutorial_dialog_msg">Do you want to follow the tutorial?</string>
+    <string name="tutorial_main_title">Welcome!</string>
+   	<string name="tutorial_main_open">This is the main screen! Here you can enter your equations.</string>
+   	<string name="tutorial_main_drawer">Click here to access the side menu where you will find functions and operators.</string>
+   	<string name="tutorial_main_drawer_slide">You can also slide from the left edge of the screen to access it. From there you can drag \'n\' drop onto the main screen.</string>
+   	<string name="tutorial_main_start">This little box is where you\'ll enter your equations.</string>
+   	<string name="tutorial_func_open">To do so, click here..</string>
+   	<string name="tutorial_func_swipe">Or swipe from the left edge of the screen, to open the side menu. </string>
+   	<string name="tutorial_func_enter">From there, drag an icon into an empty box to enter it.</string>
+   	<string name="tutorial_main_undo">If you made a mistake, undo and redo are right here...</string>
+   	<string name="tutorial_main_delete">Along with completely deleting your equation.</string>
+   	<string name="tutorial_main_favs">If you want to save an equation, click the star.</string>
+   	<string name="tutorial_main_eval">If you want to get an answer, exact and approximate answers are here.</string>
+   	<string name="tutorial_main_diff">These buttons are for quickly differentiating and integrating your equation.</string>
+   	<string name="tutorial_main_subs">If you want to enter a value for your variables, click here to do that!</string>
+   	<string name="tutorial_main_close">Go ahead, try it out!</string>
+   	<string name="tutorial_keyb_title">Keyboard</string>
+   	<string name="tutorial_keyb_open">This is the keyboard!</string>
+   	<string name="tutorial_keyb_enter">Here, you can enter your constants...</string>
+   	<string name="tutorial_keyb_vars">Or, click here to enter a variable!</string>
+   	<string name="tutorial_keyb_confirm">When you\'re done, click here to confirm.</string>
+    <string name="tutorial_subs_title">Substitutions</string>
+    <string name="tutorial_subs_open">This is the substution tab! Here you can enter values for your variables.</string>
+    <string name="tutorial_subs_add">Please click here to add a substitution.</string>
+    <string name="tutorial_subs_edit">Here, you can choose your variable, and what to enter for it.</string>
+    <string name="tutorial_subs_choose">Pick a variable from the keyboard...</string>
+    <string name="tutorial_subs_enter">Click here to edit the value...</string>
+    <string name="tutorial_subs_confirm">And click here to confirm the substitution!</string>
+    <string name="tutorial_subs_delete">If you no longer need a substitution, keep your finger on it for a while to delete it.</string>
+    <string name="tutorial_favs_title">Favourites</string>
+    <string name="tutorial_favs_msg">Tap this button load any favorite formulas. Or save your current formula as a favorite so that you can reuse it later.</string>
+    <string name="tutorial_favs_open">This is the favourites tab! Here you can save and load formulas you use often.</string>
+    <string name="tutorial_favs_save_textbox">Type the name of the formula you want to save here... </string>
+    <string name="tutorial_favs_save_btn">Then click here to save it to your favourites.</string>
+    <string name="tutorial_favs_load">And a new formula will appear here. You can click to load it...</string>
+    <string name="tutorial_favs_overwrite">Or click the save button after a formula to overwrite it.</string>
+    <string name="tutorial_favs_delete">If you no longer need a formula, keep your finger on it for a while to delete it.</string>
 </resources>

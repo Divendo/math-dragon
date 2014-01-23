@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white" >
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/tut_dlg_padding"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/dialog_title_font_size"
+        android:background="@drawable/border_bottom" />
+
+    <TextView
+        android:id="@+id/text_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/tut_dlg_padding" />
+
+    <CheckBox 
+        android:id="@+id/check_dont_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dont_show" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        
+	    <Button
+	        android:id="@+id/btn_yes"
+	        style="@style/FlatButton"
+	        android:layout_weight="0.5"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:text="@string/yes" />
+	    
+	    
+	    <Button
+	        android:id="@+id/btn_no"
+	        style="@style/FlatButton"
+	        android:layout_weight="0.5"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:text="@string/no" />
+    
+    </LinearLayout>
+
+</LinearLayout>

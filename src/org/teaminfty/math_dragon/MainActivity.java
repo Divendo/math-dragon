@@ -3,10 +3,9 @@ package org.teaminfty.math_dragon;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.teaminfty.math_dragon.model.Database;
-import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.Database.Substitution;
+import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
-import org.teaminfty.math_dragon.view.fragments.FragmentAbout;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
@@ -31,6 +30,8 @@ import android.view.View;
 
 public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
+	
+	public static final int TUTORIAL_ID = 0;
 
     /** The ActionBarDrawerToggle that is used to toggle the drawer using the action bar */
     ActionBarDrawerToggle actionBarDrawerToggle = null;
@@ -52,7 +53,8 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         }
     }
 
-    @Override
+
+	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -72,17 +74,16 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         // Load Symja
         new SymjaLoader().execute();
 
+        DrawerLayout drawerLayout;
         // DrawLayout specific code
-        if(findViewById(R.id.drawerLayout) != null)
+        if((drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout)) != null)
         {
-            // Get the DrawerLayout object
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-    
+
             // Remove the grey overlay
             drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
     
             // Set the shadow
-            drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+            //drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
     
             try
             {
@@ -138,6 +139,14 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
         return super.onOptionsItemSelected(item);
     }
     
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        // TODO Auto-generated method stub
+        super.onSaveInstanceState(outState);
+    }
+
     /**
      * Gets called when wolfram alpha needs to be started. It will send the unevaluated IExpr to wolfram alpha for evaluation and inspection
      * @param view
@@ -311,19 +320,5 @@ public class MainActivity extends Activity implements FragmentOperationsSource.C
                 source.setChild(i, substitute(source.getChild(i)));
             return source;
         }
-    }
-
-    /** The tag for the about dialog */
-    private static final String ABOUT_TAG = "about";
-    
-    public void help(View view)
-    {
-        // If a about dialog is already shown, stop here
-        if(getFragmentManager().findFragmentByTag(ABOUT_TAG) != null)
-            return;
-        
-        // Create and show the about dialog
-        FragmentAbout fragmentAbout = new FragmentAbout();
-        fragmentAbout.show(getFragmentManager(), ABOUT_TAG);
     }
 }

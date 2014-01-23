@@ -14,12 +14,15 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.teaminfty.math_dragon.view.math.Symbol;
 import org.w3c.dom.Document;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -33,7 +36,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class FragmentSubstitutionEditor extends DialogFragment
+import com.espian.showcaseview.ShowcaseView;
+
+public class FragmentSubstitutionEditor extends DialogFragment implements Tutorial
 {
     /** We'll keep a list of all variable buttons */
     private ArrayList<ToggleButton> varButtons = new ArrayList<ToggleButton>();
@@ -254,7 +259,69 @@ public class FragmentSubstitutionEditor extends DialogFragment
             refreshButtonState();
         }
     }
+    private ShowcaseViewDialog currentShowcaseDialog;
+    @Override
+    public ShowcaseViewDialog getCurrentShowcaseDialog()
+    {
+        return this.currentShowcaseDialog;
+    }
 
+    @Override
+    public void setCurrentShowcaseDialog(ShowcaseViewDialog dialog)
+    {
+        this.currentShowcaseDialog = dialog;
+    }
+
+    @Override
+    public int getTutorialId()
+    {
+        return TUTORIAL_ID;
+    }
+    
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        tutorial();   
+    }
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        if (getCurrentShowcaseDialog() != null)
+            getCurrentShowcaseDialog().dismiss();
+    }
+    
+    private void tutorial()
+    {
+
+        Activity ctx = getActivity();
+
+        
+        ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
+        
+        showcases.addViews(new ShowcaseViewDialog[]
+        {
+        		new ShowcaseViewDialog(ctx, ShowcaseView.NONE,
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_edit),
+            	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.var_buttons_container), this),
+            			R.string.tutorial_subs_title,
+                		R.string.tutorial_subs_choose),
+                new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_edit_substitute_for), this),
+                    	R.string.tutorial_subs_title,
+                        R.string.tutorial_subs_enter),
+                new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_ok), this),
+                		R.string.tutorial_subs_title,
+                   		R.string.tutorial_subs_confirm),
+                new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_ok), this),
+                		R.string.tutorial_subs_title,
+                   		R.string.tutorial_subs_delete)
+        });
+        
+        showcases.show();
+
+    }
     /** The OnClickListener for the OK button */
     private class ButtonOkOnClickListener implements View.OnClickListener
     {
@@ -276,6 +343,8 @@ public class FragmentSubstitutionEditor extends DialogFragment
 
     /** The tag for the keyboard fragment */
     private static final String KEYBOARD_TAG = "keyboard";
+
+    public static final int TUTORIAL_ID = 2;
 
     /** The OnClickListener for the cancel button */
     private class ButtonEditOnClickListener implements View.OnClickListener

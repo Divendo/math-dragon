@@ -16,11 +16,14 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.Database.Formula;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.w3c.dom.Document;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -34,11 +37,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FragmentSaveLoad extends DialogFragment
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.targets.PointTarget;
+
+public class FragmentSaveLoad extends DialogFragment implements Tutorial
 {
     /** The current expression */
     private Expression currExpr = null;
-
+    
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -89,11 +96,19 @@ public class FragmentSaveLoad extends DialogFragment
                 e.printStackTrace();
             }
         }
-        
         // Return the content view
+        
+       
         return view;
     }
 
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        tutorial();
+    }
+    
     @Override
     public void onResume()
     {
@@ -117,6 +132,7 @@ public class FragmentSaveLoad extends DialogFragment
         }
         getDialog().getWindow().setAttributes(params);
     }
+    
     
     @Override
     public void onCancel(DialogInterface dialog)
@@ -289,6 +305,7 @@ public class FragmentSaveLoad extends DialogFragment
     
     /** The tag for the confirmation dialog */
     private static final String CONFIRMATION_DLG_TAG = "confirm";
+
     
     /** Listens for overwrite click events */
     private class OnOverwriteClickListener implements View.OnClickListener
@@ -402,5 +419,71 @@ public class FragmentSaveLoad extends DialogFragment
             // Remove the formula with given id
             removeFormula(id);
         }
+    }
+
+    public static final int TUTORIAL_ID = 4;
+    
+    private ShowcaseViewDialog currentShowcaseDialog;
+    @Override
+    public ShowcaseViewDialog getCurrentShowcaseDialog()
+    {
+        return this.currentShowcaseDialog;
+    }
+
+    @Override
+    public void setCurrentShowcaseDialog(ShowcaseViewDialog dialog)
+    {
+        this.currentShowcaseDialog = dialog;
+    }
+
+    @Override
+    public int getTutorialId()
+    {
+        return TUTORIAL_ID;
+    }
+    
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        if (getCurrentShowcaseDialog() != null)
+            getCurrentShowcaseDialog().dismiss();
+    }
+    
+    private void tutorial()
+    {
+
+        Activity ctx = getActivity();
+
+        
+        ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
+        
+        showcases.addViews(new ShowcaseViewDialog[]
+        {
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.titleRow), this),
+            			R.string.tutorial_favs_title,
+            			R.string.tutorial_favs_open),
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.edit_name), this),
+        				R.string.tutorial_favs_title,
+                        R.string.tutorial_favs_save_textbox),
+            new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_save), this),
+                        R.string.tutorial_favs_title,
+                        R.string.tutorial_favs_save_btn),
+            new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.layout_formula_list), this),
+            			R.string.tutorial_favs_title,
+            			R.string.tutorial_favs_load),
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.layout_formula_list), this),
+        				R.string.tutorial_favs_title,
+        				R.string.tutorial_favs_overwrite),
+        	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.layout_formula_list), this),
+            			R.string.tutorial_favs_title,
+                		R.string.tutorial_favs_delete)
+           
+
+            
+        });
+        
+        showcases.show();
+
     }
 }
