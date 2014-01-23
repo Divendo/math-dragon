@@ -542,8 +542,11 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         
         showcases.addViews(new ShowcaseViewDialog[]
         {
-                // TODO voeg views toe, kul!
-        });
+        		new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.mathSymbolEditorScroller), this), R.string.tutorial_keyb_title, R.string.tutorial_keyb_open),
+        		new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.keyboardButton5), this), R.string.tutorial_keyb_title, R.string.tutorial_keyb_enter),
+        		new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_tab_variables), this), R.string.tutorial_keyb_title, R.string.tutorial_keyb_vars),
+        		new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.keyboardButtonConfirm), this), R.string.tutorial_keyb_title, R.string.tutorial_keyb_confirm)
+        		});
         
         showcases.show();
 
