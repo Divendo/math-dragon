@@ -39,15 +39,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.ShowcaseViews;
-import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
 import com.espian.showcaseview.targets.ActionViewTarget;
 import com.espian.showcaseview.targets.PointTarget;
+import com.espian.showcaseview.targets.ViewTarget;
 
 public class FragmentMainScreen extends Fragment implements Tutorial
 {
@@ -95,7 +95,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         }
         else if(state.tutInProg)
         {
-            continueTutorial2();
+            continueTutorial();
         }
         db.close();
     }
@@ -107,12 +107,12 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         @Override
         public void confirm()
         {
-            continueTutorial2();
+            continueTutorial();
         }
 
     }
 
-    private void continueTutorial2()
+    private void continueTutorial()
     {
         final Database db = new Database(getActivity());
 
@@ -197,14 +197,23 @@ public class FragmentMainScreen extends Fragment implements Tutorial
             {}
         });
         
-        
+        showcases.addViews(new ShowcaseViewDialog[]
+        {
+                new ShowcaseViewDialog(getActivity(), new ViewTarget(getActivity().findViewById(R.id.btn_derivative)),
+                        R.string.tutorial_main_title, R.string.tutorial_main_diff),
+                new ShowcaseViewDialog(getActivity(), new ViewTarget(getActivity().findViewById(R.id.btn_substitute)),
+                        R.string.tutorial_main_title, R.string.tutorial_main_subs),
+                new ShowcaseViewDialog(getActivity(), new ViewTarget(getActivity().findViewById(R.id.btn_evaluate)),
+                        R.string.tutorial_main_title, R.string.tutorial_main_eval),
+                
+        });
         showcases.setOnShowcaseAcknowledged(new ShowcaseViewDialogs.OnShowcaseAcknowledged()
         {        
             @Override
             public void acknowledge()
             {
-                Database.TutorialState state = new Database.TutorialState(
-                        TUTORIAL_ID, false, false);
+                Database.TutorialState state = db.getTutorialState(getTutorialId());
+                state.tutInProg = false;
                 db.saveTutorialState(state);
 
                 db.close();
@@ -216,7 +225,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         
     }
 
-  
+    public static final String ABOUT_TAG = "about";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
@@ -316,8 +325,38 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         btnUndo.setOnClickListener(new UndoRedoClickListener());
         btnRedo.setOnClickListener(new UndoRedoClickListener());
 
-        view.findViewById(R.id.btn_help).setOnClickListener(
-                new HelpClickListener());
+        view.findViewById(R.id.btn_help).setOnClickListener(new OnClickListener()
+        {
+            
+            @Override
+            public void onClick(View arg0)
+            {
+                // TODO Auto-generated method stub
+                // If a about dialog is already shown, stop here
+                if(getFragmentManager().findFragmentByTag(ABOUT_TAG) != null)
+                    return;
+                
+                // Create and show the about dialog
+                final FragmentAbout fragmentAbout = new FragmentAbout();
+                fragmentAbout.setListener(new View.OnClickListener()
+                {
+                    
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Database db = new Database(getActivity());
+                        Database.TutorialState state = db.getTutorialState(getTutorialId());
+                        state.showTutDlg = true;
+                        state.tutInProg = false;
+                        db.saveTutorialState(state);
+                        db.close();
+                        fragmentAbout.dismiss();
+                        tutorial();
+                    }
+                });
+                fragmentAbout.show(getFragmentManager(), ABOUT_TAG);    
+            }
+        });
 
         if(savedInstanceState != null)
         {
@@ -688,22 +727,6 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         }
     }
 
-    private class HelpClickListener implements View.OnClickListener
-    {
-        @Override
-        public void onClick(View v)
-        {
-            Database db = new Database(getActivity());
-            Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
-
-            boolean wasInProgress = state.tutInProg;
-            state.tutInProg = true;
-            db.saveTutorialState(state);
-            db.close();
-            if(!wasInProgress)
-                continueTutorial2();
-        }
-    }
 
     @Override
     public int getTutorialId()

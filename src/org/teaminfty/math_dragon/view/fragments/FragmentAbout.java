@@ -1,6 +1,8 @@
 package org.teaminfty.math_dragon.view.fragments;
 
+import org.teaminfty.math_dragon.MainActivity;
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.model.Database;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -14,6 +16,10 @@ import android.view.WindowManager;
 
 public class FragmentAbout extends DialogFragment
 {
+    
+    private View.OnClickListener listener;
+
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -28,10 +34,21 @@ public class FragmentAbout extends DialogFragment
         view.findViewById(R.id.btn_close).setOnClickListener(new OnCloseClicked());
         
         // Set the click listener for the start tutorial button
-        view.findViewById(R.id.btn_start_tutorial).setOnClickListener(new OnStartTutorialClicked());
+        if (listener != null)
+            view.findViewById(R.id.btn_start_tutorial).setOnClickListener(listener);
         
         // Return the content view
         return view;
+    }
+
+    public View.OnClickListener getListener()
+    {
+        return listener;
+    }
+
+    public void setListener(View.OnClickListener listener)
+    {
+        this.listener = listener;
     }
 
     @Override
@@ -78,6 +95,12 @@ public class FragmentAbout extends DialogFragment
         @Override
         public void onClick(View v)
         {
+            Database db = new Database(getActivity());
+            Database.TutorialState state = db.getTutorialState(MainActivity.TUTORIAL_ID);
+            state.showTutDlg = true;
+            state.tutInProg = false;
+            db.saveTutorialState(state);
+            db.close();
             dismiss();
         }
     }

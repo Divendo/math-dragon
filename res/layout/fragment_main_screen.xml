@@ -120,7 +120,6 @@
         android:layout_alignParentTop="true"
         android:layout_margin="@dimen/main_screen_button_margin"
         android:contentDescription="@string/help"
-        android:onClick="help"
         android:src="@drawable/help" />
     
     <!-- Delete confirmers -->
