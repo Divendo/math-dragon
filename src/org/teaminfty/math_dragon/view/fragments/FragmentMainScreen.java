@@ -75,6 +75,8 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         final Database db = new Database(getActivity());
         Database.TutorialState state = db
                 .getTutorialState(FragmentMainScreen.TUTORIAL_ID);
+        
+        
 
         System.out.println("tutInProg:"+state.tutInProg);
         System.out.println("showTutDlg:"+state.showTutDlg);
@@ -136,79 +138,79 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         final DrawerLayout drawerLayout = (DrawerLayout) getActivity()
                 .findViewById(R.id.drawerLayout);
       
+        
+        ShowcaseViewDialog actionBar = new ShowcaseViewDialog(
+                getActivity(),
+                new ActionViewTarget(getActivity(), ActionViewTarget.Type.HOME),
+                R.string.tutorial_main_title, R.string.tutorial_main_drawer);
+        
+        setCurrentShowcaseDialog(actionBar);
+        actionBar.show();
+        final ShowcaseViewDialog swipeToOpen = new ShowcaseViewDialog(getActivity(),
+                new PointTarget(0, 200), R.string.tutorial_main_title,
+                R.string.tutorial_main_drawer_slide, new ShowcaseViewDialog.Gesture(0, 0, 200, 0));
+        
+        final ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
+        
+        
+        
+        // make sure the drawer is closed before we explain the swipe to open gesture.
+        actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener()
+        {
+            
+            @Override
+            public void onShowcaseViewShow(ShowcaseView showcaseView)
+            { }
+            
+            @Override
+            public void onShowcaseViewHide(ShowcaseView showcaseView)
+            {
+                drawerLayout.closeDrawer(Gravity.LEFT);
+                swipeToOpen.show();
+                setCurrentShowcaseDialog(swipeToOpen);
+            }
+            
+            @Override
+            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
+            { }
+        });
+        swipeToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener()
+        {
+            
+            @Override
+            public void onShowcaseViewShow(ShowcaseView showcaseView)
+            {
+                //TODO moet ik hier handmatig gesturen of gaat dit perongeluk goed?
+                
+            }
 
-//        ShowcaseViewDialog actionBar = new ShowcaseViewDialog(
-//                getActivity(),
-//                new ActionViewTarget(getActivity(), ActionViewTarget.Type.HOME),
-//                R.string.tutorial_fun_op_title, R.string.tutorial_fun_op_msg);
-//        
-//        setCurrentShowcaseDialog(actionBar);
-//        actionBar.show();
-//        final ShowcaseViewDialog swipeToOpen = new ShowcaseViewDialog(getActivity(),
-//                new PointTarget(100, 200), R.string.tutorial_fun_op_title,
-//                R.string.tutorial_fun_op_drag_msg, new ShowcaseViewDialog.Gesture(0, 0, 200, 0));
-//        
-//        final ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
-//        
-//        
-//        
-//        // make sure the drawer is closed before we explain the swipe to open gesture.
-//        actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener()
-//        {
-//            
-//            @Override
-//            public void onShowcaseViewShow(ShowcaseView showcaseView)
-//            { }
-//            
-//            @Override
-//            public void onShowcaseViewHide(ShowcaseView showcaseView)
-//            {
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-//                swipeToOpen.show();
-//                setCurrentShowcaseDialog(swipeToOpen);
-//            }
-//            
-//            @Override
-//            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
-//            { }
-//        });
-//        swipeToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener()
-//        {
-//            
-//            @Override
-//            public void onShowcaseViewShow(ShowcaseView showcaseView)
-//            {
-//                //TODO moet ik hier handmatig gesturen of gaat dit perongeluk goed?
-//                
-//            }
-//
-//            @Override
-//            public void onShowcaseViewHide(ShowcaseView showcaseView)
-//            {
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-//                showcases.show();
-//            }
-//
-//            @Override
-//            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
-//            {}
-//        });
-//        
-//        
-//        showcases.setOnShowcaseAcknowledged(new ShowcaseViewDialogs.OnShowcaseAcknowledged()
-//        {        
-//            @Override
-//            public void acknowledge()
-//            {
-//                Database.TutorialState state = new Database.TutorialState(
-//                        TUTORIAL_ID, false, false);
-//                db.saveTutorialState(state);
-//
-//                db.close();
-//            }
-//
-//        });
-//        actionBar.show();
+            @Override
+            public void onShowcaseViewHide(ShowcaseView showcaseView)
+            {
+                drawerLayout.closeDrawer(Gravity.LEFT);
+                showcases.show();
+            }
+
+            @Override
+            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
+            {}
+        });
+        
+        
+        showcases.setOnShowcaseAcknowledged(new ShowcaseViewDialogs.OnShowcaseAcknowledged()
+        {        
+            @Override
+            public void acknowledge()
+            {
+                Database.TutorialState state = new Database.TutorialState(
+                        TUTORIAL_ID, false, false);
+                db.saveTutorialState(state);
+
+                db.close();
+            }
+
+        });
+        actionBar.show();
         
         
     }
