@@ -4,10 +4,13 @@ import java.util.ArrayList;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.view.MathSymbolEditor;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
 import org.teaminfty.math_dragon.view.MathSymbolEditor.EditingSymbol;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Symbol;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -23,7 +26,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
-public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor.OnStateChangeListener, MathSymbolEditor.OnScrollToListener
+public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor.OnStateChangeListener, MathSymbolEditor.OnScrollToListener, Tutorial
 {
     /** The {@link MathSymbolEditor} in this fragment */
     private MathSymbolEditor mathSymbolEditor = null;
@@ -491,6 +494,59 @@ public class FragmentKeyboard extends DialogFragment implements MathSymbolEditor
         HorizontalScrollView scrollView = (HorizontalScrollView) getView().findViewById(R.id.mathSymbolEditorScroller);
         final int padding = getResources().getDimensionPixelSize(R.dimen.math_symbol_editor_scroll_padding);
         scrollView.scrollTo(Math.max(left - padding, right - scrollView.getWidth() + padding), scrollView.getScrollY());
+    }
+
+    
+    private ShowcaseViewDialog currentShowcaseDialog;
+    @Override
+    public ShowcaseViewDialog getCurrentShowcaseDialog()
+    {
+        return this.currentShowcaseDialog;
+    }
+
+    @Override
+    public void setCurrentShowcaseDialog(ShowcaseViewDialog dialog)
+    {
+        this.currentShowcaseDialog = dialog;
+    }
+
+    @Override
+    public int getTutorialId()
+    {
+        return TUTORIAL_ID;
+    }
+ 
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        tutorial();   
+    }
+    
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        if (getCurrentShowcaseDialog() != null)
+            getCurrentShowcaseDialog().dismiss();
+    }
+    
+    
+    private void tutorial()
+    {
+
+        Activity ctx = getActivity();
+
+        
+        ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
+        
+        showcases.addViews(new ShowcaseViewDialog[]
+        {
+                // TODO voeg views toe, kul!
+        });
+        
+        showcases.show();
+
     }
 }
 

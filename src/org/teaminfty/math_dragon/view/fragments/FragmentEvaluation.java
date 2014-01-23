@@ -22,6 +22,7 @@ import org.teaminfty.math_dragon.model.ExpressionBeautifier;
 import org.teaminfty.math_dragon.model.ModelHelper;
 import org.teaminfty.math_dragon.model.ParenthesesHelper;
 import org.teaminfty.math_dragon.view.MathView;
+import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.w3c.dom.Document;
@@ -31,7 +32,6 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.os.Handler;
@@ -387,5 +387,7 @@ public class FragmentEvaluation extends DialogFragment
      * @param listener The new {@link FragmentEvaluation#OnWolframListener OnWolframListener} */
     public void setOnWolframListener(OnWolframListener listener)
     { onWolframListener = listener; }
+    
+   
 }
 

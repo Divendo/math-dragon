@@ -23,6 +23,7 @@ import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
 import org.w3c.dom.Document;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -39,32 +40,11 @@ import android.widget.TextView;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.PointTarget;
 
-public class FragmentSaveLoad extends DialogFragment
+public class FragmentSaveLoad extends DialogFragment implements Tutorial
 {
     /** The current expression */
     private Expression currExpr = null;
-
-    private void tutorial()
-    {
-        
-        Database db = new Database(getActivity());
-        
-        Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
-        
-        
-
-        
-        ShowcaseViewDialogs dgs = new ShowcaseViewDialogs();
-        
-        
-        dgs.addView(new ShowcaseViewDialog(getActivity(), new PointTarget(50,50), R.string.tutorial_dialog_title, R.string.tutorial_dialog_msg));
-        dgs.addView(new ShowcaseViewDialog(getActivity(), new PointTarget(90,100), R.string.tutorial_eval_title, R.string.tutorial_eval_msg));
-        dgs.show();
-        
-        db.close();
-        
-       
-    }
+    
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -116,12 +96,6 @@ public class FragmentSaveLoad extends DialogFragment
                 e.printStackTrace();
             }
         }
-        
-        ShowcaseView.ConfigOptions opts = new ShowcaseView.ConfigOptions();
-        
-   
-        ShowcaseView view2 = ShowcaseView.insertShowcaseView(new PointTarget(10,10), getActivity(), "yo", "sup", opts);
-        view2.bringToFront();
         // Return the content view
         
        
@@ -158,6 +132,7 @@ public class FragmentSaveLoad extends DialogFragment
         }
         getDialog().getWindow().setAttributes(params);
     }
+    
     
     @Override
     public void onCancel(DialogInterface dialog)
@@ -331,7 +306,6 @@ public class FragmentSaveLoad extends DialogFragment
     /** The tag for the confirmation dialog */
     private static final String CONFIRMATION_DLG_TAG = "confirm";
 
-    public static final int TUTORIAL_ID = 4;
     
     /** Listens for overwrite click events */
     private class OnOverwriteClickListener implements View.OnClickListener
@@ -445,5 +419,57 @@ public class FragmentSaveLoad extends DialogFragment
             // Remove the formula with given id
             removeFormula(id);
         }
+    }
+
+    public static final int TUTORIAL_ID = 4;
+    
+    private ShowcaseViewDialog currentShowcaseDialog;
+    @Override
+    public ShowcaseViewDialog getCurrentShowcaseDialog()
+    {
+        return this.currentShowcaseDialog;
+    }
+
+    @Override
+    public void setCurrentShowcaseDialog(ShowcaseViewDialog dialog)
+    {
+        this.currentShowcaseDialog = dialog;
+    }
+
+    @Override
+    public int getTutorialId()
+    {
+        return TUTORIAL_ID;
+    }
+    
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        if (getCurrentShowcaseDialog() != null)
+            getCurrentShowcaseDialog().dismiss();
+    }
+    
+    private void tutorial()
+    {
+
+        Activity ctx = getActivity();
+
+        
+        ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
+        
+        showcases.addViews(new ShowcaseViewDialog[]
+        {
+            new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.btn_save), this),
+                        R.string.tutorial_favs_title,
+                        R.string.tutorial_favs_save_btn),
+            new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.edit_name), this),
+                        R.string.tutorial_favs_title,
+                        R.string.tutorial_favs_save_textbox)
+            
+        });
+        
+        showcases.show();
+
     }
 }

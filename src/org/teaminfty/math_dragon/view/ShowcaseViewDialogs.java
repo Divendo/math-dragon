@@ -3,6 +3,9 @@ package org.teaminfty.math_dragon.view;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.teaminfty.math_dragon.model.Database;
+import org.teaminfty.math_dragon.view.fragments.Tutorial;
+
 import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
 
@@ -21,6 +24,11 @@ public class ShowcaseViewDialogs
     private OnShowcaseAcknowledged onShowcaseAcknowledged;
     
     
+    private final Tutorial tutorial;
+    
+    public ShowcaseViewDialogs(Tutorial tutorial)
+    { this.tutorial = tutorial; }
+    
     /**
      * Adds a new {@link ShowcaseViewDialog} to the queue. 
      * @param dg the dialog to add.
@@ -30,7 +38,6 @@ public class ShowcaseViewDialogs
         dialogs.add(dg);
         
         int index = dialogs.indexOf(dg);
-        
         
         
         if(dialogs.size() > 1)
@@ -44,7 +51,7 @@ public class ShowcaseViewDialogs
                 
                 @Override
                 public void onShowcaseViewHide(ShowcaseView showcaseView)
-                { dg.show(); }
+                { dg.show();  tutorial.setCurrentShowcaseDialog(dg);}
                 
                 @Override
                 public void onShowcaseViewDidHide(ShowcaseView showcaseView)
@@ -73,6 +80,17 @@ public class ShowcaseViewDialogs
      */
     public void show()
     {
+        Database db = new Database(tutorial.getActivity());
+        if (db.getTutorialState(tutorial.getTutorialId()).tutInProg == false)
+        {
+            db.close(); return;
+        }
+        db.close();
+        if(!(dialogs.size() > 0)) 
+        {
+            if(onShowcaseAcknowledged != null) onShowcaseAcknowledged.acknowledge(); 
+            return;
+        }
         dialogs.getLast().setOnShowcaseEventListener(new OnShowcaseEventListener()
         {
             
@@ -83,13 +101,20 @@ public class ShowcaseViewDialogs
             @Override
             public void onShowcaseViewHide(ShowcaseView showcaseView)
             {
-                if (onShowcaseAcknowledged != null) onShowcaseAcknowledged.acknowledge();              
+                if (onShowcaseAcknowledged != null) onShowcaseAcknowledged.acknowledge();    
+                
+                Database db = new Database(tutorial.getActivity());
+                Database.TutorialState state = db.getTutorialState(tutorial.getTutorialId());
+                state.tutInProg = false;
+                db.saveTutorialState(state);
+                db.close();
             }
             
             @Override
             public void onShowcaseViewDidHide(ShowcaseView showcaseView)
             { }
         });
+        tutorial.setCurrentShowcaseDialog(dialogs.get(0));
         dialogs.get(0).show();
     }
     

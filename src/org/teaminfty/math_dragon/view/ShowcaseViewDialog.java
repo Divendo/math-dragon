@@ -2,11 +2,6 @@ package org.teaminfty.math_dragon.view;
 
 import org.teaminfty.math_dragon.R;
 
-import com.espian.showcaseview.OnShowcaseEventListener;
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.targets.Target;
-import com.espian.showcaseview.targets.ViewTarget;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,6 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
+
+import com.espian.showcaseview.OnShowcaseEventListener;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.targets.Target;
+import com.espian.showcaseview.targets.ViewTarget;
 
 public class ShowcaseViewDialog extends Dialog
 {
@@ -29,9 +30,15 @@ public class ShowcaseViewDialog extends Dialog
         // Construct an invisible dialog
         super(ctx, R.style.ShowcaseViewDialogTheme);
 
+        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        co.buttonLayoutParams = lps;
         // Create the ShowcaseView and directly remove is from its parent
         ShowcaseView sv = ShowcaseView.insertShowcaseView(target, ctx, title,
-                msg);
+                msg, co);
+        
         ((ViewGroup) sv.getParent()).removeView(sv);
         sv.setOnShowcaseEventListener(new ShowcaseEventListener());
         this.sv = sv;

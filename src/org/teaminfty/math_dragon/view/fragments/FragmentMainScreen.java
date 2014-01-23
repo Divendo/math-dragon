@@ -21,7 +21,6 @@ import org.teaminfty.math_dragon.exceptions.ParseException;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.MathView;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
-import org.teaminfty.math_dragon.view.ShowcaseViewDialog.Gesture;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
 import org.teaminfty.math_dragon.view.fragments.FragmentKeyboard.OnConfirmListener;
 import org.teaminfty.math_dragon.view.math.Empty;
@@ -49,7 +48,7 @@ import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
 import com.espian.showcaseview.targets.ActionViewTarget;
 import com.espian.showcaseview.targets.PointTarget;
 
-public class FragmentMainScreen extends Fragment
+public class FragmentMainScreen extends Fragment implements Tutorial
 {
     /** The {@link MathView} in this fragment */
     private MathView mathView = null;
@@ -62,7 +61,8 @@ public class FragmentMainScreen extends Fragment
 
     private boolean isShowingDialog = false;
 
-    private boolean isShowingTutorial = false;
+    
+    private ShowcaseViewDialog currentDialog;
 
     public static final int TUTORIAL_ID = 0;
 
@@ -70,11 +70,14 @@ public class FragmentMainScreen extends Fragment
 
     private void tutorial()
     {
+        System.out.println("JEMOEDER");
         // TODO werken met savedInstanceState
         final Database db = new Database(getActivity());
         Database.TutorialState state = db
                 .getTutorialState(FragmentMainScreen.TUTORIAL_ID);
 
+        System.out.println("tutInProg:"+state.tutInProg);
+        System.out.println("showTutDlg:"+state.showTutDlg);
         if(!state.tutInProg && state.showTutDlg && !isShowingDialog)
         {
 
@@ -87,7 +90,7 @@ public class FragmentMainScreen extends Fragment
 
             isShowingDialog = true;
         }
-        else if(state.tutInProg && !isShowingTutorial)
+        else if(state.tutInProg)
         {
             continueTutorial2();
         }
@@ -108,7 +111,6 @@ public class FragmentMainScreen extends Fragment
 
     private void continueTutorial2()
     {
-        isShowingTutorial = true;
         final Database db = new Database(getActivity());
 
         Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
@@ -140,190 +142,78 @@ public class FragmentMainScreen extends Fragment
                 new ActionViewTarget(getActivity(), ActionViewTarget.Type.HOME),
                 R.string.tutorial_fun_op_title, R.string.tutorial_fun_op_msg);
         
+        setCurrentShowcaseDialog(actionBar);
         actionBar.show();
-//        final ShowcaseViewDialog swipeToOpen = new ShowcaseViewDialog(getActivity(),
-//                new PointTarget(100, 200), R.string.tutorial_fun_op_title,
-//                R.string.tutorial_fun_op_drag_msg, new ShowcaseViewDialog.Gesture(0, 0, 200, 0));
-//        
-//        final ShowcaseViewDialogs showcases = new ShowcaseViewDialogs();
-//        
-//        // make sure the drawer is closed before we explain the swipe to open gesture.
-//        actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener()
-//        {
-//            
-//            @Override
-//            public void onShowcaseViewShow(ShowcaseView showcaseView)
-//            { }
-//            
-//            @Override
-//            public void onShowcaseViewHide(ShowcaseView showcaseView)
-//            {
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-//                swipeToOpen.show();
-//            }
-//            
-//            @Override
-//            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
-//            { }
-//        });
-//        swipeToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener()
-//        {
-//            
-//            @Override
-//            public void onShowcaseViewShow(ShowcaseView showcaseView)
-//            {
-//                //TODO moet ik hier handmatig gesturen of gaat dit perongeluk goed?
-//                
-//            }
-//
-//            @Override
-//            public void onShowcaseViewHide(ShowcaseView showcaseView)
-//            {
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-//                showcases.show();
-//            }
-//
-//            @Override
-//            public void onShowcaseViewDidHide(ShowcaseView showcaseView)
-//            {}
-//        });
-//        
-//        
-//        actionBar.show();
-        state.tutInProg = false;
-        db.saveTutorialState(state);
-        db.close();
+        final ShowcaseViewDialog swipeToOpen = new ShowcaseViewDialog(getActivity(),
+                new PointTarget(100, 200), R.string.tutorial_fun_op_title,
+                R.string.tutorial_fun_op_drag_msg, new ShowcaseViewDialog.Gesture(0, 0, 200, 0));
+        
+        final ShowcaseViewDialogs showcases = new ShowcaseViewDialogs(this);
         
         
-    }
-
-    private void continueTutorial()
-    {
-
-        isShowingTutorial = true;
-
-        final Database db = new Database(getActivity());
-
         
-        Database.TutorialState state = db.getTutorialState(TUTORIAL_ID);
-        state.tutInProg = true;
-        db.saveTutorialState(state);
-
-        final ShowcaseView actionBar, swipeToOpen, editExpr, ops, evaluate;
-
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-
-        co.shotType = ShowcaseView.TYPE_ONE_SHOT;
-
-        final DrawerLayout drawerLayout = (DrawerLayout) getActivity()
-                .findViewById(R.id.drawerLayout);
-
-        System.out.println(drawerLayout);
-        actionBar = ShowcaseView.insertShowcaseView(new ActionViewTarget(
-                getActivity(), ActionViewTarget.Type.HOME), getActivity(),
-                R.string.tutorial_fun_op_title, R.string.tutorial_fun_op_msg,
-                co);
-        swipeToOpen = ShowcaseView.insertShowcaseView(new PointTarget(0, 300),
-                getActivity(), R.string.tutorial_fun_op_title,
-                R.string.tutorial_fun_op_drag_msg);
-
-        swipeToOpen.hide();
-
-        Database.TutorialState[] states = new Database.TutorialState[] {
-                db.getTutorialState(FragmentSubstitute.TUTORIAL_ID),
-                db.getTutorialState(FragmentSubstitutionEditor.TUTORIAL_ID),
-                db.getTutorialState(FragmentKeyboard.TUTORIAL_ID),
-                db.getTutorialState(FragmentSaveLoad.TUTORIAL_ID)};
-
-        for(Database.TutorialState s : states)
-        {
-            s.tutInProg = true;
-            db.saveTutorialState(s);
-        }
-
-        System.out
-                .println(db.getTutorialState(FragmentSaveLoad.TUTORIAL_ID).tutInProg);
-
+        // make sure the drawer is closed before we explain the swipe to open gesture.
         actionBar.setOnShowcaseEventListener(new OnShowcaseEventListener()
         {
-
+            
+            @Override
+            public void onShowcaseViewShow(ShowcaseView showcaseView)
+            { }
+            
             @Override
             public void onShowcaseViewHide(ShowcaseView showcaseView)
             {
-                swipeToOpen.show();
-                System.out.println(drawerLayout);
                 drawerLayout.closeDrawer(Gravity.LEFT);
+                swipeToOpen.show();
+                setCurrentShowcaseDialog(swipeToOpen);
             }
-
+            
             @Override
             public void onShowcaseViewDidHide(ShowcaseView showcaseView)
-            {}
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView)
-            {}
-
+            { }
         });
-
-        final ShowcaseViews views = new ShowcaseViews(getActivity(),
-                new OnShowcaseAcknowledged()
-                {
-
-                    @Override
-                    public void onShowCaseAcknowledged(ShowcaseView showcaseView)
-                    {
-
-                        Database.TutorialState state = new Database.TutorialState(
-                                TUTORIAL_ID, false, false);
-                        db.saveTutorialState(state);
-
-                        db.close();
-                    }
-                });
-
-        ShowcaseView.ConfigOptions co1 = new ShowcaseView.ConfigOptions();
-
-        co1.noButton = true;
-        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_undo,
-                R.string.tutorial_undo_redo_title,
-                R.string.tutorial_undo_redo_msg));
-
-        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_favourites,
-                R.string.tutorial_favs_title, R.string.tutorial_favs_msg));
-
-        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_evaluate,
-                R.string.tutorial_eval_title, R.string.tutorial_eval_msg, co1));
-
-        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_substitute,
-                R.string.tutorial_subst_title, R.string.tutorial_subst_msg1));
-
-        views.addView(new ShowcaseViews.ItemViewProperties(R.id.btn_derivative,
-                R.string.tutorial_int_deriv_title,
-                R.string.tutorial_int_deriv_msg));
-
         swipeToOpen.setOnShowcaseEventListener(new OnShowcaseEventListener()
         {
+            
             @Override
             public void onShowcaseViewShow(ShowcaseView showcaseView)
             {
-                swipeToOpen.animateGesture(-40, 0, 200, 0);
+                //TODO moet ik hier handmatig gesturen of gaat dit perongeluk goed?
+                
             }
 
             @Override
             public void onShowcaseViewHide(ShowcaseView showcaseView)
             {
                 drawerLayout.closeDrawer(Gravity.LEFT);
-                views.show();
+                showcases.show();
             }
 
             @Override
             public void onShowcaseViewDidHide(ShowcaseView showcaseView)
             {}
+        });
+        
+        
+        showcases.setOnShowcaseAcknowledged(new ShowcaseViewDialogs.OnShowcaseAcknowledged()
+        {        
+            @Override
+            public void acknowledge()
+            {
+                Database.TutorialState state = new Database.TutorialState(
+                        TUTORIAL_ID, false, false);
+                db.saveTutorialState(state);
+
+                db.close();
+            }
 
         });
-
+        actionBar.show();
+        
+        
     }
 
+  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
@@ -341,8 +231,6 @@ public class FragmentMainScreen extends Fragment
         if(savedInstanceState != null)
         {
 
-            isShowingTutorial = savedInstanceState
-                    .getBoolean("isShowingTutorial");
             // Load the history from the bundle
             ArrayList<String> historyStrings = savedInstanceState
                     .getStringArrayList(BUNDLE_HISTORY);
@@ -477,6 +365,17 @@ public class FragmentMainScreen extends Fragment
         super.onStart();
         tutorial();
     }
+    
+    @Override
+    public void onStop()
+    {
+        System.out.println("onStop");
+        super.onStop();
+        if (getCurrentShowcaseDialog() != null)
+        {
+            getCurrentShowcaseDialog().dismiss();
+        }
+    }
 
     /**
      * An integer in the state bundle that indicates the current history
@@ -498,7 +397,6 @@ public class FragmentMainScreen extends Fragment
     {
 
         outState.putBoolean("isShowingDialog", isShowingDialog);
-        outState.putBoolean("isShowingTutorial", isShowingTutorial);
         // Save the history
         ArrayList<String> historyStrings = new ArrayList<String>();
         for(Document doc : history)
@@ -591,7 +489,6 @@ public class FragmentMainScreen extends Fragment
         }
         catch(ParseException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -630,6 +527,16 @@ public class FragmentMainScreen extends Fragment
         view.findViewById(R.id.btn_wolfram).setEnabled(isCompleted);
         view.findViewById(R.id.btn_approximate).setEnabled(isCompleted);
         view.findViewById(R.id.btn_evaluate).setEnabled(isCompleted);
+    }
+
+    public ShowcaseViewDialog getCurrentShowcaseDialog()
+    {
+        return currentDialog;
+    }
+
+    public void setCurrentShowcaseDialog(ShowcaseViewDialog currentDialog)
+    {
+        this.currentDialog = currentDialog;
     }
 
     /** The tag for the keyboard fragment */
@@ -782,5 +689,11 @@ public class FragmentMainScreen extends Fragment
             if(!wasInProgress)
                 continueTutorial2();
         }
+    }
+
+    @Override
+    public int getTutorialId()
+    {
+        return TUTORIAL_ID;
     }
 }

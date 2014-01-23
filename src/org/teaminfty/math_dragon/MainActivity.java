@@ -3,14 +3,13 @@ package org.teaminfty.math_dragon;
 import org.matheclipse.core.eval.EvalEngine;
 import org.matheclipse.core.expression.F;
 import org.teaminfty.math_dragon.model.Database;
-import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.model.Database.Substitution;
+import org.teaminfty.math_dragon.model.EvalHelper;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.fragments.FragmentEvaluation;
 import org.teaminfty.math_dragon.view.fragments.FragmentMainScreen;
 import org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource;
 import org.teaminfty.math_dragon.view.fragments.FragmentSubstitute;
-import org.teaminfty.math_dragon.view.fragments.FragmentTutorialDialog;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionDuplicator;
 import org.teaminfty.math_dragon.view.math.Symbol;
@@ -28,13 +27,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.espian.showcaseview.OnShowcaseEventListener;
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.ShowcaseViews;
-import com.espian.showcaseview.ShowcaseViews.OnShowcaseAcknowledged;
-import com.espian.showcaseview.targets.ActionViewTarget;
-import com.espian.showcaseview.targets.PointTarget;
 
 public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
