@@ -4,6 +4,7 @@ import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.Function;
 import org.teaminfty.math_dragon.view.math.Parentheses;
 import org.teaminfty.math_dragon.view.math.Symbol;
+import org.teaminfty.math_dragon.view.math.operation.Negate;
 import org.teaminfty.math_dragon.view.math.operation.binary.Derivative;
 import org.teaminfty.math_dragon.view.math.operation.binary.Divide;
 import org.teaminfty.math_dragon.view.math.operation.binary.Log;
@@ -87,10 +88,13 @@ public class ParenthesesHelper
         {
             // Place parentheses around the base of the power operator
             // if the it's a Symbol and the Symbol has multiple visible symbols
+            // or if it's an instance of Negate
             // or if its precedence is lower than that of the power operator
             if(index == 0)
             {
                 if(withoutParentheses instanceof Symbol && multipleSymbolsVisible((Symbol) withoutParentheses))
+                    placeParentheses = true;
+                else if(withoutParentheses instanceof Negate)
                     placeParentheses = true;
                 else if(parent.getPrecedence() < withoutParentheses.getPrecedence())
                     placeParentheses = true;
@@ -116,7 +120,9 @@ public class ParenthesesHelper
         //      The first child of the Derivative
         //      The child of a function
         //      The children of a logarithm
-        if(parent instanceof Root || (parent instanceof Derivative && index == 0) || parent instanceof Parentheses || parent instanceof Function || parent instanceof Log)
+        //      The child of a negate operation
+        if(parent instanceof Root || (parent instanceof Derivative && index == 0) || parent instanceof Parentheses ||
+           parent instanceof Function ||parent instanceof Log || parent instanceof Negate)
         {
             placeParentheses = false;
             definitivePlaceParentheses = true;

@@ -28,29 +28,10 @@ public abstract class Linear extends Binary
     {
     	super(left, right);
     }
-    
-    @Override
-    public void setDefaultHeight(int height)
-    {
-        super.setDefaultHeight(height);
-        
-        operatorSize = calculateOperatorSize();
-    }
-    
-    @Override
-    public void setLevel(int l)
-    {
-    	super.setLevel(l);
-    	
-    	operatorSize = calculateOperatorSize();
-    }
-    
-    protected Rect getOperatorSize()
-    { return operatorSize; }
-    
+
     /** Returns the size of the operator
      * @return The size of the operator */
-    protected Rect calculateOperatorSize()
+    protected Rect getOperatorSize()
     {
         final int size = (int) (defaultHeight * Math.pow(2.0 / 3.0, level + 1));
         return new Rect(0, 0, size, size);
