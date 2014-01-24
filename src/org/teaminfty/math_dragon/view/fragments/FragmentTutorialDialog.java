@@ -2,8 +2,6 @@ package org.teaminfty.math_dragon.view.fragments;
 
 import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.Database;
-import org.teaminfty.math_dragon.view.fragments.FragmentWarningDialog.OnConfirmListener;
-
 import android.annotation.SuppressLint;
 import android.app.DialogFragment;
 import android.os.Bundle;
@@ -93,7 +91,6 @@ public class FragmentTutorialDialog extends DialogFragment
         });
         view.findViewById(R.id.btn_no).setOnClickListener(new OnClickListener()
         {
-            
             @Override
             public void onClick(View v)
             {

@@ -71,22 +71,15 @@ public class FragmentMainScreen extends Fragment implements Tutorial
 
     private void tutorial()
     {
-        System.out.println("JEMOEDER");
         // TODO werken met savedInstanceState
         final Database db = new Database(getActivity());
-        Database.TutorialState state = db
-                .getTutorialState(FragmentMainScreen.TUTORIAL_ID);
+        Database.TutorialState state = db.getTutorialState(FragmentMainScreen.TUTORIAL_ID);
         
-        
-
         System.out.println("tutInProg:"+state.tutInProg);
         System.out.println("showTutDlg:"+state.showTutDlg);
         if(!state.tutInProg && state.showTutDlg && !isShowingDialog)
         {
-
-            FragmentTutorialDialog dg = new FragmentTutorialDialog(
-                    R.string.tutorial_dialog_title,
-                    R.string.tutorial_dialog_msg);
+            FragmentTutorialDialog dg = new FragmentTutorialDialog(R.string.tutorial_dialog_title, R.string.tutorial_dialog_msg);
 
             dg.setOnConfirmListener(new OnTutorialConfirmListener());
             dg.show(getFragmentManager(), TUTORIAL_TAG);
@@ -100,16 +93,13 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         db.close();
     }
 
-    final class OnTutorialConfirmListener implements
-            FragmentTutorialDialog.OnConfirmListener
+    final class OnTutorialConfirmListener implements FragmentTutorialDialog.OnConfirmListener
     {
-
         @Override
         public void confirm()
         {
             continueTutorial();
         }
-
     }
 
     private void continueTutorial()
@@ -136,9 +126,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         
         
         // we programatically open and close the drawer for demonstration, so we're going to need it here.
-        final DrawerLayout drawerLayout = (DrawerLayout) getActivity()
-                .findViewById(R.id.drawerLayout);
-      
+        final DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
         
         ShowcaseViewDialog actionBar = new ShowcaseViewDialog(
                 getActivity(),
@@ -166,9 +154,14 @@ public class FragmentMainScreen extends Fragment implements Tutorial
             @Override
             public void onShowcaseViewHide(ShowcaseView showcaseView)
             {
-                drawerLayout.closeDrawer(Gravity.LEFT);
-                swipeToOpen.show();
-                setCurrentShowcaseDialog(swipeToOpen);
+                if(drawerLayout != null)
+                {
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+                    swipeToOpen.show();
+                    setCurrentShowcaseDialog(swipeToOpen);
+                }
+                else
+                    showcases.show();
             }
             
             @Override
@@ -180,10 +173,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
             
             @Override
             public void onShowcaseViewShow(ShowcaseView showcaseView)
-            {
-                //TODO moet ik hier handmatig gesturen of gaat dit perongeluk goed?
-                
-            }
+            { }
 
             @Override
             public void onShowcaseViewHide(ShowcaseView showcaseView)
@@ -208,12 +198,13 @@ public class FragmentMainScreen extends Fragment implements Tutorial
                 
         });
         showcases.setOnShowcaseAcknowledged(new ShowcaseViewDialogs.OnShowcaseAcknowledged()
-        {        
+        {
             @Override
             public void acknowledge()
             {
                 Database.TutorialState state = db.getTutorialState(getTutorialId());
                 state.tutInProg = false;
+                state.showTutDlg = false;
                 db.saveTutorialState(state);
 
                 db.close();
@@ -317,8 +308,6 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         // Disable the undo and redo buttons and set their click listeners
         ImageButton btnUndo = (ImageButton) view.findViewById(R.id.btn_undo);
         ImageButton btnRedo = (ImageButton) view.findViewById(R.id.btn_redo);
-
-        ImageButton btnHep = (ImageButton) view.findViewById(R.id.btn_help);
         view.findViewById(R.id.btn_undo).setEnabled(historyPos > 0);
         view.findViewById(R.id.btn_redo).setEnabled(
                 historyPos < history.size() - 1);
@@ -363,8 +352,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
             isShowingDialog = savedInstanceState.getBoolean("isShowingDialog");
 
             FragmentTutorialDialog dg;
-            if((dg = (FragmentTutorialDialog) getFragmentManager()
-                    .findFragmentByTag(TUTORIAL_TAG)) != null)
+            if((dg = (FragmentTutorialDialog) getFragmentManager().findFragmentByTag(TUTORIAL_TAG)) != null)
                 dg.setOnConfirmListener(new OnTutorialConfirmListener());
         }
 
@@ -388,20 +376,6 @@ public class FragmentMainScreen extends Fragment implements Tutorial
 
         // Return the view
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        // TODO Auto-generated method stub
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-
     }
 
     @Override
@@ -648,8 +622,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         @Override
         public void showWarning(int title, int msg)
         {
-            FragmentWarningDialog warningDlg = new FragmentWarningDialog(title,
-                    msg);
+            FragmentWarningDialog warningDlg = new FragmentWarningDialog(title, msg);
             warningDlg.show(getFragmentManager(), WARNING_DLG_TAG);
         }
     }

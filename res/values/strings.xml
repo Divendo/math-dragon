@@ -73,7 +73,7 @@
     <string name="tutorial_dialog_msg">Do you want to follow the tutorial?</string>
     <string name="tutorial_main_title">Welcome!</string>
    	<string name="tutorial_main_open">This is the main screen! Here you can enter your equations.</string>
-   	<string name="tutorial_main_drawer">Click here to access the side menu where you will find functions and operators.</string>
+   	<string name="tutorial_main_drawer">Click here to access the side menu where you will find the functions and operators.</string>
    	<string name="tutorial_main_drawer_slide">You can also slide from the left edge of the screen to access it. From there you can drag \'n\' drop onto the main screen.</string>
    	<string name="tutorial_main_start">This little box is where you\'ll enter your equations.</string>
    	<string name="tutorial_func_open">To do so, click here..</string>

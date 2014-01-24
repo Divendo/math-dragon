@@ -1,8 +1,6 @@
 package org.teaminfty.math_dragon.view.fragments;
 
-import org.teaminfty.math_dragon.MainActivity;
 import org.teaminfty.math_dragon.R;
-import org.teaminfty.math_dragon.model.Database;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -34,7 +32,7 @@ public class FragmentAbout extends DialogFragment
         view.findViewById(R.id.btn_close).setOnClickListener(new OnCloseClicked());
         
         // Set the click listener for the start tutorial button
-        if (listener != null)
+        if(listener != null)
             view.findViewById(R.id.btn_start_tutorial).setOnClickListener(listener);
         
         // Return the content view
@@ -85,22 +83,6 @@ public class FragmentAbout extends DialogFragment
         @Override
         public void onClick(View v)
         {
-            dismiss();
-        }
-    }
-    
-    /** Listens for click events of the start tutorial button */
-    private class OnStartTutorialClicked implements View.OnClickListener
-    {
-        @Override
-        public void onClick(View v)
-        {
-            Database db = new Database(getActivity());
-            Database.TutorialState state = db.getTutorialState(MainActivity.TUTORIAL_ID);
-            state.showTutDlg = true;
-            state.tutInProg = false;
-            db.saveTutorialState(state);
-            db.close();
             dismiss();
         }
     }

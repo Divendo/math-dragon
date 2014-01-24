@@ -37,9 +37,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.targets.PointTarget;
-
 public class FragmentSaveLoad extends DialogFragment implements Tutorial
 {
     /** The current expression */

@@ -36,8 +36,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.espian.showcaseview.ShowcaseView;
-
 public class FragmentSubstitutionEditor extends DialogFragment implements Tutorial
 {
     /** We'll keep a list of all variable buttons */
@@ -302,7 +300,7 @@ public class FragmentSubstitutionEditor extends DialogFragment implements Tutori
         
         showcases.addViews(new ShowcaseViewDialog[]
         {
-        		new ShowcaseViewDialog(ctx, ShowcaseView.NONE,
+        		new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.text_title), this),
             			R.string.tutorial_subs_title,
                 		R.string.tutorial_subs_edit),
             	new ShowcaseViewDialog(ctx, new ShowcaseViewDialog.DialogFragmentTarget(getView().findViewById(R.id.var_buttons_container), this),
