@@ -166,7 +166,11 @@ public class ExpressionBeautifier
     {
         // Make sure we handle multiplications from left to right
         if(add.getRight() instanceof Add)
-            return add(new Add(new Add(add.getLeft(), add.getRight().getChild(0)), add.getRight().getChild(1)));
+        {
+            Add radd = (Add) add.getRight();
+            Expression lexpr = add(new Add(add.getLeft(), radd.getLeft()));
+            return new Add(lexpr, radd.getRight());
+        }
         
         Expression left = parse(add.getLeft());
         Expression right = parse(add.getRight());
@@ -212,7 +216,11 @@ public class ExpressionBeautifier
     {
         // Make sure we handle multiplications from left to right
         if(sub.getRight() instanceof Subtract)
-            return subtract(new Subtract(new Subtract(sub.getLeft(), sub.getRight().getChild(0)), sub.getRight().getChild(1)));
+        {
+            Subtract rsub = (Subtract) sub.getRight();
+            Expression lexpr = subtract(new Subtract(sub.getLeft(), rsub.getLeft()));
+            return new Subtract(lexpr, rsub.getRight());
+        }
         
         Expression left = parse(sub.getLeft());
         Expression right = parse(sub.getRight());
@@ -251,7 +259,11 @@ public class ExpressionBeautifier
     {
         // Make sure we handle multiplications from left to right
         if(mul.getRight() instanceof Multiply)
-            return mul(new Multiply(new Multiply(mul.getLeft(), mul.getRight().getChild(0)), mul.getRight().getChild(1)));
+        {
+            Multiply rmul = (Multiply) mul.getRight();
+            Expression lexpr = mul(new Multiply(mul.getLeft(), rmul.getLeft()));
+            return new Multiply(lexpr, rmul.getRight());
+        }
         
         Expression left = parse(mul.getLeft());
         Expression right = parse(mul.getRight());
@@ -321,14 +333,18 @@ public class ExpressionBeautifier
         if(leftNegative)
         {
             if(left instanceof Symbol)
-                ((Symbol) left).setFactor(-((Symbol) left).getFactor());
+            {
+                ((Symbol) left).invertFactor();
+            }
             else
                 left = left.getChild(0);
         }
         if(rightNegative)
         {
             if(right instanceof Symbol)
-                ((Symbol) right).setFactor(-((Symbol) right).getFactor());
+            {
+                ((Symbol) right).invertFactor();
+            }
             else
                 right = right.getChild(0);
         }
@@ -363,8 +379,8 @@ public class ExpressionBeautifier
             double num = ((Symbol) div.getNumerator()).getFactor();
             double denom = ((Symbol) div.getDenominator()).getFactor();
             final boolean negative = num < 0 ^ denom < 0;
-            if(num < 0) num = -num;
-            if(denom < 0) denom = -denom;
+            num = Math.abs(num);
+            denom = Math.abs(denom);
             double intPart =  Math.floor(num / denom);
             num -= intPart * denom;
             
@@ -398,25 +414,35 @@ public class ExpressionBeautifier
             // Also if our numerator or denominator isn't an integer, we stop here
             if(denom < 10 || !validDenom || num != Math.round(num) || denom != Math.round(denom))
             {
+                Expression lexpr, rexpr;
+                lexpr = new Symbol(num);
+                rexpr = new Symbol(denom);
+                Expression divide = div(new Divide(lexpr, rexpr));
                 if(negative)
                 {
                     if(intPart != 0)
-                        return new Subtract(new Negate(new Symbol(intPart)), new Divide(new Symbol(num), new Symbol(denom)));
+                    {
+                        return new Subtract(new Negate(new Symbol(intPart)), divide);
+                    }
                     else
-                        return new Negate(new Divide(new Symbol(num), new Symbol(denom)));
+                        return new Negate(divide);
                 }
                 else
                 {
                     if(intPart != 0)
-                        return new Add(new Symbol(intPart), new Divide(new Symbol(num), new Symbol(denom)));
+                    {
+                        return add(new Add(new Symbol(intPart), divide));
+                    }
                     else
-                        return new Divide(new Symbol(num), new Symbol(denom));
+                    {
+                        return divide;
+                    }
                 }
             }
             
             // If the denominator is smaller than or equal to 1 000 000, we're done
             if(denom <= 1000000)
-                return new Symbol((negative ? -1 : 1) * (intPart + num / denom));
+                return symbol(new Symbol((negative ? -1 : 1) * (intPart + num / denom)));
             
             // Create a denominator that's a power of 10
             int exp = Math.max(exp2, exp5);
@@ -517,8 +543,8 @@ public class ExpressionBeautifier
      */
     static Expression pow(Power pow)
     {
-        Expression rawExpontent = pow.getExponent();
-        Expression exponent = parse(rawExpontent);
+        Expression rawExponent = pow.getExponent();
+        Expression exponent = parse(rawExponent);
         if(exponent instanceof Symbol)
         {
             Symbol symexp = (Symbol) exponent;
@@ -551,11 +577,11 @@ public class ExpressionBeautifier
                 }
             }
         }
-        else if(exponent instanceof Divide || rawExpontent instanceof Divide)
+        else if(exponent instanceof Divide || rawExponent instanceof Divide)
         {
             Expression beautifiedExp = exponent;
             if(!(exponent instanceof Divide))
-                exponent = rawExpontent;
+                exponent = rawExponent;
             
             // x^(a/b) -> root(b,x^a): b > 0
             Divide div = (Divide) exponent;
@@ -605,17 +631,18 @@ public class ExpressionBeautifier
             return (div.getLeft() instanceof Symbol || isBase10(div.getLeft())) &&
                    (div.getRight() instanceof Symbol || isBase10(div.getRight()));
         }
-        else if(isBase10(expr))
-            return true;
-        return false;
+        return isBase10(expr);
     }
     
-    /** Returns true if the given {@link Expression} is a base 10 power (i.e. a Power with 10 as base and a Symbol as exponent) */
+    /**
+     * Returns true if the given {@link Expression} is a base 10 power (i.e. a
+     * Power with 10 as base and a Symbol as exponent)
+     */
     private static boolean isBase10(Expression expr)
     {
-        if(!(expr instanceof Power)) return false;
+        if(!(expr instanceof Power))
+            return false;
         Power pow = (Power) expr;
-        return pow.getBase() instanceof Symbol && ((Symbol) pow.getBase()).isFactorOnly() && ((Symbol) pow.getBase()).getFactor() == 10 &&
-               pow.getExponent() instanceof Symbol && ((Symbol) pow.getExponent()).isFactorOnly();
+        return pow.getBase() instanceof Symbol && ((Symbol) pow.getBase()).isFactorOnly() && ((Symbol) pow.getBase()).getFactor() == 10 && pow.getExponent() instanceof Symbol && ((Symbol) pow.getExponent()).isFactorOnly();
     }
 }
