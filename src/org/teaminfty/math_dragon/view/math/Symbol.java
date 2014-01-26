@@ -384,6 +384,15 @@ public class Symbol extends Expression
         // Set the factor
         this.factor = (factor > 0 ? Math.floor(factor) : Math.ceil(factor)) + decimals;
     }
+    
+    /**
+     * Invert the current factor and return the new value.
+     * @return <tt>-</tt>{@link factor}
+     */
+    public double invertFactor()
+    {
+        return this.factor = -factor;
+    }
 
     /** Get the current power for <tt>pi</tt>
      * @return The current power for <tt>pi</tt> */
