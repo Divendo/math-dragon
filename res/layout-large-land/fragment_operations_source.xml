@@ -43,11 +43,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceAdd"
 	        	style="@style/MathSourceView" />
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceSubtract"
 	        	style="@style/MathSourceView" />
 	
@@ -59,11 +59,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceMultiply"
 	        	style="@style/MathSourceView"/>
 	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceDivide"
 	        	style="@style/MathSourceView"/>
 	
@@ -75,11 +75,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourcePower"
 	        	style="@style/MathSourceView" />
 	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceRoot"
 	        	style="@style/MathSourceView" />
 	
@@ -91,11 +91,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceDerivative"
 	        	style="@style/MathSourceView" />
 	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceIntegral"
 	        	style="@style/MathSourceView" />
 	
@@ -119,11 +119,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceSin"
 	        	style="@style/MathSourceView" />
 	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceArcSin"
 	        	style="@style/MathSourceView" />
 	
@@ -135,11 +135,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceCos"
 	        	style="@style/MathSourceView" />
 	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceArcCos"
 	        	style="@style/MathSourceView" />
 	
@@ -151,11 +151,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceTan"
 	        	style="@style/MathSourceView" />
 	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceArcTan"
 	        	style="@style/MathSourceView" />
 	
@@ -167,11 +167,11 @@
 	        android:orientation="horizontal"
 	        android:weightSum="2" >
 	
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceLog"
 	        	style="@style/MathSourceView" />
 	        
-	        <org.teaminfty.math_dragon.view.MathSourceView
+	        <org.teaminfty.math_dragon.view.math.SourceView
 	            android:id="@+id/mathSourceLn"
 	        	style="@style/MathSourceView" />
 	
