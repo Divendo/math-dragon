@@ -324,7 +324,7 @@ public final class ModelHelper
      * @throws ParseException
      *         Throw when conversion is impossible
      */
-    static Function unary(IAST func) throws ParseException
+    static Expression unary(IAST func) throws ParseException
     {
         Expression expr = toExpression(func.get(1));
         if(func.isSin())
@@ -345,6 +345,23 @@ public final class ModelHelper
             return new Function(ARCTAN, expr);
         if(func.isLog())
             return new Function(LN, expr);
+        // also check for incompatible results
+        if(func.get(0) instanceof Symbol)
+        {
+           Symbol sym = (Symbol) func.get(0);
+           if(sym.equals(F.Sec))
+           {
+               return new Divide(new org.math_dragon.view.math.Symbol(1), new Function(COS, expr));
+           }
+           if(sym.equals(F.Csc))
+           {
+               return new Divide(new org.math_dragon.view.math.Symbol(1), new Function(SIN, expr));
+           }
+           if(sym.equals(F.Cot))
+           {
+               return new Divide(new org.math_dragon.view.math.Symbol(1), new Function(TAN, expr));
+           }
+        }
         // Whoops, not supported
         throw new ParseException(func);
     }

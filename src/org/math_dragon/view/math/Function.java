@@ -33,6 +33,9 @@ public class Function extends Expression
         ARCSIN("sin\u207B\u00B9", "arcsin"),
         ARCCOS("cos\u207B\u00B9", "arccos"),
         ARCTAN("tan\u207B\u00B9", "arctan"),
+        SEC("sec\u207B\u00B9", "sec"),
+        CSC("csc\u207B\u00B9", "csc"),
+        COT("cot\u207B\u00B9", "cot"),
         LN("ln");
         
         /** The name of the function type */
