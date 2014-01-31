@@ -7,14 +7,14 @@
     
    <fragment
       android:id="@+id/fragmentOperationSource"
-      android:name="org.teaminfty.math_dragon.view.fragments.FragmentOperationsSource"
+      android:name="org.math_dragon.view.fragments.FragmentOperationsSource"
       android:layout_width="@dimen/drawer_width"
       android:layout_height="match_parent"
       tools:layout="@layout/fragment_operations_source" />
    
   <fragment
       android:id="@+id/fragmentMainScreen"
-      android:name="org.teaminfty.math_dragon.view.fragments.FragmentMainScreen"
+      android:name="org.math_dragon.view.fragments.FragmentMainScreen"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       tools:layout="@layout/fragment_main_screen" />
