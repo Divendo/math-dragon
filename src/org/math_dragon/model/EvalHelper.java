@@ -368,6 +368,7 @@ public class EvalHelper
             case SIN:       return F.Sin(eval(f.getChild(0)));
             case SINH:      return F.Sinh(eval(f.getChild(0)));
             case TAN:       return F.Tan(eval(f.getChild(0)));
+            default: /* To prevent warnings */ break;
         }
 
         throw new ParseException(f.toString());

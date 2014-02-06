@@ -72,14 +72,6 @@
             android:text="@string/unable_to_eval"
         	android:gravity="center" />
         
-        <ImageButton
-        	android:id="@+id/btn_wolfram"
-	        style="@style/CircleButton"
-	        android:layout_margin="@dimen/main_screen_button_margin"
-	        android:contentDescription="@string/wolfram"
-	        android:onClick="wolfram"
-	        android:src="@drawable/wolfram" />
-        
     </LinearLayout>
     
     <TextView

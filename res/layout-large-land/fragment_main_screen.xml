@@ -29,20 +29,11 @@
         style="@style/CircleButton"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/main_screen_button_margin"
+        android:layout_marginTop="@dimen/main_screen_button_margin"
         android:layout_toLeftOf="@id/btn_evaluate"
         android:contentDescription="@string/approximate"
         android:onClick="approximate"
         android:src="@drawable/approximate" />
-
-    <ImageButton
-        android:id="@+id/btn_wolfram"
-        style="@style/CircleButton"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/main_screen_button_margin"
-        android:layout_toLeftOf="@id/btn_approximate"
-        android:contentDescription="@string/wolfram"
-        android:onClick="wolfram"
-        android:src="@drawable/wolfram" />
     
     <Button
         android:id="@+id/btn_integrate"
@@ -56,8 +47,8 @@
     <Button
         android:id="@+id/btn_derivative"
         style="@style/CircleButton"
-        android:layout_above="@id/btn_integrate"
-        android:layout_alignParentRight="true"
+        android:layout_above="@id/btn_approximate"
+        android:layout_toLeftOf="@id/btn_integrate"
         android:layout_marginRight="@dimen/main_screen_button_margin"
         android:text="@string/f_derivative" />
 

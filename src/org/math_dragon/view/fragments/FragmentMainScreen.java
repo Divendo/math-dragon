@@ -534,7 +534,7 @@ public class FragmentMainScreen extends Fragment implements Tutorial
     }
 
     /**
-     * Enables / disables the evaluate, approximate and Wolfram|Alpha buttons
+     * Enables / disables the evaluate and approximate buttons
      * according to the current {@link Expression}
      * 
      * @param view
@@ -549,7 +549,6 @@ public class FragmentMainScreen extends Fragment implements Tutorial
         final boolean isCompleted = expr.isCompleted();
 
         // Enable / disable the buttons
-        view.findViewById(R.id.btn_wolfram).setEnabled(isCompleted);
         view.findViewById(R.id.btn_approximate).setEnabled(isCompleted);
         view.findViewById(R.id.btn_evaluate).setEnabled(isCompleted);
     }

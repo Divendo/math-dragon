@@ -132,17 +132,6 @@ public class FragmentEvaluation extends DialogFragment
         if(varsSubstituted)
             view.findViewById(R.id.text_warning_substitutions_used).setVisibility(View.VISIBLE);
         
-        // Wolfram|Alpha button click listener
-        view.findViewById(R.id.btn_wolfram).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if(onWolframListener != null)
-                    onWolframListener.wolfram();
-            }
-        });
-
         // Return the content view
         return view;
     }
@@ -419,22 +408,6 @@ public class FragmentEvaluation extends DialogFragment
             }
         }
     }
-    
-    /** Interface that can be implemented to listen when the expression should be evaluated using Wolfram|Alpha */
-    public interface OnWolframListener
-    {
-        /** Called when the expression should be evaluated using Wolfram|Alpha */
-        public void wolfram();
-    }
-    
-    /** The current {@link FragmentEvaluation#OnWolframListener OnWolframListener} */
-    private OnWolframListener onWolframListener = null;
-    
-    /** Set the {@link FragmentEvaluation#OnWolframListener OnWolframListener}
-     * @param listener The new {@link FragmentEvaluation#OnWolframListener OnWolframListener} */
-    public void setOnWolframListener(OnWolframListener listener)
-    { onWolframListener = listener; }
-    
    
 }
 
