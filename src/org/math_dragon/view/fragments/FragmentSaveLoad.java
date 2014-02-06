@@ -28,6 +28,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,9 @@ public class FragmentSaveLoad extends DialogFragment implements Tutorial
         
         // The add button
         view.findViewById(R.id.btn_save).setOnClickListener(new BtnSaveClickListener());
+        
+        // The return button of the keyboard
+        ((TextView) view.findViewById(R.id.edit_name)).setOnEditorActionListener(new BtnReturnKeyListener());
 
         // Restore the confirmation listener
         if(savedInstanceState != null && getFragmentManager().findFragmentByTag(CONFIRMATION_DLG_TAG) != null)
@@ -297,6 +301,25 @@ public class FragmentSaveLoad extends DialogFragment implements Tutorial
             
             // Close the dialog
             dismiss();
+        }
+    }
+
+    /** Listens for the return key of the keyboard */
+    private class BtnReturnKeyListener implements TextView.OnEditorActionListener
+    {
+        @Override
+        public boolean onEditorAction(TextView view, int actionID, KeyEvent event)
+        {
+            // Save the current expression
+            Database db = new Database(getActivity());
+            db.saveFormula(Database.INSERT_ID, ((TextView) getView().findViewById(R.id.edit_name)).getText().toString(), currExpr);
+            db.close();
+            
+            // Close the dialog
+            dismiss();
+            
+            // We always consume the event
+            return true;
         }
     }
     

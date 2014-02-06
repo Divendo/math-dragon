@@ -57,10 +57,13 @@
             android:id="@+id/edit_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/btn_save"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:hint="@string/save_under_name" >
+            android:layout_toLeftOf="@id/btn_save"
+            android:hint="@string/save_under_name"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            android:imeOptions="actionGo" >
 
             <requestFocus />
         </EditText>
