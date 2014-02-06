@@ -13,6 +13,7 @@ import org.math_dragon.view.math.Expression;
 import org.math_dragon.view.math.Empty;
 import org.math_dragon.view.math.operation.Integral;
 import org.math_dragon.view.math.operation.binary.Add;
+import org.math_dragon.view.math.operation.binary.Derivative;
 import org.math_dragon.view.math.operation.binary.Linear;
 import org.math_dragon.view.math.operation.binary.Subtract;
 
@@ -839,8 +840,8 @@ public class MathView extends View
                     // Add the children we intersect with to the queue
                     for(int i = 0; i < info.expression.getChildCount(); ++i)
                     {
-                        // Ignore the 'integrate over' child of the integral
-                        if(info.expression instanceof Integral && i == 1)
+                        // Ignore the 'integrate over' and 'differentiate over' children
+                        if((info.expression instanceof Integral && i == 1) || (info.expression instanceof Derivative && i == 1))
                             continue;
                         
                         // Get the bounding box for the child
@@ -971,8 +972,11 @@ public class MathView extends View
             else
             {
                 // In the 'integrate over' child only a single variable is allowed
-                if(expressionInfo.parent instanceof Integral && expressionInfo.childIndex == 1)
+                if((expressionInfo.parent instanceof Integral && expressionInfo.childIndex == 1) || (expressionInfo.parent instanceof Derivative &&expressionInfo.childIndex == 1))
                 {
+                    // Determine the warning we should show (if a warning should be shown)
+                    final int warningToShow = expressionInfo.parent instanceof Integral ? R.string.invalid_integrate_over : R.string.invalid_differentiate_over;
+                    
                     // Only allow a Symbol
                     if(input instanceof Symbol)
                     {
@@ -980,7 +984,7 @@ public class MathView extends View
                         
                         // No constants allowed
                         if(mathSymbol.getFactor() != 1 || (mathSymbol.getPiPow() | mathSymbol.getEPow() | mathSymbol.getIPow()) != 0)
-                            warningId = R.string.invalid_integrate_over;
+                            warningId = warningToShow;
                         else
                         {
                             // Check if exactly one variable is used
@@ -993,7 +997,7 @@ public class MathView extends View
                                 {
                                     if(varVisible)
                                     {
-                                        warningId = R.string.invalid_integrate_over;
+                                        warningId = warningToShow;
                                         break;
                                     }
                                     else
@@ -1001,16 +1005,16 @@ public class MathView extends View
                                 }
                                 else
                                 {
-                                    warningId = R.string.invalid_integrate_over;
+                                    warningId = warningToShow;
                                     break;
                                 }
                             }
                             if(!varVisible)
-                                warningId = R.string.invalid_integrate_over;
+                                warningId = warningToShow;
                         }
                     }
                     else
-                        warningId = R.string.invalid_integrate_over;
+                        warningId = warningToShow;
                 }
                         
                 // Only insert the symbol if no problems have been found

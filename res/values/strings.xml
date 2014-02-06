@@ -30,6 +30,7 @@
 	<string name="dot">.</string>
 	<string name="invalid_input">Invalid input</string>
 	<string name="invalid_integrate_over">Only integrating over a single variable is supported.</string>
+	<string name="invalid_differentiate_over">Only differentiating over a single variable is supported.</string>
 	<string name="substitute">Substitute</string>
 	<string name="add_substitution">Add substitution</string>
 	<string name="edit_substitution">Edit substitution</string>
