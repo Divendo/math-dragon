@@ -19,7 +19,7 @@
         android:requiresFadingEdge="horizontal"
         android:fillViewport="true" >
 
-        <org.math_dragon.view.MathSymbolEditor
+        <org.teaminfty.math_dragon.view.MathSymbolEditor
             android:id="@+id/mathSymbolEditor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

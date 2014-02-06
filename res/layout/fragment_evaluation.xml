@@ -47,7 +47,7 @@
         android:layout_below="@id/layoutEvalTitle"
         android:layout_gravity="center" />
     	
-    <org.math_dragon.view.MathView
+    <org.teaminfty.math_dragon.view.MathView
 		android:id="@+id/mathView"
 		android:visibility="gone"
 		android:layout_width="match_parent"
