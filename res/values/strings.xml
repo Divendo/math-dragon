@@ -60,11 +60,11 @@
 	<string name="label_url">Website:</string>
 	<string name="label_authors">Authors:</string>
 	<string name="label_special_thanks">Special thanks:</string>
-	<string name="version">1.0</string>
+	<string name="version">1.0.1</string>
 	<string name="url">http://math-dragon.org</string>
 	<string name="authors">Mark Kamsma\nArian van Putten\nFolkert van Verseveld\nIvor van der Hoog\nBas van Rooij\nGlenn Stewart\nTim de Jonge</string>
 	<string name="special_thanks">Dawn Haaksman\nhttp://pixelsmedia.nl</string>
-	<string name="about_text">Math DragOn is open source. The source code is freely available under the LGPLv3 license and can be found at GitHub:\nhttps://github.com/Divendo/math-dragon</string>
+	<string name="about_text">Math DragOn is open source. The source code is freely available under the LGPLv3 license and can be found at GitHub: https://github.com/Divendo/math-dragon</string>
 	<string name="start_tutorial">Start tutorial</string>
 	<string name="warning_substitutions_used">Some variables have been substituted</string>
     <string name="dont_show">Don\'t ask again</string>
