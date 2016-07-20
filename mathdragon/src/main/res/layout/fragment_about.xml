@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+    
+<RelativeLayout
+    android:id="@+id/layoutAboutTitle"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true" >
+    
+	<ImageButton
+		android:id="@+id/btn_close"
+		style="@style/CircleButton"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:layout_margin="@dimen/main_screen_button_margin"
+		android:contentDescription="@string/close"
+		android:src="@drawable/close" />
+	
+	<TextView
+		android:layout_width="0dp"
+		android:layout_height="@dimen/circle_button_size"
+		android:layout_marginLeft="@dimen/main_screen_button_margin"
+		android:layout_marginTop="@dimen/main_screen_button_margin"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:layout_toLeftOf="@id/btn_close"
+		android:gravity="center"
+		android:textStyle="bold"
+		android:textSize="@dimen/dialog_title_font_size"
+		android:text="@string/about" />
+ 
+</RelativeLayout>
+    
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@id/layoutAboutTitle"
+    android:layout_margin="@dimen/about_margin"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <TextView
+            android:layout_width="@dimen/about_label_width"
+            android:layout_height="wrap_content"
+	        android:textStyle="bold"
+            android:text="@string/label_app_name" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/about_padding" >
+        <TextView
+            android:layout_width="@dimen/about_label_width"
+            android:layout_height="wrap_content"
+	        android:textStyle="bold"
+            android:text="@string/label_version" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/version" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/about_padding" >
+        <TextView
+            android:layout_width="@dimen/about_label_width"
+            android:layout_height="wrap_content"
+	        android:textStyle="bold"
+            android:text="@string/label_url" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:textColorLink="@color/blue"
+            android:text="@string/url" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/about_padding" >
+        <TextView
+            android:layout_width="@dimen/about_label_width"
+            android:layout_height="wrap_content"
+	        android:textStyle="bold"
+            android:text="@string/label_authors" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/authors" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/about_padding" >
+        <TextView
+            android:layout_width="@dimen/about_label_width"
+            android:layout_height="wrap_content"
+	        android:textStyle="bold"
+            android:text="@string/label_special_thanks" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:textColorLink="@color/blue"
+            android:text="@string/special_thanks" />
+    </LinearLayout>
+    
+	<TextView
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="@dimen/about_margin"
+	    android:autoLink="web"
+	    android:textColorLink="@color/blue"
+	    android:text="@string/about_text" />
+    
+</LinearLayout>
+
+
+<Button
+    android:id="@+id/btn_start_tutorial"
+    style="@style/FlatButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentBottom="true"
+    android:text="@string/start_tutorial" />
+    
+</RelativeLayout>

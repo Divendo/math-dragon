@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <RelativeLayout
+        android:id="@+id/titleRow"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        <ImageButton
+            android:id="@+id/btn_close"
+            style="@style/CircleButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/main_screen_button_margin"
+            android:contentDescription="@string/close"
+            android:src="@drawable/close" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/circle_button_size"
+            android:layout_marginLeft="@dimen/main_screen_button_margin"
+            android:layout_marginTop="@dimen/main_screen_button_margin"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/btn_close"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/dialog_title_font_size"
+            android:text="@string/favourites" />
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/saveRow"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/formula_row_margin"
+        android:layout_marginBottom="@dimen/formula_row_margin"
+        android:layout_marginRight="@dimen/formula_row_margin" >
+
+	    <Button
+	        android:id="@+id/btn_save"
+	        style="@style/FlatButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+	        android:text="@string/save" />
+	    
+        <EditText
+            android:id="@+id/edit_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/btn_save"
+            android:hint="@string/save_under_name"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            android:imeOptions="actionGo" >
+
+            <requestFocus />
+        </EditText>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@id/saveRow"
+        android:layout_below="@id/titleRow"
+        android:layout_margin="@dimen/keyboard_button_margin"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:requiresFadingEdge="vertical"
+        android:fillViewport="true" >
+
+        <LinearLayout
+            android:id="@+id/layout_formula_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+        
+    </ScrollView>
+
+</RelativeLayout>

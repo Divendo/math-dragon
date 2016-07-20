@@ -1,0 +1,27 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "24.0.0"
+
+    defaultConfig {
+        applicationId "org.teaminfty.math_dragon"
+        minSdkVersion 11
+        targetSdkVersion 19
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile project(':library')
+    compile 'com.android.support:support-v4:19.1.0'
+    compile files('libs/log4j-over-slf4j-1.7.2.jar')
+    compile files('libs/slf4j-android-1.6.1-RC1.jar')
+    compile files('libs/symja_android_library.jar')
+}

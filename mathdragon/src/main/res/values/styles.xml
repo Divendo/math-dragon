@@ -1,0 +1,90 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <item name="showcaseViewStyle">@style/ShowcaseTheme</item>
+    </style>
+    
+    <style name="ActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/white</item>
+    </style>
+    
+    <style name="MathSourceView">
+        <item name="android:layout_margin">@dimen/math_source_margin</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/math_source_height</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="CircleButton">
+        <item name="android:layout_width">@dimen/circle_button_size</item>
+        <item name="android:layout_height">@dimen/circle_button_size</item>
+        <item name="android:background">@drawable/circle_button_bg</item>
+        <item name="android:textColor">@color/circle_button_colors</item>
+    </style>
+    
+    <style name="KeyboardButton" parent="@android:style/Widget.Holo.Button.Borderless">
+        <item name="android:layout_width">@dimen/circle_button_big_size</item>
+        <item name="android:layout_height">@dimen/circle_button_big_size</item>
+        <item name="android:layout_margin">@dimen/keyboard_button_margin</item>
+        <item name="android:textColor">@color/circle_button_colors</item>
+        <item name="android:background">@drawable/circle_button_bg</item>
+    </style>
+    
+    <style name="KeyboardButtonSmall" parent="@style/KeyboardButton">
+        <item name="android:layout_width">@dimen/circle_button_medium_size</item>
+        <item name="android:layout_height">@dimen/circle_button_medium_size</item>
+    </style>
+    
+    <style name="FlatButton" parent="@android:style/Widget.Holo.Button.Borderless">
+        <item name="android:textColor">@color/tab_color</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+    
+    <style name="TabButton" parent="@style/FlatButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">0.5</item>
+    </style>
+    
+    <style name="OperationsSourceTabButton" parent="@style/TabButton">
+        <item name="android:background">@drawable/border_operations_source_tab_bottom</item>
+    </style>
+    
+    <style name="DeleteConfirmer">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">0.5</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/delete_confirmer_text_size</item>
+    </style>
+
+    <style name="ShowcaseViewDialogTheme" parent="android:Theme.Dialog">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+    
+   <style name="ShowcaseTheme" parent="ShowcaseView.Light">
+        <item name="sv_backgroundColor">#334444ff</item>
+        <item name="sv_showcaseColor">@color/blue</item>
+        <item name="sv_titleTextAppearance">@style/ShowcaseTitle</item>
+        <item name="sv_detailTextAppearance">@style/ShowcaseDetail</item>
+        <item name="sv_buttonText">OK</item>
+    </style>
+
+    <style name="ShowcaseTitle" parent="TextAppearance.ShowcaseView.Title">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    
+    <style name="ShowcaseDetail" parent="TextAppearance.ShowcaseView.Detail">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    
+    <style name="ShowcaseButton" parent="ShowcaseButton">
+        <item name="android:background">@color/blue</item>
+    </style>
+
+</resources>
