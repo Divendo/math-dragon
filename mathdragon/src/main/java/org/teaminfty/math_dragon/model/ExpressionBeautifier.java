@@ -156,7 +156,7 @@ public class ExpressionBeautifier
      * possible such that the expression remains as simple as possible to be
      * read by users.
      * 
-     * @param expr
+     * @param add
      *        The mathematical addition. If it could not be simplified or
      *        beautified, {@code expr} is returned.
      * @return Usually a simplified and beautified expression. <tt>this</tt>
@@ -164,17 +164,17 @@ public class ExpressionBeautifier
      */
     static Expression add(Add add)
     {
-        // Make sure we handle multiplications from left to right
+        // Make sure we handle additions from left to right
         if(add.getRight() instanceof Add)
         {
             Add radd = (Add) add.getRight();
             Expression lexpr = add(new Add(add.getLeft(), radd.getLeft()));
-            return new Add(lexpr, radd.getRight());
+            return add(new Add(lexpr, radd.getRight()));
         }
         
         Expression left = parse(add.getLeft());
         Expression right = parse(add.getRight());
-        if(isSymbol(right) && !isSymbol(left))
+        if(isSymbol(right) && !isSymbol(left) && !(left instanceof  Add))
         {
             add.set(right, left); // swap
             left = add.getLeft();
@@ -214,14 +214,6 @@ public class ExpressionBeautifier
      */
     static Expression subtract(Subtract sub)
     {
-        // Make sure we handle multiplications from left to right
-        if(sub.getRight() instanceof Subtract)
-        {
-            Subtract rsub = (Subtract) sub.getRight();
-            Expression lexpr = subtract(new Subtract(sub.getLeft(), rsub.getLeft()));
-            return new Subtract(lexpr, rsub.getRight());
-        }
-        
         Expression left = parse(sub.getLeft());
         Expression right = parse(sub.getRight());
         if (left.equals(Symbol.ZERO))
@@ -249,7 +241,7 @@ public class ExpressionBeautifier
      * possible such that the expression remains as simple as possible to be
      * read by users.
      * 
-     * @param expr
+     * @param mul
      *        The mathematical multiplication. If it could not be simplified or
      *        beautified, {@code expr} is returned.
      * @return Usually a simplified and beautified expression. <tt>this</tt>
@@ -262,7 +254,7 @@ public class ExpressionBeautifier
         {
             Multiply rmul = (Multiply) mul.getRight();
             Expression lexpr = mul(new Multiply(mul.getLeft(), rmul.getLeft()));
-            return new Multiply(lexpr, rmul.getRight());
+            return mul(new Multiply(lexpr, rmul.getRight()));
         }
         
         Expression left = parse(mul.getLeft());
@@ -363,7 +355,7 @@ public class ExpressionBeautifier
      * possible such that the expression remains as simple as possible to be
      * read by users.
      * 
-     * @param expr
+     * @param div
      *        The mathematical division. If it could not be simplified or
      *        beautified, {@code expr} is returned.
      * @return Usually a simplified and beautified expression. <tt>this</tt>
@@ -534,7 +526,7 @@ public class ExpressionBeautifier
      * such that the expression remains as simple as possible to be read by
      * users.
      * 
-     * @param expr
+     * @param pow
      *        The mathematical power. If it could not be simplified or
      *        beautified, {@code expr} is returned.
      * @return Usually a simplified and beautified expression. <tt>this</tt>
