@@ -566,9 +566,9 @@ public class ExpressionBeautifier
                     // explicit (symbol) ^ (n) -> implicit symbol^n
                     // i.e.: Power -> Symbol
                     Expression base = parse(pow.getBase());
-                    if (base instanceof Symbol)
+                    if (base instanceof Symbol && symexp.isFactorOnly())
                     {
-                        if (((Symbol) base).setPow(symexp))
+                        if(((Symbol) base).tryRaisePower(symexp.getFactor()))
                             return base;
                     }
                     pow.setExponent(symexp);

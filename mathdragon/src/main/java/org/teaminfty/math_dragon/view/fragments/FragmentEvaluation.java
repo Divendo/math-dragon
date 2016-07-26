@@ -300,7 +300,7 @@ public class FragmentEvaluation extends DialogFragment
 
     /** Class that evaluates the expression in a separate thread */
     private class Evaluator extends AsyncTask<Expression, Void, Expression>
-    {        
+    {
         @Override
         protected Expression doInBackground(Expression... args)
         {

@@ -3,6 +3,7 @@ package org.teaminfty.math_dragon.view.math;
 import java.util.Arrays;
 
 import org.teaminfty.math_dragon.view.TypefaceHolder;
+import org.teaminfty.math_dragon.view.math.operation.Integral;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -400,7 +401,7 @@ public class Symbol extends Expression
     { return piPow; }
 
     /** Set the new power for <tt>pi</tt>
-     * @param factor the new power for <tt>pi</tt> */
+     * @param piPow the new power for <tt>pi</tt> */
     public void setPiPow(long piPow)
     { this.piPow = piPow; }
 
@@ -410,7 +411,7 @@ public class Symbol extends Expression
     { return ePow; }
 
     /** Set the new power for <tt>e</tt>
-     * @param factor the new power for <tt>e</tt> */
+     * @param ePow the new power for <tt>e</tt> */
     public void setEPow(long ePow)
     { this.ePow = ePow; }
 
@@ -420,7 +421,7 @@ public class Symbol extends Expression
     { return iPow; }
 
     /** Set the new power for <tt>i</tt>
-     * @param factor the new power for <tt>i</tt> */
+     * @param iPow the new power for <tt>i</tt> */
     public void setIPow(long iPow)
     { this.iPow = iPow; }
 
@@ -432,7 +433,7 @@ public class Symbol extends Expression
 
     /** Set the new power for the given variable
      * @param index The variable index
-     * @param factor the new power for the variable */
+     * @param pow the new power for the variable */
     public void setVarPow(int index, long pow)
     { varPows[index] = pow; }
     
@@ -455,28 +456,37 @@ public class Symbol extends Expression
     { return varPows.length; }
     
     /**
-     * Try to combine the specified mathematical symbol and return whether they
-     * were combined.
-     * 
-     * @param exp
-     *        A mathematical symbol
-     * @return <tt>true</tt> if they are combined. <tt>false</tt> otherwise.
+     * Raises the current symbol to the given power. That is, all powers are multiplied with the given power.
+     * @param power The power to multiply the current powers with.
+     * @return True if successful, or false otherwise (e.g. when one of the powers wouldn't be an integer).
      */
-    public boolean setPow(Symbol exp)
+    public boolean tryRaisePower(double power)
     {
-        if(!isFactorOnly())
+        try
         {
-            double factor = exp.factor;
-            piPow *= factor;
-            ePow *= factor;
-            iPow *= factor;
+            // Try multiplying the powers
+            long newPiPow = tryMultiplyWithIntegerResult(piPow, power);
+            long newEPow = tryMultiplyWithIntegerResult(ePow, power);
+            long newIPow = tryMultiplyWithIntegerResult(iPow, power);
+            long[] newVarPows = new long[varPows.length];
             for(int i = 0; i < varPows.length; ++i)
             {
-                varPows[i] *= factor;
+                newVarPows[i] = tryMultiplyWithIntegerResult(varPows[i], power);
             }
+
+            // If we've come here, all powers could be multiplied successfully and we can use the new powers
+            piPow = newPiPow;
+            ePow = newEPow;
+            iPow = newIPow;
+            varPows = newVarPows;
+
+            // We have successfully raised the symbol to a power
             return true;
         }
-        return false;
+        catch(Exception exc)
+        {
+            return false;
+        }
     }
 
     /**
@@ -535,5 +545,25 @@ public class Symbol extends Expression
                 e.setAttribute(ATTR_VAR + (char) ('a' + i), String.valueOf(varPows[i]));
         }
         el.appendChild(e);
+    }
+
+    /** The precision for determining roundoff errors in the powers. */
+    private static final double EPSILON = 0.0000001;
+
+    /**
+     * Tries to multiply the given integer and real number to get an integer result.
+     * Throws an exception if the result is not an integer.
+     * @param integer The integer to multiply with the real value.
+     * @param real The real value to multiply with the integer.
+     * @return The multiplied value.
+     * @throws Exception When the result is not an integer.
+     */
+    private long tryMultiplyWithIntegerResult(long integer, double real) throws Exception
+    {
+        double result = integer * real;
+        long resultAsInteger = Math.round(result);
+        if(Math.abs(result - resultAsInteger) >= EPSILON)
+            throw new Exception("Multiplying " + Long.toString(integer) + " and " + Double.toString(real) + " does not give an integer.");
+        return resultAsInteger;
     }
 }
