@@ -128,9 +128,8 @@ public class FragmentEvaluation extends DialogFragment
             view.findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
         }
         
-        // Show a warning if variables have been substituted
-        if(varsSubstituted)
-            view.findViewById(R.id.text_warning_substitutions_used).setVisibility(View.VISIBLE);
+        // Show a warning iff variables have been substituted
+        view.findViewById(R.id.text_warning_substitutions_used).setVisibility(varsSubstituted ? View.VISIBLE : View.GONE);
         
         // Return the content view
         return view;
@@ -312,6 +311,7 @@ public class FragmentEvaluation extends DialogFragment
                     {
                         // We always evaluate the answer exactly first (without substitutions)
                         EvalHelper.substitute = false;
+                        EvalHelper.substitutionsMade = false;
                         IExpr result = EvalEngine.eval(EvalHelper.eval(args[0]));
                         
                         // Now we calculate the answer (with substitutions, if there are any)
@@ -319,7 +319,6 @@ public class FragmentEvaluation extends DialogFragment
                         {
                             Expression resultExpr = ModelHelper.toExpression(result);
                             EvalHelper.substitute = true;
-                            EvalHelper.substitutionsMade = false;
                             if(exactEvaluation)
                                 result = EvalEngine.eval(EvalHelper.eval(resultExpr));
                             else
@@ -390,7 +389,7 @@ public class FragmentEvaluation extends DialogFragment
         {
             if(result != null)
                 showExpression(result);
-            else if(getView() != null)
+            if(getView() != null)
             {
                 // We'll want to hide the progressbar anyway
                 getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -402,9 +401,8 @@ public class FragmentEvaluation extends DialogFragment
                     getView().findViewById(R.id.unableToEvalLayout).setVisibility(View.VISIBLE);
                 }
                 
-                // Show a warning if variables have been substituted
-                if(varsSubstituted)
-                    getView().findViewById(R.id.text_warning_substitutions_used).setVisibility(View.VISIBLE);
+                // Show a warning iff variables have been substituted
+                getView().findViewById(R.id.text_warning_substitutions_used).setVisibility(varsSubstituted ? View.VISIBLE : View.GONE);
             }
         }
     }
