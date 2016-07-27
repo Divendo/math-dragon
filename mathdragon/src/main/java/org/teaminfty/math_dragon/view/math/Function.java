@@ -78,23 +78,23 @@ public class Function extends Expression
          * @return The {@link FunctionType}, or <tt>null</tt> if none belong to the given XML safe name */
         public static FunctionType getByXmlName(String xmlName)
         {
-            if(xmlName.equals(SIN.name))
+            if(xmlName.equals(SIN.xmlName))
                 return SIN;
-            else if(xmlName.equals(COS.name))
+            else if(xmlName.equals(COS.xmlName))
                 return COS;
-            else if(xmlName.equals(TAN.name))
+            else if(xmlName.equals(TAN.xmlName))
                 return TAN;
-            else if(xmlName.equals(SINH.name))
+            else if(xmlName.equals(SINH.xmlName))
                 return SINH;
-            else if(xmlName.equals(COSH.name))
+            else if(xmlName.equals(COSH.xmlName))
                 return COSH;
-            else if(xmlName.equals(ARCSIN.name))
+            else if(xmlName.equals(ARCSIN.xmlName))
                 return ARCSIN;
-            else if(xmlName.equals(ARCCOS.name))
+            else if(xmlName.equals(ARCCOS.xmlName))
                 return ARCCOS;
-            else if(xmlName.equals(ARCTAN.name))
+            else if(xmlName.equals(ARCTAN.xmlName))
                 return ARCTAN;
-            else if(xmlName.equals(LN.name))
+            else if(xmlName.equals(LN.xmlName))
                 return LN;
             return null;
         }
