@@ -20,8 +20,6 @@ android {
 
 dependencies {
     compile project(':library')
+    compile project(':symjalib-release-2016-04-25')
     compile 'com.android.support:support-v4:19.1.0'
-    compile files('libs/log4j-over-slf4j-1.7.2.jar')
-    compile files('libs/slf4j-android-1.6.1-RC1.jar')
-    compile files('libs/symja_android_library.jar')
 }

@@ -1,2 +1,2 @@
-include ':library'
+include ':library', ':symjalib-release-2016-04-25'
 include ':mathdragon'
