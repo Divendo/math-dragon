@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-    compile project(':library')
+    compile project(':showcase-view')
     compile project(':symjalib-release-2016-04-25')
     compile 'com.android.support:support-v4:19.1.0'
 }
