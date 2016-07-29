@@ -50,7 +50,7 @@ public final class ModelHelper
      * @param expr
      *        The mathematical expression from symja. Usually obtained from
      *        <tt>EvalHelper.eval(Expression)</tt>.
-     * @return A viewer that contains {@link expr}.
+     * @return A viewer that contains expr.
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
@@ -86,11 +86,11 @@ public final class ModelHelper
      * @param s
      *        The mathematical symbolic constant from symja. Usually obtained
      *        from <tt>EvalHelper.eval(Expression)</tt>.
-     * @return A viewer that contains {@link s}.
+     * @return A viewer that contains s.
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
-    static org.teaminfty.math_dragon.view.math.Symbol symbol(Symbol s)
+    static org.teaminfty.math_dragon.view.math.Symbol symbol(Symbol s) throws ParseException
     {
         org.teaminfty.math_dragon.view.math.Symbol symbol = new org.teaminfty.math_dragon.view.math.Symbol(1);
         // Figure out which symbol it is
@@ -103,11 +103,16 @@ public final class ModelHelper
         else
         {
             String str = s.toString().toLowerCase(Locale.US);
-            if(str.length() > 0)
+            if(str.length() == 1)
             {
                 char var = str.charAt(0);
                 if((var >= 'A' && var <= 'Z' && var != 'E' && var != 'I') || (var >= 'a' && var <= 'z' && var != 'e' && var != 'i'))
                     symbol.setVarPow(var, 1);
+            }
+            else
+            {
+                // Invalid variable symbol, could also indicate an invalid calculation (e.g. the result "indeterminate")
+                throw new ParseException("Invalid symbol: " + s.toString());
             }
         }
         return symbol;
@@ -121,7 +126,7 @@ public final class ModelHelper
      * @param i
      *        The mathematical numerical constant from symja. Usually obtained
      *        from <tt>EvalHelper.eval(Expression)</tt>.
-     * @return A viewer that contains {@link i}.
+     * @return A viewer that contains i.
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
@@ -144,7 +149,7 @@ public final class ModelHelper
      * @param rat
      *        The mathematical rational constant from symja. Usually obtained
      *        from <tt>EvalHelper.eval(Expression)</tt>.
-     * @return A viewer that contains {@link rat}.
+     * @return A viewer that contains rat.
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
@@ -163,7 +168,7 @@ public final class ModelHelper
      * @param c
      *        The mathematical complex constant from symja. Usually obtained
      *        from <tt>EvalHelper.eval(Expression)</tt>.
-     * @return A viewer that contains {@link s}.
+     * @return A viewer that contains s.
      * @throws ParseException
      *         Thrown when conversion is impossible.
      */
@@ -202,7 +207,7 @@ public final class ModelHelper
      * contains the mathematical expression. Unknown mathematical expressions
      * result in a {@link ParseException}.
      * 
-     * @param expr
+     * @param ast
      *        The mathematical expression from symja. Usually obtained from
      *        <tt>EvalHelper.eval(Expression)</tt>.
      * @return A viewer that contains <tt>expr</tt>.
@@ -230,8 +235,8 @@ public final class ModelHelper
      * 
      * @param add
      *        Symja's abstract syntax tree holding the current binary addition.
-     *        Usually obtained from {@link EvalHelper.eval(Expression}.
-     * @return A graphical viewer that contains {@link add}
+     *        Usually obtained from EvalHelper.eval().
+     * @return A graphical viewer that contains add
      * @throws ParseException
      *         Throw when conversion is impossible
      */
@@ -244,9 +249,8 @@ public final class ModelHelper
             Add child = new Add(toExpression(add.get(operandIndex - 1)), toExpression(add.get(operandIndex)));
             for(operandIndex -= 2; operandIndex > 0; --operandIndex)
             {
-                Add parent = new Add(toExpression(add.get(operandIndex)), child);
                 // Navigate to root element
-                child = parent;
+                child = new Add(toExpression(add.get(operandIndex)), child);
             }
             return child;
         }
@@ -264,9 +268,8 @@ public final class ModelHelper
      * 
      * @param mul
      *        Symja's abstract syntax tree holding the current binary
-     *        multiplication. Usually obtained from {@link
-     *        EvalHelper.eval(Expression}.
-     * @return A graphical viewer that contains {@link mul}
+     *        multiplication. Usually obtained from EvalHelper.eval().
+     * @return A graphical viewer that contains mul
      * @throws ParseException
      *         Throw when conversion is impossible
      */
@@ -279,9 +282,8 @@ public final class ModelHelper
             Multiply child = new Multiply(toExpression(mul.get(operandIndex - 1)), toExpression(mul.get(operandIndex)));
             for(operandIndex -= 2; operandIndex > 0; --operandIndex)
             {
-                Multiply parent = new Multiply(toExpression(mul.get(operandIndex)), child);
                 // Navigate to root element
-                child = parent;
+                child = new Multiply(toExpression(mul.get(operandIndex)), child);
             }
             return child;
         }
@@ -299,8 +301,8 @@ public final class ModelHelper
      * 
      * @param pow
      *        Symja's abstract syntax tree holding the current binary power.
-     *        Usually obtained from {@link EvalHelper.eval(Expression}.
-     * @return A graphical viewer that contains {@link pow}
+     *        Usually obtained from EvalHelper.eval().
+     * @return A graphical viewer that contains pow
      * @throws ParseException
      *         Throw when conversion is impossible
      */
@@ -319,8 +321,8 @@ public final class ModelHelper
      * 
      * @param func
      *        Symja's abstract syntax tree holding the current unary function.
-     *        Usually obtained from {@link EvalHelper.eval(Expression}.
-     * @return A graphical viewer that contains {@link pow}
+     *        Usually obtained from EvalHelper.eval().
+     * @return A graphical viewer that contains pow
      * @throws ParseException
      *         Throw when conversion is impossible
      */
