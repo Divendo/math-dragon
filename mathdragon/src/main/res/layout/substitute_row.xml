@@ -4,6 +4,13 @@
     android:layout_height="@dimen/substitute_row_height"
     android:orientation="horizontal" >
 
+    <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_delete_substitution" android:src="@drawable/clear" style="@style/CircleButton"
+            android:layout_gravity="center" android:layout_marginLeft="@dimen/substitute_margin"
+            android:layout_marginRight="@dimen/substitute_margin" android:clickable="false"
+            android:contentDescription="@string/delete"/>
     <TextView
         android:id="@+id/text_var_name"
         android:layout_width="@dimen/substitute_var_width"

@@ -146,6 +146,7 @@ public class FragmentSubstitute extends DialogFragment implements Tutorial
             RowClickListener rowClickListener = new RowClickListener(var);
             row.setOnClickListener(rowClickListener);
             row.setOnLongClickListener(rowClickListener);
+            row.findViewById(R.id.btn_delete_substitution).setOnClickListener(rowClickListener);
             
             // Insert the row into the layout
             boolean inserted = false;
@@ -271,8 +272,19 @@ public class FragmentSubstitute extends DialogFragment implements Tutorial
         { varName = name; }
         
         @Override
-        public void onClick(View v)
+        public void onClick(View view)
         {
+            // This onclick listener can handle the onclick event of both the row and the delete button
+            // In case the delete button is clicked we simply display the confirmation dialog, otherwise we start editing the substitution
+            if(view.getId() == R.id.btn_delete_substitution)
+            {
+                // Delete the substitution (if the user confirms to do so)
+                confirmSubstitutionDeletion();
+
+                // We're done
+                return;
+            }
+
             // If an editor is already shown, stop here
             if(getFragmentManager().findFragmentByTag(EDITOR_TAG) != null)
                 return;
@@ -297,16 +309,22 @@ public class FragmentSubstitute extends DialogFragment implements Tutorial
         @Override
         public boolean onLongClick(View v)
         {
-            // If a warning is already shown, stop here
-            if(getFragmentManager().findFragmentByTag(WARNING_TAG) != null)
-                return true;
-            
-            // Create and show a warning dialog
-            FragmentWarningDialog dlg = new FragmentWarningDialog(R.string.delete_substitution, R.string.sure_to_delete_substitution, new DeleteSubstituteListener(varName));
-            dlg.show(getFragmentManager(), WARNING_TAG);
+            // Delete the substitution (if the user confirms to do so)
+            confirmSubstitutionDeletion();
             
             // We've consumed the event
             return true;
+        }
+
+        /** Displays a warning dialog that deletes the substitution if the user confirms it. */
+        private void confirmSubstitutionDeletion()
+        {
+            // Only display a warning dialog if none is shown
+            if(getFragmentManager().findFragmentByTag(WARNING_TAG) == null)
+            {
+                FragmentWarningDialog dlg = new FragmentWarningDialog(R.string.delete_substitution, R.string.sure_to_delete_substitution, new DeleteSubstituteListener(varName));
+                dlg.show(getFragmentManager(), WARNING_TAG);
+            }
         }
     }
 
