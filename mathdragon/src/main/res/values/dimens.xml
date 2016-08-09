@@ -55,5 +55,6 @@
     <dimen name="about_label_width">128dp</dimen>
     <dimen name="about_margin">8dp</dimen>
     <dimen name="about_padding">4dp</dimen>
-    
+    <dimen name="check_vibration_on_margin">8dp</dimen>
+
 </resources>

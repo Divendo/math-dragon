@@ -61,7 +61,6 @@ public class FragmentMainScreen extends Fragment implements Tutorial
     private int historyPos = 0;
 
     private boolean isShowingDialog = false;
-
     
     private ShowcaseViewDialog currentDialog;
 

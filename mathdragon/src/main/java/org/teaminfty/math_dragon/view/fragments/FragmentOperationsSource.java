@@ -2,7 +2,10 @@ package org.teaminfty.math_dragon.view.fragments;
 
 import static org.teaminfty.math_dragon.view.math.Function.FunctionType.*;
 
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import org.teaminfty.math_dragon.R;
+import org.teaminfty.math_dragon.model.AppSettings;
 import org.teaminfty.math_dragon.view.math.SourceView;
 import org.teaminfty.math_dragon.view.math.source.Expression;
 import org.teaminfty.math_dragon.view.math.source.operation.BinaryLinear;
@@ -63,6 +66,11 @@ public class FragmentOperationsSource extends Fragment implements SourceView.Dra
             operatorsVisible = savedInstanceState.getBoolean(BUNDLE_OPERATORS_VISIBLE);
         layout.findViewById(R.id.operators_container).setVisibility(operatorsVisible ? SourceView.VISIBLE : SourceView.GONE);
         layout.findViewById(R.id.functions_container).setVisibility(operatorsVisible ? SourceView.GONE : SourceView.VISIBLE);
+
+        // Check or uncheck the "vibration on" checkbox depending on the current settings
+        CheckBox checkVibrationOn = (CheckBox) layout.findViewById(R.id.check_vibration_on);
+        checkVibrationOn.setChecked(AppSettings.getVibrationOn(getActivity()));
+        checkVibrationOn.setOnCheckedChangeListener(new VibrationOnCheckedChangeListener());
         
         // Return the layout
         return layout;
@@ -81,7 +89,7 @@ public class FragmentOperationsSource extends Fragment implements SourceView.Dra
     /** Sets the given {@link Expression} to the {@link SourceView} with the given ID
      * @param layout The layout that contains the {@link SourceView}
      * @param id The ID of the {@link SourceView} where the {@link SourceView} should be set for
-     * @param mo The {@link Expression} that should be set */
+     * @param mso The {@link Expression} that should be set */
     protected void setMathSourceObjectFor(android.view.View layout, int id, Expression mso)
     {
         SourceView mathSourceView = (SourceView) layout.findViewById(id);
@@ -129,6 +137,16 @@ public class FragmentOperationsSource extends Fragment implements SourceView.Dra
             // Show/hide the containers
             containerOperators.setVisibility(showOperators ? SourceView.VISIBLE : SourceView.INVISIBLE);
             containerFunctions.setVisibility(showOperators ? SourceView.INVISIBLE : SourceView.VISIBLE);
+        }
+    }
+
+    /** The OnCheckedChangeListener for the "vibration on" checkbox. */
+    private class VibrationOnCheckedChangeListener implements CheckBox.OnCheckedChangeListener
+    {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+        {
+            AppSettings.setVibrationOn(getActivity(), isChecked);
         }
     }
 }

@@ -18,6 +18,7 @@ import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.model.Database.Formula;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
+import org.teaminfty.math_dragon.view.TouchFeedbackVibrator;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 import org.teaminfty.math_dragon.view.math.ExpressionXMLReader;
@@ -407,6 +408,9 @@ public class FragmentSaveLoad extends DialogFragment implements Tutorial
             // If a confirmation dialog is already shown, stop here
             if(getFragmentManager().findFragmentByTag(CONFIRMATION_DLG_TAG) != null)
                 return true;
+
+            // Vibrate
+            TouchFeedbackVibrator.longPressVibrate(getActivity());
             
             // Create and show a warning dialog
             FragmentWarningDialog dlg = new FragmentWarningDialog(R.string.sure_to_delete_title, R.string.sure_to_delete_msg, new ConfirmDeleteListener(id));

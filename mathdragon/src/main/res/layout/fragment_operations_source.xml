@@ -178,5 +178,12 @@
 	    </LinearLayout>
 	    
     </LinearLayout>
+	<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/vibration_on"
+			android:id="@+id/check_vibration_on"
+			android:layout_alignParentBottom="true" android:layout_centerHorizontal="true"
+			android:layout_marginBottom="@dimen/check_vibration_on_margin"/>
 
 </RelativeLayout>

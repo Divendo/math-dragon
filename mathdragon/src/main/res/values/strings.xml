@@ -107,4 +107,5 @@
     <string name="tutorial_favs_load">And a new formula will appear here. You can click to load it…</string>
     <string name="tutorial_favs_overwrite">Or click the save button after a formula to overwrite it.</string>
     <string name="tutorial_favs_delete">If you no longer need a formula, keep your finger on it for a while to delete it.</string>
+	<string name="vibration_on">Vibrate on long press</string>
 </resources>

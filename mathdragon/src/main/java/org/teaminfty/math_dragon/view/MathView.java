@@ -495,6 +495,9 @@ public class MathView extends View
             // Also, we can't delete an empty box
             if(info != null && !(info.expression instanceof Empty))
             {
+                // Vibrate
+                TouchFeedbackVibrator.longPressVibrate(getContext());
+
                 // In case the target is a linear binary operation, we only want the operands directly next to it
                 // So we rearrange the Expression tree to make that happen
                 freeExpression(info);

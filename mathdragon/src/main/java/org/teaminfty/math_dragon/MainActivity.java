@@ -23,7 +23,6 @@ import android.view.View;
 
 public class MainActivity extends Activity implements FragmentOperationsSource.CloseMeListener
 {
-	
 	public static final int TUTORIAL_ID = 0;
 
     /** The ActionBarDrawerToggle that is used to toggle the drawer using the action bar */

@@ -4,6 +4,7 @@ import org.teaminfty.math_dragon.R;
 import org.teaminfty.math_dragon.model.Database;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialog;
 import org.teaminfty.math_dragon.view.ShowcaseViewDialogs;
+import org.teaminfty.math_dragon.view.TouchFeedbackVibrator;
 import org.teaminfty.math_dragon.view.TypefaceHolder;
 import org.teaminfty.math_dragon.view.math.Expression;
 
@@ -309,6 +310,9 @@ public class FragmentSubstitute extends DialogFragment implements Tutorial
         @Override
         public boolean onLongClick(View v)
         {
+            // Vibrate
+            TouchFeedbackVibrator.longPressVibrate(getActivity());
+
             // Delete the substitution (if the user confirms to do so)
             confirmSubstitutionDeletion();
             
